@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# TypeScript
+tsconfig.tsbuildinfo
+
+# Environment / secrets
+.env.local
+.secrets/
+secrets/
+.dev.vars
+*.key
+*.pem
+
+# Runtime
+.nodemon.json
+*.log
+
+# Optional: generated test scaffolding (tests/sales_migration_test.py is checked in as source)
+# supabase/tests/

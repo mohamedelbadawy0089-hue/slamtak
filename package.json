@@ -1,0 +1,49 @@
+{
+  "name": "1287c603b8cd7ae5ae3c9cc1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --passWithNoTests",
+    "build": "tsc --build",
+    "start": "node start.js",
+    "dev": "NODE_ENV=development nodemon start.js",
+    "dev:watch": "nodemon --watch public --watch src --exec \"npm run dev\"",
+    "test:db": "node supabase/tests/run-phase1-migration-test.mjs && node supabase/tests/run-phase1-behavior-test.mjs && node supabase/tests/run-inventory-lock-test.mjs",
+    "test:phase1": "jest tests/phase1-ui.test.js tests/phase1-concurrency.test.js"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFiles": [
+      "<rootDir>/tests/setup-env.js"
+    ]
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.1",
+    "helmet": "^8.3.0",
+    "node-fetch": "^3.3.2",
+    "react": "^19.3.1",
+    "react-bootstrap": "^2.10.10",
+    "react-dom": "^19.3.1",
+    "react-router-dom": "^7.18.4",
+    "recharts": "^3.10.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/supertest": "^7.2.1",
+    "jest": "^30.5.2",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.3.1",
+    "ts-jest": "^29.4.15",
+    "wrangler": "^4.152.0"
+  }
+}

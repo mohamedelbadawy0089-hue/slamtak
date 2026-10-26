@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>نظام إدارة المخزن</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app"></div>
+  <!-- Supabase: public config + client library (real auth & PostgreSQL via RLS) -->
+  <script src="supabase-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <!-- Load app.js last with cache-busting to ensure all routers/libs are loaded first -->
+  <script src="app.js?v=202610252140"></script>
+  <!-- Conditional Eruda debugging tool - only loads when debug=true in URL -->
+  <script>
+    // تحميل Eruda فقط إذا كان الرابط يحتوي على debug=true
+    if (window.location.search.includes('debug=true')) {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/eruda';
+      script.onload = function () { eruda.init(); };
+      document.head.appendChild(script);
+    }
+  </script>
+</body>
+</html>

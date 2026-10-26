@@ -1,0 +1,13 @@
+{
+  "name": "inventory-management",
+  "main": "worker.js",
+  "compatibility_date": "2026-10-18",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  },
+  "vars": {
+    "SUPABASE_URL": "https://iksjhjxwphmvthryfeae.supabase.co"
+  }
+}
