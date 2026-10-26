@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الدليفري - سلامتك</title>
+    <!-- Supabase SDK -->
+    <script src="libs/supabase.min.js"></script>
+    <script src="supabase-singleton.js"></script>
+    <script src="navigation.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        .back-arrow {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
+            background: linear-gradient(135deg, #ff6b6b, #dc3545);
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.5);
+            transition: all 0.3s;
+            border: 3px solid white;
+            z-index: 1000;
+            outline: none;
+            user-select: none;
+        }
+        .back-arrow:hover {
+            transform: scale(1.1) translateY(-3px);
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.7);
+        }
+        .back-arrow:active {
+            transform: scale(0.95);
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .stats {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .stat-card {
+            flex: 1;
+            min-width: 150px;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 14px;
+        }
+        .add-section {
+            background: #f8f9ff;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 2px solid #667eea;
+        }
+        .add-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+        .required {
+            color: #dc3545;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+        input.error {
+            border-color: #dc3545;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .btn-add {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 100%;
+        }
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-add:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            padding: 12px;
+            text-align: right;
+            font-weight: bold;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: right;
+        }
+        tr:hover {
+            background: #fff9f0;
+        }
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s;
+        }
+        .btn-delete:hover {
+            background: #c82333;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        .empty-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        .empty-text {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="back-arrow" onclick="goBack()" title="رجوع">←</div>
+    
+    <div class="container">
+        <h2>🚚 إدارة رجال الدليفري وموظف التحضير</h2>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="deliveryCount">0</div>
+                <div class="stat-label">إجمالي رجال الدليفري</div>
+            </div>
+        </div>
+        
+        <div class="add-section" style="background: #e8f5e9; border-color: #25d366;">
+            <div class="add-title" style="color: #25d366;">📱 رقم موظف التحضير</div>
+            <div id="preparationDisplay" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: white; border-radius: 8px; margin-bottom: 15px;">
+                    <div>
+                        <div style="font-size: 14px; color: #666; margin-bottom: 5px;">رقم الواتساب:</div>
+                        <div style="font-size: 18px; font-weight: bold; color: #25d366;" id="preparationPhoneText"></div>
+                    </div>
+                    <div>
+                        <button class="btn" style="background: #667eea; color: white; margin-left: 10px;" onclick="editPreparationPhone()">✏️ تعديل</button>
+                        <button class="btn" style="background: #dc3545; color: white;" onclick="deletePreparationPhone()">🗑️ حذف</button>
+                    </div>
+                </div>
+            </div>
+            <div id="preparationForm" style="display: none;">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>رقم واتساب موظف التحضير <span class="required">*</span></label>
+                        <input type="tel" id="preparationPhone" placeholder="01234567890 (بدون كود الدولة)" maxlength="11" oninput="validatePreparationPhone()">
+                        <div class="error-message" id="prepPhoneError">يجب إدخال 11 رقم</div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-add" id="savePreparationBtn" onclick="savePreparationPhone()" disabled>حفظ رقم موظف التحضير</button>
+            </div>
+        </div>
+        
+        <div class="add-section">
+            <div class="add-title">➕ إضافة رجل دليفري جديد</div>
+            <form onsubmit="handleSubmit(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>الاسم <span class="required">*</span></label>
+                        <input type="text" id="deliveryName" oninput="checkFormValidity()" required>
+                    </div>
+                    <div class="form-group">
+                        <label>رقم التليفون <span class="required">*</span></label>
+                        <input type="tel" id="deliveryPhone" placeholder="11 رقم" maxlength="11" oninput="validatePhone()" required>
+                        <div class="error-message" id="phoneError">يجب إدخال 11 رقم</div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-add" id="submitBtn" disabled>إضافة رجل الدليفري</button>
+            </form>
+        </div>
+        
+        <div class="table-container">
+            <table id="deliveryTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>الاسم</th>
+                        <th>رقم التليفون</th>
+                        <th>تاريخ الإضافة</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="deliveryBody"></tbody>
+            </table>
+            
+            <div class="empty-state" id="emptyState">
+                <div class="empty-icon">🚚</div>
+                <div class="empty-text">لا يوجد رجال دليفري مسجلين حالياً</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+        let supabaseUserId = null;
+        
+        let allDelivery = [];
+        
+        // Get Supabase client
+        function getSupabaseClient() {
+            return window.SupabaseSingleton ? window.SupabaseSingleton.getClient() : null;
+        }
+        
+        // Get authenticated user ID from Supabase
+        async function getSupabaseUserId() {
+            const supabase = getSupabaseClient();
+            if (!supabase) return null;
+            
+            try {
+                const { data: { user }, error } = await supabase.auth.getUser();
+                if (error) {
+                    console.error('Error getting user:', error);
+                    return null;
+                }
+                supabaseUserId = user ? user.id : null;
+                return supabaseUserId;
+            } catch (e) {
+                console.error('Error:', e);
+                return null;
+            }
+        }
+        
+        // Get warehouse ID
+        function getCurrentUser() {
+            return JSON.parse(sessionStorage.getItem('currentUser'));
+        }
+        
+        // Check authentication on load - Hybrid Auth (Local First, No Forced Redirects)
+        async function checkAuth() {
+            // استخدام نظام الهجين - الأولوية للبيانات المحلية
+            if (window.HybridAuth) {
+                const auth = await window.HybridAuth.checkAuth({ 
+                    allowLocal: true, 
+                    silent: true, 
+                    background: false 
+                });
+                
+                if (auth.authenticated) {
+                    console.log('✅ Authenticated via Hybrid Auth:', auth.source);
+                    // تحديث المتغيرات المحلية
+                    if (auth.user) {
+                        currentUser = auth.user;
+                        supabaseUserId = auth.user.id;
+                    }
+                    return true;
+                }
+                
+                // ❌ لا يوجد جلسة - لكن لا نُوجّه إجبارياً!
+                // نسمح للمستخدم باستخدام البيانات المحلية القديمة
+                console.warn('⚠️ No valid session - Continuing in offline mode');
+                
+                // إذا كان هناك بيانات محلية قديمة، نستمر
+                if (currentUser) {
+                    console.log('🔄 Using cached local data');
+                    return true;
+                }
+                
+                // فقط إذا لم يكن هناك أي بيانات على الإطلاق
+                // نعرض رسالة ودية بدلاً من التوجيه الإجباري
+                console.log('ℹ️ No cached data - Showing login prompt');
+                // if(typeof window.showOfflineToast === 'function') window.showOfflineToast(); // ❌ ممنوع - لا توجيه إجباري
+                return false;
+            }
+            
+            // Fallback للنظام القديم إذا لم يكن HybridAuth متوفراً
+            const userId = await getSupabaseUserId();
+            if (!userId && !currentUser) {
+                // لا توجيه إجباري - نعرض رسالة فقط
+                console.warn('⚠️ No session available');
+                return false;
+            }
+            return true;
+        }
+        
+        // عرض رقم موظف التحضير
+        async function displayPreparationPhone() {
+            const phone = await loadPreparationPhone();
+            if (phone) {
+                document.getElementById('preparationDisplay').style.display = 'block';
+                document.getElementById('preparationForm').style.display = 'none';
+                document.getElementById('preparationPhoneText').textContent = phone;
+            } else {
+                document.getElementById('preparationDisplay').style.display = 'none';
+                document.getElementById('preparationForm').style.display = 'block';
+            }
+        }
+        
+        // تحميل رقم موظف التحضير من Supabase
+        async function loadPreparationPhone() {
+            const supabase = getSupabaseClient();
+            if (!supabase) return null;
+            
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return null;
+            
+            const { data, error } = await supabase
+                .from('preparation_phone')
+                .select('phone')
+                .eq('user_id', user.id)
+                .single();
+            
+            if (error && error.code !== 'PGRST116') {
+                console.error('Error loading preparation phone:', error);
+            }
+            
+            return data ? data.phone : null;
+        }
+        
+        function validatePreparationPhone() {
+            const phone = document.getElementById('preparationPhone').value;
+            const phoneError = document.getElementById('prepPhoneError');
+            const phoneInput = document.getElementById('preparationPhone');
+            const saveBtn = document.getElementById('savePreparationBtn');
+            
+            if (phone && phone.length !== 11) {
+                phoneError.style.display = 'block';
+                phoneInput.classList.add('error');
+                saveBtn.disabled = true;
+            } else if (phone.length === 11) {
+                phoneError.style.display = 'none';
+                phoneInput.classList.remove('error');
+                saveBtn.disabled = false;
+            } else {
+                saveBtn.disabled = true;
+            }
+        }
+        
+        async function savePreparationPhone() {
+            const phone = document.getElementById('preparationPhone').value.trim();
+            
+            if (phone.length !== 11) {
+                alert('يرجى إدخال رقم صحيح (11 رقم)');
+                return;
+            }
+            
+            const supabase = getSupabaseClient();
+            if (!supabase) {
+                alert('❌ لا يمكن الاتصال بـ Supabase');
+                return;
+            }
+            
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                alert('يجب تسجيل الدخول أولاً');
+                return;
+            }
+            
+            // التحقق إذا كان يوجد رقم سابق
+            const { data: existingData } = await supabase
+                .from('preparation_phone')
+                .select('id')
+                .eq('user_id', user.id)
+                .single();
+            
+            let error;
+            if (existingData) {
+                // تحديث الرقم الموجود
+                const { error: updateError } = await supabase
+                    .from('preparation_phone')
+                    .update({ phone: phone, updated_at: new Date().toISOString() })
+                    .eq('user_id', user.id);
+                error = updateError;
+            } else {
+                // إضافة رقم جديد
+                const { error: insertError } = await supabase
+                    .from('preparation_phone')
+                    .insert([{
+                        user_id: user.id,
+                        phone: phone
+                    }]);
+                error = insertError;
+            }
+            
+            if (error) {
+                console.error('Error saving preparation phone:', error);
+                alert('❌ حدث خطأ أثناء الحفظ: ' + error.message);
+                return;
+            }
+            
+            alert('✅ تم حفظ رقم موظف التحضير بنجاح!');
+            document.getElementById('preparationPhone').value = '';
+            await displayPreparationPhone();
+        }
+        
+        async function editPreparationPhone() {
+            const phone = await loadPreparationPhone();
+            document.getElementById('preparationPhone').value = phone || '';
+            document.getElementById('preparationDisplay').style.display = 'none';
+            document.getElementById('preparationForm').style.display = 'block';
+            validatePreparationPhone();
+        }
+        
+        async function deletePreparationPhone() {
+            if (!confirm('هل أنت متأكد من حذف رقم موظف التحضير؟')) return;
+            
+            const supabase = getSupabaseClient();
+            if (!supabase) {
+                alert('❌ لا يمكن الاتصال بـ Supabase');
+                return;
+            }
+            
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                alert('يجب تسجيل الدخول أولاً');
+                return;
+            }
+            
+            const { error } = await supabase
+                .from('preparation_phone')
+                .delete()
+                .eq('user_id', user.id);
+            
+            if (error) {
+                console.error('Error deleting preparation phone:', error);
+                alert('❌ حدث خطأ أثناء الحذف: ' + error.message);
+                return;
+            }
+            
+            alert('تم حذف رقم موظف التحضير بنجاح!');
+            await displayPreparationPhone();
+        }
+        
+        function validatePhone() {
+            const phone = document.getElementById('deliveryPhone').value;
+            const phoneError = document.getElementById('phoneError');
+            const phoneInput = document.getElementById('deliveryPhone');
+            
+            if (phone && phone.length !== 11) {
+                phoneError.style.display = 'block';
+                phoneInput.classList.add('error');
+            } else {
+                phoneError.style.display = 'none';
+                phoneInput.classList.remove('error');
+            }
+            
+            checkFormValidity();
+        }
+        
+        function checkFormValidity() {
+            const name = document.getElementById('deliveryName').value.trim();
+            const phone = document.getElementById('deliveryPhone').value;
+            const submitBtn = document.getElementById('submitBtn');
+            
+            if (name && phone.length === 11) {
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.disabled = true;
+            }
+        }
+        
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            // ✅ جلب البيانات من الفورم فقط (لا يوجد حقل user_id في الفورم)
+            const name = document.getElementById('deliveryName').value.trim();
+            const phone = document.getElementById('deliveryPhone').value;
+            
+            // ✅ التحقق من البيانات المدخلة
+            if (!name || phone.length !== 11) {
+                alert('يرجى إدخال جميع البيانات بشكل صحيح');
+                return;
+            }
+            
+            const supabase = getSupabaseClient();
+            if (!supabase) {
+                alert('❌ لا يمكن الاتصال بـ Supabase. تأكد من تسجيل الدخول.');
+                return;
+            }
+            
+            // ✅ سحب user_id و warehouse_id مباشرة من Supabase Auth Session
+            const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+            if (sessionError || !session || !session.user) {
+                alert('يجب تسجيل الدخول أولاً');
+                if(typeof window.showOfflineToast === 'function') window.showOfflineToast();
+                return;
+            }
+            
+            const user = session.user;
+            // نستخرج الـ warehouse_id مباشرة من الجلسة (في هذا النظام معرف المستخدم هو معرف المخزن للمدير)
+            const warehouseId = user.id;
+
+            // ✅ بناء البيانات للإرسال - user_id من Auth فقط
+            // سياسة RLS: WITH CHECK (auth.uid() = user_id)
+            const deliveryData = {
+                user_id: user.id,  // 🔒 آمن: مسحوب تلقائياً
+                warehouse_id: warehouseId,
+                name: name,
+                phone: phone,
+                created_at: new Date().toISOString()
+            };
+            
+            // ✅ تنفيذ INSERT مع التحقق من RLS
+            const { data, error } = await supabase
+                .from('delivery')
+                .insert([deliveryData])
+                .select();
+            
+            if (error) {
+                console.error('Error adding delivery:', error);
+                if (error.code === '42501') {
+                    alert('❌ خطأ في السياسة: لا يمكن إضافة البيانات. تأكد من تسجيل الدخول.');
+                } else {
+                    alert('❌ حدث خطأ أثناء الإضافة: ' + error.message);
+                }
+                return;
+            }
+            
+            alert('✅ تم إضافة رجل الدليفري بنجاح!');
+            resetForm();
+            loadDeliveryFromSupabase();
+        }
+        
+        function resetForm() {
+            document.getElementById('deliveryName').value = '';
+            document.getElementById('deliveryPhone').value = '';
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('phoneError').style.display = 'none';
+            document.getElementById('deliveryPhone').classList.remove('error');
+        }
+        
+        async function loadDeliveryFromSupabase() {
+            const supabase = getSupabaseClient();
+            if (!supabase) {
+                console.error('❌ Supabase client not available');
+                return;
+            }
+            
+            try {
+                // ✅ التحقق من الجلسة باستخدام HybridAuth (Local First)
+                const auth = await window.HybridAuth.checkAuth({ silent: true });
+                
+                if (!auth.authenticated) {
+                    console.warn('⚠️ Not authenticated - Continuing with empty data');
+                    const tbody = document.getElementById('deliveryBody');
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">⚠️ يرجى تسجيل الدخول لعرض البيانات</td></tr>';
+                    return;
+                }
+                
+                // ✅ استخدام HybridAPI للاستعلام مع Try-Catch
+                const { data, error, fromFallback } = await window.HybridAPI.call(async () => {
+                    return await supabase
+                        .from('delivery')
+                        .select('id, name, phone, created_at')
+                        .order('created_at', { ascending: false });
+                }, []); // البيانات الاحتياطية: مصفوفة فارغة
+                
+                if (error) {
+                    console.error('Error loading delivery:', error);
+                    
+                    // ❌ لا توجيه إجباري - نعرض رسالة فقط
+                    if (error.message?.includes('Auth session missing') || 
+                        error.message?.includes('AuthSessionMissingError')) {
+                        console.warn('⚠️ Session expired, using local fallback');
+                    } else if (error.message?.includes('network') || error.message?.includes('fetch')) {
+                        console.warn('⚠️ Network error, using local fallback');
+                    } else {
+                        alert('❌ حدث خطأ أثناء تحميل البيانات: ' + error.message);
+                    }
+                    
+                    // استمر في عرض البيانات المحلية إن وجدت
+                    return;
+                }
+                
+                const tbody = document.getElementById('deliveryBody');
+                tbody.innerHTML = '';
+                
+                // ✅ استخدام data وليس delivery (إصلاح ReferenceError)
+                if (data && data.length > 0) {
+                    document.getElementById('deliveryCount').textContent = data.length; // تحديث العداد
+                    document.getElementById('deliveryTable').style.display = 'table';
+                    document.getElementById('emptyState').style.display = 'none';
+                    
+                    data.forEach((person, index) => {
+                        const date = new Date(person.created_at || person.createdAt).toLocaleDateString('ar-EG');
+                        const id = person.id || index;
+                        const row = `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td><strong>${person.name}</strong></td>
+                                <td>${person.phone}</td>
+                                <td>${date}</td>
+                                <td><button class="btn-delete" onclick="deleteDelivery('${id}')">حذف</button></td>
+                            </tr>
+                        `;
+                        tbody.innerHTML += row;
+                    });
+                    
+                    if (fromFallback) {
+                        console.log('📦 Data loaded from local fallback');
+                    }
+                } else {
+                    document.getElementById('deliveryCount').textContent = '0'; // تحديث العداد
+                    document.getElementById('deliveryTable').style.display = 'none';
+                    document.getElementById('emptyState').style.display = 'block';
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">لا يوجد رجال دليفري</td></tr>';
+                }
+                
+            } catch (err) {
+                console.error('❌ Unexpected error in loadDeliveryFromSupabase:', err);
+                // ❌ لا توجيه إجباري - نستمر في عرض الواجهة
+                const tbody = document.getElementById('deliveryBody');
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">⚠️ خطأ في تحميل البيانات</td></tr>';
+            }
+        }
+        
+        async function deleteDelivery(id) {
+            if (!confirm('هل أنت متأكد من حذف رجل الدليفري؟')) return;
+            
+            const supabase = getSupabaseClient();
+            if (supabase && id) {
+                // ✅ تحديث فوري للواجهة قبل الرد من السيرفر (Optimistic UI)
+                const row = document.querySelector(`button[onclick="deleteDelivery('${id}')"]`)?.closest('tr');
+                if (row) {
+                    row.style.opacity = '0.5';
+                    row.style.backgroundColor = '#ffebee';
+                }
+                
+                // RLS policy ensures user can only delete their own delivery
+                // السيرفر يرفض تلقائياً إذا لم يكن السجل تابعاً لنفس user_id
+                const { error } = await supabase
+                    .from('delivery')
+                    .delete()
+                    .eq('id', id);
+                
+                if (error) {
+                    console.error('Error deleting delivery:', error);
+                    // إعادة الصف لوضعه الطبيعي
+                    if (row) {
+                        row.style.opacity = '1';
+                        row.style.backgroundColor = '';
+                    }
+                    // ✅ معالجة أخطاء RLS - السيرفر يرفض العملية
+                    if (error.code === '42501') {
+                        alert('❌ لا يمكنك حذف هذا السجل!\n\nهذا السجل لا يخص مخزنك أو لا تمتلك صلاحية الحذف.\n\n(تم رفض العملية بواسطة سياسة الأمان RLS)');
+                    } else if (error.message.includes('policy') || error.message.includes('row-level')) {
+                        alert('❌ خطأ في سياسة الأمان!\n\nليس لديك صلاحية حذف هذا السجل.');
+                    } else {
+                        alert('❌ حدث خطأ أثناء الحذف: ' + error.message);
+                    }
+                    return;
+                }
+                
+                // ✅ تحديث فوري للواجهة بعد نجاح الحذف
+                if (row) {
+                    row.style.transition = 'all 0.3s ease';
+                    row.style.transform = 'translateX(100%)';
+                    row.style.opacity = '0';
+                    setTimeout(() => {
+                        loadDeliveryFromSupabase();
+                    }, 300);
+                } else {
+                    await loadDeliveryFromSupabase();
+                }
+            } else {
+                alert('❌ لا يمكن الاتصال بـ Supabase');
+            }
+        }
+        
+        // ✅ اشتراك Real-time لتحديث الجدول تلقائياً
+        let realtimeChannel = null;
+        
+        function subscribeToDeliveryChanges() {
+            const supabase = getSupabaseClient();
+            if (!supabase) return;
+            
+            // إلغاء الاشتراك القديم إذا وجد
+            if (realtimeChannel) {
+                supabase.removeChannel(realtimeChannel);
+            }
+            
+            // إنشاء اشتراك جديد للتغييرات
+            realtimeChannel = supabase
+                .channel('delivery-changes')
+                .on('postgres_changes', 
+                    { 
+                        event: '*', 
+                        schema: 'public', 
+                        table: 'delivery' 
+                    }, 
+                    (payload) => {
+                        console.log('Real-time change received:', payload);
+                        // ✅ إعادة تحميل البيانات فوراً عند أي تغيير
+                        loadDeliveryFromSupabase();
+                    }
+                )
+                .subscribe((status) => {
+                    console.log('Real-time subscription status:', status);
+                });
+        }
+        
+        function goBack() {
+            if (currentUser && currentUser.userType === 'admin') {
+                window.location.replace('admin-dashboard.html');
+            } else {
+                window.location.replace('menu.html');
+            }
+        }
+        
+        // Load delivery data on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            const isAuth = await checkAuth();
+            if (isAuth) {
+                await loadDeliveryFromSupabase();
+                await displayPreparationPhone();
+                // ✅ تفعيل الاشتراك Real-time لتحديث تلقائي
+                subscribeToDeliveryChanges();
+            }
+        });
+    </script>
+    <script src="supabase-singleton.js"></script>
+    <script src="auth-hybrid.js"></script>
+    <script src="ai-core.js"></script>
+    <script src="ai-validation.js"></script>
+    <script src="ai-speech.js"></script>
+    <script src="ai-ui.js"></script>
+    <script src="ai-assistant.js"></script>
+</body>
+</html>

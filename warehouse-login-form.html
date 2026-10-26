@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device=device-width, initial-scale=1.0">
+<title>سلامتك - دخول مخزن موجود</title>
+<style>
+body{margin:0;padding:0;background:#f8f9fa;color:#000;font-family:Arial,sans-serif}
+header{background:#28a745;color:#fff;padding:20px;text-align:center}
+.container{max-width:500px;margin:50px auto;padding:30px;background:#fff;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.1)}
+.btn{display:inline-block;padding:15px 30px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;font-size:16px;margin:10px;width:100%}
+.btn-success{background:#28a745;color:#fff}
+.btn-secondary{background:#6c757d;color:#fff}
+.field{margin-bottom:20px;text-align:right}
+label{display:block;margin-bottom:10px;font-weight:bold}
+input[type="tel"]{width:100%;padding:12px;border:2px solid #28a745;border-radius:6px;box-sizing:border-box;font-size:16px}
+</style>
+</head>
+<body>
+<header>
+<h1>🏭 دخول المخزن</h1>
+</header>
+<div class="container">
+<form id="loginForm">
+<div class="field">
+<label for="phone">رقم الهاتف</label>
+<input type="tel" id="phone" placeholder="05xxxxxxxx" required>
+</div>
+<button class="btn btn-success" type="submit">دخول</button>
+</form>
+<button class="btn btn-secondary" onclick="window.location.href='warehouse-register.html'">مخزن جديد</button>
+</div>
+<script>
+const DB_NAME='SalamatkDB'; 
+const STORE='warehouses';
+document.getElementById('loginForm').addEventListener('submit',async(e)=>{
+e.preventDefault();
+const phone=document.getElementById('phone').value.trim();
+try{
+const request=indexedDB.open(DB_NAME,6);
+request.onsuccess=()=>{
+const db=request.result;
+const tx=db.transaction([STORE],'readonly');
+const store=tx.objectStore(STORE);
+const idx=store.index('phone');
+const req=idx.get(phone);
+req.onsuccess=()=>{
+const data=req.result;
+if(data){
+localStorage.setItem('warehouseData',JSON.stringify(data));
+window.location.href='warehouse.html';
+}else{
+alert('رقم الهاتف غير مسجل');
+}
+};
+};
+}catch(e){alert('خطأ: '+e.message);}
+});
+</script>
+</body>
+</html>

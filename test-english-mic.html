@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test English Medicine Recognition</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; text-align: center; }
+        .field-group {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .mic-btn {
+            padding: 12px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+        .mic-btn:hover { background: #5568d3; }
+        .mic-btn.recording { background: #dc3545; }
+        #log {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .log-entry { margin: 2px 0; }
+        .error { color: #dc3545; }
+        .success { color: #28a745; }
+        .info { color: #17a2b8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎤 Test English Medicine Recognition</h1>
+        
+        <div class="field-group">
+            <label>Say an English medicine name:</label>
+            <div class="input-wrapper">
+                <input type="text" id="medicineName" placeholder="e.g., Panadol, Augmentin...">
+                <button class="mic-btn" id="micBtn" onclick="toggleListening()">🎤</button>
+            </div>
+        </div>
+
+        <div id="log">
+            <div class="log-entry info">Click the microphone and say an English medicine name...</div>
+        </div>
+    </div>
+
+    <script>
+        const logDiv = document.getElementById('log');
+        const micBtn = document.getElementById('micBtn');
+        const inputField = document.getElementById('medicineName');
+        let recognition = null;
+        let isListening = false;
+
+        function log(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+
+        function toggleListening() {
+            if (isListening) {
+                stopListening();
+            } else {
+                startListening();
+            }
+        }
+
+        async function startListening() {
+            log('Starting speech recognition...', 'info');
+            
+            // Check browser support
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                log('❌ Speech recognition not supported in this browser!', 'error');
+                return;
+            }
+
+            try {
+                // Request microphone permission
+                log('Requesting microphone permission...', 'info');
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                stream.getTracks().forEach(track => track.stop());
+                log('✅ Microphone permission granted', 'success');
+
+                // Create new recognition instance
+                recognition = new SpeechRecognition();
+                
+                // ENGLISH ONLY settings
+                recognition.lang = 'en-US';
+                recognition.continuous = false;
+                recognition.interimResults = true;
+                recognition.maxAlternatives = 5;
+                
+                log(`🌐 Language set to: ${recognition.lang}`, 'info');
+                log(`📊 Max alternatives: ${recognition.maxAlternatives}`, 'info');
+
+                recognition.onstart = () => {
+                    isListening = true;
+                    micBtn.classList.add('recording');
+                    micBtn.textContent = '⏹️';
+                    log('🎤 Recording started... Speak now!', 'success');
+                };
+
+                recognition.onresult = (event) => {
+                    log('🎯 onresult event fired!', 'success');
+                    
+                    const results = event.results[0];
+                    log(`📊 Received ${results.length} alternatives`, 'info');
+                    
+                    // Log all alternatives
+                    for (let i = 0; i < results.length; i++) {
+                        const alt = results[i];
+                        const isFinal = alt.isFinal ? '[FINAL]' : '[INTERIM]';
+                        log(`  ${i+1}. "${alt.transcript}" (${(alt.confidence * 100).toFixed(1)}%) ${isFinal}`, 'info');
+                    }
+                    
+                    // Get best result
+                    const bestResult = results[0];
+                    const transcript = bestResult.transcript;
+                    const confidence = bestResult.confidence;
+                    
+                    log(`✅ Best match: "${transcript}" (${(confidence * 100).toFixed(1)}%)`, 'success');
+                    
+                    // Update input
+                    inputField.value = transcript;
+                };
+
+                recognition.onerror = (event) => {
+                    log(`❌ Error: ${event.error}`, 'error');
+                    
+                    if (event.error === 'no-speech') {
+                        log('💡 Try speaking louder or closer to the microphone', 'info');
+                    } else if (event.error === 'audio-capture') {
+                        log('💡 Check if microphone is connected and working', 'info');
+                    } else if (event.error === 'not-allowed') {
+                        log('💡 Click the lock icon in the address bar and allow microphone', 'info');
+                    } else if (event.error === 'network') {
+                        log('💡 Network error - speech recognition requires internet', 'info');
+                    }
+                    
+                    stopListening();
+                };
+
+                recognition.onend = () => {
+                    log('🔚 Recognition ended', 'info');
+                    stopListening();
+                };
+
+                // Start recognition
+                recognition.start();
+                log('⏳ Waiting for speech...', 'info');
+
+            } catch (error) {
+                log(`❌ Failed to start: ${error.name}: ${error.message}`, 'error');
+                
+                if (error.name === 'NotAllowedError') {
+                    log('💡 Permission denied. Check browser settings.', 'error');
+                } else if (error.name === 'NotFoundError') {
+                    log('💡 No microphone found. Please connect one.', 'error');
+                }
+            }
+        }
+
+        function stopListening() {
+            if (recognition) {
+                try {
+                    recognition.stop();
+                } catch(e) {}
+            }
+            isListening = false;
+            micBtn.classList.remove('recording');
+            micBtn.textContent = '🎤';
+            log('⏹️ Recording stopped', 'info');
+        }
+
+        // Initial check
+        log('🚀 Page loaded. Ready to test.', 'success');
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            log('✅ Speech Recognition API is supported', 'success');
+        } else {
+            log('❌ Speech Recognition API is NOT supported in this browser', 'error');
+        }
+    </script>
+</body>
+</html>

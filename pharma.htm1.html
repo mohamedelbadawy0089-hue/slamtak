@@ -1,0 +1,186 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صفحة الزرين</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+        .button-container {
+            display: flex;
+            gap: 20px;
+        }
+        .button {
+            padding: 15px 30px;
+            font-size: 16px;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, opacity 0.3s ease;
+            opacity: 1; /* تأكد من أن الزر واضح */
+        }
+        .pharmacy-btn {
+            background-color: #03a9f4; /* لون أزرق */
+        }
+        .warehouse-btn {
+            background-color: #4caf50; /* لون أخضر */
+        }
+        .login-register-container {
+            display: none; /* مخفي افتراضيًا */
+            flex-direction: column;
+            gap: 20px;
+        }
+        .register-form-container {
+            display: none; /* مخفي افتراضيًا */
+            flex-direction: column; /* ترتيب الحقول بشكل عمودي */
+            gap: 15px;
+            width: 300px;
+        }
+        .form-field {
+            display: flex;
+            flex-direction: column; /* الحقول بشكل عمودي */
+            margin-bottom: 15px; /* مسافة بين الحقول */
+        }
+        .form-field label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-field input, .form-field select {
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #607d8b;
+            padding: 10px 15px;
+            font-size: 16px;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .back-btn:hover {
+            opacity: 0.9;
+        }
+        .button:hover {
+            opacity: 0.9;
+        }
+    </style>
+    <script>
+        // دالة للتبديل بين المحتويات
+        function showLoginRegister() {
+            document.getElementById("main-buttons").style.display = "none";
+            document.getElementById("login-register").style.display = "flex";
+        }
+
+        function showMainButtons() {
+            document.getElementById("main-buttons").style.display = "flex";
+            document.getElementById("login-register").style.display = "none";
+            document.getElementById("register-form").style.display = "none";
+        }
+
+        function showRegisterForm() {
+            document.getElementById("login-register").style.display = "none";
+            document.getElementById("register-form").style.display = "flex";
+        }
+
+        // دالة لزر الرجوع
+        function goBackToMain() {
+            if (document.getElementById("login-register").style.display === "flex" || 
+                document.getElementById("register-form").style.display === "flex") {
+                showMainButtons();
+            }
+        }
+    </script>
+</head>
+<body>
+    <!-- زر الرجوع -->
+    <button class="back-btn" onclick="goBackToMain()">← رجوع</button>
+
+    <!-- المحتوى الرئيسي -->
+    <div id="main-buttons" class="button-container">
+        <!-- Pharmacy Button -->
+        <button class="button pharmacy-btn">Pharmacy</button>
+
+        <!-- Warehouse Button -->
+        <button class="button warehouse-btn" onclick="showLoginRegister()">Warehouse</button>
+    </div>
+
+    <!-- محتوى تسجيل الدخول والتسجيل -->
+    <div id="login-register" class="login-register-container">
+        <!-- Login Button -->
+        <button class="button login-btn" onclick="showMainButtons()">Login</button>
+
+        <!-- Register Button -->
+        <button class="button register-btn" onclick="showRegisterForm()">Register</button>
+    </div>
+
+    <!-- نموذج تسجيل البيانات -->
+    <div id="register-form" class="register-form-container">
+        <div class="form-field">
+            <label for="store-name">اسم المخزن</label>
+            <input type="text" id="store-name" placeholder="أدخل اسم المخزن">
+        </div>
+        <div class="form-field">
+            <label for="phone">التليفون</label>
+            <input type="tel" id="phone" placeholder="أدخل رقم التليفون">
+        </div>
+        <div class="form-field">
+            <label for="governorate">المحافظة</label>
+            <select id="governorate">
+                <option value="">اختر محافظة</option>
+                <option value="cairo">القاهرة</option>
+                <option value="alexandria">الإسكندرية</option>
+                <option value="giza">الجيزة</option>
+                <option value="luxor">الأقصر</option>
+                <option value="aswan">أسوان</option>
+                <option value="qena">قنا</option>
+                <option value="sohag">سوهاج</option>
+                <option value="asyut">أسيوط</option>
+                <option value="minya">المنيا</option>
+                <option value="beni-suef">بني سويف</option>
+                <option value="faiyum">الفيوم</option>
+                <option value="dakahlia">الدقهلية</option>
+                <option value="sharqia">الشرقية</option>
+                <option value="gharbia">الغربية</option>
+                <option value="kafr-el-sheikh">كفر الشيخ</option>
+                <option value="damietta">دمياط</option>
+                <option value="port-said">بورسعيد</option>
+                <option value="ismailia">الإسماعيلية</option>
+                <option value="suez">السويس</option>
+                <option value="north-sinai">شمال سيناء</option>
+                <option value="south-sinai">جنوب سيناء</option>
+                <option value="red-sea">البحر الأحمر</option>
+                <option value="matrouh">مطروح</option>
+                <option value="new-valley">الوادي الجديد</option>
+            </select>
+        </div>
+        <div class="form-field">
+            <label for="email">البريد الإلكتروني</label>
+            <input type="email" id="email" placeholder="أدخل البريد الإلكتروني">
+        </div>
+        <div class="form-field">
+            <label for="password">كلمة المرور</label>
+            <input type="password" id="password" placeholder="أدخل كلمة المرور">
+        </div>
+        <div class="form-field">
+            <label for="confirm-password">تأكيد كلمة المرور</label>
+            <input type="password" id="confirm-password" placeholder="أعد إدخال كلمة المرور">
+        </div>
+        <button class="button register-btn" onclick="alert('تم تسجيل البيانات بنجاح!')">إرسال</button>
+    </div>
+</body>
+</html>

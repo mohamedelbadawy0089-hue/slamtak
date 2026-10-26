@@ -1,0 +1,2678 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام الإدخال الصوتي للمخازن - مع مزامنة تلقائية</title>
+    <link href="libs/cairo.css" rel="stylesheet">
+    <link rel="stylesheet" href="libs/font-awesome.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .header h1 {
+            color: #667eea;
+            font-size: 26px;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 13px;
+        }
+        
+        .sync-panel {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .sync-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .sync-header h3 {
+            color: #495057;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .sync-status {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 12px;
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .status-badge.online {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-badge.offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-badge.syncing {
+            background: #fff3cd;
+            color: #856404;
+            animation: pulse-badge 1.5s infinite;
+        }
+        
+        @keyframes pulse-badge {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .sync-details {
+            font-size: 11px;
+            color: #6c757d;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .data-sources {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .source-tag {
+            background: #e7f3ff;
+            color: #004085;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .source-tag.official {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .progress-container {
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 5px;
+        }
+        
+        .progress-text {
+            font-size: 10px;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .form-control {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .mic-btn {
+            width: 52px;
+            height: 52px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            font-size: 18px;
+        }
+
+        .mic-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .mic-btn.listening {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            animation: pulse-mic 1.5s infinite;
+        }
+
+        @keyframes pulse-mic {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(220, 53, 69, 0); }
+        }
+
+        .mic-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Green Pulsing Mic for Product Name Field - Positioned inside input */
+        #productMic {
+            position: absolute !important;
+            right: 15px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            width: 36px !important;
+            height: 36px !important;
+            background: #2ecc71 !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 50% !important;
+            cursor: pointer !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 16px !important;
+            box-shadow: 0 2px 8px rgba(46, 204, 113, 0.4) !important;
+            z-index: 10 !important;
+        }
+
+        #productMic i {
+            font-size: 20px !important;
+            color: white !important;
+        }
+
+        #productMic:hover {
+            background: #27ae60 !important;
+            transform: translateY(-50%) scale(1.1) !important;
+            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.6) !important;
+        }
+
+        #productMic.listening {
+            background: #2ecc71 !important;
+            animation: pulse-green-mic 1.2s infinite;
+        }
+
+        /* Blue Processing State - AI is thinking */
+        #productMic.processing {
+            background: #3498db !important;
+            animation: pulse-blue-mic 0.8s infinite !important;
+            box-shadow: 0 0 20px rgba(52, 152, 219, 0.8), 0 0 40px rgba(52, 152, 219, 0.4) !important;
+        }
+
+        /* Green Success State - Action completed */
+        #productMic.success {
+            background: #2ecc71 !important;
+            animation: success-pulse 0.5s ease-out !important;
+            box-shadow: 0 0 30px rgba(46, 204, 113, 1), 0 0 60px rgba(46, 204, 113, 0.6) !important;
+        }
+
+        /* Product name input with padding for the mic icon */
+        #productName {
+            padding-right: 45px !important;
+        }
+
+        @keyframes pulse-green-mic {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(0, 212, 170, 0.6);
+            }
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 20px rgba(0, 212, 170, 0);
+            }
+        }
+
+        @keyframes pulse-blue-mic {
+            0%, 100% {
+                transform: translateY(-50%) scale(1);
+                box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.8);
+            }
+            50% {
+                transform: translateY(-50%) scale(1.15);
+                box-shadow: 0 0 0 25px rgba(52, 152, 219, 0);
+            }
+        }
+
+        @keyframes success-pulse {
+            0% {
+                transform: translateY(-50%) scale(1);
+                box-shadow: 0 0 0 0 rgba(46, 204, 113, 1);
+            }
+            50% {
+                transform: translateY(-50%) scale(1.3);
+                box-shadow: 0 0 50px 20px rgba(46, 204, 113, 0.8);
+            }
+            100% {
+                transform: translateY(-50%) scale(1);
+                box-shadow: 0 0 30px rgba(46, 204, 113, 1);
+            }
+        }
+
+        /* Voice Tooltip Styles */
+        .voice-tooltip {
+            position: absolute;
+            z-index: 9999;
+            background: white;
+            border: 2px solid #00d4aa;
+            border-radius: 12px;
+            padding: 12px 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15), 0 0 0 4px rgba(0, 212, 170, 0.1);
+            min-width: 280px;
+            max-width: 350px;
+            animation: tooltipSlideIn 0.3s ease;
+        }
+
+        @keyframes tooltipSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .voice-tooltip-content {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .voice-tooltip-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #00a884;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        .voice-tooltip-header i {
+            animation: pulse-icon 1s infinite;
+        }
+
+        @keyframes pulse-icon {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .voice-tooltip-text {
+            color: #333;
+            font-size: 0.9rem;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            min-height: 20px;
+            direction: rtl;
+        }
+
+        /* Google Assistant-style Waveform Visualization */
+        .voice-waveform {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            height: 40px;
+            padding: 10px 0;
+            margin: 10px 0;
+        }
+
+        .wave-bar {
+            width: 4px;
+            background: linear-gradient(to top, #4285f4, #34a853, #fbbc05, #ea4335);
+            border-radius: 2px;
+            animation: wave-animation 1.2s ease-in-out infinite;
+            transition: height 0.1s ease;
+        }
+
+        .wave-bar:nth-child(1) { animation-delay: 0s; height: 20px; }
+        .wave-bar:nth-child(2) { animation-delay: 0.1s; height: 30px; }
+        .wave-bar:nth-child(3) { animation-delay: 0.2s; height: 25px; }
+        .wave-bar:nth-child(4) { animation-delay: 0.3s; height: 35px; }
+        .wave-bar:nth-child(5) { animation-delay: 0.4s; height: 28px; }
+        .wave-bar:nth-child(6) { animation-delay: 0.5s; height: 32px; }
+        .wave-bar:nth-child(7) { animation-delay: 0.6s; height: 22px; }
+        .wave-bar:nth-child(8) { animation-delay: 0.7s; height: 38px; }
+        .wave-bar:nth-child(9) { animation-delay: 0.8s; height: 26px; }
+        .wave-bar:nth-child(10) { animation-delay: 0.9s; height: 30px; }
+
+        @keyframes wave-animation {
+            0%, 100% {
+                transform: scaleY(0.5);
+                opacity: 0.6;
+            }
+            50% {
+                transform: scaleY(1);
+                opacity: 1;
+            }
+        }
+
+        .voice-waveform.processing .wave-bar {
+            background: linear-gradient(to top, #4285f4, #34a853);
+            animation-duration: 0.6s;
+        }
+
+        .voice-waveform.success .wave-bar {
+            background: linear-gradient(to top, #34a853, #0f9d58);
+            animation: none;
+            height: 35px;
+            opacity: 1;
+        }
+
+        .voice-tooltip-match {
+            padding: 8px;
+            background: #e8f5f0;
+            border-radius: 8px;
+            border-right: 3px solid #00d4aa;
+        }
+
+        .match-label {
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .match-value {
+            color: #00a884;
+            font-weight: bold;
+            font-size: 0.95rem;
+            display: block;
+            margin-top: 4px;
+        }
+        
+        .suggestion-item {
+            padding: 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .suggestion-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+        
+        .suggestion-info {
+            flex: 1;
+        }
+        
+        .suggestion-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+        
+        .suggestion-scientific {
+            font-size: 12px;
+            color: #666;
+            margin-top: 3px;
+        }
+        
+        .suggestion-company {
+            font-size: 11px;
+            color: #999;
+            margin-top: 2px;
+        }
+        
+        .suggestion-meta {
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            align-items: flex-end;
+        }
+        
+        .suggestion-price {
+            color: #28a745;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        
+        .suggestion-match {
+            font-size: 11px;
+            color: #667eea;
+            background: #e7f3ff;
+            padding: 3px 8px;
+            border-radius: 10px;
+        }
+        
+        .official-badge {
+            font-size: 10px;
+            color: #155724;
+            background: #d4edda;
+            padding: 2px 6px;
+            border-radius: 8px;
+            margin-top: 3px;
+        }
+        
+        .btn-save {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-save:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .alert {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+        }
+        
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert.info {
+            background: #cce5ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+        }
+        
+        .alert.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .recent-items {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+        
+        .recent-items h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .recent-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .recent-item:hover {
+            background: #e9ecef;
+        }
+        
+        .price-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .official-price-tag {
+            background: #d4edda;
+            color: #155724;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .sync-log {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-top: 10px;
+            font-size: 11px;
+            color: #6c757d;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .sync-log-entry {
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .sync-status {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .suggestion-item {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .suggestion-meta {
+                align-items: flex-start;
+                width: 100%;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Google Assistant-Style Voice Interface -->
+    <div id="voice-tooltip" class="voice-tooltip" style="display: none;">
+        <div class="voice-tooltip-content">
+            <div class="voice-tooltip-header">
+                <i class="fas fa-microphone-alt"></i>
+                <span id="tooltipStatus">المساعد الصوتي جاهز...</span>
+            </div>
+            
+            <!-- Waveform Visualization -->
+            <div class="voice-waveform" id="voiceWaveform">
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+            </div>
+            
+            <div class="voice-tooltip-text" id="tooltipText"></div>
+            <div class="voice-tooltip-match" id="tooltipMatch" style="display: none;">
+                <span class="match-label">تم التعرف على:</span>
+                <span class="match-value" id="tooltipMatchValue"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-microphone-alt"></i> نظام الإدخال الصوتي للمخازن</h1>
+            <p>تحديث تلقائي من قواعد بيانات الأدوية المصرية | مزامنة مع هيئة الدواء</p>
+        </div>
+
+        <!-- Sync Status Panel -->
+        <div class="sync-panel">
+            <div class="sync-header">
+                <h3><i class="fas fa-sync-alt"></i> حالة مزامنة البيانات</h3>
+                <button class="status-badge online" id="manualSyncBtn" onclick="manualSync()" style="cursor: pointer; border: none;">
+                    <i class="fas fa-refresh"></i>
+                    <span>مزامنة يدوية</span>
+                </button>
+            </div>
+            
+            <div class="sync-status">
+                <div class="status-badge" id="syncStatusBadge">
+                    <i class="fas fa-circle-notch fa-spin"></i>
+                    <span>جاري التحميل...</span>
+                </div>
+                <div class="status-badge offline" id="dbCountBadge">
+                    <i class="fas fa-database"></i>
+                    <span>0 منتج</span>
+                </div>
+                <div class="status-badge offline" id="lastSyncBadge">
+                    <i class="fas fa-clock"></i>
+                    <span>لم تتم المزامنة</span>
+                </div>
+                <div class="status-badge offline" id="supabaseBadge">
+                    <i class="fas fa-cloud"></i>
+                    <span>Supabase: غير متصل</span>
+                </div>
+            </div>
+            
+            <div class="data-sources">
+                <div class="source-tag official">
+                    <i class="fas fa-check-circle"></i>
+                    هيئة الدواء المصرية
+                </div>
+                <div class="source-tag">
+                    <i class="fas fa-database"></i>
+                    Seifeldeen Dataset
+                </div>
+                <div class="source-tag">
+                    <i class="fas fa-database"></i>
+                    Mohammad Shahin DB
+                </div>
+            </div>
+            
+            <div class="progress-container" id="syncProgressContainer">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="syncProgressFill" style="width: 0%">
+                        <span class="progress-text" id="syncProgressText">0%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sync-log" id="syncLog"></div>
+            
+            <div class="sync-details" id="syncDetails">
+                النظام يتحقق تلقائياً من التحديثات عند كل تشغيل
+            </div>
+        </div>
+
+        <div class="alert" id="alertBox"></div>
+
+        <form id="voiceEntryForm">
+            <div class="form-group">
+                <label><i class="fas fa-warehouse"></i> المخزن</label>
+                <select class="form-control" id="warehouseId" required>
+                    <option value="">اختر المخزن...</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-pills"></i> اسم المنتج (الاسم التجاري)</label>
+                <div class="input-wrapper">
+                    <input type="text" class="form-control" id="productName" 
+                           placeholder="قل اسم الدواء بالإنجليزية أو اكتبه..." required>
+                    <button type="button" class="mic-btn" id="productMic" 
+                            onclick="startVoiceEntry('productName')">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                </div>
+                <div class="suggestions" id="productSuggestions"></div>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <i class="fas fa-money-bill-wave"></i> 
+                    السعر الرسمي
+                    <span class="official-price-tag" id="priceTag" style="display: none;">
+                        <i class="fas fa-certificate"></i> هيئة الدواء
+                    </span>
+                </label>
+                <div class="input-wrapper">
+                    <input type="number" class="form-control" id="price" 
+                           placeholder="سيتم جلبه تلقائياً من البيانات الرسمية..." readonly>
+                    <span style="padding: 15px; color: #28a745; font-weight: bold;">ج.م</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-sort-numeric-up"></i> الكمية</label>
+                <div class="input-wrapper">
+                    <input type="number" class="form-control" id="quantity" 
+                           placeholder="قل الكمية بالعربية..." required>
+                    <button type="button" class="mic-btn" id="qtyMic" 
+                            onclick="startVoiceEntry('quantity')">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-save" id="saveBtn">
+                <i class="fas fa-save"></i> حفظ في المخزن
+            </button>
+        </form>
+
+        <div class="recent-items" id="recentItems" style="display: none;">
+            <h3><i class="fas fa-history"></i> آخر المنتجات المضافة</h3>
+            <div id="recentItemsList"></div>
+        </div>
+    </div>
+
+    <!-- Supabase Config -->
+    <script src="supabase-config.js"></script>
+    <!-- Fuse.js Library -->
+    <script src="libs/fuse.min.js"></script>
+    <!-- Drug Data Synchronizer -->
+    <script src="drug-data-synchronizer.js"></script>
+    <!-- Fuse Medicine Search -->
+    <script src="fuse-medicine-search.js"></script>
+    
+    <script>
+        // ============================================
+        // Voice Warehouse Entry System v2
+        // مع مزامنة تلقائية من قواعد بيانات الأدوية
+        // ============================================
+        
+        let synchronizer = null;
+        let fuseSearch = null;
+        let recognition = null;
+        let isListening = false;
+        let currentField = null;
+        let warehouses = [];
+        let currentMedicine = null;
+
+        // ============================================
+        // Initialization
+        // ============================================
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('🚀 Starting Voice Warehouse Entry System v2...');
+            
+            // Initialize synchronizer with warehouse_id (will be updated when warehouse selected)
+            const storedWarehouseId = localStorage.getItem('currentWarehouseId');
+            synchronizer = new DrugDataSynchronizer();
+            await synchronizer.initialize(window.supabaseClient, storedWarehouseId);
+            
+            // Setup sync callbacks
+            setupSyncCallbacks();
+            
+            // Setup warehouse change handler
+            document.getElementById('warehouseId').addEventListener('change', handleWarehouseChange);
+            
+            // Load initial data
+            await loadInitialData();
+            
+            // Check for updates immediately (ensures latest data from GitHub)
+            console.log('🔍 Checking for updates on startup...');
+            const updateResult = await synchronizer.checkUpdates({
+                autoUpdate: true,
+                silent: false,
+                onProgress: (progress) => {
+                    console.log('Update progress:', progress);
+                }
+            });
+            
+            if (updateResult.updated) {
+                console.log(`✅ Data updated: ${updateResult.medicinesUpdated} medicines`);
+                addSyncLog(`🔄 تحديث فوري: ${updateResult.medicinesUpdated} منتج محدث`);
+                // Refresh Fuse.js index with new data
+                const medicines = await synchronizer.getAllMedicines();
+                if (fuseSearch && medicines.length > 0) {
+                    fuseSearch.updateIndex(medicines);
+                }
+            } else {
+                console.log('✅ Data is up to date');
+            }
+            
+            // Start auto sync
+            synchronizer.startAutoSync();
+            
+            // Load warehouses
+            await loadWarehouses();
+            
+            // Load user's products (RLS filtered by user_id)
+            await loadUserProducts();
+            
+            // Setup event listeners
+            document.getElementById('voiceEntryForm').addEventListener('submit', saveToSupabase);
+            document.getElementById('productName').addEventListener('input', handleProductInput);
+            
+            // Hide suggestions on outside click
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.form-group')) {
+                    document.getElementById('productSuggestions').style.display = 'none';
+                }
+            });
+            
+            // Check for updates on startup
+            setTimeout(() => checkForUpdates(), 3000);
+            
+            console.log('✅ System ready');
+        });
+
+        // ============================================
+        // Sync Management
+        // ============================================
+        
+        function setupSyncCallbacks() {
+            synchronizer.onSync((event, data) => {
+                switch(event) {
+                    case 'start':
+                        updateSyncUI('syncing', 'جاري المزامنة...');
+                        addSyncLog('🔄 بدء المزامنة...');
+                        break;
+                        
+                    case 'up_to_date':
+                        updateSyncUI('online', 'البيانات محدثة');
+                        addSyncLog('✅ البيانات محدثة');
+                        break;
+                        
+                    case 'complete':
+                        updateSyncUI('online', 'تم التحديث');
+                        updateDataCount(data.medicines?.length);
+                        addSyncLog(`✅ تم تحديث ${data.medicines?.length || 0} منتج`);
+                        if (data.syncResult?.supabaseSynced > 0) {
+                            addSyncLog(`☁️ تم رفع ${data.syncResult.supabaseSynced} إلى السحابة`);
+                        }
+                        
+                        // Refresh Fuse.js index with new data
+                        if (data.medicines && data.medicines.length > 0) {
+                            fuseSearch.updateIndex(data.medicines);
+                            addSyncLog(`🔍 تم تحديث Fuse.js index`);
+                        }
+                        
+                        showAlert('success', `✅ تم تحديث البيانات: ${data.medicines?.length || 0} منتج`);
+                        break;
+                        
+                    case 'error':
+                        updateSyncUI('offline', 'خطأ في المزامنة');
+                        addSyncLog(`❌ خطأ: ${data.error?.message || 'Unknown'}`);
+                        break;
+                }
+            });
+        }
+
+        async function loadInitialData() {
+            try {
+                const medicines = await synchronizer.getAllMedicines();
+                updateDataCount(medicines.length);
+                
+                // Initialize Fuse.js search with medicines
+                if (medicines.length > 0) {
+                    fuseSearch = new FuseMedicineSearch({
+                        threshold: 0.25,  // Stricter threshold for accurate matching (was 0.35)
+                        minMatchCharLength: 3,
+                        distance: 50,
+                        ignoreLocation: true
+                    });
+                    fuseSearch.initialize(medicines);
+                    console.log(`✅ Fuse index initialized with ${medicines.length} medicines`);
+                    
+                    const stats = fuseSearch.getStats();
+                    console.log('📊 Fuse stats:', stats);
+                }
+                
+                const status = await synchronizer.getSyncStatus();
+                updateLastSyncTime(status.lastSync);
+                
+                if (medicines.length > 0) {
+                    updateSyncUI('online', `✅ ${medicines.length.toLocaleString()} منتج محمل`);
+                    addSyncLog(`🔍 Fuse.js جاهز للبحث الضبابي`);
+                } else {
+                    updateSyncUI('syncing', 'جاري تحميل البيانات...');
+                }
+            } catch (error) {
+                console.error('❌ Load initial data error:', error);
+                updateSyncUI('offline', 'خطأ في تحميل البيانات');
+            }
+        }
+
+        async function checkForUpdates() {
+            addSyncLog('🔍 التحقق من التحديثات...');
+            
+            try {
+                const result = await synchronizer.performSync();
+                
+                if (result.status === 'up_to_date') {
+                    addSyncLog('✅ البيانات محدثة بالكامل');
+                }
+            } catch (error) {
+                addSyncLog(`❌ خطأ: ${error.message}`);
+            }
+        }
+
+        async function manualSync() {
+            addSyncLog('🔄 مزامنة يدوية...');
+            
+            try {
+                const result = await synchronizer.performSync({ force: true });
+                
+                if (result.status === 'completed') {
+                    showAlert('success', `✅ تم مزامنة ${result.medicines?.length || 0} منتج`);
+                }
+            } catch (error) {
+                showAlert('error', `❌ فشل المزامنة: ${error.message}`);
+            }
+        }
+
+        function updateSyncUI(status, message) {
+            const badge = document.getElementById('syncStatusBadge');
+            badge.className = `status-badge ${status}`;
+            
+            const icon = status === 'syncing' ? 'fa-circle-notch fa-spin' : 
+                        status === 'online' ? 'fa-check-circle' : 'fa-exclamation-circle';
+            
+            badge.innerHTML = `<i class="fas ${icon}"></i><span>${message}</span>`;
+            
+            // Show progress bar if syncing
+            const progressContainer = document.getElementById('syncProgressContainer');
+            progressContainer.style.display = status === 'syncing' ? 'block' : 'none';
+        }
+
+        function updateDataCount(count) {
+            const badge = document.getElementById('dbCountBadge');
+            badge.className = 'status-badge online';
+            badge.innerHTML = `<i class="fas fa-database"></i><span>${count?.toLocaleString() || 0} منتج</span>`;
+        }
+
+        function updateLastSyncTime(timestamp) {
+            const badge = document.getElementById('lastSyncBadge');
+            
+            if (timestamp) {
+                const date = new Date(timestamp);
+                const timeString = date.toLocaleString('ar-EG');
+                badge.className = 'status-badge online';
+                badge.innerHTML = `<i class="fas fa-clock"></i><span>${timeString}</span>`;
+            } else {
+                badge.className = 'status-badge offline';
+                badge.innerHTML = `<i class="fas fa-clock"></i><span>لم تتم المزامنة</span>`;
+            }
+        }
+
+        function addSyncLog(message) {
+            const log = document.getElementById('syncLog');
+            const time = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+            
+            const entry = document.createElement('div');
+            entry.className = 'sync-log-entry';
+            entry.innerHTML = `<span style="color: #999;">[${time}]</span> ${message}`;
+            
+            log.insertBefore(entry, log.firstChild);
+            
+            // Keep last 10 entries
+            while (log.children.length > 10) {
+                log.removeChild(log.lastChild);
+            }
+        }
+
+        // ============================================
+        // Voice Recognition
+        // ============================================
+        
+        // ============================================
+        // Voice Tooltip Functions
+        // ============================================
+
+        function showVoiceTooltip(message, matchText = null) {
+            const tooltip = document.getElementById('voice-tooltip');
+            const statusEl = document.getElementById('tooltipStatus');
+            const textEl = document.getElementById('tooltipText');
+            const matchEl = document.getElementById('tooltipMatch');
+            const matchValueEl = document.getElementById('tooltipMatchValue');
+
+            // Position tooltip above product field
+            const productField = document.getElementById('productName');
+            const rect = productField.getBoundingClientRect();
+
+            tooltip.style.top = (rect.top - tooltip.offsetHeight - 10) + 'px';
+            tooltip.style.left = rect.left + 'px';
+            tooltip.style.display = 'block';
+
+            statusEl.textContent = message;
+            textEl.textContent = '';
+
+            if (matchText) {
+                matchValueEl.textContent = matchText;
+                matchEl.style.display = 'block';
+            } else {
+                matchEl.style.display = 'none';
+            }
+        }
+
+        function updateVoiceTooltip(message, transcript) {
+            const statusEl = document.getElementById('tooltipStatus');
+            const textEl = document.getElementById('tooltipText');
+            statusEl.textContent = message;
+            textEl.textContent = transcript;
+        }
+
+        function hideVoiceTooltip() {
+            const tooltip = document.getElementById('voice-tooltip');
+            tooltip.style.display = 'none';
+        }
+
+        async function startVoiceEntry(field) {
+            if (isListening) {
+                stopListening();
+                return;
+            }
+
+            currentField = field;
+
+            // Check if synchronizer is ready
+            if (!synchronizer) {
+                showAlert('warning', '⚠️ جاري تحميل البيانات... يرجى الانتظار');
+                return;
+            }
+
+            // Request microphone permission
+            try {
+                await navigator.mediaDevices.getUserMedia({ audio: true });
+            } catch (err) {
+                showAlert('error', '❌ يرجى السماح بالوصول للميكروفون');
+                return;
+            }
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                showAlert('error', '❌ المتصفح لا يدعم التعرف الصوتي');
+                return;
+            }
+
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 3;
+            recognition.lang = field === 'productName' ? 'en-US' : 'ar-EG';
+
+            recognition.onresult = async (event) => {
+                // ⭐ CRITICAL: Prevent browser from auto-writing to focused input
+                event.preventDefault && event.preventDefault();
+
+                const transcript = event.results[0][0].transcript;
+                console.log('🎤 Voice input:', transcript);
+
+                // Show tooltip with recognized text
+                if (currentField === 'productName') {
+                    updateVoiceTooltip('جاري البحث...', transcript);
+                }
+
+                // ⭐ IMMEDIATE INTERCEPTION: Clear field BEFORE any processing
+                // This prevents the browser from writing raw transcript
+                if (currentField === 'productName') {
+                    const productField = document.getElementById('productName');
+                    // Remove readonly to allow writing
+                    productField.readOnly = false;
+                    // Force clear any auto-inserted text
+                    productField.blur();
+                    productField.value = '';
+                    productField.style.color = '#999';
+                    console.log('🛡️ Field intercepted - cleared and showing searching message');
+
+                    // ⭐ DOUBLE PROTECTION: Clear again after short delay
+                    setTimeout(() => {
+                        if (productField.value !== '... جاري البحث ...' &&
+                            productField.value !== '' &&
+                            !productField.value.includes('Panadol')) {
+                            console.log('🛡️ Late interception - clearing browser auto-write');
+                            productField.value = '';
+                        }
+                    }, 50);
+                }
+
+                // Check if medicines are loaded before processing
+                if (!fuseSearch || !fuseSearch.fuse) {
+                    console.error('❌ Fuse search not initialized. Loading data first...');
+                    showAlert('warning', '⚠️ جاري تحميل بيانات الأدوية... يرجى المحاولة مرة أخرى');
+                    await loadInitialData(); // Try to reload
+                    stopListening();
+                    return;
+                }
+
+                if (currentField === 'productName') {
+                    await handleProductVoiceInput(transcript);
+                } else if (currentField === 'quantity') {
+                    handleQuantityVoiceInput(transcript);
+                }
+
+                stopListening();
+            };
+
+            recognition.onerror = (event) => {
+                console.error('❌ Speech error:', event.error);
+                hideVoiceTooltip();
+                showAlert('error', `خطأ في التعرف: ${event.error}`);
+                stopListening();
+            };
+
+            recognition.onend = () => {
+                stopListening();
+            };
+
+            // Update UI
+            const micBtn = document.getElementById(field === 'productName' ? 'productMic' : 'qtyMic');
+            micBtn.classList.add('listening');
+            isListening = true;
+
+            try {
+                // ⭐ MAKE FIELD READONLY to prevent browser auto-writing transcript
+                if (field === 'productName') {
+                    const productField = document.getElementById('productName');
+                    productField.blur();
+                    productField.readOnly = true;
+                    productField.value = '';
+                    // Show compact tooltip
+                    showVoiceTooltip('جاري الاستماع... تحدث الآن');
+                    console.log('🛡️ Field made readonly before speech start, tooltip shown');
+                }
+
+                recognition.start();
+            } catch (err) {
+                console.error('❌ Start error:', err);
+                hideVoiceTooltip();
+                stopListening();
+            }
+        }
+
+        function stopListening() {
+            isListening = false;
+
+            document.getElementById('productMic').classList.remove('listening');
+            document.getElementById('qtyMic').classList.remove('listening');
+
+            // Hide tooltip
+            hideVoiceTooltip();
+
+            if (recognition) {
+                try {
+                    recognition.stop();
+                } catch (e) {}
+            }
+        }
+
+        async function handleProductVoiceInput(transcript) {
+            console.log('🎤=== VOICE INPUT START ===');
+            console.log('🎤 Raw transcript (for debugging only):', transcript);
+
+            // ⭐ DO NOT show raw transcript in field - only corrected names from database!
+            // Show searching indicator
+            const productField = document.getElementById('productName');
+            productField.value = '';
+            productField.style.color = '#999';
+
+            // Preprocess using FuseSearch pronunciation mapping (e.g., Bernardo -> Panadol)
+            let searchQuery = transcript;
+            if (fuseSearch && fuseSearch.preprocessVoiceQuery) {
+                searchQuery = fuseSearch.preprocessVoiceQuery(transcript);
+                console.log('🔧 Preprocessed query:', searchQuery);
+            }
+
+            // Use LOCAL Fuse.js for intelligent correction (NO external API)
+            console.log('🔍 Starting LOCAL correction for:', searchQuery);
+            const correction = await correctVoiceInputWithFuse(searchQuery);
+
+            console.log('🔍 Correction result:', JSON.stringify(correction, null, 2));
+
+            // ⭐ LOWERED THRESHOLD: Accept matches with confidence >= 40%
+            if (correction.found && correction.result && correction.result.confidence >= 40) {
+                const correctName = correction.result.tradeName;
+                const correctPrice = correction.result.price;
+
+                console.log(`✅ CORRECTION FOUND (${correction.result.confidence}% confidence):`);
+                console.log(`   Original: "${transcript}"`);
+                console.log(`   Corrected: "${correctName}"`);
+                console.log(`   Price: ${correctPrice}`);
+                console.log(`   Source: ${correction.source}`);
+
+                // ⭐ IMMEDIATE REPLACEMENT with database value only
+                productField.style.color = ''; // Reset color
+                productField.value = correctName;
+                productField.focus(); // Auto-focus on field after fill
+
+                console.log(`📝 FIELD UPDATE SUCCESS: "${transcript}" → "${correctName}"`);
+
+                // Update tooltip with match
+                showVoiceTooltip('تم التعرف بنجاح!', correctName);
+                setTimeout(hideVoiceTooltip, 2000); // Hide after 2 seconds
+
+                // Build medicine object for selectMedicine to auto-fill price
+                const medicine = {
+                    id: correction.result.id,
+                    tradeName: correctName,
+                    scientificName: correction.result.scientificName,
+                    price: correctPrice,
+                    company: correction.result.company,
+                    isOfficialPrice: correction.result.isOfficial,
+                    source: correction.result.source
+                };
+
+                // ⭐ AUTO-FILL PRICE from database
+                selectMedicine(medicine);
+
+                console.log('🎤=== VOICE INPUT COMPLETE ===');
+            } else {
+                // ⭐ No valid match found - clear field and show suggestions
+                console.log('⚠️ No valid match (>60% confidence) found for:', transcript);
+                console.log('   Correction object:', correction);
+
+                productField.style.color = '';
+                productField.value = ''; // Clear field - don't accept random text
+
+                // Show no match in tooltip
+                showVoiceTooltip('لم يتم العثور على تطابق', transcript);
+                setTimeout(hideVoiceTooltip, 3000);
+
+                await searchAndDisplayMedicines(transcript);
+            }
+        }
+
+        async function handleProductInput(e) {
+            const query = e.target.value;
+            if (query.length >= 2) {
+                await searchAndDisplayMedicines(query);
+            } else {
+                document.getElementById('productSuggestions').style.display = 'none';
+            }
+        }
+
+        // ============================================
+        // Medicine Search (Using Fuse.js Fuzzy Search)
+        // ============================================
+        
+        async function searchAndDisplayMedicines(query) {
+            if (!fuseSearch && !synchronizer) {
+                showAlert('warning', '⚠️ جاري تحميل البيانات...');
+                return;
+            }
+            
+            try {
+                let matches = [];
+                
+                // First try to query from master_drugs table in Supabase
+                if (synchronizer && window.supabaseClient) {
+                    const masterDrugsResults = await synchronizer.queryFromMasterDrugs(query, { limit: 6 });
+                    if (masterDrugsResults && masterDrugsResults.length > 0) {
+                        // Transform master_drugs format to match our display format
+                        matches = masterDrugsResults.map(med => ({
+                            id: med.id,
+                            tradeName: med.trade_name,
+                            scientificName: med.scientific_name,
+                            price: med.price,
+                            company: med.company,
+                            isOfficial: med.is_official_price,
+                            source: med.source,
+                            confidence: 90, // High confidence from master table
+                            score: 0.1
+                        }));
+                        console.log(`✅ Found ${matches.length} matches in master_drugs table`);
+                    }
+                }
+                
+                // Fallback to Fuse.js local search if no Supabase results
+                if (matches.length === 0 && fuseSearch) {
+                    matches = fuseSearch.search(query, { limit: 6 });
+                    console.log(`🔍 Found ${matches.length} matches in local Fuse index`);
+                }
+                
+                displaySuggestions(matches);
+                
+                // Auto-select best match if confidence is high
+                if (matches.length > 0 && (matches[0].confidence >= 75 || matches[0].isOfficial)) {
+                    selectMedicine(matches[0]);
+                    
+                    // Show auto-correction notification
+                    if (matches[0].score < 0.5) {  // Low score = high fuzzy match = likely correction
+                        addSyncLog(`🔧 تصحيح تلقائي: "${query}" → "${matches[0].tradeName}" (${matches[0].confidence}%)`);
+                    }
+                }
+            } catch (error) {
+                console.error('❌ Search error:', error);
+            }
+        }
+        
+        // Smart voice correction using LOCAL Fuse.js only (NO external API calls)
+        async function correctVoiceInputWithFuse(spokenText) {
+            console.log('🔍 [LOCAL SEARCH ONLY] Searching for:', spokenText);
+            
+            // Check if fuseSearch is initialized
+            if (!fuseSearch) {
+                console.error('❌ Fuse search not initialized');
+                return { found: false, original: spokenText, error: 'Fuse not ready' };
+            }
+            
+            // Use LOCAL Fuse.js search only - NO external API calls
+            const result = fuseSearch.search(spokenText, { limit: 5 });
+            
+            console.log('🔍 Local Fuse search results:', result);
+            
+            if (result && result.length > 0) {
+                const bestMatch = result[0];
+                const confidence = Math.round((1 - (bestMatch.score || 0)) * 100);
+                
+                console.log('✅ Best match found:', bestMatch.item?.tradeName || bestMatch.tradeName, 'Score:', bestMatch.score, 'Confidence:', confidence + '%');
+                
+                // ⭐ LOWERED THRESHOLD to 40% to catch Panadol even with poor pronunciation
+                const isCorrected = confidence >= 40;
+                
+                // Return the corrected result
+                return {
+                    found: true,
+                    corrected: isCorrected,
+                    original: spokenText,
+                    result: {
+                        id: bestMatch.item?.id || bestMatch.id,
+                        tradeName: bestMatch.item?.tradeName || bestMatch.tradeName,
+                        scientificName: bestMatch.item?.scientificName || bestMatch.scientificName,
+                        price: bestMatch.item?.price || bestMatch.price,
+                        company: bestMatch.item?.company || bestMatch.company,
+                        isOfficial: bestMatch.item?.isOfficial || bestMatch.isOfficial || bestMatch.item?.is_official_price || bestMatch.is_official_price,
+                        source: bestMatch.item?.source || bestMatch.source,
+                        confidence: confidence
+                    },
+                    source: 'fuse_local',
+                    message: `تم تصحيح "${spokenText}" إلى "${bestMatch.item?.tradeName || bestMatch.tradeName}"`
+                };
+            }
+            
+            console.log('❌ No match found for:', spokenText);
+            return { found: false, original: spokenText, source: 'fuse_local' };
+        }
+
+        function displaySuggestions(matches) {
+            const container = document.getElementById('productSuggestions');
+            
+            if (matches.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.innerHTML = matches.map(med => {
+                // Use highlighted trade name if available, otherwise plain
+                const displayName = med.highlightedTradeName || med.tradeName;
+                const displayScientific = med.highlightedScientificName || med.scientificName;
+                
+                // Show correction indicator if fuzzy matched
+                const isCorrected = med.score < 0.5;
+                const correctionBadge = isCorrected ? 
+                    `<span style="background: #667eea; color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; margin-right: 5px;"><i class="fas fa-magic"></i> تصحيح ذكي</span>` : '';
+                
+                return `
+                <div class="suggestion-item" onclick='selectMedicineById("${med.id}")'>
+                    <div class="suggestion-info">
+                        <div class="suggestion-name">${correctionBadge}${displayName}</div>
+                        ${displayScientific ? `<div class="suggestion-scientific">${displayScientific}</div>` : ''}
+                        ${med.company ? `<div class="suggestion-company">${med.company}</div>` : ''}
+                        ${med.isOfficial ? `<div class="official-badge"><i class="fas fa-certificate"></i> معتمد من هيئة الدواء</div>` : ''}
+                    </div>
+                    <div class="suggestion-meta">
+                        <div class="suggestion-price">
+                            ${med.price > 0 ? med.price.toFixed(2) + ' ج.م' : 'غير متوفر'}
+                        </div>
+                        <div class="suggestion-match">${med.confidence || 0}% مطابقة</div>
+                        ${med.isOfficial ? `<div class="official-badge">سعر رسمي</div>` : ''}
+                    </div>
+                </div>
+            `}).join('');
+            
+            container.style.display = 'block';
+        }
+
+        async function selectMedicineById(id) {
+            try {
+                const medicines = await synchronizer.getAllMedicines();
+                const medicine = medicines.find(m => m.id === id);
+                if (medicine) {
+                    selectMedicine(medicine);
+                }
+            } catch (error) {
+                console.error('❌ Select error:', error);
+            }
+        }
+
+        function selectMedicine(medicine) {
+            currentMedicine = medicine;
+            
+            document.getElementById('productName').value = medicine.tradeName;
+            document.getElementById('productSuggestions').style.display = 'none';
+            
+            // Set price
+            const priceInput = document.getElementById('price');
+            const priceTag = document.getElementById('priceTag');
+            
+            if (medicine.price > 0) {
+                priceInput.value = medicine.price;
+                
+                if (medicine.isOfficialPrice) {
+                    priceTag.style.display = 'inline';
+                    showAlert('success', `✅ ${medicine.tradeName}<br>💰 السعر الرسمي: ${medicine.price.toFixed(2)} ج.م`);
+                } else {
+                    priceTag.style.display = 'none';
+                    showAlert('info', `✅ ${medicine.tradeName}<br>⚠️ السعر غير رسمي: ${medicine.price.toFixed(2)} ج.م`);
+                }
+            } else {
+                priceInput.value = '';
+                priceInput.readOnly = false;
+                priceInput.placeholder = 'أدخل السعر يدوياً...';
+                priceTag.style.display = 'none';
+                showAlert('warning', `⚠️ ${medicine.tradeName}<br>السعر غير متوفر - أدخل يدوياً`);
+            }
+            
+            // Focus quantity
+            document.getElementById('quantity').focus();
+        }
+
+        // ============================================
+        // Quantity Voice Input
+        // ============================================
+        
+        function handleQuantityVoiceInput(transcript) {
+            const arabicNumbers = {
+                'صفر': 0, 'واحد': 1, 'واحدة': 1, 'اثنين': 2, 'ثلاثة': 3, 'أربعة': 4,
+                'خمسة': 5, 'ستة': 6, 'سبعة': 7, 'ثمانية': 8, 'تسعة': 9, 'عشرة': 10,
+                'عشرين': 20, 'ثلاثين': 30, 'أربعين': 40, 'خمسين': 50,
+                'مئة': 100, 'مية': 100, 'ميتين': 200, 'ثلاثمية': 300, 'ألف': 1000
+            };
+            
+            let number = null;
+            
+            // Check Arabic words
+            for (const [word, val] of Object.entries(arabicNumbers)) {
+                if (transcript.includes(word)) {
+                    number = val;
+                    break;
+                }
+            }
+            
+            // Extract number from text
+            if (!number) {
+                const match = transcript.match(/(\d+)/);
+                if (match) number = parseInt(match[1]);
+            }
+            
+            if (number) {
+                document.getElementById('quantity').value = number;
+                showAlert('success', `✅ الكمية: ${number}`);
+            } else {
+                document.getElementById('quantity').value = transcript;
+            }
+        }
+
+        // ============================================
+        // Supabase Save
+        // ============================================
+        
+        async function loadWarehouses() {
+            try {
+                if (window.supabaseClient) {
+                    const { data, error } = await window.supabaseClient
+                        .from('warehouses')
+                        .select('id, name, location')
+                        .eq('is_active', true);
+                    
+                    if (!error && data) {
+                        warehouses = data;
+                    }
+                }
+                
+                // Fallback to localStorage
+                if (warehouses.length === 0) {
+                    const stored = localStorage.getItem('warehouses');
+                    if (stored) warehouses = JSON.parse(stored);
+                }
+                
+                // Populate dropdown
+                const select = document.getElementById('warehouseId');
+                select.innerHTML = '<option value="">اختر المخزن...</option>';
+                
+                warehouses.forEach(wh => {
+                    const option = document.createElement('option');
+                    option.value = wh.id;
+                    option.textContent = `${wh.name} ${wh.location ? '- ' + wh.location : ''}`;
+                    select.appendChild(option);
+                });
+                
+            } catch (error) {
+                console.error('❌ Load warehouses error:', error);
+            }
+        }
+
+        // ============================================
+        // Load User Products (RLS Filtered)
+        // ============================================
+        
+        async function loadUserProducts() {
+            if (!window.supabaseClient) {
+                console.warn('⚠️ No Supabase client - cannot load products');
+                return [];
+            }
+            
+            try {
+                // Get current user (RLS will automatically filter)
+                const { data: { user } } = await window.supabaseClient.auth.getUser();
+                
+                if (!user) {
+                    console.warn('⚠️ No user logged in');
+                    return [];
+                }
+                
+                console.log('🔍 Loading products for user:', user.id);
+                
+                // RLS automatically filters by user_id
+                const { data, error } = await window.supabaseClient
+                    .from('warehouse_inventory')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(50);
+                
+                if (error) {
+                    console.error('❌ Error loading products:', error);
+                    return [];
+                }
+                
+                console.log(`✅ Loaded ${data?.length || 0} products for user`);
+                
+                // Display in recent items
+                if (data && data.length > 0) {
+                    displayUserProducts(data);
+                }
+                
+                return data || [];
+                
+            } catch (error) {
+                console.error('❌ Load user products error:', error);
+                return [];
+            }
+        }
+        
+        function displayUserProducts(products) {
+            const container = document.getElementById('recentItems');
+            const list = document.getElementById('recentItemsList');
+            
+            // Clear existing
+            list.innerHTML = '';
+            
+            products.forEach(product => {
+                const item = document.createElement('div');
+                item.className = 'recent-item';
+                item.innerHTML = `
+                    <div>
+                        <strong>${product.trade_name}</strong>
+                        ${product.is_official_price ? '<span class="official-badge" style="margin-right: 8px;"><i class="fas fa-certificate"></i> رسمي</span>' : ''}
+                    </div>
+                    <div class="price-display">
+                        <span style="color: #28a745; font-weight: bold;">
+                            ${product.price > 0 ? product.price.toFixed(2) + ' ج.م' : ''}
+                        </span>
+                        <span style="color: #666;">× ${product.quantity}</span>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+            
+            container.style.display = 'block';
+            
+            // Update header
+            const header = container.querySelector('h3');
+            if (header) {
+                header.innerHTML = `<i class="fas fa-box"></i> منتجاتي (${products.length})`;
+            }
+        }
+
+        // ============================================
+        // Warehouse Change Handler
+        // ============================================
+        
+        function handleWarehouseChange(e) {
+            const warehouseId = e.target.value;
+            
+            if (warehouseId) {
+                // Set warehouse ID in synchronizer for multi-tenancy
+                synchronizer.setWarehouseId(warehouseId);
+                console.log('🏭 Warehouse changed:', warehouseId);
+                
+                // Check if we have inventory for this warehouse
+                checkWarehouseInventory(warehouseId);
+            }
+        }
+        
+        async function checkWarehouseInventory(warehouseId) {
+            if (!window.supabaseClient) return;
+            
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('warehouse_inventory')
+                    .select('count')
+                    .eq('warehouse_id', warehouseId)
+                    .single();
+                
+                if (!error && data) {
+                    console.log(`📦 Warehouse has ${data.count} items in inventory`);
+                }
+            } catch (err) {
+                console.log('📦 Checking warehouse inventory...');
+            }
+        }
+
+        // ============================================
+        // Save to Supabase with Multi-tenancy
+        // ============================================
+        
+        async function saveToSupabase(e) {
+            e.preventDefault();
+            
+            const warehouseId = document.getElementById('warehouseId').value;
+            const productName = document.getElementById('productName').value;
+            const price = parseFloat(document.getElementById('price').value) || 0;
+            const quantity = parseInt(document.getElementById('quantity').value) || 0;
+            
+            if (!warehouseId || !productName || !quantity) {
+                showAlert('error', '❌ يرجى ملء جميع الحقول المطلوبة');
+                return;
+            }
+            
+            const saveBtn = document.getElementById('saveBtn');
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...';
+            
+            try {
+                // Get current user from Supabase auth
+                const { data: { user } } = await window.supabaseClient.auth.getUser();
+                const userId = user?.id || localStorage.getItem('userId');
+                
+                if (!userId) {
+                    showAlert('error', '❌ يجب تسجيل الدخول أولاً');
+                    return;
+                }
+                
+                // Build record with all required fields for warehouse_inventory + user_id
+                const record = {
+                    user_id: userId,  // RLS: Required for security
+                    warehouse_id: warehouseId,
+                    trade_name: productName,
+                    scientific_name: currentMedicine?.scientificName || '',
+                    price: price,
+                    quantity: quantity,
+                    company: currentMedicine?.company || '',
+                    is_official_price: currentMedicine?.isOfficialPrice || false,
+                    source: currentMedicine?.source || 'voice_entry',
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
+                };
+                
+                let saved = false;
+                
+                // Try Supabase with warehouse_id filter for multi-tenancy
+                if (window.supabaseClient) {
+                    const { data, error } = await window.supabaseClient
+                        .from('warehouse_inventory')
+                        .insert([record])
+                        .select();
+                    
+                    if (!error) {
+                        saved = true;
+                        updateSupabaseBadge(true);
+                        console.log('✅ Saved to warehouse_inventory:', data);
+                    } else {
+                        updateSupabaseBadge(false);
+                        console.error('❌ Supabase error:', error);
+                    }
+                }
+                
+                if (saved) {
+                    showAlert('success', '✅ تم الحفظ في مخزن ' + document.getElementById('warehouseId').selectedOptions[0].text);
+                    
+                    // Reload user products to update the list (RLS filtered)
+                    await loadUserProducts();
+                } else {
+                    // Queue for later sync
+                    await queueForSync(record);
+                    showAlert('warning', '⚠️ تم الحفظ محلياً - سيتم المزامنة لاحقاً');
+                }
+                
+                // Clear form
+                resetForm();
+                
+            } catch (error) {
+                console.error('❌ Save error:', error);
+                showAlert('error', '❌ فشل في الحفظ: ' + error.message);
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> حفظ في المخزن';
+            }
+        }
+
+        async function queueForSync(record) {
+            const pending = JSON.parse(localStorage.getItem('pendingSync') || '[]');
+            pending.push({ ...record, queuedAt: Date.now() });
+            localStorage.setItem('pendingSync', JSON.stringify(pending));
+        }
+
+        function updateSupabaseBadge(connected) {
+            const badge = document.getElementById('supabaseBadge');
+            if (connected) {
+                badge.className = 'status-badge online';
+                badge.innerHTML = '<i class="fas fa-cloud"></i><span>Supabase: متصل</span>';
+            } else {
+                badge.className = 'status-badge offline';
+                badge.innerHTML = '<i class="fas fa-cloud"></i><span>Supabase: غير متصل</span>';
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('productName').value = '';
+            document.getElementById('price').value = '';
+            document.getElementById('quantity').value = '';
+            document.getElementById('price').readOnly = true;
+            document.getElementById('price').placeholder = 'سيتم جلبه تلقائياً...';
+            document.getElementById('priceTag').style.display = 'none';
+            document.getElementById('productSuggestions').style.display = 'none';
+            currentMedicine = null;
+        }
+
+        function addToRecentItems(record) {
+            const container = document.getElementById('recentItems');
+            const list = document.getElementById('recentItemsList');
+            
+            const item = document.createElement('div');
+            item.className = 'recent-item';
+            item.innerHTML = `
+                <div>
+                    <strong>${record.trade_name || record.product_name}</strong>
+                    ${record.is_official_price ? '<span class="official-badge" style="margin-right: 8px;"><i class="fas fa-certificate"></i> رسمي</span>' : ''}
+                </div>
+                <div class="price-display">
+                    <span style="color: #28a745; font-weight: bold;">
+                        ${record.price > 0 ? record.price.toFixed(2) + ' ج.م' : ''}
+                    </span>
+                    <span style="color: #666;">× ${record.quantity}</span>
+                </div>
+            `;
+            
+            list.insertBefore(item, list.firstChild);
+            
+            while (list.children.length > 5) {
+                list.removeChild(list.lastChild);
+            }
+            
+            container.style.display = 'block';
+        }
+
+        // ============================================
+        // Utilities
+        // ============================================
+        
+        function showAlert(type, message) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.className = `alert ${type}`;
+            alertBox.innerHTML = message;
+            alertBox.style.display = 'block';
+            
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 5000);
+        }
+
+        // Check Supabase connection
+        setInterval(async () => {
+            if (window.supabaseClient) {
+                try {
+                    const { error } = await window.supabaseClient.from('warehouses').select('id').limit(1);
+                    updateSupabaseBadge(!error);
+                } catch {
+                    updateSupabaseBadge(false);
+                }
+            }
+        }, 30000);
+
+        // ============================================
+        // Smart Assistant Panel - Self-Sovereign Gemini
+        // ============================================
+
+        let geminiSim = null;
+        let drugDB = null;
+        let allDrugs = [];
+        let currentRecognition = null;
+        let lastRecognizedDrug = null;
+        let lastRecognizedQuantity = 1;
+
+        // Initialize Gemini Simulation on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🧠 Initializing Smart Assistant Panel...');
+
+            // Initialize Gemini Simulation Engine
+            if (typeof GeminiSimulationEngine !== 'undefined') {
+                geminiSim = new GeminiSimulationEngine();
+                console.log('✅ Gemini Simulation Engine ready');
+            } else {
+                console.warn('⚠️ GeminiSimulationEngine not loaded');
+            }
+
+            // Initialize Global Drug Database
+            if (typeof GlobalDrugDatabase !== 'undefined') {
+                drugDB = new GlobalDrugDatabase();
+                try {
+                    allDrugs = await drugDB.initialize();
+                    console.log(`✅ Global Drug Database loaded: ${allDrugs.length} drugs`);
+                    updateAssistantStatus('جاهز - ' + allDrugs.length + ' دواء');
+                } catch (err) {
+                    console.error('❌ Failed to load drug database:', err);
+                    updateAssistantStatus('خطأ في قاعدة البيانات');
+                }
+            } else {
+                console.warn('⚠️ GlobalDrugDatabase not loaded');
+                // Load from localStorage fallback
+                loadDrugsFromLocalStorage();
+            }
+
+            // Initialize speech recognition
+            initSpeechRecognition();
+        });
+
+        function updateAssistantStatus(status) {
+            const statusEl = document.getElementById('assistantStatus');
+            if (statusEl) {
+                statusEl.innerHTML = `<span class="status-dot active"></span><span>${status}</span>`;
+            }
+        }
+
+        function loadDrugsFromLocalStorage() {
+            try {
+                const sources = ['eda_drugs', 'seifeldeen_drugs', 'shahin_drugs'];
+                allDrugs = [];
+                sources.forEach(source => {
+                    const data = localStorage.getItem(source);
+                    if (data) {
+                        const drugs = JSON.parse(data);
+                        allDrugs = allDrugs.concat(drugs);
+                    }
+                });
+                console.log(`📦 Loaded ${allDrugs.length} drugs from localStorage`);
+                updateAssistantStatus('جاهز - ' + allDrugs.length + ' دواء');
+            } catch (err) {
+                console.error('❌ Failed to load from localStorage:', err);
+                updateAssistantStatus('لا توجد بيانات');
+            }
+        }
+
+        function initSpeechRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                currentRecognition = new SpeechRecognition();
+                currentRecognition.continuous = false;
+                currentRecognition.interimResults = true;
+                currentRecognition.lang = 'ar-SA';
+                
+                currentRecognition.onstart = function() {
+                    console.log('🎤 Voice recognition started');
+                    document.getElementById('voiceBtn').classList.add('listening');
+                    document.getElementById('voiceStatus').classList.add('listening');
+                    document.getElementById('voiceStatus').textContent = 'جاري الاستماع... تحدث الآن';
+                    activateBadge(1);
+                };
+                
+                currentRecognition.onresult = function(event) {
+                    let finalTranscript = '';
+                    let interimTranscript = '';
+                    
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        const transcript = event.results[i][0].transcript;
+                        if (event.results[i].isFinal) {
+                            finalTranscript += transcript;
+                        } else {
+                            interimTranscript += transcript;
+                        }
+                    }
+                    
+                    if (interimTranscript) {
+                        document.getElementById('recognizedText').textContent = interimTranscript;
+                        document.getElementById('voiceStatus').textContent = 'جاري التعرف...';
+                        activateBadge(2);
+                    }
+                    
+                    if (finalTranscript) {
+                        console.log('🎯 Final transcript:', finalTranscript);
+                        document.getElementById('recognizedText').textContent = finalTranscript;
+                        processVoiceCommand(finalTranscript);
+                    }
+                };
+                
+                currentRecognition.onerror = function(event) {
+                    console.error('❌ Speech recognition error:', event.error);
+                    document.getElementById('voiceStatus').textContent = 'خطأ: ' + event.error;
+                    document.getElementById('voiceBtn').classList.remove('listening');
+                    document.getElementById('voiceStatus').classList.remove('listening');
+                    deactivateAllBadges();
+                };
+                
+                currentRecognition.onend = function() {
+                    console.log('🎤 Voice recognition ended');
+                    document.getElementById('voiceBtn').classList.remove('listening');
+                    document.getElementById('voiceStatus').classList.remove('listening');
+                    document.getElementById('voiceStatus').textContent = 'اضغط للتحدث مع المساعد الذكي';
+                    setTimeout(deactivateAllBadges, 2000);
+                };
+                
+                console.log('✅ Speech recognition initialized');
+            } else {
+                console.error('❌ Speech recognition not supported');
+                document.getElementById('voiceStatus').textContent = 'المتصفح لا يدعم التعرف الصوتي';
+            }
+        }
+
+        function toggleVoice() {
+            if (!currentRecognition) {
+                showAlert('error', 'التعرف الصوتي غير متاح');
+                return;
+            }
+            
+            if (document.getElementById('voiceBtn').classList.contains('listening')) {
+                currentRecognition.stop();
+            } else {
+                currentRecognition.start();
+            }
+        }
+
+        function activateBadge(badgeNum) {
+            deactivateAllBadges();
+            const badge = document.getElementById('badge' + badgeNum);
+            if (badge) {
+                badge.classList.add('active');
+            }
+            
+            // Activate all previous badges
+            for (let i = 1; i < badgeNum; i++) {
+                const prevBadge = document.getElementById('badge' + i);
+                if (prevBadge) {
+                    prevBadge.classList.add('active');
+                }
+            }
+        }
+
+        function deactivateAllBadges() {
+            for (let i = 1; i <= 4; i++) {
+                const badge = document.getElementById('badge' + i);
+                if (badge) {
+                    badge.classList.remove('active');
+                }
+            }
+        }
+
+        async function processVoiceCommand(command) {
+            activateBadge(3);
+            
+            if (!geminiSim) {
+                console.warn('⚠️ Gemini Simulation not available');
+                // Fallback: simple search
+                simpleSearch(command);
+                return;
+            }
+            
+            // Extract numbers (quantities)
+            const numbers = geminiSim.extractNumbers(command);
+            lastRecognizedQuantity = numbers.find(n => n.type === 'quantity')?.value || 1;
+            
+            // Remove numbers from drug name
+            let drugQuery = command;
+            numbers.forEach(n => {
+                drugQuery = drugQuery.replace(n.words || n.word, '').trim();
+            });
+            
+            console.log('🔍 Searching for:', drugQuery, 'Quantity:', lastRecognizedQuantity);
+            
+            // Search in database using Gemini simulation
+            const result = geminiSim.simulateGemini(drugQuery, allDrugs);
+            
+            activateBadge(4);
+            
+            if (result.drugData && result.confidence >= 0.60) {
+                console.log('✅ Found drug:', result.drugData.tradeName, 'Confidence:', result.confidence);
+                
+                lastRecognizedDrug = result.drugData;
+                
+                // Update results display
+                document.getElementById('resultDrug').textContent = result.drugData.tradeName;
+                document.getElementById('resultQuantity').textContent = lastRecognizedQuantity;
+                document.getElementById('resultConfidence').textContent = Math.round(result.confidence * 100) + '%';
+                
+                // Enable auto-fill button
+                document.getElementById('autoFillBtn').disabled = false;
+                document.getElementById('confirmBtn').disabled = false;
+                
+                // Speak confirmation
+                speak(`تم التعرف على ${result.drugData.tradeName} بكمية ${lastRecognizedQuantity}`);
+                
+                // Auto-fill form immediately (Voice-Only Entry Mode)
+                autoFillForm();
+                
+                showAlert('success', `✅ تم التعرف على: ${result.drugData.tradeName}`);
+            } else {
+                console.log('❌ No match found for:', command);
+                document.getElementById('resultDrug').textContent = 'غير معروف';
+                document.getElementById('resultQuantity').textContent = lastRecognizedQuantity;
+                document.getElementById('resultConfidence').textContent = '0%';
+                document.getElementById('autoFillBtn').disabled = true;
+                document.getElementById('confirmBtn').disabled = true;
+                
+                speak('لم أتمكن من التعرف على اسم الدواء');
+                showAlert('warning', `⚠️ لم أتمكن من التعرف على "${command}"`);
+            }
+            
+            setTimeout(deactivateAllBadges, 3000);
+        }
+
+        function simpleSearch(query) {
+            // Fallback search without Gemini
+            const normalizedQuery = query.toLowerCase().trim();
+            const matches = allDrugs.filter(drug => {
+                const name = (drug.tradeName || drug.trade_name || drug.name || '').toLowerCase();
+                return name.includes(normalizedQuery);
+            });
+            
+            if (matches.length > 0) {
+                const bestMatch = matches[0];
+                lastRecognizedDrug = bestMatch;
+                document.getElementById('resultDrug').textContent = bestMatch.tradeName || bestMatch.trade_name;
+                document.getElementById('resultQuantity').textContent = lastRecognizedQuantity;
+                document.getElementById('resultConfidence').textContent = 'بحث بسيط';
+                document.getElementById('autoFillBtn').disabled = false;
+                document.getElementById('confirmBtn').disabled = false;
+                autoFillForm();
+            }
+        }
+
+        function smartSearch() {
+            const query = document.getElementById('productName').value;
+            if (!query) {
+                showAlert('warning', '⚠️ أدخل اسم الدواء أولاً');
+                return;
+            }
+            processVoiceCommand(query);
+        }
+
+        function autoFillForm() {
+            if (!lastRecognizedDrug) {
+                showAlert('warning', '⚠️ لا يوجد دواء للتعبئة');
+                return;
+            }
+
+            console.log('🎯 Auto-filling form with:', lastRecognizedDrug);
+
+            // Get product name
+            const productName = lastRecognizedDrug.tradeName || lastRecognizedDrug.trade_name || lastRecognizedDrug.name;
+
+            // Fill product name and trigger input event for suggestions
+            const productField = document.getElementById('productName');
+            productField.value = productName;
+
+            // Trigger input event to activate existing form handlers
+            const inputEvent = new Event('input', { bubbles: true });
+            productField.dispatchEvent(inputEvent);
+
+            // Fill price if available
+            const price = lastRecognizedDrug.price || lastRecognizedDrug.officialPrice || lastRecognizedDrug.publicPrice || 0;
+            if (price > 0) {
+                document.getElementById('price').value = price;
+                document.getElementById('price').readOnly = false;
+                const priceTag = document.getElementById('priceTag');
+                if (priceTag) priceTag.style.display = 'inline';
+            }
+
+            // Fill quantity
+            document.getElementById('quantity').value = lastRecognizedQuantity;
+
+            // Set current medicine for form submission
+            currentMedicine = {
+                ...lastRecognizedDrug,
+                isOfficialPrice: !!lastRecognizedDrug.officialPrice
+            };
+
+            // Hide any suggestions
+            const suggestions = document.getElementById('productSuggestions');
+            if (suggestions) suggestions.style.display = 'none';
+
+            // Focus on the form
+            productField.focus();
+
+            speak(`تمت تعبئة بيانات ${productName} في الاستمارة`);
+            showAlert('success', '✅ تمت تعبئة الاستمارة تلقائياً');
+        }
+
+        async function confirmEntry() {
+            if (!currentMedicine) {
+                showAlert('warning', '⚠️ لا يوجد دواء للحفظ');
+                return;
+            }
+            
+            // Trigger the form submission
+            const saveBtn = document.getElementById('saveBtn');
+            if (saveBtn) {
+                saveBtn.click();
+            } else {
+                // Direct save if button not available
+                const fakeEvent = { preventDefault: () => {} };
+                await saveToSupabase(fakeEvent);
+            }
+            
+            // Reset assistant state
+            lastRecognizedDrug = null;
+            lastRecognizedQuantity = 1;
+            document.getElementById('resultDrug').textContent = '-';
+            document.getElementById('resultQuantity').textContent = '-';
+            document.getElementById('resultConfidence').textContent = '-';
+            document.getElementById('autoFillBtn').disabled = true;
+            document.getElementById('confirmBtn').disabled = true;
+            document.getElementById('recognizedText').textContent = '';
+        }
+
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ar-SA';
+                utterance.rate = 1;
+                utterance.pitch = 1;
+                speechSynthesis.speak(utterance);
+            }
+        }
+    </script>
+
+    <!-- Offline Smart Assistant - Transformers.js Integration -->
+    <script src="offline-smart-assistant.js"></script>
+    <script>
+        // ============================================
+        // Offline Smart Assistant Integration
+        // Transformers.js + Web Speech API - Fully Offline
+        // ============================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🤖 Initializing Offline Smart Assistant...');
+
+            // Wait for the assistant to be ready
+            const initAssistant = setInterval(() => {
+                if (window.offlineAssistant) {
+                    clearInterval(initAssistant);
+                    setupOfflineAssistant();
+                }
+            }, 100);
+
+            // Timeout after 10 seconds
+            setTimeout(() => clearInterval(initAssistant), 10000);
+        });
+
+        function setupOfflineAssistant() {
+            const assistant = window.offlineAssistant;
+            const micBtn = document.getElementById('productMic');
+
+            // Set up visual state callbacks
+            assistant.onProcessingStart = function() {
+                console.log('🔄 AI Processing started - Blue state');
+                if (micBtn) {
+                    micBtn.classList.remove('listening');
+                    micBtn.classList.add('processing');
+                }
+                showVoiceTooltip('🧠 جاري معالجة الذكاء الاصطناعي...', '');
+            };
+
+            assistant.onProcessingEnd = function() {
+                console.log('✅ AI Processing complete');
+                if (micBtn) {
+                    micBtn.classList.remove('processing');
+                }
+            };
+
+            assistant.onSuccess = function(result) {
+                console.log('🎉 Success - Green state');
+                if (micBtn) {
+                    micBtn.classList.add('success');
+                    setTimeout(() => {
+                        micBtn.classList.remove('success');
+                    }, 1500);
+                }
+            };
+
+            // Set up callbacks
+            assistant.onIntentDetected = function(result) {
+                console.log('🎯 Intent detected:', result);
+
+                // Handle interim results (show listening feedback)
+                if (result.type === 'interim') {
+                    showVoiceTooltip('جاري الاستماع...', result.text);
+                    return;
+                }
+
+                // Handle final intent
+                const { intent, entities, fuseMatch } = result;
+                const intentType = intent.intent;
+                const confidence = intent.confidence;
+
+                // Build status message
+                let statusMsg = `تم التعرف: ${intentType}`;
+                if (fuseMatch) {
+                    statusMsg += ` + Fuse.js match`;
+                }
+                statusMsg += ` (${(confidence * 100).toFixed(0)}%)`;
+
+                // Update tooltip with recognition result
+                updateVoiceTooltip(
+                    statusMsg,
+                    entities.drugName || intent.originalText
+                );
+
+                // Execute the intent
+                const actionResult = assistant.executeIntent(result, {
+                    currentProduct: document.getElementById('productName')?.value,
+                    currentQuantity: document.getElementById('quantity')?.value
+                });
+
+                // Handle the action result
+                if (actionResult.success) {
+                    handleOfflineIntentAction(actionResult, result);
+                } else {
+                    showVoiceTooltip('⚠️ ' + actionResult.message, '');
+                    setTimeout(hideVoiceTooltip, 3000);
+                }
+            };
+
+            assistant.onListeningStart = function() {
+                console.log('🎤 Offline assistant started listening');
+                if (micBtn) {
+                    micBtn.classList.remove('processing', 'success');
+                    micBtn.classList.add('listening');
+                }
+            };
+
+            assistant.onListeningEnd = function() {
+                console.log('🎤 Offline assistant stopped listening');
+                if (micBtn) {
+                    micBtn.classList.remove('listening');
+                }
+            };
+
+            assistant.onModelStatus = function(status) {
+                console.log('📊 Model status:', status);
+                if (status.loaded) {
+                    console.log('✅ AI Model loaded and ready for offline use');
+                }
+            };
+
+            assistant.onError = function(error) {
+                console.error('❌ Offline assistant error:', error);
+                if (micBtn) {
+                    micBtn.classList.remove('listening', 'processing');
+                }
+                hideVoiceTooltip();
+            };
+
+            console.log('✅ Offline Smart Assistant integrated successfully');
+        }
+
+        // Handle offline intent actions
+        function handleOfflineIntentAction(actionResult, fullResult) {
+            const { action, data, message } = actionResult;
+            const { fuseMatch, entities } = fullResult || {};
+
+            // Use Fuse.js match if available for better drug name
+            if (fuseMatch && fuseMatch.matchedName) {
+                data.productName = fuseMatch.matchedName;
+            } else if (entities && entities.drugName) {
+                data.productName = entities.drugName;
+            }
+
+            // Show action message
+            showVoiceTooltip(message, '');
+
+            switch (action) {
+                case 'add_product':
+                    if (data.productName) {
+                        document.getElementById('productName').value = data.productName;
+                    }
+                    if (data.quantity) {
+                        document.getElementById('quantity').value = data.quantity;
+                    }
+                    if (data.price) {
+                        document.getElementById('priceInt').value = Math.floor(data.price);
+                        document.getElementById('priceFrac').value = Math.round((data.price % 1) * 100);
+                    }
+                    // Focus on product name
+                    document.getElementById('productName').focus();
+                    break;
+
+                case 'update_quantity':
+                    if (data.quantity) {
+                        document.getElementById('quantity').value = data.quantity;
+                    }
+                    break;
+
+                case 'search_product':
+                    if (data.productName) {
+                        document.getElementById('productName').value = data.productName;
+                        // Trigger search if available
+                        if (typeof smartSearchDrugs === 'function') {
+                            smartSearchDrugs(data.productName);
+                        }
+                    }
+                    break;
+
+                case 'show_inventory':
+                    // Navigate to inventory view if available
+                    if (typeof showInventory === 'function') {
+                        showInventory();
+                    }
+                    break;
+
+                case 'unknown':
+                default:
+                    // Keep tooltip visible for unknown commands
+                    setTimeout(hideVoiceTooltip, 4000);
+                    return;
+            }
+
+            // Hide tooltip after successful action
+            setTimeout(hideVoiceTooltip, 2000);
+
+            // Speak confirmation
+            if (typeof speak === 'function') {
+                speak(message);
+            }
+        }
+
+        // Override startVoiceEntry to use offline assistant
+        const originalStartVoiceEntry = window.startVoiceEntry;
+        window.startVoiceEntry = function(fieldId) {
+            // Use offline assistant if available
+            if (window.offlineAssistant && window.offlineAssistant.isModelLoaded !== undefined) {
+                console.log('🎤 Using Offline Smart Assistant for voice input');
+
+                window.offlineAssistant.startListening({
+                    field: fieldId,
+                    language: fieldId === 'productName' ? 'en-US' : 'ar-SA'
+                }).catch(err => {
+                    console.error('Offline listening failed:', err);
+                    // Fallback to original function
+                    if (originalStartVoiceEntry) {
+                        originalStartVoiceEntry(fieldId);
+                    }
+                });
+            } else {
+                // Use original function
+                if (originalStartVoiceEntry) {
+                    originalStartVoiceEntry(fieldId);
+                }
+            }
+        };
+
+        console.log('✅ Offline Smart Assistant integration complete');
+    </script>
+
+    <!-- Google Assistant-Style Advanced Voice System -->
+    <script src="google-assistant-voice-system.js"></script>
+    <script>
+        // ============================================
+        // Google Assistant Voice System Integration
+        // Continuous Listening + Waveform + Bulk Fill
+        // ============================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎙️ Initializing Google Assistant Voice System...');
+
+            // Wait for system to be ready
+            const initGA = setInterval(() => {
+                if (window.googleAssistant) {
+                    clearInterval(initGA);
+                    setupGoogleAssistant();
+                }
+            }, 100);
+
+            setTimeout(() => clearInterval(initGA), 15000);
+        });
+
+        function setupGoogleAssistant() {
+            const ga = window.googleAssistant;
+            const micBtn = document.getElementById('productMic');
+            const tooltip = document.getElementById('voice-tooltip');
+            const waveform = document.getElementById('voiceWaveform');
+            const tooltipStatus = document.getElementById('tooltipStatus');
+
+            // Waveform visualization callback
+            ga.onWaveformUpdate = function(state, text, volume) {
+                if (waveform) {
+                    waveform.style.display = 'flex';
+                    
+                    if (state === 'listening') {
+                        waveform.classList.remove('processing', 'success');
+                        if (text) {
+                            document.getElementById('tooltipText').textContent = text;
+                        }
+                    } else if (state === 'visualizing' && volume !== undefined) {
+                        // Real-time volume visualization
+                        const bars = waveform.querySelectorAll('.wave-bar');
+                        bars.forEach((bar, index) => {
+                            const height = Math.max(10, (volume / 255) * 40 + (index % 3) * 5);
+                            bar.style.height = height + 'px';
+                        });
+                    }
+                }
+            };
+
+            // Listening state changes
+            ga.onListeningStateChange = function(state) {
+                console.log('🎤 State:', state);
+                
+                if (!micBtn) return;
+
+                micBtn.classList.remove('listening', 'processing', 'success');
+
+                switch (state) {
+                    case 'listening':
+                        micBtn.classList.add('listening');
+                        showVoiceTooltip('🎤 أنا أستمع... تحدث الآن', '');
+                        tooltipStatus.textContent = 'المساعد يستمع...';
+                        break;
+                        
+                    case 'processing':
+                        micBtn.classList.add('processing');
+                        tooltipStatus.textContent = '🧠 جاري المعالجة...';
+                        if (waveform) {
+                            waveform.classList.add('processing');
+                        }
+                        break;
+                        
+                    case 'success':
+                        micBtn.classList.add('success');
+                        tooltipStatus.textContent = '✅ تم بنجاح!';
+                        if (waveform) {
+                            waveform.classList.add('success');
+                        }
+                        setTimeout(() => {
+                            micBtn.classList.remove('success');
+                        }, 2000);
+                        break;
+                        
+                    case 'error':
+                        tooltipStatus.textContent = '❌ خطأ في التعرف';
+                        break;
+                        
+                    case 'idle':
+                        hideVoiceTooltip();
+                        break;
+                }
+            };
+
+            // Bulk fill complete callback
+            ga.onBulkFillComplete = function(result) {
+                console.log('📝 Bulk Fill Complete:', result);
+                
+                const { filled, data } = result;
+                
+                if (filled.length > 0) {
+                    // Show success with filled fields
+                    const fillMsg = `✅ تم ملء: ${filled.join('، ')}`;
+                    updateVoiceTooltip('تم التعرف', fillMsg);
+                    
+                    // Highlight filled fields
+                    filled.forEach(field => {
+                        const fieldMap = {
+                            'اسم المنتج': 'productName',
+                            'الكمية': 'quantity',
+                            'السعر': 'priceInt',
+                            'تاريخ الصلاحية': 'expiryDate'
+                        };
+                        
+                        const fieldId = fieldMap[field];
+                        if (fieldId) {
+                            const el = document.getElementById(fieldId);
+                            if (el) {
+                                el.style.animation = 'pulse 0.5s ease';
+                                setTimeout(() => {
+                                    el.style.animation = '';
+                                }, 500);
+                            }
+                        }
+                    });
+                }
+            };
+
+            // Voice confirmation callback
+            ga.onVoiceConfirmation = function(state, text) {
+                if (state === 'start' && text) {
+                    console.log('🔊 Speaking:', text);
+                    tooltipStatus.textContent = '🔊 ' + text.substring(0, 30) + '...';
+                }
+            };
+
+            // Command recognized callback
+            ga.onCommandRecognized = function(result) {
+                console.log('🎯 Command:', result);
+                
+                const { nlu, entities, fillResult } = result;
+                
+                // Update tooltip with full info
+                let matchText = '';
+                if (entities.drugName) {
+                    matchText += `الدواء: ${entities.drugName}\n`;
+                }
+                if (entities.quantity) {
+                    matchText += `الكمية: ${entities.quantity}\n`;
+                }
+                if (entities.price) {
+                    matchText += `السعر: ${entities.price} ج.م`;
+                }
+                
+                document.getElementById('tooltipMatchValue').textContent = matchText;
+                document.getElementById('tooltipMatch').style.display = 'block';
+            };
+
+            // Double-click on mic button for continuous mode
+            if (micBtn) {
+                micBtn.addEventListener('dblclick', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    if (!ga.isContinuousMode) {
+                        console.log('🎤 Activating Continuous Listening Mode');
+                        ga.startContinuousListening();
+                        showVoiceTooltip('🎙️ وضع الاستماع المستمر', 'انقر مرة أخرى للإيقاف');
+                    } else {
+                        console.log('🎤 Stopping Continuous Listening');
+                        ga.stopContinuousListening();
+                        hideVoiceTooltip();
+                    }
+                });
+
+                // Single click for single command
+                micBtn.addEventListener('click', function(e) {
+                    if (!ga.isContinuousMode && !ga.isListening) {
+                        // Single command mode - use the existing pipeline
+                        window.startVoiceEntry('productName');
+                    }
+                });
+            }
+
+            console.log('✅ Google Assistant Voice System integrated');
+            console.log('💡 Tip: Double-click the mic button for continuous listening mode');
+        }
+    </script>
+</body>
+</html>

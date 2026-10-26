@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - سلامتك</title>
+    <script src="libs/supabase.min.js"></script>
+    <script src="navigation.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        .header {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .header p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+        }
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .logout-btn:hover {
+            background: #c82333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        .info-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #555;
+        }
+        .info-value {
+            color: #333;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .pagination button {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .pagination button:hover {
+            background: #f0f0f0;
+        }
+        .pagination button.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
+        <h1 id="welcomeMsg">مرحباً</h1>
+        <p>لوحة التحكم الخاصة بك - سلامتك</p>
+    </div>
+    
+    <div class="container">
+        <div id="messageContainer"></div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalWarehouses">0</div>
+                <div class="stat-label">إجمالي المخازن</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="activeWarehouses">0</div>
+                <div class="stat-label">المخازن النشطة</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="newWarehouses">0</div>
+                <div class="stat-label">المخازن الجديدة اليوم</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="currentPage">1</div>
+                <div class="stat-label">الصفحة الحالية</div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h2>قائمة المخازن</h2>
+            <div id="loadingIndicator" class="loading">جاري تحميل البيانات...</div>
+            <div id="warehousesList"></div>
+            <div class="pagination" id="pagination"></div>
+        </div>
+    </div>
+
+    <script>
+        // إعدادات Supabase
+        const supabaseUrl = 'https://iksjhjxwphmvthryfeae.supabase.co';
+        const supabaseKey = 'sb_publishable_0DUy2mtXS6m5S8PwTDAANQ_XWlzbu0G';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        // متغيرات Pagination
+        let currentPage = 1;
+        const itemsPerPage = 20;
+        let totalItems = 0;
+        let totalPages = 0;
+        let allWarehouses = [];
+
+        // عرض الرسائل
+        function showMessage(message, type = 'info') {
+            const container = document.getElementById('messageContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type;
+            messageDiv.textContent = message;
+            container.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        // تحميل إحصائيات المخازن
+        async function loadStats() {
+            try {
+                const { data: totalData, error: totalError } = await supabase
+                    .from('warehouses')
+                    .select('*', { count: 'exact', head: true });
+
+                if (totalError) throw totalError;
+
+                const { data: activeData, error: activeError } = await supabase
+                    .from('warehouses')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('status', 'active');
+
+                if (activeError) throw activeError;
+
+                const today = new Date().toISOString().split('T')[0];
+                const { data: newData, error: newError } = await supabase
+                    .from('warehouses')
+                    .select('*', { count: 'exact', head: true })
+                    .gte('created_at', today);
+
+                if (newError) throw newError;
+
+                document.getElementById('totalWarehouses').textContent = totalData?.length || 0;
+                document.getElementById('activeWarehouses').textContent = activeData?.length || 0;
+                document.getElementById('newWarehouses').textContent = newData?.length || 0;
+
+            } catch (error) {
+                console.error('Error loading stats:', error);
+                showMessage('خطأ في تحميل الإحصائيات', 'error');
+            }
+        }
+
+        // تحميل المخازن مع Pagination
+        async function loadWarehouses(page = 1) {
+            try {
+                document.getElementById('loadingIndicator').style.display = 'block';
+                document.getElementById('warehousesList').innerHTML = '';
+
+                const from = (page - 1) * itemsPerPage;
+                const to = from + itemsPerPage - 1;
+
+                const { data, error, count } = await supabase
+                    .from('warehouses')
+                    .select('*', { count: 'exact' })
+                    .order('created_at', { ascending: false })
+                    .range(from, to);
+
+                if (error) throw error;
+
+                allWarehouses = data || [];
+                totalItems = count || 0;
+                totalPages = Math.ceil(totalItems / itemsPerPage);
+                currentPage = page;
+
+                displayWarehouses();
+                updatePagination();
+                updatePageInfo();
+
+                document.getElementById('loadingIndicator').style.display = 'none';
+
+            } catch (error) {
+                console.error('Error loading warehouses:', error);
+                showMessage('خطأ في تحميل بيانات المخازن', 'error');
+                document.getElementById('loadingIndicator').style.display = 'none';
+            }
+        }
+
+        // عرض المخازن
+        function displayWarehouses() {
+            const container = document.getElementById('warehousesList');
+            
+            if (allWarehouses.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666;">لا توجد مخازن مسجلة</p>';
+                return;
+            }
+
+            const html = allWarehouses.map(warehouse => `
+                <div class="info-row">
+                    <span class="info-label">${warehouse.store_name || 'غير محدد'}</span>
+                    <span class="info-value">
+                        ${warehouse.phone} | ${warehouse.governorate} | ${warehouse.email}
+                    </span>
+                </div>
+            `).join('');
+
+            container.innerHTML = html;
+        }
+
+        // تحديث Pagination
+        function updatePagination() {
+            const container = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+
+            // زر السابق
+            html += `<button ${currentPage === 1 ? 'disabled' : ''} onclick="loadWarehouses(${currentPage - 1})">السابق</button>`;
+
+            // أرقام الصفحات
+            const maxVisible = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+
+            if (endPage - startPage < maxVisible - 1) {
+                startPage = Math.max(1, endPage - maxVisible + 1);
+            }
+
+            if (startPage > 1) {
+                html += `<button onclick="loadWarehouses(1)">1</button>`;
+                if (startPage > 2) html += `<span>...</span>`;
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                html += `<button class="${i === currentPage ? 'active' : ''}" onclick="loadWarehouses(${i})">${i}</button>`;
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) html += `<span>...</span>`;
+                html += `<button onclick="loadWarehouses(${totalPages})">${totalPages}</button>`;
+            }
+
+            // زر التالي
+            html += `<button ${currentPage === totalPages ? 'disabled' : ''} onclick="loadWarehouses(${currentPage + 1})">التالي</button>`;
+
+            container.innerHTML = html;
+        }
+
+        // تحديث معلومات الصفحة
+        function updatePageInfo() {
+            document.getElementById('currentPage').textContent = currentPage;
+        }
+
+        // تسجيل الخروج
+        function logout() {
+            sessionStorage.removeItem('currentUser');
+            window.location.href = 'warehouse-login.html';
+        }
+
+        // تحديث تلقائي كل 30 ثانية
+        function startAutoRefresh() {
+            setInterval(() => {
+                loadStats();
+                loadWarehouses(currentPage);
+            }, 30000);
+        }
+
+        // تهيئة الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStats();
+            loadWarehouses(1);
+            startAutoRefresh();
+            
+            // تحديث رسالة الترحيب
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+            if (currentUser) {
+                document.getElementById('welcomeMsg').textContent = `مرحباً ${currentUser.warehouseName || 'Admin'}`;
+            }
+        });
+    </script>
+</body>
+</html>

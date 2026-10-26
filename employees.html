@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الموظفين - سلامتك</title>
+    <link href="libs/cairo.css" rel="stylesheet">
+    <script src="libs/supabase.min.js"></script>
+    <script src="auth-hybrid.js"></script>
+    <style>
+        :root {
+            --primary: #6C63FF;
+            --secondary: #4FB5FF;
+            --accent: #FF6B6B;
+            --bg-dark: #0a0a1a;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --radius-lg: 20px;
+            --radius-md: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 2rem;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(108, 99, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 107, 107, 0.1) 0%, transparent 40%);
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        h1 { font-size: 2.5rem; font-weight: 800; }
+
+        .btn-back {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            transition: 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-back:hover { background: rgba(255, 255, 255, 0.15); transform: translateX(5px); }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 2rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @media (max-width: 850px) { .main-grid { grid-template-columns: 1fr; } }
+
+        /* Card Style */
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        h2 { font-size: 1.5rem; margin-bottom: 1.5rem; color: var(--primary); }
+
+        /* Form Style */
+        .form-group { margin-bottom: 1.2rem; }
+        label { display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-secondary); }
+        input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            color: white;
+            font-family: inherit;
+            transition: 0.3s;
+        }
+        input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 15px rgba(108, 99, 255, 0.2); }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: var(--radius-md);
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 1rem;
+        }
+        .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(108, 99, 255, 0.3); }
+
+        /* List Style */
+        .employee-list { display: flex; flex-direction: column; gap: 1rem; }
+        .employee-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            padding: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.3s;
+        }
+        .employee-item:hover { background: rgba(255, 255, 255, 0.07); }
+
+        .emp-info h3 { font-size: 1.1rem; margin-bottom: 0.2rem; }
+        .emp-info p { font-size: 0.85rem; color: var(--text-secondary); }
+
+        .badge {
+            background: rgba(108, 99, 255, 0.2);
+            color: var(--primary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .btn-delete {
+            background: rgba(255, 107, 107, 0.1);
+            color: var(--accent);
+            border: 1px solid rgba(255, 107, 107, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-delete:hover { background: var(--accent); color: white; }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            background: #1e1e30;
+            border-left: 5px solid var(--primary);
+            color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>👥 إدارة الموظفين</h1>
+            <a href="products.html" class="btn-back">🔙 العودة للمتجر</a>
+        </header>
+
+        <div class="main-grid">
+            <!-- Add Employee Form -->
+            <section class="card">
+                <h2>➕ إضافة موظف جديد</h2>
+                <form id="addEmployeeForm">
+                    <div class="form-group">
+                        <label>الاسم الكامل</label>
+                        <input type="text" id="empName" placeholder="مثال: أحمد محمد" required>
+                    </div>
+                    <div class="form-group">
+                        <label>البريد الإلكتروني (للدخول)</label>
+                        <input type="email" id="empEmail" placeholder="example@slamtak.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>كلمة المرور</label>
+                        <input type="password" id="empPassword" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn-submit" id="submitBtn">إنشاء حساب الموظف</button>
+                </form>
+            </section>
+
+            <!-- Employee List -->
+            <section class="card">
+                <h2>📋 قائمة الموظفين</h2>
+                <div id="employeeList" class="employee-list">
+                    <!-- Dynamic Content -->
+                    <p style="text-align: center; color: var(--text-muted);">جاري تحميل الموظفين...</p>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // Supabase Init
+        const SUPABASE_URL = 'https://iksjhjxwphmvthryfeae.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_0DUy2mtXS6m5S8PwTDAANQ_XWlzbu0G';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // State
+        let warehouseId = null;
+
+        async function init() {
+            // Check session
+            if (window.HybridAuth) {
+                window.HybridAuth.init();
+                if (!window.HybridAuth.state.isAuthenticated) {
+                    window.location.href = 'warehouse.html';
+                    return;
+                }
+                
+                // Only owners can manage employees
+                if (window.HybridAuth.state.role !== 'owner') {
+                    showToast('⛔ عذراً، هذه الصفحة للمديرين فقط');
+                    setTimeout(() => window.location.href = 'products.html', 2000);
+                    return;
+                }
+
+                warehouseId = window.HybridAuth.state.warehouseId;
+                fetchEmployees();
+            }
+        }
+
+        async function fetchEmployees() {
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('warehouse_id', warehouseId)
+                .eq('role', 'employee');
+
+            const listEl = document.getElementById('employeeList');
+            
+            if (error) {
+                listEl.innerHTML = `<p style="color: var(--accent);">خطأ في التحميل: ${error.message}</p>`;
+                return;
+            }
+
+            if (data.length === 0) {
+                listEl.innerHTML = `<p style="text-align: center; color: var(--text-secondary);">لا يوجد موظفون حالياً</p>`;
+                return;
+            }
+
+            listEl.innerHTML = data.map(emp => `
+                <div class="employee-item">
+                    <div class="emp-info">
+                        <h3>${emp.email.split('@')[0]}</h3>
+                        <p>${emp.email}</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <span class="badge">موظف</span>
+                        <button class="btn-delete" onclick="deleteEmployee('${emp.id}')">حذف</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('addEmployeeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const email = document.getElementById('empEmail').value;
+            const password = document.getElementById('empPassword').value;
+
+            btn.disabled = true;
+            btn.textContent = 'جاري المعالجة...';
+
+            try {
+                // IMPORTANT: signUp will log us out unless we use a non-persistent client
+                const tempClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+                    auth: { persistSession: false }
+                });
+
+                const { data, error } = await tempClient.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            warehouse_id: warehouseId,
+                            role: 'employee'
+                        }
+                    }
+                });
+
+                if (error) throw error;
+
+                showToast('✅ تم إنشاء حساب الموظف بنجاح!');
+                document.getElementById('addEmployeeForm').reset();
+                fetchEmployees();
+            } catch (err) {
+                showToast('❌ خطأ: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'إنشاء حساب الموظف';
+            }
+        });
+
+        async function deleteEmployee(id) {
+            if (!confirm('هل أنت متأكد من حذف هذا الموظف؟')) return;
+
+            const { error } = await supabase
+                .from('profiles')
+                .delete()
+                .eq('id', id);
+
+            if (error) {
+                showToast('❌ فشل الحذف: ' + error.message);
+            } else {
+                showToast('🗑️ تم حذف الموظف');
+                fetchEmployees();
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 3000);
+        }
+
+        init();
+    </script>
+</body>
+</html>

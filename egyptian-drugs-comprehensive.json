@@ -1,0 +1,7548 @@
+[
+  {
+    "id": 317,
+    "tradeName": "A-Hydrocort",
+    "scientificName": "Hyoscine",
+    "company": "Sandoz",
+    "price": 493.06
+  },
+  {
+    "id": 6,
+    "tradeName": "Abimol",
+    "scientificName": "Pilocarpine",
+    "company": "CID",
+    "price": 443.82
+  },
+  {
+    "id": 499,
+    "tradeName": "Abimol 16mg Powder",
+    "scientificName": "Valacyclovir",
+    "company": "EIPICO",
+    "price": 675.19
+  },
+  {
+    "id": 498,
+    "tradeName": "Abimol 16mg Solution",
+    "scientificName": "Busulfan",
+    "company": "Janssen",
+    "price": 534.7
+  },
+  {
+    "id": 494,
+    "tradeName": "Abimol 1g/100ml Cream",
+    "scientificName": "Valganciclovir",
+    "company": "Sedico",
+    "price": 174.52
+  },
+  {
+    "id": 495,
+    "tradeName": "Abimol 1g/100ml Tablet",
+    "scientificName": "Docetaxel",
+    "company": "Boehringer Ingelheim",
+    "price": 402.39
+  },
+  {
+    "id": 496,
+    "tradeName": "Abimol 8000 IU Suppository",
+    "scientificName": "Famciclovir",
+    "company": "Hikma",
+    "price": 555.99
+  },
+  {
+    "id": 497,
+    "tradeName": "Abimol 8000 IU Syrup",
+    "scientificName": "Pomalidomide",
+    "company": "GlaxoSmithKline",
+    "price": 334.54
+  },
+  {
+    "id": 210,
+    "tradeName": "Accolate",
+    "scientificName": "Adalimumab",
+    "company": "Pfizer Egypt",
+    "price": 309.37
+  },
+  {
+    "id": 171,
+    "tradeName": "Actos",
+    "scientificName": "Oseltamivir",
+    "company": "Servier",
+    "price": 250.6
+  },
+  {
+    "id": 253,
+    "tradeName": "Acular",
+    "scientificName": "Podophyllin",
+    "company": "Rameda",
+    "price": 10.84
+  },
+  {
+    "id": 254,
+    "tradeName": "Acuvail",
+    "scientificName": "Ibuprofen",
+    "company": "GlaxoSmithKline",
+    "price": 436.16
+  },
+  {
+    "id": 154,
+    "tradeName": "Adalat",
+    "scientificName": "Diosmin",
+    "company": "GlaxoSmithKline",
+    "price": 258.03
+  },
+  {
+    "id": 5,
+    "tradeName": "Adol 500",
+    "scientificName": "Donepezil",
+    "company": "Pharco",
+    "price": 411.56
+  },
+  {
+    "id": 492,
+    "tradeName": "Adol 500 100mg/ml Capsule",
+    "scientificName": "Physostigmine",
+    "company": "Rameda",
+    "price": 577.55
+  },
+  {
+    "id": 493,
+    "tradeName": "Adol 500 100mg/ml Ointment",
+    "scientificName": "L-asparaginase",
+    "company": "Pharco Biet",
+    "price": 694.47
+  },
+  {
+    "id": 491,
+    "tradeName": "Adol 500 200,000 IU Capsule",
+    "scientificName": "Rasagiline",
+    "company": "Pharco",
+    "price": 382.52
+  },
+  {
+    "id": 490,
+    "tradeName": "Adol 500 200,000 IU Tablet",
+    "scientificName": "Doxorubicin",
+    "company": "Sigma",
+    "price": 568.01
+  },
+  {
+    "id": 488,
+    "tradeName": "Adol 500 24mg Ointment",
+    "scientificName": "Cantharidin",
+    "company": "Boehringer Ingelheim",
+    "price": 503.03
+  },
+  {
+    "id": 489,
+    "tradeName": "Adol 500 24mg Solution",
+    "scientificName": "Hyoscine",
+    "company": "Tabuk",
+    "price": 683.05
+  },
+  {
+    "id": 453,
+    "tradeName": "Adolescent",
+    "scientificName": "Osimertinib",
+    "company": "Hikma",
+    "price": 356.09
+  },
+  {
+    "id": 459,
+    "tradeName": "Adult",
+    "scientificName": "Pazopanib",
+    "company": "Servier",
+    "price": 135.91
+  },
+  {
+    "id": 202,
+    "tradeName": "Advair",
+    "scientificName": "Miconazole",
+    "company": "Amoun",
+    "price": 275.85
+  },
+  {
+    "id": 19,
+    "tradeName": "Advil",
+    "scientificName": "Clotrimazole",
+    "company": "Multi-Apex",
+    "price": 366.21
+  },
+  {
+    "id": 573,
+    "tradeName": "Advil 300mg Powder",
+    "scientificName": "Sorafenib",
+    "company": "Glaxo Wellcome",
+    "price": 417.26
+  },
+  {
+    "id": 572,
+    "tradeName": "Advil 300mg Tablet",
+    "scientificName": "Olokizumab",
+    "company": "Julphar",
+    "price": 699.25
+  },
+  {
+    "id": 575,
+    "tradeName": "Advil 4mg Powder",
+    "scientificName": "Hexamethylmelamine",
+    "company": "EIPICO",
+    "price": 115.0
+  },
+  {
+    "id": 574,
+    "tradeName": "Advil 4mg Syrup",
+    "scientificName": "Melphalan",
+    "company": "Tabuk",
+    "price": 81.02
+  },
+  {
+    "id": 577,
+    "tradeName": "Advil 500mg Suspension",
+    "scientificName": "Busulfan",
+    "company": "Hikma Egypt",
+    "price": 479.27
+  },
+  {
+    "id": 576,
+    "tradeName": "Advil 500mg Tablet",
+    "scientificName": "Pemetrexed",
+    "company": "Rameda",
+    "price": 508.78
+  },
+  {
+    "id": 456,
+    "tradeName": "Aged",
+    "scientificName": "Azithromycin",
+    "company": "Glaxo Wellcome",
+    "price": 379.0
+  },
+  {
+    "id": 193,
+    "tradeName": "Alavert",
+    "scientificName": "Metformin",
+    "company": "Pharco Biet",
+    "price": 202.45
+  },
+  {
+    "id": 374,
+    "tradeName": "Albumin",
+    "scientificName": "Cidofovir",
+    "company": "Boehringer Ingelheim",
+    "price": 344.93
+  },
+  {
+    "id": 197,
+    "tradeName": "Albuterol",
+    "scientificName": "Dacarbazine",
+    "company": "Arab Drug Company",
+    "price": 295.77
+  },
+  {
+    "id": 266,
+    "tradeName": "Alesse",
+    "scientificName": "Adalimumab",
+    "company": "Memphis",
+    "price": 471.06
+  },
+  {
+    "id": 21,
+    "tradeName": "Aleve",
+    "scientificName": "Miconazole",
+    "company": "Glaxo Wellcome",
+    "price": 468.09
+  },
+  {
+    "id": 588,
+    "tradeName": "Aleve 1000mg Capsule",
+    "scientificName": "Sunitinib",
+    "company": "CID",
+    "price": 789.59
+  },
+  {
+    "id": 589,
+    "tradeName": "Aleve 1000mg Gel",
+    "scientificName": "Bupivacaine",
+    "company": "Amoun",
+    "price": 201.21
+  },
+  {
+    "id": 586,
+    "tradeName": "Aleve 2mg Cream",
+    "scientificName": "Ruxolitinib",
+    "company": "Eva Pharma",
+    "price": 16.11
+  },
+  {
+    "id": 587,
+    "tradeName": "Aleve 2mg Tablet",
+    "scientificName": "Bosutinib",
+    "company": "Janssen",
+    "price": 582.91
+  },
+  {
+    "id": 585,
+    "tradeName": "Aleve 3mg Gel",
+    "scientificName": "Streptozocin",
+    "company": "Nawmed",
+    "price": 619.21
+  },
+  {
+    "id": 584,
+    "tradeName": "Aleve 3mg Injection",
+    "scientificName": "Paclitaxel",
+    "company": "Kahira Pharm",
+    "price": 760.96
+  },
+  {
+    "id": 180,
+    "tradeName": "Allegra",
+    "scientificName": "Osimertinib",
+    "company": "LEO Pharma",
+    "price": 283.91
+  },
+  {
+    "id": 295,
+    "tradeName": "Alprazolam",
+    "scientificName": "Tofacitinib",
+    "company": "Hikma Egypt",
+    "price": 9.2
+  },
+  {
+    "id": 251,
+    "tradeName": "Alrex",
+    "scientificName": "Epinephrine",
+    "company": "Tabuk",
+    "price": 346.93
+  },
+  {
+    "id": 146,
+    "tradeName": "Altace",
+    "scientificName": "Ganciclovir",
+    "company": "Pharco",
+    "price": 436.06
+  },
+  {
+    "id": 161,
+    "tradeName": "Amaryl",
+    "scientificName": "Adalimumab",
+    "company": "Eva Pharma",
+    "price": 390.71
+  },
+  {
+    "id": 127,
+    "tradeName": "Amaryl 2mg",
+    "scientificName": "Thalidomide",
+    "company": "Eva Pharma",
+    "price": 215.71
+  },
+  {
+    "id": 64,
+    "tradeName": "Amikacin",
+    "scientificName": "Alectinib",
+    "company": "GSK Egypt",
+    "price": 135.69
+  },
+  {
+    "id": 846,
+    "tradeName": "Amikacin 100,000 IU Injection",
+    "scientificName": "Glycopyrrolate",
+    "company": "Tabuk",
+    "price": 353.58
+  },
+  {
+    "id": 847,
+    "tradeName": "Amikacin 100,000 IU Suppository",
+    "scientificName": "Ibuprofen",
+    "company": "Nawmed",
+    "price": 610.6
+  },
+  {
+    "id": 845,
+    "tradeName": "Amikacin 30% Granules",
+    "scientificName": "Ixazomib",
+    "company": "EVA",
+    "price": 234.63
+  },
+  {
+    "id": 844,
+    "tradeName": "Amikacin 30% Syrup",
+    "scientificName": "Nifuroxazide",
+    "company": "Janssen",
+    "price": 213.91
+  },
+  {
+    "id": 843,
+    "tradeName": "Amikacin 750mg Powder",
+    "scientificName": "Chlorambucil",
+    "company": "Sigma",
+    "price": 288.29
+  },
+  {
+    "id": 842,
+    "tradeName": "Amikacin 750mg Syrup",
+    "scientificName": "Ribavirin",
+    "company": "EIPICO",
+    "price": 629.33
+  },
+  {
+    "id": 65,
+    "tradeName": "Amikin",
+    "scientificName": "Trypsin/Chymotrypsin",
+    "company": "Global Napi",
+    "price": 199.45
+  },
+  {
+    "id": 848,
+    "tradeName": "Amikin 1000 IU Ointment",
+    "scientificName": "Natalizumab",
+    "company": "Hikma Egypt",
+    "price": 105.4
+  },
+  {
+    "id": 849,
+    "tradeName": "Amikin 1000 IU Powder",
+    "scientificName": "Cyclophosphamide",
+    "company": "Hikma Egypt",
+    "price": 510.33
+  },
+  {
+    "id": 853,
+    "tradeName": "Amikin 2.5mg Gel",
+    "scientificName": "Ibritumomab",
+    "company": "Organon Egypt",
+    "price": 732.41
+  },
+  {
+    "id": 852,
+    "tradeName": "Amikin 2.5mg Ointment",
+    "scientificName": "Tositumomab",
+    "company": "Boehringer Ingelheim",
+    "price": 39.11
+  },
+  {
+    "id": 851,
+    "tradeName": "Amikin 500mg/ml Gel",
+    "scientificName": "Rituximab",
+    "company": "EIPICO",
+    "price": 275.05
+  },
+  {
+    "id": 850,
+    "tradeName": "Amikin 500mg/ml Suppository",
+    "scientificName": "Nifuroxazide",
+    "company": "Sandoz",
+    "price": 373.51
+  },
+  {
+    "id": 151,
+    "tradeName": "Amlodipine",
+    "scientificName": "Topotecan",
+    "company": "Pharco",
+    "price": 352.18
+  },
+  {
+    "id": 1068,
+    "tradeName": "Amlodipine + Atenolol",
+    "scientificName": "Amlodipine / Atenolol",
+    "company": "Global Napi",
+    "price": 258.38
+  },
+  {
+    "id": 57,
+    "tradeName": "Amoxicillin",
+    "scientificName": "Dasatinib",
+    "company": "Pharco",
+    "price": 401.95
+  },
+  {
+    "id": 1066,
+    "tradeName": "Amoxicillin + Clavulanate",
+    "scientificName": "Amoxicillin / Clavulanate",
+    "company": "Spimaco",
+    "price": 70.17
+  },
+  {
+    "id": 802,
+    "tradeName": "Amoxicillin 0.5% Capsule",
+    "scientificName": "Metoclopramide/Enzymes",
+    "company": "LEO Pharma",
+    "price": 217.74
+  },
+  {
+    "id": 803,
+    "tradeName": "Amoxicillin 0.5% Tablet",
+    "scientificName": "Alectinib",
+    "company": "Kahira Pharm",
+    "price": 557.37
+  },
+  {
+    "id": 800,
+    "tradeName": "Amoxicillin 10% Injection",
+    "scientificName": "Vitamin B",
+    "company": "Servier",
+    "price": 757.96
+  },
+  {
+    "id": 801,
+    "tradeName": "Amoxicillin 10% Suspension",
+    "scientificName": "Betamethasone",
+    "company": "Merck Egypt",
+    "price": 171.32
+  },
+  {
+    "id": 804,
+    "tradeName": "Amoxicillin 8000 IU Cream",
+    "scientificName": "Betamethasone",
+    "company": "Hikma Egypt",
+    "price": 657.89
+  },
+  {
+    "id": 805,
+    "tradeName": "Amoxicillin 8000 IU Tablet",
+    "scientificName": "Sirukumab",
+    "company": "Kahira Pharm",
+    "price": 62.1
+  },
+  {
+    "id": 58,
+    "tradeName": "Amoxil",
+    "scientificName": "Rilonacept",
+    "company": "Pharco",
+    "price": 54.67
+  },
+  {
+    "id": 809,
+    "tradeName": "Amoxil 2000 IU Granules",
+    "scientificName": "Domperidone",
+    "company": "Pharco Biet",
+    "price": 120.06
+  },
+  {
+    "id": 808,
+    "tradeName": "Amoxil 2000 IU Powder",
+    "scientificName": "Cobimetinib",
+    "company": "Bayer Egypt",
+    "price": 188.1
+  },
+  {
+    "id": 810,
+    "tradeName": "Amoxil 20mg Ointment",
+    "scientificName": "Memantine",
+    "company": "Memphis",
+    "price": 294.93
+  },
+  {
+    "id": 811,
+    "tradeName": "Amoxil 20mg Powder",
+    "scientificName": "Domperidone",
+    "company": "Bayer Egypt",
+    "price": 516.78
+  },
+  {
+    "id": 806,
+    "tradeName": "Amoxil 750mg Ointment",
+    "scientificName": "Tocilizumab",
+    "company": "Hikma",
+    "price": 597.59
+  },
+  {
+    "id": 807,
+    "tradeName": "Amoxil 750mg Solution",
+    "scientificName": "Ketoprofen",
+    "company": "Nawmed",
+    "price": 522.44
+  },
+  {
+    "id": 59,
+    "tradeName": "Amoxilin",
+    "scientificName": "Ibuprofen",
+    "company": "Kahira Pharm",
+    "price": 346.46
+  },
+  {
+    "id": 817,
+    "tradeName": "Amoxilin 100mg Ointment",
+    "scientificName": "Carfilzomib",
+    "company": "Eva Pharma",
+    "price": 174.42
+  },
+  {
+    "id": 816,
+    "tradeName": "Amoxilin 100mg Suppository",
+    "scientificName": "Amantadine",
+    "company": "Julphar",
+    "price": 176.29
+  },
+  {
+    "id": 813,
+    "tradeName": "Amoxilin 1g/100ml Cream",
+    "scientificName": "Sirukumab",
+    "company": "Nawmed",
+    "price": 184.11
+  },
+  {
+    "id": 812,
+    "tradeName": "Amoxilin 1g/100ml Ointment",
+    "scientificName": "Adalimumab",
+    "company": "Nawmed",
+    "price": 408.74
+  },
+  {
+    "id": 815,
+    "tradeName": "Amoxilin 80mg Cream",
+    "scientificName": "Paclitaxel",
+    "company": "Boehringer Ingelheim",
+    "price": 650.71
+  },
+  {
+    "id": 814,
+    "tradeName": "Amoxilin 80mg Powder",
+    "scientificName": "Sinecatechins",
+    "company": "Bayer Egypt",
+    "price": 168.7
+  },
+  {
+    "id": 401,
+    "tradeName": "Analyzers",
+    "scientificName": "Epratuzumab",
+    "company": "Pharco",
+    "price": 314.35
+  },
+  {
+    "id": 24,
+    "tradeName": "Anaprox",
+    "scientificName": "Fusidic Acid",
+    "company": "Novartis Egypt",
+    "price": 28.79
+  },
+  {
+    "id": 605,
+    "tradeName": "Anaprox 0.1% Capsule",
+    "scientificName": "Cidofovir",
+    "company": "Takeda",
+    "price": 110.05
+  },
+  {
+    "id": 604,
+    "tradeName": "Anaprox 0.1% Cream",
+    "scientificName": "Epratuzumab",
+    "company": "Arab Drug Company",
+    "price": 332.1
+  },
+  {
+    "id": 606,
+    "tradeName": "Anaprox 10mg Granules",
+    "scientificName": "Epratuzumab",
+    "company": "Janssen",
+    "price": 399.16
+  },
+  {
+    "id": 607,
+    "tradeName": "Anaprox 10mg Powder",
+    "scientificName": "Esomeprazole",
+    "company": "GSK Egypt",
+    "price": 707.56
+  },
+  {
+    "id": 603,
+    "tradeName": "Anaprox 2mg Capsule",
+    "scientificName": "Ketoprofen",
+    "company": "Julphar",
+    "price": 295.77
+  },
+  {
+    "id": 602,
+    "tradeName": "Anaprox 2mg Solution",
+    "scientificName": "Sorafenib",
+    "company": "Julphar",
+    "price": 713.01
+  },
+  {
+    "id": 328,
+    "tradeName": "Anastrozole",
+    "scientificName": "Sinecatechins",
+    "company": "LEO Pharma",
+    "price": 137.49
+  },
+  {
+    "id": 437,
+    "tradeName": "Anesthesia",
+    "scientificName": "Mitoxantrone",
+    "company": "Pharco",
+    "price": 474.83
+  },
+  {
+    "id": 1,
+    "tradeName": "Antinal",
+    "scientificName": "Epratuzumab",
+    "company": "Eva Pharma",
+    "price": 485.73
+  },
+  {
+    "id": 466,
+    "tradeName": "Antinal 10,000 IU Granules",
+    "scientificName": "Alectinib",
+    "company": "EVA",
+    "price": 606.48
+  },
+  {
+    "id": 467,
+    "tradeName": "Antinal 10,000 IU Suspension",
+    "scientificName": "Vinorelbine",
+    "company": "Memphis",
+    "price": 713.83
+  },
+  {
+    "id": 468,
+    "tradeName": "Antinal 200 IU Cream",
+    "scientificName": "Trifluridine",
+    "company": "Mina Pharm",
+    "price": 209.51
+  },
+  {
+    "id": 469,
+    "tradeName": "Antinal 200 IU Solution",
+    "scientificName": "Vemurafenib",
+    "company": "Janssen",
+    "price": 107.83
+  },
+  {
+    "id": 465,
+    "tradeName": "Antinal 30mg Capsule",
+    "scientificName": "Paclitaxel",
+    "company": "Pharco",
+    "price": 489.52
+  },
+  {
+    "id": 464,
+    "tradeName": "Antinal 30mg Suppository",
+    "scientificName": "Muromonab-CD3",
+    "company": "Merck Egypt",
+    "price": 463.99
+  },
+  {
+    "id": 26,
+    "tradeName": "Arcoxia",
+    "scientificName": "Gemcitabine",
+    "company": "Sanofi Egypt",
+    "price": 172.55
+  },
+  {
+    "id": 614,
+    "tradeName": "Arcoxia 2000 IU Granules",
+    "scientificName": "Valganciclovir",
+    "company": "Abbott Egypt",
+    "price": 408.11
+  },
+  {
+    "id": 615,
+    "tradeName": "Arcoxia 2000 IU Ointment",
+    "scientificName": "Alectinib",
+    "company": "Medical Union",
+    "price": 202.14
+  },
+  {
+    "id": 618,
+    "tradeName": "Arcoxia 400,000 IU Granules",
+    "scientificName": "Valacyclovir",
+    "company": "Arab Drug Company",
+    "price": 111.39
+  },
+  {
+    "id": 619,
+    "tradeName": "Arcoxia 400,000 IU Ointment",
+    "scientificName": "Vinblastine",
+    "company": "Nawmed",
+    "price": 180.32
+  },
+  {
+    "id": 616,
+    "tradeName": "Arcoxia 750mg Gel",
+    "scientificName": "Miconazole",
+    "company": "Nawmed",
+    "price": 687.8
+  },
+  {
+    "id": 617,
+    "tradeName": "Arcoxia 750mg Syrup",
+    "scientificName": "Vasopressin",
+    "company": "Bayer Egypt",
+    "price": 226.32
+  },
+  {
+    "id": 327,
+    "tradeName": "Arimidex",
+    "scientificName": "Rimantadine",
+    "company": "Dar Al Dawa",
+    "price": 386.32
+  },
+  {
+    "id": 308,
+    "tradeName": "Armour",
+    "scientificName": "Physostigmine",
+    "company": "Janssen",
+    "price": 471.94
+  },
+  {
+    "id": 331,
+    "tradeName": "Aromasin",
+    "scientificName": "Teniposide",
+    "company": "GlaxoSmithKline",
+    "price": 27.45
+  },
+  {
+    "id": 105,
+    "tradeName": "Ascorbic Acid",
+    "scientificName": "Clotrimazole",
+    "company": "Pfizer Egypt",
+    "price": 125.3
+  },
+  {
+    "id": 400,
+    "tradeName": "Assays",
+    "scientificName": "Brigatinib",
+    "company": "Sedico",
+    "price": 329.0
+  },
+  {
+    "id": 185,
+    "tradeName": "Atarax",
+    "scientificName": "Procarbazine",
+    "company": "Servier",
+    "price": 398.31
+  },
+  {
+    "id": 132,
+    "tradeName": "Atenolol",
+    "scientificName": "Glimepiride",
+    "company": "Janssen",
+    "price": 158.46
+  },
+  {
+    "id": 298,
+    "tradeName": "Ativan",
+    "scientificName": "Fexofenadine",
+    "company": "Novartis Egypt",
+    "price": 192.97
+  },
+  {
+    "id": 430,
+    "tradeName": "Atropine",
+    "scientificName": "Sorafenib",
+    "company": "LEO Pharma",
+    "price": 448.05
+  },
+  {
+    "id": 214,
+    "tradeName": "Atrovent",
+    "scientificName": "Hyoscine",
+    "company": "Servier",
+    "price": 353.68
+  },
+  {
+    "id": 31,
+    "tradeName": "Augmentin 1g",
+    "scientificName": "Golimumab",
+    "company": "Servier",
+    "price": 406.72
+  },
+  {
+    "id": 646,
+    "tradeName": "Augmentin 1g 10,000 IU Gel",
+    "scientificName": "Bupivacaine",
+    "company": "GlaxoSmithKline",
+    "price": 213.4
+  },
+  {
+    "id": 647,
+    "tradeName": "Augmentin 1g 10,000 IU Suppository",
+    "scientificName": "Dobutamine",
+    "company": "Dar Al Dawa",
+    "price": 626.93
+  },
+  {
+    "id": 645,
+    "tradeName": "Augmentin 1g 1mg Injection",
+    "scientificName": "Ruxolitinib",
+    "company": "Novartis Egypt",
+    "price": 185.91
+  },
+  {
+    "id": 644,
+    "tradeName": "Augmentin 1g 1mg Solution",
+    "scientificName": "Fludarabine",
+    "company": "Merck Egypt",
+    "price": 30.89
+  },
+  {
+    "id": 648,
+    "tradeName": "Augmentin 1g 5mg Injection",
+    "scientificName": "Imatinib",
+    "company": "AstraZeneca",
+    "price": 194.45
+  },
+  {
+    "id": 649,
+    "tradeName": "Augmentin 1g 5mg Ointment",
+    "scientificName": "Cyclophosphamide",
+    "company": "Servier",
+    "price": 790.96
+  },
+  {
+    "id": 173,
+    "tradeName": "Avandia",
+    "scientificName": "Filgotinib",
+    "company": "Sanofi Egypt",
+    "price": 351.92
+  },
+  {
+    "id": 56,
+    "tradeName": "Azithromycin",
+    "scientificName": "Nilotinib",
+    "company": "Servier",
+    "price": 362.23
+  },
+  {
+    "id": 799,
+    "tradeName": "Azithromycin 20mg Powder",
+    "scientificName": "Nifuroxazide",
+    "company": "Eva Pharma",
+    "price": 270.44
+  },
+  {
+    "id": 798,
+    "tradeName": "Azithromycin 20mg Suspension",
+    "scientificName": "Tildrakizumab",
+    "company": "Pharco",
+    "price": 42.65
+  },
+  {
+    "id": 795,
+    "tradeName": "Azithromycin 30mg Injection",
+    "scientificName": "Adalimumab",
+    "company": "Pfizer Egypt",
+    "price": 182.17
+  },
+  {
+    "id": 794,
+    "tradeName": "Azithromycin 30mg Tablet",
+    "scientificName": "Daclizumab",
+    "company": "Merck Egypt",
+    "price": 144.69
+  },
+  {
+    "id": 797,
+    "tradeName": "Azithromycin 3mg Suppository",
+    "scientificName": "Valganciclovir",
+    "company": "Multi-Apex",
+    "price": 553.09
+  },
+  {
+    "id": 796,
+    "tradeName": "Azithromycin 3mg Suspension",
+    "scientificName": "Hexamethylmelamine",
+    "company": "Novo Nordisk Egypt",
+    "price": 689.73
+  },
+  {
+    "id": 121,
+    "tradeName": "B-Complex",
+    "scientificName": "Muromonab-CD3",
+    "company": "Mina Pharm",
+    "price": 416.41
+  },
+  {
+    "id": 122,
+    "tradeName": "B1-B6-B12",
+    "scientificName": "Bosutinib",
+    "company": "Pharco",
+    "price": 52.45
+  },
+  {
+    "id": 449,
+    "tradeName": "Baby",
+    "scientificName": "Diosmin",
+    "company": "Pharco",
+    "price": 16.36
+  },
+  {
+    "id": 423,
+    "tradeName": "Bandage",
+    "scientificName": "Fluorouracil",
+    "company": "EIPICO",
+    "price": 393.8
+  },
+  {
+    "id": 355,
+    "tradeName": "Barium",
+    "scientificName": "Ipratropium",
+    "company": "Servier",
+    "price": 25.34
+  },
+  {
+    "id": 390,
+    "tradeName": "Barium",
+    "scientificName": "Pazopanib",
+    "company": "Servier",
+    "price": 80.05
+  },
+  {
+    "id": 356,
+    "tradeName": "Barosperse",
+    "scientificName": "Selegiline",
+    "company": "Medical Union",
+    "price": 33.38
+  },
+  {
+    "id": 98,
+    "tradeName": "Becadexamin",
+    "scientificName": "Tiemonium",
+    "company": "Abbott Egypt",
+    "price": 267.97
+  },
+  {
+    "id": 1050,
+    "tradeName": "Becadexamin 100 IU Solution",
+    "scientificName": "Rilonacept",
+    "company": "Amoun",
+    "price": 127.93
+  },
+  {
+    "id": 1051,
+    "tradeName": "Becadexamin 100 IU Tablet",
+    "scientificName": "Hexamethylmelamine",
+    "company": "LEO Pharma",
+    "price": 350.3
+  },
+  {
+    "id": 1046,
+    "tradeName": "Becadexamin 2mg Capsule",
+    "scientificName": "Nelarabine",
+    "company": "GlaxoSmithKline",
+    "price": 51.7
+  },
+  {
+    "id": 1047,
+    "tradeName": "Becadexamin 2mg Ointment",
+    "scientificName": "Rasagiline",
+    "company": "Medical Union",
+    "price": 508.49
+  },
+  {
+    "id": 1049,
+    "tradeName": "Becadexamin 40,000 IU Capsule",
+    "scientificName": "Hyoscine",
+    "company": "CID",
+    "price": 449.45
+  },
+  {
+    "id": 1048,
+    "tradeName": "Becadexamin 40,000 IU Granules",
+    "scientificName": "Ixekizumab",
+    "company": "Boehringer Ingelheim",
+    "price": 452.48
+  },
+  {
+    "id": 1078,
+    "tradeName": "Beclomethasone + Formoterol",
+    "scientificName": "Beclomethasone / Formoterol",
+    "company": "Pfizer Egypt",
+    "price": 266.68
+  },
+  {
+    "id": 181,
+    "tradeName": "Benadryl",
+    "scientificName": "Lidocaine",
+    "company": "Dar Al Dawa",
+    "price": 428.84
+  },
+  {
+    "id": 61,
+    "tradeName": "Benzylpenicillin",
+    "scientificName": "Daunorubicin",
+    "company": "Abbott Egypt",
+    "price": 377.94
+  },
+  {
+    "id": 825,
+    "tradeName": "Benzylpenicillin 3mg Injection",
+    "scientificName": "Tiemonium",
+    "company": "Amoun",
+    "price": 298.59
+  },
+  {
+    "id": 824,
+    "tradeName": "Benzylpenicillin 3mg Solution",
+    "scientificName": "Ibuprofen",
+    "company": "Janssen",
+    "price": 712.43
+  },
+  {
+    "id": 829,
+    "tradeName": "Benzylpenicillin 5mg Cream",
+    "scientificName": "Trametinib",
+    "company": "Organon Egypt",
+    "price": 130.68
+  },
+  {
+    "id": 828,
+    "tradeName": "Benzylpenicillin 5mg Injection",
+    "scientificName": "Dactinomycin",
+    "company": "Sedico",
+    "price": 342.21
+  },
+  {
+    "id": 827,
+    "tradeName": "Benzylpenicillin 800 IU Suppository",
+    "scientificName": "Carfilzomib",
+    "company": "Sedico",
+    "price": 21.25
+  },
+  {
+    "id": 826,
+    "tradeName": "Benzylpenicillin 800 IU Syrup",
+    "scientificName": "Podophyllotoxin",
+    "company": "Merck Egypt",
+    "price": 633.92
+  },
+  {
+    "id": 216,
+    "tradeName": "Betnovate",
+    "scientificName": "Muromonab-CD3",
+    "company": "Spimaco",
+    "price": 379.28
+  },
+  {
+    "id": 138,
+    "tradeName": "Bisoprolol",
+    "scientificName": "Epirubicin",
+    "company": "Pharco Biet",
+    "price": 462.91
+  },
+  {
+    "id": 11,
+    "tradeName": "Brufen 400",
+    "scientificName": "Valganciclovir",
+    "company": "LEO Pharma",
+    "price": 470.71
+  },
+  {
+    "id": 529,
+    "tradeName": "Brufen 400 100,000 IU Cream",
+    "scientificName": "Clotrimazole",
+    "company": "Boehringer Ingelheim",
+    "price": 612.24
+  },
+  {
+    "id": 528,
+    "tradeName": "Brufen 400 100,000 IU Solution",
+    "scientificName": "Esomeprazole",
+    "company": "Glaxo Wellcome",
+    "price": 641.73
+  },
+  {
+    "id": 527,
+    "tradeName": "Brufen 400 25mg Cream",
+    "scientificName": "Paracetamol",
+    "company": "GSK Egypt",
+    "price": 387.14
+  },
+  {
+    "id": 526,
+    "tradeName": "Brufen 400 25mg Suspension",
+    "scientificName": "Ribavirin",
+    "company": "Sanofi Egypt",
+    "price": 278.05
+  },
+  {
+    "id": 524,
+    "tradeName": "Brufen 400 30mg Capsule",
+    "scientificName": "Mitoxantrone",
+    "company": "Nawmed",
+    "price": 128.22
+  },
+  {
+    "id": 525,
+    "tradeName": "Brufen 400 30mg Cream",
+    "scientificName": "Sinecatechins",
+    "company": "Nawmed",
+    "price": 529.04
+  },
+  {
+    "id": 207,
+    "tradeName": "Budesonide",
+    "scientificName": "Atropine",
+    "company": "GSK Egypt",
+    "price": 413.66
+  },
+  {
+    "id": 1077,
+    "tradeName": "Budesonide + Formoterol",
+    "scientificName": "Budesonide / Formoterol",
+    "company": "Servier",
+    "price": 166.57
+  },
+  {
+    "id": 376,
+    "tradeName": "Buminate",
+    "scientificName": "Osimertinib",
+    "company": "Kahira Pharm",
+    "price": 376.56
+  },
+  {
+    "id": 342,
+    "tradeName": "Bupivacaine",
+    "scientificName": "Irinotecan",
+    "company": "Memphis",
+    "price": 470.28
+  },
+  {
+    "id": 71,
+    "tradeName": "Buscopan",
+    "scientificName": "Pegaspargase",
+    "company": "Novo Nordisk Egypt",
+    "price": 35.48
+  },
+  {
+    "id": 889,
+    "tradeName": "Buscopan 1mg Capsule",
+    "scientificName": "Epinephrine",
+    "company": "Kahira Pharm",
+    "price": 65.68
+  },
+  {
+    "id": 888,
+    "tradeName": "Buscopan 1mg Solution",
+    "scientificName": "Valacyclovir",
+    "company": "Bayer Egypt",
+    "price": 273.91
+  },
+  {
+    "id": 886,
+    "tradeName": "Buscopan 20mg Granules",
+    "scientificName": "Epratuzumab",
+    "company": "Janssen",
+    "price": 210.93
+  },
+  {
+    "id": 887,
+    "tradeName": "Buscopan 20mg Ointment",
+    "scientificName": "Regorafenib",
+    "company": "AstraZeneca",
+    "price": 410.61
+  },
+  {
+    "id": 884,
+    "tradeName": "Buscopan 2mg Capsule",
+    "scientificName": "Cetirizine",
+    "company": "Amoun",
+    "price": 452.57
+  },
+  {
+    "id": 885,
+    "tradeName": "Buscopan 2mg Solution",
+    "scientificName": "Amoxicillin",
+    "company": "Organon Egypt",
+    "price": 272.94
+  },
+  {
+    "id": 393,
+    "tradeName": "CT Scan",
+    "scientificName": "Betamethasone",
+    "company": "GSK Egypt",
+    "price": 27.31
+  },
+  {
+    "id": 110,
+    "tradeName": "Calcium Carbonate",
+    "scientificName": "Epratuzumab",
+    "company": "Abbott Egypt",
+    "price": 101.71
+  },
+  {
+    "id": 107,
+    "tradeName": "Calcium D",
+    "scientificName": "Tildrakizumab",
+    "company": "Hikma",
+    "price": 400.13
+  },
+  {
+    "id": 109,
+    "tradeName": "Caltrate",
+    "scientificName": "Vemurafenib",
+    "company": "Organon Egypt",
+    "price": 272.89
+  },
+  {
+    "id": 226,
+    "tradeName": "Canesten",
+    "scientificName": "Etoposide",
+    "company": "Abbott Egypt",
+    "price": 280.37
+  },
+  {
+    "id": 344,
+    "tradeName": "Carbocaine",
+    "scientificName": "Penciclovir",
+    "company": "Abbott Egypt",
+    "price": 262.43
+  },
+  {
+    "id": 136,
+    "tradeName": "Carvedilol",
+    "scientificName": "Nelarabine",
+    "company": "LEO Pharma",
+    "price": 341.37
+  },
+  {
+    "id": 12,
+    "tradeName": "Catafast 50",
+    "scientificName": "Busulfan",
+    "company": "Hikma",
+    "price": 307.54
+  },
+  {
+    "id": 532,
+    "tradeName": "Catafast 50 10% Gel",
+    "scientificName": "Hexamethylmelamine",
+    "company": "Pfizer Egypt",
+    "price": 11.16
+  },
+  {
+    "id": 533,
+    "tradeName": "Catafast 50 10% Granules",
+    "scientificName": "Muromonab-CD3",
+    "company": "GSK Egypt",
+    "price": 499.55
+  },
+  {
+    "id": 534,
+    "tradeName": "Catafast 50 100,000 IU Powder",
+    "scientificName": "Thiotepa",
+    "company": "CID",
+    "price": 599.51
+  },
+  {
+    "id": 535,
+    "tradeName": "Catafast 50 100,000 IU Tablet",
+    "scientificName": "Bisoprolol",
+    "company": "Spimaco",
+    "price": 477.25
+  },
+  {
+    "id": 530,
+    "tradeName": "Catafast 50 10mg Cream",
+    "scientificName": "Valganciclovir",
+    "company": "Medical Union",
+    "price": 111.19
+  },
+  {
+    "id": 531,
+    "tradeName": "Catafast 50 10mg Suspension",
+    "scientificName": "Semustine",
+    "company": "Kahira Pharm",
+    "price": 690.71
+  },
+  {
+    "id": 407,
+    "tradeName": "Catheter",
+    "scientificName": "Vandetanib",
+    "company": "Hikma Egypt",
+    "price": 187.57
+  },
+  {
+    "id": 285,
+    "tradeName": "Celexa",
+    "scientificName": "Dacarbazine",
+    "company": "Global Napi",
+    "price": 325.68
+  },
+  {
+    "id": 100,
+    "tradeName": "Centrum",
+    "scientificName": "Dabrafenib",
+    "company": "Kahira Pharm",
+    "price": 23.53
+  },
+  {
+    "id": 1059,
+    "tradeName": "Centrum 10mg Gel",
+    "scientificName": "Tositumomab",
+    "company": "Tabuk",
+    "price": 410.83
+  },
+  {
+    "id": 1058,
+    "tradeName": "Centrum 10mg Syrup",
+    "scientificName": "Natalizumab",
+    "company": "Chemipharm",
+    "price": 779.26
+  },
+  {
+    "id": 1062,
+    "tradeName": "Centrum 2mg Granules",
+    "scientificName": "Canakinumab",
+    "company": "Eva Pharma",
+    "price": 277.04
+  },
+  {
+    "id": 1063,
+    "tradeName": "Centrum 2mg Ointment",
+    "scientificName": "Secukinumab",
+    "company": "EIPICO",
+    "price": 466.96
+  },
+  {
+    "id": 1061,
+    "tradeName": "Centrum 40mg Capsule",
+    "scientificName": "Binimetinib",
+    "company": "Sedico",
+    "price": 404.71
+  },
+  {
+    "id": 1060,
+    "tradeName": "Centrum 40mg Granules",
+    "scientificName": "Valacyclovir",
+    "company": "Merck Egypt",
+    "price": 377.01
+  },
+  {
+    "id": 369,
+    "tradeName": "Cervarix",
+    "scientificName": "Altretamine",
+    "company": "Sandoz",
+    "price": 134.89
+  },
+  {
+    "id": 2,
+    "tradeName": "Cetal",
+    "scientificName": "Bleomycin",
+    "company": "Servier",
+    "price": 63.3
+  },
+  {
+    "id": 471,
+    "tradeName": "Cetal 10mg Injection",
+    "scientificName": "Vincristine",
+    "company": "GSK Egypt",
+    "price": 766.2
+  },
+  {
+    "id": 470,
+    "tradeName": "Cetal 10mg Suspension",
+    "scientificName": "Fludarabine",
+    "company": "Novartis Egypt",
+    "price": 110.82
+  },
+  {
+    "id": 474,
+    "tradeName": "Cetal 20,000 IU Gel",
+    "scientificName": "Ibritumomab",
+    "company": "Pfizer Egypt",
+    "price": 372.27
+  },
+  {
+    "id": 475,
+    "tradeName": "Cetal 20,000 IU Suppository",
+    "scientificName": "Lidocaine",
+    "company": "Global Napi",
+    "price": 53.45
+  },
+  {
+    "id": 472,
+    "tradeName": "Cetal 50mg/ml Ointment",
+    "scientificName": "Levocetirizine",
+    "company": "Hikma Egypt",
+    "price": 524.89
+  },
+  {
+    "id": 473,
+    "tradeName": "Cetal 50mg/ml Powder",
+    "scientificName": "Chlorambucil",
+    "company": "Mina Pharm",
+    "price": 284.13
+  },
+  {
+    "id": 402,
+    "tradeName": "Chemistry",
+    "scientificName": "Valganciclovir",
+    "company": "Eva Pharma",
+    "price": 392.08
+  },
+  {
+    "id": 452,
+    "tradeName": "Child",
+    "scientificName": "Lorlatinib",
+    "company": "Novo Nordisk Egypt",
+    "price": 454.79
+  },
+  {
+    "id": 445,
+    "tradeName": "Children",
+    "scientificName": "Metformin",
+    "company": "Mina Pharm",
+    "price": 400.7
+  },
+  {
+    "id": 183,
+    "tradeName": "Chlor-Trimeton",
+    "scientificName": "Epinephrine",
+    "company": "Memphis",
+    "price": 130.46
+  },
+  {
+    "id": 41,
+    "tradeName": "Ciflox",
+    "scientificName": "Vinblastine",
+    "company": "Eva Pharma",
+    "price": 203.06
+  },
+  {
+    "id": 708,
+    "tradeName": "Ciflox 100,000 IU Injection",
+    "scientificName": "Lenalidomide",
+    "company": "Global Napi",
+    "price": 26.79
+  },
+  {
+    "id": 709,
+    "tradeName": "Ciflox 100,000 IU Powder",
+    "scientificName": "Risankizumab",
+    "company": "Bayer Egypt",
+    "price": 526.96
+  },
+  {
+    "id": 707,
+    "tradeName": "Ciflox 250mg Suppository",
+    "scientificName": "Etoposide",
+    "company": "LEO Pharma",
+    "price": 55.27
+  },
+  {
+    "id": 706,
+    "tradeName": "Ciflox 250mg Tablet",
+    "scientificName": "Memantine",
+    "company": "Boehringer Ingelheim",
+    "price": 390.8
+  },
+  {
+    "id": 705,
+    "tradeName": "Ciflox 80mg Capsule",
+    "scientificName": "Metformin",
+    "company": "EIPICO",
+    "price": 266.13
+  },
+  {
+    "id": 704,
+    "tradeName": "Ciflox 80mg Injection",
+    "scientificName": "Ofatumumab",
+    "company": "Chemipharm",
+    "price": 410.29
+  },
+  {
+    "id": 247,
+    "tradeName": "Ciloxan",
+    "scientificName": "Abatacept",
+    "company": "Nawmed",
+    "price": 29.86
+  },
+  {
+    "id": 42,
+    "tradeName": "Cipro",
+    "scientificName": "Dopamine",
+    "company": "Mina Pharm",
+    "price": 46.61
+  },
+  {
+    "id": 712,
+    "tradeName": "Cipro 120mg Ointment",
+    "scientificName": "Topotecan",
+    "company": "Novo Nordisk Egypt",
+    "price": 267.7
+  },
+  {
+    "id": 713,
+    "tradeName": "Cipro 120mg Powder",
+    "scientificName": "Teniposide",
+    "company": "Pharco Biet",
+    "price": 52.46
+  },
+  {
+    "id": 710,
+    "tradeName": "Cipro 20mg Injection",
+    "scientificName": "Pantoprazole",
+    "company": "Memphis",
+    "price": 199.77
+  },
+  {
+    "id": 711,
+    "tradeName": "Cipro 20mg Suspension",
+    "scientificName": "Alectinib",
+    "company": "Novartis Egypt",
+    "price": 467.72
+  },
+  {
+    "id": 714,
+    "tradeName": "Cipro 30mg Cream",
+    "scientificName": "Trypsin/Chymotrypsin",
+    "company": "Eva Pharma",
+    "price": 169.08
+  },
+  {
+    "id": 715,
+    "tradeName": "Cipro 30mg Powder",
+    "scientificName": "Mepivacaine",
+    "company": "GSK Egypt",
+    "price": 190.42
+  },
+  {
+    "id": 256,
+    "tradeName": "Cipro HC",
+    "scientificName": "Doxorubicin",
+    "company": "Bayer Egypt",
+    "price": 371.53
+  },
+  {
+    "id": 39,
+    "tradeName": "Ciprofloxacin",
+    "scientificName": "Etoposide",
+    "company": "Kahira Pharm",
+    "price": 251.1
+  },
+  {
+    "id": 694,
+    "tradeName": "Ciprofloxacin 20mg Gel",
+    "scientificName": "Betamethasone",
+    "company": "Pfizer Egypt",
+    "price": 721.81
+  },
+  {
+    "id": 695,
+    "tradeName": "Ciprofloxacin 20mg Powder",
+    "scientificName": "Paracetamol",
+    "company": "Hikma Egypt",
+    "price": 326.8
+  },
+  {
+    "id": 693,
+    "tradeName": "Ciprofloxacin 40mg Cream",
+    "scientificName": "Ruxolitinib",
+    "company": "Pharco",
+    "price": 62.1
+  },
+  {
+    "id": 692,
+    "tradeName": "Ciprofloxacin 40mg Gel",
+    "scientificName": "Regorafenib",
+    "company": "Eva Pharma",
+    "price": 193.97
+  },
+  {
+    "id": 697,
+    "tradeName": "Ciprofloxacin 625mg Powder",
+    "scientificName": "Pomalidomide",
+    "company": "Kahira Pharm",
+    "price": 745.03
+  },
+  {
+    "id": 696,
+    "tradeName": "Ciprofloxacin 625mg Suppository",
+    "scientificName": "Paracetamol/Caffeine",
+    "company": "Sedico",
+    "price": 558.88
+  },
+  {
+    "id": 40,
+    "tradeName": "Ciproxin",
+    "scientificName": "Esomeprazole",
+    "company": "Organon Egypt",
+    "price": 329.83
+  },
+  {
+    "id": 702,
+    "tradeName": "Ciproxin 20% Capsule",
+    "scientificName": "Ofatumumab",
+    "company": "Hikma",
+    "price": 754.59
+  },
+  {
+    "id": 703,
+    "tradeName": "Ciproxin 20% Solution",
+    "scientificName": "Binimetinib",
+    "company": "Medical Union",
+    "price": 538.44
+  },
+  {
+    "id": 701,
+    "tradeName": "Ciproxin 20mg Cream",
+    "scientificName": "Epratuzumab",
+    "company": "Chemipharm",
+    "price": 707.64
+  },
+  {
+    "id": 700,
+    "tradeName": "Ciproxin 20mg Solution",
+    "scientificName": "Basiliximab",
+    "company": "Kahira Pharm",
+    "price": 159.65
+  },
+  {
+    "id": 699,
+    "tradeName": "Ciproxin 400,000 IU Granules",
+    "scientificName": "Sunitinib",
+    "company": "Global Napi",
+    "price": 217.94
+  },
+  {
+    "id": 698,
+    "tradeName": "Ciproxin 400,000 IU Syrup",
+    "scientificName": "Streptozocin",
+    "company": "Medical Union",
+    "price": 626.17
+  },
+  {
+    "id": 286,
+    "tradeName": "Citalopram",
+    "scientificName": "Podophyllotoxin",
+    "company": "Janssen",
+    "price": 146.63
+  },
+  {
+    "id": 421,
+    "tradeName": "Clamp",
+    "scientificName": "Podophyllin",
+    "company": "Hikma",
+    "price": 60.59
+  },
+  {
+    "id": 54,
+    "tradeName": "Clarithromycin",
+    "scientificName": "Sarilumab",
+    "company": "Dar Al Dawa",
+    "price": 18.86
+  },
+  {
+    "id": 784,
+    "tradeName": "Clarithromycin 0.1% Granules",
+    "scientificName": "Trifluridine",
+    "company": "Janssen",
+    "price": 403.92
+  },
+  {
+    "id": 785,
+    "tradeName": "Clarithromycin 0.1% Solution",
+    "scientificName": "Idoxuridine",
+    "company": "Bayer Egypt",
+    "price": 557.53
+  },
+  {
+    "id": 786,
+    "tradeName": "Clarithromycin 120mg Gel",
+    "scientificName": "Bortezomib",
+    "company": "Nawmed",
+    "price": 293.62
+  },
+  {
+    "id": 787,
+    "tradeName": "Clarithromycin 120mg Solution",
+    "scientificName": "Bisoprolol",
+    "company": "Rameda",
+    "price": 569.12
+  },
+  {
+    "id": 783,
+    "tradeName": "Clarithromycin 5mg Suspension",
+    "scientificName": "Canakinumab",
+    "company": "Boehringer Ingelheim",
+    "price": 246.54
+  },
+  {
+    "id": 782,
+    "tradeName": "Clarithromycin 5mg Syrup",
+    "scientificName": "Adalimumab",
+    "company": "Julphar",
+    "price": 780.85
+  },
+  {
+    "id": 192,
+    "tradeName": "Claritin",
+    "scientificName": "Epratuzumab",
+    "company": "Takeda",
+    "price": 358.9
+  },
+  {
+    "id": 177,
+    "tradeName": "Claritine",
+    "scientificName": "Tositumomab",
+    "company": "Eva Pharma",
+    "price": 242.01
+  },
+  {
+    "id": 241,
+    "tradeName": "Clear Eyes",
+    "scientificName": "Irinotecan",
+    "company": "Pharco",
+    "price": 185.07
+  },
+  {
+    "id": 274,
+    "tradeName": "Clomid",
+    "scientificName": "Pazopanib",
+    "company": "Mina Pharm",
+    "price": 451.46
+  },
+  {
+    "id": 275,
+    "tradeName": "Clomiphene",
+    "scientificName": "Pegaspargase",
+    "company": "Kahira Pharm",
+    "price": 208.42
+  },
+  {
+    "id": 301,
+    "tradeName": "Clonazepam",
+    "scientificName": "Budesonide",
+    "company": "GlaxoSmithKline",
+    "price": 11.85
+  },
+  {
+    "id": 225,
+    "tradeName": "Clotrimazole",
+    "scientificName": "Abatacept",
+    "company": "Julphar",
+    "price": 172.21
+  },
+  {
+    "id": 348,
+    "tradeName": "Cocaine",
+    "scientificName": "Bosutinib",
+    "company": "Novo Nordisk Egypt",
+    "price": 52.2
+  },
+  {
+    "id": 91,
+    "tradeName": "Colofac",
+    "scientificName": "Chlorambucil",
+    "company": "Amoun",
+    "price": 318.46
+  },
+  {
+    "id": 1009,
+    "tradeName": "Colofac 0.5% Cream",
+    "scientificName": "Epirubicin",
+    "company": "Hikma",
+    "price": 219.96
+  },
+  {
+    "id": 1008,
+    "tradeName": "Colofac 0.5% Tablet",
+    "scientificName": "Fluticasone",
+    "company": "LEO Pharma",
+    "price": 708.56
+  },
+  {
+    "id": 1007,
+    "tradeName": "Colofac 100mg/ml Granules",
+    "scientificName": "Upadacitinib",
+    "company": "EIPICO",
+    "price": 218.3
+  },
+  {
+    "id": 1006,
+    "tradeName": "Colofac 100mg/ml Ointment",
+    "scientificName": "Etoposide",
+    "company": "Global Napi",
+    "price": 714.77
+  },
+  {
+    "id": 1004,
+    "tradeName": "Colofac 375mg Suppository",
+    "scientificName": "Norepinephrine",
+    "company": "Kahira Pharm",
+    "price": 171.76
+  },
+  {
+    "id": 1005,
+    "tradeName": "Colofac 375mg Suspension",
+    "scientificName": "Pantoprazole",
+    "company": "Mina Pharm",
+    "price": 581.2
+  },
+  {
+    "id": 93,
+    "tradeName": "Colospa",
+    "scientificName": "Oseltamivir",
+    "company": "Sigma",
+    "price": 115.76
+  },
+  {
+    "id": 1018,
+    "tradeName": "Colospa 2.5mg Capsule",
+    "scientificName": "Cabozantinib",
+    "company": "Memphis",
+    "price": 175.28
+  },
+  {
+    "id": 1019,
+    "tradeName": "Colospa 2.5mg Syrup",
+    "scientificName": "Cytarabine",
+    "company": "Servier",
+    "price": 667.55
+  },
+  {
+    "id": 1021,
+    "tradeName": "Colospa 2000 IU Capsule",
+    "scientificName": "Olokizumab",
+    "company": "Global Napi",
+    "price": 500.52
+  },
+  {
+    "id": 1020,
+    "tradeName": "Colospa 2000 IU Powder",
+    "scientificName": "Teniposide",
+    "company": "Spimaco",
+    "price": 746.68
+  },
+  {
+    "id": 1017,
+    "tradeName": "Colospa 4mg Ointment",
+    "scientificName": "Bisoprolol",
+    "company": "Memphis",
+    "price": 178.43
+  },
+  {
+    "id": 1016,
+    "tradeName": "Colospa 4mg Solution",
+    "scientificName": "Dasatinib",
+    "company": "Sandoz",
+    "price": 515.46
+  },
+  {
+    "id": 126,
+    "tradeName": "Concor 5",
+    "scientificName": "Dopamine",
+    "company": "Takeda",
+    "price": 40.71
+  },
+  {
+    "id": 352,
+    "tradeName": "Conray",
+    "scientificName": "Dabrafenib",
+    "company": "Organon Egypt",
+    "price": 23.14
+  },
+  {
+    "id": 387,
+    "tradeName": "Contrast",
+    "scientificName": "Diclofenac Potassium",
+    "company": "Mina Pharm",
+    "price": 247.57
+  },
+  {
+    "id": 69,
+    "tradeName": "Controloc 20",
+    "scientificName": "Ganciclovir",
+    "company": "Arab Drug Company",
+    "price": 17.96
+  },
+  {
+    "id": 876,
+    "tradeName": "Controloc 20 1% Suppository",
+    "scientificName": "Pyridostigmine",
+    "company": "EIPICO",
+    "price": 82.57
+  },
+  {
+    "id": 877,
+    "tradeName": "Controloc 20 1% Syrup",
+    "scientificName": "Docetaxel",
+    "company": "Medical Union",
+    "price": 46.51
+  },
+  {
+    "id": 875,
+    "tradeName": "Controloc 20 10mg Gel",
+    "scientificName": "Rituximab",
+    "company": "GlaxoSmithKline",
+    "price": 410.32
+  },
+  {
+    "id": 874,
+    "tradeName": "Controloc 20 10mg Solution",
+    "scientificName": "Abatacept",
+    "company": "Sandoz",
+    "price": 748.83
+  },
+  {
+    "id": 873,
+    "tradeName": "Controloc 20 625mg Injection",
+    "scientificName": "Mitoxantrone",
+    "company": "Kahira Pharm",
+    "price": 612.46
+  },
+  {
+    "id": 872,
+    "tradeName": "Controloc 20 625mg Suppository",
+    "scientificName": "Bosutinib",
+    "company": "Boehringer Ingelheim",
+    "price": 279.6
+  },
+  {
+    "id": 68,
+    "tradeName": "Controloc 40",
+    "scientificName": "Vitamin B",
+    "company": "Takeda",
+    "price": 208.9
+  },
+  {
+    "id": 867,
+    "tradeName": "Controloc 40 20mg Gel",
+    "scientificName": "Altretamine",
+    "company": "Tabuk",
+    "price": 60.42
+  },
+  {
+    "id": 866,
+    "tradeName": "Controloc 40 20mg Suppository",
+    "scientificName": "Vinorelbine",
+    "company": "Memphis",
+    "price": 366.74
+  },
+  {
+    "id": 871,
+    "tradeName": "Controloc 40 250mg Powder",
+    "scientificName": "Montelukast",
+    "company": "Boehringer Ingelheim",
+    "price": 491.7
+  },
+  {
+    "id": 870,
+    "tradeName": "Controloc 40 250mg Suspension",
+    "scientificName": "Melphalan",
+    "company": "Janssen",
+    "price": 776.52
+  },
+  {
+    "id": 869,
+    "tradeName": "Controloc 40 600mg Capsule",
+    "scientificName": "Gefitinib",
+    "company": "AstraZeneca",
+    "price": 659.67
+  },
+  {
+    "id": 868,
+    "tradeName": "Controloc 40 600mg Injection",
+    "scientificName": "Pemetrexed",
+    "company": "AstraZeneca",
+    "price": 115.77
+  },
+  {
+    "id": 137,
+    "tradeName": "Coreg",
+    "scientificName": "Semustine",
+    "company": "Bayer Egypt",
+    "price": 474.73
+  },
+  {
+    "id": 315,
+    "tradeName": "Cortef",
+    "scientificName": "Trypsin/Chymotrypsin",
+    "company": "Pfizer Egypt",
+    "price": 84.94
+  },
+  {
+    "id": 221,
+    "tradeName": "Cortisol",
+    "scientificName": "Paracetamol",
+    "company": "Hikma Egypt",
+    "price": 45.38
+  },
+  {
+    "id": 318,
+    "tradeName": "Cortisol",
+    "scientificName": "Ixekizumab",
+    "company": "AstraZeneca",
+    "price": 156.61
+  },
+  {
+    "id": 255,
+    "tradeName": "Cortisporin",
+    "scientificName": "Brigatinib",
+    "company": "Hikma",
+    "price": 130.09
+  },
+  {
+    "id": 148,
+    "tradeName": "Cozaar",
+    "scientificName": "Pilocarpine",
+    "company": "EVA",
+    "price": 364.28
+  },
+  {
+    "id": 441,
+    "tradeName": "Critical Care",
+    "scientificName": "Vinblastine",
+    "company": "Pharco",
+    "price": 223.63
+  },
+  {
+    "id": 33,
+    "tradeName": "Curam 1g",
+    "scientificName": "Sarilumab",
+    "company": "Boehringer Ingelheim",
+    "price": 463.26
+  },
+  {
+    "id": 657,
+    "tradeName": "Curam 1g 2.5mg Granules",
+    "scientificName": "Carfilzomib",
+    "company": "Sedico",
+    "price": 512.2
+  },
+  {
+    "id": 656,
+    "tradeName": "Curam 1g 2.5mg Ointment",
+    "scientificName": "Cladribine",
+    "company": "Kahira Pharm",
+    "price": 264.15
+  },
+  {
+    "id": 658,
+    "tradeName": "Curam 1g 20mg Powder",
+    "scientificName": "Brodalumab",
+    "company": "Mina Pharm",
+    "price": 659.22
+  },
+  {
+    "id": 659,
+    "tradeName": "Curam 1g 20mg Solution",
+    "scientificName": "Pyridostigmine",
+    "company": "Pharco",
+    "price": 597.54
+  },
+  {
+    "id": 660,
+    "tradeName": "Curam 1g 30% Granules",
+    "scientificName": "Procarbazine",
+    "company": "Abbott Egypt",
+    "price": 397.95
+  },
+  {
+    "id": 661,
+    "tradeName": "Curam 1g 30% Solution",
+    "scientificName": "Vitamin B",
+    "company": "AstraZeneca",
+    "price": 89.56
+  },
+  {
+    "id": 125,
+    "tradeName": "Cyanocobalamin",
+    "scientificName": "Lidocaine",
+    "company": "Sedico",
+    "price": 436.57
+  },
+  {
+    "id": 291,
+    "tradeName": "Cymbalta",
+    "scientificName": "Clofarabine",
+    "company": "Glaxo Wellcome",
+    "price": 13.76
+  },
+  {
+    "id": 191,
+    "tradeName": "Cyproheptadine",
+    "scientificName": "Loratadine",
+    "company": "Merck Egypt",
+    "price": 160.45
+  },
+  {
+    "id": 129,
+    "tradeName": "Daflon 500",
+    "scientificName": "Ceritinib",
+    "company": "Sigma",
+    "price": 457.16
+  },
+  {
+    "id": 320,
+    "tradeName": "Decadron",
+    "scientificName": "Selegiline",
+    "company": "Multi-Apex",
+    "price": 7.93
+  },
+  {
+    "id": 223,
+    "tradeName": "Deltasone",
+    "scientificName": "Ruxolitinib",
+    "company": "Global Napi",
+    "price": 83.74
+  },
+  {
+    "id": 310,
+    "tradeName": "Deltasone",
+    "scientificName": "Scopolamine",
+    "company": "Dar Al Dawa",
+    "price": 203.75
+  },
+  {
+    "id": 270,
+    "tradeName": "Depo-Provera",
+    "scientificName": "Tetracaine",
+    "company": "Pharco Biet",
+    "price": 213.48
+  },
+  {
+    "id": 217,
+    "tradeName": "Dermovate",
+    "scientificName": "Lenvatinib",
+    "company": "Pfizer Egypt",
+    "price": 328.09
+  },
+  {
+    "id": 319,
+    "tradeName": "Dexamethasone",
+    "scientificName": "Azithromycin",
+    "company": "Pharco Biet",
+    "price": 10.42
+  },
+  {
+    "id": 158,
+    "tradeName": "Diabeta",
+    "scientificName": "Physostigmine",
+    "company": "Kahira Pharm",
+    "price": 108.06
+  },
+  {
+    "id": 163,
+    "tradeName": "Diamicron",
+    "scientificName": "Vincristine",
+    "company": "Novartis Egypt",
+    "price": 325.38
+  },
+  {
+    "id": 88,
+    "tradeName": "Diamode",
+    "scientificName": "Amantadine",
+    "company": "Sigma",
+    "price": 277.01
+  },
+  {
+    "id": 991,
+    "tradeName": "Diamode 10% Injection",
+    "scientificName": "Zanamivir",
+    "company": "CID",
+    "price": 311.1
+  },
+  {
+    "id": 990,
+    "tradeName": "Diamode 10% Syrup",
+    "scientificName": "Podophyllin",
+    "company": "Sandoz",
+    "price": 140.97
+  },
+  {
+    "id": 989,
+    "tradeName": "Diamode 20,000 IU Powder",
+    "scientificName": "Anakinra",
+    "company": "Hikma Egypt",
+    "price": 583.29
+  },
+  {
+    "id": 988,
+    "tradeName": "Diamode 20,000 IU Suppository",
+    "scientificName": "Dacarbazine",
+    "company": "CID",
+    "price": 766.67
+  },
+  {
+    "id": 987,
+    "tradeName": "Diamode 4mg Ointment",
+    "scientificName": "Physostigmine",
+    "company": "EIPICO",
+    "price": 119.48
+  },
+  {
+    "id": 986,
+    "tradeName": "Diamode 4mg Syrup",
+    "scientificName": "Pomalidomide",
+    "company": "EVA",
+    "price": 146.83
+  },
+  {
+    "id": 259,
+    "tradeName": "Diane 35",
+    "scientificName": "Vinblastine",
+    "company": "Mina Pharm",
+    "price": 323.7
+  },
+  {
+    "id": 297,
+    "tradeName": "Diazepam",
+    "scientificName": "Adalimumab",
+    "company": "Boehringer Ingelheim",
+    "price": 262.13
+  },
+  {
+    "id": 94,
+    "tradeName": "Dicetel",
+    "scientificName": "Oxaliplatin",
+    "company": "Sedico",
+    "price": 205.17
+  },
+  {
+    "id": 1024,
+    "tradeName": "Dicetel 10mg Injection",
+    "scientificName": "Risankizumab",
+    "company": "Takeda",
+    "price": 740.83
+  },
+  {
+    "id": 1025,
+    "tradeName": "Dicetel 10mg Powder",
+    "scientificName": "Norepinephrine",
+    "company": "GSK Egypt",
+    "price": 341.28
+  },
+  {
+    "id": 1022,
+    "tradeName": "Dicetel 200mg Granules",
+    "scientificName": "Pyridostigmine",
+    "company": "LEO Pharma",
+    "price": 387.54
+  },
+  {
+    "id": 1023,
+    "tradeName": "Dicetel 200mg Injection",
+    "scientificName": "Certolizumab",
+    "company": "Rameda",
+    "price": 668.01
+  },
+  {
+    "id": 1027,
+    "tradeName": "Dicetel 50mg Cream",
+    "scientificName": "Memantine",
+    "company": "Sanofi Egypt",
+    "price": 301.94
+  },
+  {
+    "id": 1026,
+    "tradeName": "Dicetel 50mg Powder",
+    "scientificName": "Ixazomib",
+    "company": "Eva Pharma",
+    "price": 707.08
+  },
+  {
+    "id": 150,
+    "tradeName": "Diovan",
+    "scientificName": "Esomeprazole",
+    "company": "Memphis",
+    "price": 235.79
+  },
+  {
+    "id": 182,
+    "tradeName": "Diphenhydramine",
+    "scientificName": "Chlorambucil",
+    "company": "EIPICO",
+    "price": 157.38
+  },
+  {
+    "id": 432,
+    "tradeName": "Dobutamine",
+    "scientificName": "Regorafenib",
+    "company": "Bayer Egypt",
+    "price": 47.51
+  },
+  {
+    "id": 14,
+    "tradeName": "Doliprane",
+    "scientificName": "Cantharidin",
+    "company": "Janssen",
+    "price": 350.13
+  },
+  {
+    "id": 545,
+    "tradeName": "Doliprane 200mg/ml Solution",
+    "scientificName": "Methotrexate",
+    "company": "Hikma Egypt",
+    "price": 147.67
+  },
+  {
+    "id": 544,
+    "tradeName": "Doliprane 200mg/ml Syrup",
+    "scientificName": "Ibritumomab",
+    "company": "Glaxo Wellcome",
+    "price": 759.33
+  },
+  {
+    "id": 543,
+    "tradeName": "Doliprane 30mg Gel",
+    "scientificName": "L-asparaginase",
+    "company": "Pharco",
+    "price": 485.54
+  },
+  {
+    "id": 542,
+    "tradeName": "Doliprane 30mg Powder",
+    "scientificName": "Obinutuzumab",
+    "company": "Pharco Biet",
+    "price": 713.78
+  },
+  {
+    "id": 546,
+    "tradeName": "Doliprane 4000 IU Solution",
+    "scientificName": "Lorlatinib",
+    "company": "Pharco",
+    "price": 750.94
+  },
+  {
+    "id": 547,
+    "tradeName": "Doliprane 4000 IU Suppository",
+    "scientificName": "Dactinomycin",
+    "company": "Arab Drug Company",
+    "price": 335.25
+  },
+  {
+    "id": 13,
+    "tradeName": "Dolorex",
+    "scientificName": "Oseltamivir",
+    "company": "Glaxo Wellcome",
+    "price": 138.31
+  },
+  {
+    "id": 540,
+    "tradeName": "Dolorex 10,000 IU Cream",
+    "scientificName": "Rasagiline",
+    "company": "Julphar",
+    "price": 723.71
+  },
+  {
+    "id": 541,
+    "tradeName": "Dolorex 10,000 IU Injection",
+    "scientificName": "Oseltamivir",
+    "company": "Kahira Pharm",
+    "price": 535.23
+  },
+  {
+    "id": 539,
+    "tradeName": "Dolorex 160mg Solution",
+    "scientificName": "Vinblastine",
+    "company": "Servier",
+    "price": 437.05
+  },
+  {
+    "id": 538,
+    "tradeName": "Dolorex 160mg Tablet",
+    "scientificName": "Amantadine",
+    "company": "EIPICO",
+    "price": 605.83
+  },
+  {
+    "id": 537,
+    "tradeName": "Dolorex 750mg Granules",
+    "scientificName": "Penciclovir",
+    "company": "Arab Drug Company",
+    "price": 625.64
+  },
+  {
+    "id": 536,
+    "tradeName": "Dolorex 750mg Injection",
+    "scientificName": "Dacarbazine",
+    "company": "Takeda",
+    "price": 795.69
+  },
+  {
+    "id": 431,
+    "tradeName": "Dopamine",
+    "scientificName": "Memantine",
+    "company": "Hikma Egypt",
+    "price": 38.15
+  },
+  {
+    "id": 47,
+    "tradeName": "Doxycycline",
+    "scientificName": "Olokizumab",
+    "company": "Medical Union",
+    "price": 109.74
+  },
+  {
+    "id": 740,
+    "tradeName": "Doxycycline 600mg Granules",
+    "scientificName": "Betamethasone",
+    "company": "Sandoz",
+    "price": 313.06
+  },
+  {
+    "id": 741,
+    "tradeName": "Doxycycline 600mg Ointment",
+    "scientificName": "Sunitinib",
+    "company": "Glaxo Wellcome",
+    "price": 785.31
+  },
+  {
+    "id": 743,
+    "tradeName": "Doxycycline 750mg Gel",
+    "scientificName": "Oxaliplatin",
+    "company": "Spimaco",
+    "price": 202.02
+  },
+  {
+    "id": 742,
+    "tradeName": "Doxycycline 750mg Injection",
+    "scientificName": "Idarubicin",
+    "company": "Pharco",
+    "price": 153.07
+  },
+  {
+    "id": 745,
+    "tradeName": "Doxycycline 800mg Capsule",
+    "scientificName": "Methotrexate",
+    "company": "Spimaco",
+    "price": 573.28
+  },
+  {
+    "id": 744,
+    "tradeName": "Doxycycline 800mg Cream",
+    "scientificName": "Golimumab",
+    "company": "Mina Pharm",
+    "price": 728.15
+  },
+  {
+    "id": 425,
+    "tradeName": "Dressing",
+    "scientificName": "Rimantadine",
+    "company": "Hikma",
+    "price": 497.28
+  },
+  {
+    "id": 292,
+    "tradeName": "Duloxetine",
+    "scientificName": "Alemtuzumab",
+    "company": "Servier",
+    "price": 35.73
+  },
+  {
+    "id": 70,
+    "tradeName": "Duspatalin 200 Retard",
+    "scientificName": "Daclizumab",
+    "company": "Dar Al Dawa",
+    "price": 352.95
+  },
+  {
+    "id": 881,
+    "tradeName": "Duspatalin 200 Retard 120mg Capsule",
+    "scientificName": "Sorafenib",
+    "company": "Eva Pharma",
+    "price": 71.07
+  },
+  {
+    "id": 880,
+    "tradeName": "Duspatalin 200 Retard 120mg Granules",
+    "scientificName": "Alectinib",
+    "company": "Janssen",
+    "price": 523.74
+  },
+  {
+    "id": 878,
+    "tradeName": "Duspatalin 200 Retard 125mg Injection",
+    "scientificName": "Azithromycin",
+    "company": "CID",
+    "price": 111.44
+  },
+  {
+    "id": 879,
+    "tradeName": "Duspatalin 200 Retard 125mg Suppository",
+    "scientificName": "Busulfan",
+    "company": "Sedico",
+    "price": 643.49
+  },
+  {
+    "id": 883,
+    "tradeName": "Duspatalin 200 Retard 40,000 IU Solution",
+    "scientificName": "Clotrimazole",
+    "company": "GlaxoSmithKline",
+    "price": 264.53
+  },
+  {
+    "id": 882,
+    "tradeName": "Duspatalin 200 Retard 40,000 IU Syrup",
+    "scientificName": "Scopolamine",
+    "company": "Pharco Biet",
+    "price": 296.94
+  },
+  {
+    "id": 388,
+    "tradeName": "Dye",
+    "scientificName": "Fluorouracil",
+    "company": "Rameda",
+    "price": 416.62
+  },
+  {
+    "id": 32,
+    "tradeName": "E-Mox 500",
+    "scientificName": "Oseltamivir",
+    "company": "Nawmed",
+    "price": 212.79
+  },
+  {
+    "id": 651,
+    "tradeName": "E-Mox 500 10,000 IU Granules",
+    "scientificName": "Tiemonium",
+    "company": "CID",
+    "price": 185.28
+  },
+  {
+    "id": 650,
+    "tradeName": "E-Mox 500 10,000 IU Suspension",
+    "scientificName": "Gemcitabine",
+    "company": "LEO Pharma",
+    "price": 556.02
+  },
+  {
+    "id": 652,
+    "tradeName": "E-Mox 500 200,000 IU Capsule",
+    "scientificName": "Sorafenib",
+    "company": "Nawmed",
+    "price": 138.92
+  },
+  {
+    "id": 653,
+    "tradeName": "E-Mox 500 200,000 IU Powder",
+    "scientificName": "Guselkumab",
+    "company": "Amoun",
+    "price": 746.72
+  },
+  {
+    "id": 655,
+    "tradeName": "E-Mox 500 875mg Solution",
+    "scientificName": "Pomalidomide",
+    "company": "Multi-Apex",
+    "price": 670.49
+  },
+  {
+    "id": 654,
+    "tradeName": "E-Mox 500 875mg Tablet",
+    "scientificName": "Epratuzumab",
+    "company": "Pharco Biet",
+    "price": 345.12
+  },
+  {
+    "id": 357,
+    "tradeName": "E-Z-EM",
+    "scientificName": "Azithromycin",
+    "company": "Memphis",
+    "price": 249.06
+  },
+  {
+    "id": 415,
+    "tradeName": "ECG",
+    "scientificName": "Glycopyrrolate",
+    "company": "Multi-Apex",
+    "price": 165.52
+  },
+  {
+    "id": 416,
+    "tradeName": "EEG",
+    "scientificName": "Cytarabine",
+    "company": "Memphis",
+    "price": 346.63
+  },
+  {
+    "id": 258,
+    "tradeName": "Ear Drops",
+    "scientificName": "Fexofenadine",
+    "company": "Organon Egypt",
+    "price": 186.55
+  },
+  {
+    "id": 289,
+    "tradeName": "Effexor",
+    "scientificName": "Procarbazine",
+    "company": "Tabuk",
+    "price": 278.15
+  },
+  {
+    "id": 454,
+    "tradeName": "Elderly",
+    "scientificName": "Podophyllotoxin",
+    "company": "Sigma",
+    "price": 94.62
+  },
+  {
+    "id": 338,
+    "tradeName": "Eligard",
+    "scientificName": "Lomustine",
+    "company": "AstraZeneca",
+    "price": 63.13
+  },
+  {
+    "id": 218,
+    "tradeName": "Elocon",
+    "scientificName": "Alectinib",
+    "company": "Pfizer Egypt",
+    "price": 175.19
+  },
+  {
+    "id": 306,
+    "tradeName": "Eltroxin",
+    "scientificName": "Nifuroxazide",
+    "company": "Amoun",
+    "price": 131.05
+  },
+  {
+    "id": 143,
+    "tradeName": "Enalapril",
+    "scientificName": "Hyoscine",
+    "company": "Novo Nordisk Egypt",
+    "price": 129.77
+  },
+  {
+    "id": 359,
+    "tradeName": "Engerix-B",
+    "scientificName": "Sorafenib",
+    "company": "EVA",
+    "price": 55.67
+  },
+  {
+    "id": 428,
+    "tradeName": "EpiPen",
+    "scientificName": "Natalizumab",
+    "company": "Abbott Egypt",
+    "price": 292.75
+  },
+  {
+    "id": 427,
+    "tradeName": "Epinephrine",
+    "scientificName": "Rimantadine",
+    "company": "Organon Egypt",
+    "price": 273.37
+  },
+  {
+    "id": 53,
+    "tradeName": "Erythrocin",
+    "scientificName": "Bortezomib",
+    "company": "Memphis",
+    "price": 33.55
+  },
+  {
+    "id": 778,
+    "tradeName": "Erythrocin 100mg Powder",
+    "scientificName": "Tildrakizumab",
+    "company": "Medical Union",
+    "price": 585.4
+  },
+  {
+    "id": 779,
+    "tradeName": "Erythrocin 100mg Tablet",
+    "scientificName": "Physostigmine",
+    "company": "GlaxoSmithKline",
+    "price": 602.41
+  },
+  {
+    "id": 776,
+    "tradeName": "Erythrocin 1g/100ml Capsule",
+    "scientificName": "Procarbazine",
+    "company": "Julphar",
+    "price": 763.98
+  },
+  {
+    "id": 777,
+    "tradeName": "Erythrocin 1g/100ml Granules",
+    "scientificName": "Abatacept",
+    "company": "Memphis",
+    "price": 404.94
+  },
+  {
+    "id": 780,
+    "tradeName": "Erythrocin 8000 IU Gel",
+    "scientificName": "Dopamine",
+    "company": "Mina Pharm",
+    "price": 385.08
+  },
+  {
+    "id": 781,
+    "tradeName": "Erythrocin 8000 IU Tablet",
+    "scientificName": "Selegiline",
+    "company": "Memphis",
+    "price": 87.74
+  },
+  {
+    "id": 52,
+    "tradeName": "Erythromycin",
+    "scientificName": "Binimetinib",
+    "company": "Janssen",
+    "price": 358.7
+  },
+  {
+    "id": 773,
+    "tradeName": "Erythromycin 375mg Injection",
+    "scientificName": "Adalimumab",
+    "company": "Novartis Egypt",
+    "price": 278.61
+  },
+  {
+    "id": 772,
+    "tradeName": "Erythromycin 375mg Tablet",
+    "scientificName": "Thalidomide",
+    "company": "Hikma",
+    "price": 149.78
+  },
+  {
+    "id": 774,
+    "tradeName": "Erythromycin 750mg Ointment",
+    "scientificName": "Infliximab",
+    "company": "Merck Egypt",
+    "price": 752.9
+  },
+  {
+    "id": 775,
+    "tradeName": "Erythromycin 750mg Tablet",
+    "scientificName": "Filgotinib",
+    "company": "Novo Nordisk Egypt",
+    "price": 54.36
+  },
+  {
+    "id": 770,
+    "tradeName": "Erythromycin 80mg Suppository",
+    "scientificName": "Clofarabine",
+    "company": "Novartis Egypt",
+    "price": 168.93
+  },
+  {
+    "id": 771,
+    "tradeName": "Erythromycin 80mg Suspension",
+    "scientificName": "Cobimetinib",
+    "company": "Rameda",
+    "price": 154.87
+  },
+  {
+    "id": 288,
+    "tradeName": "Escitalopram",
+    "scientificName": "Guselkumab",
+    "company": "Hikma Egypt",
+    "price": 192.33
+  },
+  {
+    "id": 272,
+    "tradeName": "Estrace",
+    "scientificName": "Rimantadine",
+    "company": "Chemipharm",
+    "price": 106.27
+  },
+  {
+    "id": 273,
+    "tradeName": "Estradiol",
+    "scientificName": "Hexamethylmelamine",
+    "company": "Tabuk",
+    "price": 169.94
+  },
+  {
+    "id": 28,
+    "tradeName": "Etodolac",
+    "scientificName": "Memantine",
+    "company": "Pharco Biet",
+    "price": 497.77
+  },
+  {
+    "id": 628,
+    "tradeName": "Etodolac 20mg Powder",
+    "scientificName": "Acyclovir",
+    "company": "AstraZeneca",
+    "price": 159.9
+  },
+  {
+    "id": 629,
+    "tradeName": "Etodolac 20mg Syrup",
+    "scientificName": "Etoposide",
+    "company": "Julphar",
+    "price": 85.32
+  },
+  {
+    "id": 627,
+    "tradeName": "Etodolac 30mg Ointment",
+    "scientificName": "Vasopressin",
+    "company": "Organon Egypt",
+    "price": 701.31
+  },
+  {
+    "id": 626,
+    "tradeName": "Etodolac 30mg Powder",
+    "scientificName": "Paclitaxel",
+    "company": "Memphis",
+    "price": 34.5
+  },
+  {
+    "id": 630,
+    "tradeName": "Etodolac 400mg Gel",
+    "scientificName": "Abatacept",
+    "company": "Servier",
+    "price": 146.56
+  },
+  {
+    "id": 631,
+    "tradeName": "Etodolac 400mg Powder",
+    "scientificName": "Amantadine",
+    "company": "Rameda",
+    "price": 772.65
+  },
+  {
+    "id": 27,
+    "tradeName": "Etogesic",
+    "scientificName": "Fludarabine",
+    "company": "GSK Egypt",
+    "price": 127.88
+  },
+  {
+    "id": 624,
+    "tradeName": "Etogesic 1000mg Capsule",
+    "scientificName": "Amoxicillin/Clavulanate",
+    "company": "Sanofi Egypt",
+    "price": 482.9
+  },
+  {
+    "id": 625,
+    "tradeName": "Etogesic 1000mg Syrup",
+    "scientificName": "Glycopyrrolate",
+    "company": "Merck Egypt",
+    "price": 135.88
+  },
+  {
+    "id": 623,
+    "tradeName": "Etogesic 50mg/ml Solution",
+    "scientificName": "Clofarabine",
+    "company": "Arab Drug Company",
+    "price": 564.1
+  },
+  {
+    "id": 622,
+    "tradeName": "Etogesic 50mg/ml Syrup",
+    "scientificName": "Temozolomide",
+    "company": "Sandoz",
+    "price": 108.73
+  },
+  {
+    "id": 621,
+    "tradeName": "Etogesic 5mg Powder",
+    "scientificName": "Esomeprazole",
+    "company": "Boehringer Ingelheim",
+    "price": 788.64
+  },
+  {
+    "id": 620,
+    "tradeName": "Etogesic 5mg Suppository",
+    "scientificName": "Etanercept",
+    "company": "Spimaco",
+    "price": 744.71
+  },
+  {
+    "id": 332,
+    "tradeName": "Exemestane",
+    "scientificName": "Lorlatinib",
+    "company": "Global Napi",
+    "price": 385.03
+  },
+  {
+    "id": 382,
+    "tradeName": "Factor IX",
+    "scientificName": "Lorlatinib",
+    "company": "Pfizer Egypt",
+    "price": 339.61
+  },
+  {
+    "id": 381,
+    "tradeName": "Factor VIII",
+    "scientificName": "Miconazole",
+    "company": "GlaxoSmithKline",
+    "price": 75.88
+  },
+  {
+    "id": 79,
+    "tradeName": "Famotidine",
+    "scientificName": "Cetirizine",
+    "company": "EIPICO",
+    "price": 446.11
+  },
+  {
+    "id": 937,
+    "tradeName": "Famotidine 375mg Cream",
+    "scientificName": "Tildrakizumab",
+    "company": "Rameda",
+    "price": 460.01
+  },
+  {
+    "id": 936,
+    "tradeName": "Famotidine 375mg Syrup",
+    "scientificName": "Clofarabine",
+    "company": "Takeda",
+    "price": 533.24
+  },
+  {
+    "id": 934,
+    "tradeName": "Famotidine 5mg Suppository",
+    "scientificName": "Montelukast",
+    "company": "Janssen",
+    "price": 471.26
+  },
+  {
+    "id": 935,
+    "tradeName": "Famotidine 5mg Tablet",
+    "scientificName": "Etanercept",
+    "company": "Hikma Egypt",
+    "price": 672.32
+  },
+  {
+    "id": 933,
+    "tradeName": "Famotidine 8000 IU Solution",
+    "scientificName": "Loratadine",
+    "company": "Eva Pharma",
+    "price": 378.57
+  },
+  {
+    "id": 932,
+    "tradeName": "Famotidine 8000 IU Suspension",
+    "scientificName": "Cobimetinib",
+    "company": "Novo Nordisk Egypt",
+    "price": 567.14
+  },
+  {
+    "id": 333,
+    "tradeName": "Faslodex",
+    "scientificName": "Ketoconazole",
+    "company": "Boehringer Ingelheim",
+    "price": 384.4
+  },
+  {
+    "id": 25,
+    "tradeName": "Feldene",
+    "scientificName": "Tivozanib",
+    "company": "Dar Al Dawa",
+    "price": 363.52
+  },
+  {
+    "id": 608,
+    "tradeName": "Feldene 200mg Powder",
+    "scientificName": "Rimantadine",
+    "company": "Spimaco",
+    "price": 280.54
+  },
+  {
+    "id": 609,
+    "tradeName": "Feldene 200mg Solution",
+    "scientificName": "Temozolomide",
+    "company": "Sandoz",
+    "price": 110.1
+  },
+  {
+    "id": 613,
+    "tradeName": "Feldene 25mg Granules",
+    "scientificName": "Chlorambucil",
+    "company": "Sandoz",
+    "price": 238.43
+  },
+  {
+    "id": 612,
+    "tradeName": "Feldene 25mg Injection",
+    "scientificName": "Afatinib",
+    "company": "Julphar",
+    "price": 683.27
+  },
+  {
+    "id": 610,
+    "tradeName": "Feldene 5mg Granules",
+    "scientificName": "Epratuzumab",
+    "company": "Organon Egypt",
+    "price": 483.57
+  },
+  {
+    "id": 611,
+    "tradeName": "Feldene 5mg Solution",
+    "scientificName": "Bortezomib",
+    "company": "Sanofi Egypt",
+    "price": 523.67
+  },
+  {
+    "id": 329,
+    "tradeName": "Femara",
+    "scientificName": "Vitamin B",
+    "company": "Arab Drug Company",
+    "price": 91.59
+  },
+  {
+    "id": 112,
+    "tradeName": "Ferrous",
+    "scientificName": "Cetirizine",
+    "company": "Abbott Egypt",
+    "price": 110.69
+  },
+  {
+    "id": 385,
+    "tradeName": "Fibrinogen",
+    "scientificName": "Dobutamine",
+    "company": "Multi-Apex",
+    "price": 347.29
+  },
+  {
+    "id": 38,
+    "tradeName": "Flagyl 500",
+    "scientificName": "Ponatinib",
+    "company": "AstraZeneca",
+    "price": 18.53
+  },
+  {
+    "id": 688,
+    "tradeName": "Flagyl 500 100mg Capsule",
+    "scientificName": "L-asparaginase",
+    "company": "Abbott Egypt",
+    "price": 113.01
+  },
+  {
+    "id": 689,
+    "tradeName": "Flagyl 500 100mg Injection",
+    "scientificName": "Oseltamivir",
+    "company": "Chemipharm",
+    "price": 393.11
+  },
+  {
+    "id": 686,
+    "tradeName": "Flagyl 500 5mg Capsule",
+    "scientificName": "Trifluridine",
+    "company": "Kahira Pharm",
+    "price": 645.98
+  },
+  {
+    "id": 687,
+    "tradeName": "Flagyl 500 5mg Syrup",
+    "scientificName": "Rituximab",
+    "company": "GlaxoSmithKline",
+    "price": 504.47
+  },
+  {
+    "id": 690,
+    "tradeName": "Flagyl 500 75mg Granules",
+    "scientificName": "Lorlatinib",
+    "company": "Spimaco",
+    "price": 91.23
+  },
+  {
+    "id": 691,
+    "tradeName": "Flagyl 500 75mg Tablet",
+    "scientificName": "Encorafenib",
+    "company": "Pfizer Egypt",
+    "price": 165.85
+  },
+  {
+    "id": 204,
+    "tradeName": "Flovent",
+    "scientificName": "Upadacitinib",
+    "company": "Sandoz",
+    "price": 83.38
+  },
+  {
+    "id": 362,
+    "tradeName": "Fluarix",
+    "scientificName": "Bosutinib",
+    "company": "LEO Pharma",
+    "price": 273.58
+  },
+  {
+    "id": 8,
+    "tradeName": "Fludrex",
+    "scientificName": "Trametinib",
+    "company": "Organon Egypt",
+    "price": 88.64
+  },
+  {
+    "id": 509,
+    "tradeName": "Fludrex 160mg Suppository",
+    "scientificName": "Methotrexate",
+    "company": "Pfizer Egypt",
+    "price": 12.65
+  },
+  {
+    "id": 508,
+    "tradeName": "Fludrex 160mg Suspension",
+    "scientificName": "Amoxicillin/Clavulanate",
+    "company": "EVA",
+    "price": 332.65
+  },
+  {
+    "id": 506,
+    "tradeName": "Fludrex 2000 IU Capsule",
+    "scientificName": "Fluticasone",
+    "company": "Hikma",
+    "price": 663.93
+  },
+  {
+    "id": 507,
+    "tradeName": "Fludrex 2000 IU Granules",
+    "scientificName": "Lenalidomide",
+    "company": "Chemipharm",
+    "price": 717.24
+  },
+  {
+    "id": 510,
+    "tradeName": "Fludrex 600mg Ointment",
+    "scientificName": "Busulfan",
+    "company": "Tabuk",
+    "price": 200.29
+  },
+  {
+    "id": 511,
+    "tradeName": "Fludrex 600mg Tablet",
+    "scientificName": "Fluticasone",
+    "company": "CID",
+    "price": 164.51
+  },
+  {
+    "id": 363,
+    "tradeName": "Flulaval",
+    "scientificName": "Anakinra",
+    "company": "Novo Nordisk Egypt",
+    "price": 392.04
+  },
+  {
+    "id": 280,
+    "tradeName": "Fluoxetine",
+    "scientificName": "Glimepiride",
+    "company": "Novo Nordisk Egypt",
+    "price": 379.95
+  },
+  {
+    "id": 205,
+    "tradeName": "Fluticasone",
+    "scientificName": "Gefitinib",
+    "company": "Arab Drug Company",
+    "price": 98.64
+  },
+  {
+    "id": 1076,
+    "tradeName": "Fluticasone + Vilanterol",
+    "scientificName": "Fluticasone / Vilanterol",
+    "company": "Tabuk",
+    "price": 84.9
+  },
+  {
+    "id": 113,
+    "tradeName": "Folic Acid",
+    "scientificName": "Risankizumab",
+    "company": "Memphis",
+    "price": 470.92
+  },
+  {
+    "id": 114,
+    "tradeName": "Folvite",
+    "scientificName": "Osimertinib",
+    "company": "Multi-Apex",
+    "price": 286.05
+  },
+  {
+    "id": 419,
+    "tradeName": "Forceps",
+    "scientificName": "Ruxolitinib",
+    "company": "Amoun",
+    "price": 372.11
+  },
+  {
+    "id": 1071,
+    "tradeName": "Formoterol + Budesonide",
+    "scientificName": "Formoterol / Budesonide",
+    "company": "Spimaco",
+    "price": 85.72
+  },
+  {
+    "id": 215,
+    "tradeName": "Fucidin Ointment",
+    "scientificName": "Hyoscine",
+    "company": "Medical Union",
+    "price": 224.1
+  },
+  {
+    "id": 391,
+    "tradeName": "Gadolinium",
+    "scientificName": "Thiotepa",
+    "company": "Pharco Biet",
+    "price": 476.5
+  },
+  {
+    "id": 168,
+    "tradeName": "Galvus",
+    "scientificName": "Epinephrine",
+    "company": "Novartis Egypt",
+    "price": 106.35
+  },
+  {
+    "id": 378,
+    "tradeName": "Gamunex",
+    "scientificName": "Vandetanib",
+    "company": "Sigma",
+    "price": 53.94
+  },
+  {
+    "id": 63,
+    "tradeName": "Garamycin",
+    "scientificName": "Filgotinib",
+    "company": "Eva Pharma",
+    "price": 250.7
+  },
+  {
+    "id": 839,
+    "tradeName": "Garamycin 0.5mg Granules",
+    "scientificName": "Physostigmine",
+    "company": "Novartis Egypt",
+    "price": 731.56
+  },
+  {
+    "id": 838,
+    "tradeName": "Garamycin 0.5mg Tablet",
+    "scientificName": "Alpha-Amylase",
+    "company": "Rameda",
+    "price": 672.92
+  },
+  {
+    "id": 836,
+    "tradeName": "Garamycin 500mg Cream",
+    "scientificName": "Methotrexate",
+    "company": "LEO Pharma",
+    "price": 424.07
+  },
+  {
+    "id": 837,
+    "tradeName": "Garamycin 500mg Solution",
+    "scientificName": "Cetirizine",
+    "company": "Amoun",
+    "price": 272.84
+  },
+  {
+    "id": 841,
+    "tradeName": "Garamycin 625mg Ointment",
+    "scientificName": "Gefitinib",
+    "company": "Pfizer Egypt",
+    "price": 616.45
+  },
+  {
+    "id": 840,
+    "tradeName": "Garamycin 625mg Tablet",
+    "scientificName": "Diclofenac Sodium",
+    "company": "Organon Egypt",
+    "price": 137.15
+  },
+  {
+    "id": 368,
+    "tradeName": "Gardasil",
+    "scientificName": "Cyclophosphamide",
+    "company": "Julphar",
+    "price": 17.42
+  },
+  {
+    "id": 354,
+    "tradeName": "Gastrografin",
+    "scientificName": "Diclofenac Potassium",
+    "company": "Pharco Biet",
+    "price": 408.28
+  },
+  {
+    "id": 422,
+    "tradeName": "Gauze",
+    "scientificName": "Alpha-Amylase",
+    "company": "Chemipharm",
+    "price": 326.02
+  },
+  {
+    "id": 81,
+    "tradeName": "Gaviscon",
+    "scientificName": "Dactinomycin",
+    "company": "CID",
+    "price": 352.71
+  },
+  {
+    "id": 947,
+    "tradeName": "Gaviscon 30% Ointment",
+    "scientificName": "Procarbazine",
+    "company": "Organon Egypt",
+    "price": 482.07
+  },
+  {
+    "id": 946,
+    "tradeName": "Gaviscon 30% Solution",
+    "scientificName": "Vinorelbine",
+    "company": "AstraZeneca",
+    "price": 371.85
+  },
+  {
+    "id": 949,
+    "tradeName": "Gaviscon 500mg Injection",
+    "scientificName": "Thiotepa",
+    "company": "Global Napi",
+    "price": 329.94
+  },
+  {
+    "id": 948,
+    "tradeName": "Gaviscon 500mg Syrup",
+    "scientificName": "Neostigmine",
+    "company": "Julphar",
+    "price": 461.78
+  },
+  {
+    "id": 945,
+    "tradeName": "Gaviscon 5mg Suspension",
+    "scientificName": "Fexofenadine",
+    "company": "Mina Pharm",
+    "price": 640.57
+  },
+  {
+    "id": 944,
+    "tradeName": "Gaviscon 5mg Tablet",
+    "scientificName": "Obinutuzumab",
+    "company": "Amoun",
+    "price": 550.24
+  },
+  {
+    "id": 62,
+    "tradeName": "Gentamicin",
+    "scientificName": "Mitoxantrone",
+    "company": "Amoun",
+    "price": 460.27
+  },
+  {
+    "id": 831,
+    "tradeName": "Gentamicin 40mg Ointment",
+    "scientificName": "Ibritumomab",
+    "company": "Bayer Egypt",
+    "price": 110.26
+  },
+  {
+    "id": 830,
+    "tradeName": "Gentamicin 40mg Solution",
+    "scientificName": "Sinecatechins",
+    "company": "Hikma Egypt",
+    "price": 791.85
+  },
+  {
+    "id": 834,
+    "tradeName": "Gentamicin 600mg Granules",
+    "scientificName": "Temozolomide",
+    "company": "Kahira Pharm",
+    "price": 46.78
+  },
+  {
+    "id": 835,
+    "tradeName": "Gentamicin 600mg Tablet",
+    "scientificName": "Ixazomib",
+    "company": "Sigma",
+    "price": 527.17
+  },
+  {
+    "id": 832,
+    "tradeName": "Gentamicin 800 IU Gel",
+    "scientificName": "Glycopyrrolate",
+    "company": "Servier",
+    "price": 270.62
+  },
+  {
+    "id": 833,
+    "tradeName": "Gentamicin 800 IU Suspension",
+    "scientificName": "Lorlatinib",
+    "company": "Spimaco",
+    "price": 651.15
+  },
+  {
+    "id": 457,
+    "tradeName": "Geriatric",
+    "scientificName": "Pantoprazole",
+    "company": "Hikma",
+    "price": 405.03
+  },
+  {
+    "id": 164,
+    "tradeName": "Gliclazide",
+    "scientificName": "Nilotinib",
+    "company": "Global Napi",
+    "price": 488.96
+  },
+  {
+    "id": 162,
+    "tradeName": "Glimepiride",
+    "scientificName": "Imiquimod",
+    "company": "Medical Union",
+    "price": 111.37
+  },
+  {
+    "id": 1069,
+    "tradeName": "Glimepiride + Metformin",
+    "scientificName": "Glimepiride / Metformin",
+    "company": "Arab Drug Company",
+    "price": 154.93
+  },
+  {
+    "id": 377,
+    "tradeName": "Globulin",
+    "scientificName": "Methotrexate",
+    "company": "Julphar",
+    "price": 18.47
+  },
+  {
+    "id": 156,
+    "tradeName": "Glucophage",
+    "scientificName": "Diclofenac Potassium",
+    "company": "Janssen",
+    "price": 123.89
+  },
+  {
+    "id": 128,
+    "tradeName": "Glucophage 1000",
+    "scientificName": "Afatinib",
+    "company": "LEO Pharma",
+    "price": 117.68
+  },
+  {
+    "id": 175,
+    "tradeName": "Glucotrol",
+    "scientificName": "Scopolamine",
+    "company": "Pfizer Egypt",
+    "price": 223.65
+  },
+  {
+    "id": 1074,
+    "tradeName": "Glycopyrrolate + Formoterol",
+    "scientificName": "Glycopyrrolate / Formoterol",
+    "company": "Global Napi",
+    "price": 299.64
+  },
+  {
+    "id": 160,
+    "tradeName": "Glynase",
+    "scientificName": "Norepinephrine",
+    "company": "Memphis",
+    "price": 217.47
+  },
+  {
+    "id": 335,
+    "tradeName": "Goserelin",
+    "scientificName": "Clotrimazole",
+    "company": "CID",
+    "price": 129.43
+  },
+  {
+    "id": 229,
+    "tradeName": "Gyne-Lotrimin",
+    "scientificName": "Diclofenac Sodium",
+    "company": "Rameda",
+    "price": 283.12
+  },
+  {
+    "id": 360,
+    "tradeName": "Havrix",
+    "scientificName": "Ribavirin",
+    "company": "Hikma Egypt",
+    "price": 481.32
+  },
+  {
+    "id": 239,
+    "tradeName": "Head & Shoulders",
+    "scientificName": "Muromonab-CD3",
+    "company": "Pfizer Egypt",
+    "price": 375.15
+  },
+  {
+    "id": 403,
+    "tradeName": "Hematology",
+    "scientificName": "Methotrexate",
+    "company": "Dar Al Dawa",
+    "price": 75.73
+  },
+  {
+    "id": 383,
+    "tradeName": "Hemophilia",
+    "scientificName": "Binimetinib",
+    "company": "Janssen",
+    "price": 31.2
+  },
+  {
+    "id": 321,
+    "tradeName": "Hexadrol",
+    "scientificName": "Fusidic Acid",
+    "company": "Sanofi Egypt",
+    "price": 131.11
+  },
+  {
+    "id": 34,
+    "tradeName": "Hibiotic 1g",
+    "scientificName": "Cisplatin",
+    "company": "Servier",
+    "price": 306.52
+  },
+  {
+    "id": 663,
+    "tradeName": "Hibiotic 1g 200,000 IU Capsule",
+    "scientificName": "Dobutamine",
+    "company": "Tabuk",
+    "price": 471.16
+  },
+  {
+    "id": 662,
+    "tradeName": "Hibiotic 1g 200,000 IU Injection",
+    "scientificName": "Penciclovir",
+    "company": "Sedico",
+    "price": 526.18
+  },
+  {
+    "id": 666,
+    "tradeName": "Hibiotic 1g 2mg Injection",
+    "scientificName": "Vincristine",
+    "company": "Eva Pharma",
+    "price": 430.25
+  },
+  {
+    "id": 667,
+    "tradeName": "Hibiotic 1g 2mg Powder",
+    "scientificName": "Epinephrine",
+    "company": "Novo Nordisk Egypt",
+    "price": 548.22
+  },
+  {
+    "id": 665,
+    "tradeName": "Hibiotic 1g 500mg/ml Capsule",
+    "scientificName": "Vemurafenib",
+    "company": "Sedico",
+    "price": 379.91
+  },
+  {
+    "id": 664,
+    "tradeName": "Hibiotic 1g 500mg/ml Cream",
+    "scientificName": "Penciclovir",
+    "company": "Hikma",
+    "price": 337.96
+  },
+  {
+    "id": 220,
+    "tradeName": "Hydrocortisone",
+    "scientificName": "Etanercept",
+    "company": "Memphis",
+    "price": 193.75
+  },
+  {
+    "id": 314,
+    "tradeName": "Hydrocortisone",
+    "scientificName": "Motesanib",
+    "company": "Memphis",
+    "price": 302.86
+  },
+  {
+    "id": 187,
+    "tradeName": "Hydroxyzine",
+    "scientificName": "Rituximab",
+    "company": "Sandoz",
+    "price": 446.62
+  },
+  {
+    "id": 353,
+    "tradeName": "Hypaque",
+    "scientificName": "Canakinumab",
+    "company": "Bayer Egypt",
+    "price": 72.53
+  },
+  {
+    "id": 440,
+    "tradeName": "ICU",
+    "scientificName": "Tocilizumab",
+    "company": "Merck Egypt",
+    "price": 385.62
+  },
+  {
+    "id": 408,
+    "tradeName": "IV Line",
+    "scientificName": "Teniposide",
+    "company": "Tabuk",
+    "price": 385.25
+  },
+  {
+    "id": 379,
+    "tradeName": "IVIG",
+    "scientificName": "Sinecatechins",
+    "company": "Sedico",
+    "price": 29.07
+  },
+  {
+    "id": 1065,
+    "tradeName": "Ibuprofen + Paracetamol",
+    "scientificName": "Ibuprofen / Paracetamol",
+    "company": "Kahira Pharm",
+    "price": 271.82
+  },
+  {
+    "id": 405,
+    "tradeName": "Immunology",
+    "scientificName": "Irinotecan",
+    "company": "Novartis Egypt",
+    "price": 124.29
+  },
+  {
+    "id": 86,
+    "tradeName": "Imodium",
+    "scientificName": "Upadacitinib",
+    "company": "Tabuk",
+    "price": 240.75
+  },
+  {
+    "id": 978,
+    "tradeName": "Imodium 1000 IU Injection",
+    "scientificName": "Vitamin B",
+    "company": "Memphis",
+    "price": 580.86
+  },
+  {
+    "id": 979,
+    "tradeName": "Imodium 1000 IU Tablet",
+    "scientificName": "Ketoprofen",
+    "company": "CID",
+    "price": 187.87
+  },
+  {
+    "id": 974,
+    "tradeName": "Imodium 1mg Injection",
+    "scientificName": "Natalizumab",
+    "company": "Abbott Egypt",
+    "price": 94.69
+  },
+  {
+    "id": 975,
+    "tradeName": "Imodium 1mg Ointment",
+    "scientificName": "Ixazomib",
+    "company": "Mina Pharm",
+    "price": 797.45
+  },
+  {
+    "id": 977,
+    "tradeName": "Imodium 3mg Granules",
+    "scientificName": "Physostigmine",
+    "company": "Glaxo Wellcome",
+    "price": 609.85
+  },
+  {
+    "id": 976,
+    "tradeName": "Imodium 3mg Suspension",
+    "scientificName": "Sinecatechins",
+    "company": "Pharco",
+    "price": 83.74
+  },
+  {
+    "id": 135,
+    "tradeName": "Inderal",
+    "scientificName": "Pegaspargase",
+    "company": "Julphar",
+    "price": 318.34
+  },
+  {
+    "id": 446,
+    "tradeName": "Infant",
+    "scientificName": "Encorafenib",
+    "company": "Glaxo Wellcome",
+    "price": 448.81
+  },
+  {
+    "id": 411,
+    "tradeName": "Infusion Pump",
+    "scientificName": "Cytarabine",
+    "company": "Merck Egypt",
+    "price": 176.87
+  },
+  {
+    "id": 380,
+    "tradeName": "Intravenous Immunoglobulin",
+    "scientificName": "Pazopanib",
+    "company": "Hikma Egypt",
+    "price": 57.87
+  },
+  {
+    "id": 438,
+    "tradeName": "Intubation",
+    "scientificName": "Certolizumab",
+    "company": "Memphis",
+    "price": 130.68
+  },
+  {
+    "id": 389,
+    "tradeName": "Iodine",
+    "scientificName": "Memantine",
+    "company": "Tabuk",
+    "price": 235.13
+  },
+  {
+    "id": 111,
+    "tradeName": "Iron",
+    "scientificName": "Natalizumab",
+    "company": "Multi-Apex",
+    "price": 34.37
+  },
+  {
+    "id": 351,
+    "tradeName": "Isovue",
+    "scientificName": "Clazakizumab",
+    "company": "GlaxoSmithKline",
+    "price": 379.96
+  },
+  {
+    "id": 166,
+    "tradeName": "Januvia",
+    "scientificName": "Gemcitabine",
+    "company": "LEO Pharma",
+    "price": 119.97
+  },
+  {
+    "id": 451,
+    "tradeName": "Junior",
+    "scientificName": "Amoxicillin/Clavulanate",
+    "company": "Boehringer Ingelheim",
+    "price": 58.98
+  },
+  {
+    "id": 235,
+    "tradeName": "Ketoconazole",
+    "scientificName": "Foscarnet",
+    "company": "GSK Egypt",
+    "price": 141.93
+  },
+  {
+    "id": 9,
+    "tradeName": "Ketofan",
+    "scientificName": "Erlotinib",
+    "company": "Amoun",
+    "price": 391.62
+  },
+  {
+    "id": 513,
+    "tradeName": "Ketofan 2000 IU Solution",
+    "scientificName": "Rivastigmine",
+    "company": "Organon Egypt",
+    "price": 526.77
+  },
+  {
+    "id": 512,
+    "tradeName": "Ketofan 2000 IU Suppository",
+    "scientificName": "Valacyclovir",
+    "company": "Rameda",
+    "price": 108.51
+  },
+  {
+    "id": 514,
+    "tradeName": "Ketofan 25mg Gel",
+    "scientificName": "Axitinib",
+    "company": "Global Napi",
+    "price": 204.3
+  },
+  {
+    "id": 515,
+    "tradeName": "Ketofan 25mg Suspension",
+    "scientificName": "Bosutinib",
+    "company": "Memphis",
+    "price": 411.7
+  },
+  {
+    "id": 516,
+    "tradeName": "Ketofan 500mg Gel",
+    "scientificName": "Metoclopramide/Enzymes",
+    "company": "Pharco",
+    "price": 270.35
+  },
+  {
+    "id": 517,
+    "tradeName": "Ketofan 500mg Tablet",
+    "scientificName": "Pantoprazole",
+    "company": "Eva Pharma",
+    "price": 427.14
+  },
+  {
+    "id": 450,
+    "tradeName": "Kids",
+    "scientificName": "Lorlatinib",
+    "company": "Janssen",
+    "price": 10.11
+  },
+  {
+    "id": 398,
+    "tradeName": "Kits",
+    "scientificName": "Certolizumab",
+    "company": "Kahira Pharm",
+    "price": 476.99
+  },
+  {
+    "id": 55,
+    "tradeName": "Klaricid",
+    "scientificName": "Infliximab",
+    "company": "Nawmed",
+    "price": 134.06
+  },
+  {
+    "id": 792,
+    "tradeName": "Klaricid 1000mg Suppository",
+    "scientificName": "Oxaliplatin",
+    "company": "Pharco Biet",
+    "price": 280.41
+  },
+  {
+    "id": 793,
+    "tradeName": "Klaricid 1000mg Syrup",
+    "scientificName": "Teniposide",
+    "company": "Mina Pharm",
+    "price": 413.95
+  },
+  {
+    "id": 789,
+    "tradeName": "Klaricid 125mg Suspension",
+    "scientificName": "Dacarbazine",
+    "company": "Medical Union",
+    "price": 417.04
+  },
+  {
+    "id": 788,
+    "tradeName": "Klaricid 125mg Syrup",
+    "scientificName": "Metoclopramide/Enzymes",
+    "company": "Glaxo Wellcome",
+    "price": 377.97
+  },
+  {
+    "id": 791,
+    "tradeName": "Klaricid 8mg Ointment",
+    "scientificName": "Mitomycin",
+    "company": "GlaxoSmithKline",
+    "price": 738.16
+  },
+  {
+    "id": 790,
+    "tradeName": "Klaricid 8mg Solution",
+    "scientificName": "Rituximab",
+    "company": "Hikma",
+    "price": 86.13
+  },
+  {
+    "id": 36,
+    "tradeName": "Klavox 1g",
+    "scientificName": "L-asparaginase",
+    "company": "Dar Al Dawa",
+    "price": 205.02
+  },
+  {
+    "id": 678,
+    "tradeName": "Klavox 1g 200 IU Granules",
+    "scientificName": "Miconazole",
+    "company": "Nawmed",
+    "price": 39.83
+  },
+  {
+    "id": 679,
+    "tradeName": "Klavox 1g 200 IU Powder",
+    "scientificName": "Erlotinib",
+    "company": "Pfizer Egypt",
+    "price": 728.65
+  },
+  {
+    "id": 675,
+    "tradeName": "Klavox 1g 500mg Cream",
+    "scientificName": "Cidofovir",
+    "company": "Sanofi Egypt",
+    "price": 652.94
+  },
+  {
+    "id": 674,
+    "tradeName": "Klavox 1g 500mg Syrup",
+    "scientificName": "Trypsin/Chymotrypsin",
+    "company": "Novartis Egypt",
+    "price": 284.09
+  },
+  {
+    "id": 677,
+    "tradeName": "Klavox 1g 8mg Suppository",
+    "scientificName": "Epratuzumab",
+    "company": "Sedico",
+    "price": 569.87
+  },
+  {
+    "id": 676,
+    "tradeName": "Klavox 1g 8mg Suspension",
+    "scientificName": "Dacarbazine",
+    "company": "Pharco",
+    "price": 76.27
+  },
+  {
+    "id": 300,
+    "tradeName": "Klonopin",
+    "scientificName": "Mitomycin",
+    "company": "Abbott Egypt",
+    "price": 437.8
+  },
+  {
+    "id": 330,
+    "tradeName": "Letrozole",
+    "scientificName": "Ketoprofen",
+    "company": "Hikma Egypt",
+    "price": 412.77
+  },
+  {
+    "id": 337,
+    "tradeName": "Leuprolide",
+    "scientificName": "Etanercept",
+    "company": "Novo Nordisk Egypt",
+    "price": 352.85
+  },
+  {
+    "id": 43,
+    "tradeName": "Levaquin",
+    "scientificName": "Irinotecan",
+    "company": "Nawmed",
+    "price": 479.19
+  },
+  {
+    "id": 717,
+    "tradeName": "Levaquin 400mg Suppository",
+    "scientificName": "Hexamethylmelamine",
+    "company": "GSK Egypt",
+    "price": 113.81
+  },
+  {
+    "id": 716,
+    "tradeName": "Levaquin 400mg Suspension",
+    "scientificName": "Domperidone",
+    "company": "Merck Egypt",
+    "price": 735.85
+  },
+  {
+    "id": 721,
+    "tradeName": "Levaquin 50% Powder",
+    "scientificName": "Ponatinib",
+    "company": "Novartis Egypt",
+    "price": 147.3
+  },
+  {
+    "id": 720,
+    "tradeName": "Levaquin 50% Suppository",
+    "scientificName": "Axitinib",
+    "company": "Novartis Egypt",
+    "price": 483.83
+  },
+  {
+    "id": 718,
+    "tradeName": "Levaquin 5mg Gel",
+    "scientificName": "Ketoconazole",
+    "company": "GSK Egypt",
+    "price": 399.57
+  },
+  {
+    "id": 719,
+    "tradeName": "Levaquin 5mg Ointment",
+    "scientificName": "Dacarbazine",
+    "company": "Medical Union",
+    "price": 478.48
+  },
+  {
+    "id": 267,
+    "tradeName": "Levlen",
+    "scientificName": "Canakinumab",
+    "company": "Organon Egypt",
+    "price": 351.61
+  },
+  {
+    "id": 179,
+    "tradeName": "Levostiv",
+    "scientificName": "Cidofovir",
+    "company": "EIPICO",
+    "price": 167.12
+  },
+  {
+    "id": 305,
+    "tradeName": "Levothyroxine",
+    "scientificName": "Dacarbazine",
+    "company": "Pfizer Egypt",
+    "price": 19.31
+  },
+  {
+    "id": 287,
+    "tradeName": "Lexapro",
+    "scientificName": "Temozolomide",
+    "company": "Sigma",
+    "price": 335.65
+  },
+  {
+    "id": 340,
+    "tradeName": "Lidocaine",
+    "scientificName": "Tositumomab",
+    "company": "Julphar",
+    "price": 149.77
+  },
+  {
+    "id": 442,
+    "tradeName": "Life Support",
+    "scientificName": "Fusidic Acid",
+    "company": "Sandoz",
+    "price": 375.33
+  },
+  {
+    "id": 358,
+    "tradeName": "Liquid Polibar",
+    "scientificName": "Risankizumab",
+    "company": "AstraZeneca",
+    "price": 384.5
+  },
+  {
+    "id": 140,
+    "tradeName": "Lisinopril",
+    "scientificName": "Tositumomab",
+    "company": "Multi-Apex",
+    "price": 308.58
+  },
+  {
+    "id": 1067,
+    "tradeName": "Lisinopril + Hydrochlorothiazide",
+    "scientificName": "Lisinopril / Hydrochlorothiazide",
+    "company": "Memphis",
+    "price": 119.9
+  },
+  {
+    "id": 219,
+    "tradeName": "Locoid",
+    "scientificName": "Sorafenib",
+    "company": "Global Napi",
+    "price": 181.11
+  },
+  {
+    "id": 265,
+    "tradeName": "Loette",
+    "scientificName": "Glycopyrrolate",
+    "company": "Janssen",
+    "price": 146.65
+  },
+  {
+    "id": 89,
+    "tradeName": "Lomotil",
+    "scientificName": "Methotrexate",
+    "company": "AstraZeneca",
+    "price": 215.93
+  },
+  {
+    "id": 997,
+    "tradeName": "Lomotil 100mg Gel",
+    "scientificName": "Cisplatin",
+    "company": "Amoun",
+    "price": 775.66
+  },
+  {
+    "id": 996,
+    "tradeName": "Lomotil 100mg Ointment",
+    "scientificName": "Procarbazine",
+    "company": "Arab Drug Company",
+    "price": 170.65
+  },
+  {
+    "id": 994,
+    "tradeName": "Lomotil 16mg Injection",
+    "scientificName": "Rilonacept",
+    "company": "Dar Al Dawa",
+    "price": 471.77
+  },
+  {
+    "id": 995,
+    "tradeName": "Lomotil 16mg Solution",
+    "scientificName": "Pemetrexed",
+    "company": "Rameda",
+    "price": 498.46
+  },
+  {
+    "id": 992,
+    "tradeName": "Lomotil 200mg/ml Solution",
+    "scientificName": "Epinephrine",
+    "company": "Rameda",
+    "price": 366.37
+  },
+  {
+    "id": 993,
+    "tradeName": "Lomotil 200mg/ml Tablet",
+    "scientificName": "Rimantadine",
+    "company": "Merck Egypt",
+    "price": 477.09
+  },
+  {
+    "id": 87,
+    "tradeName": "Loperamide",
+    "scientificName": "Valganciclovir",
+    "company": "Novo Nordisk Egypt",
+    "price": 127.83
+  },
+  {
+    "id": 980,
+    "tradeName": "Loperamide 1mg Suspension",
+    "scientificName": "Metronidazole",
+    "company": "Chemipharm",
+    "price": 662.02
+  },
+  {
+    "id": 981,
+    "tradeName": "Loperamide 1mg Syrup",
+    "scientificName": "Cisplatin",
+    "company": "Sanofi Egypt",
+    "price": 142.06
+  },
+  {
+    "id": 983,
+    "tradeName": "Loperamide 40mg Capsule",
+    "scientificName": "Fusidic Acid",
+    "company": "Takeda",
+    "price": 722.39
+  },
+  {
+    "id": 982,
+    "tradeName": "Loperamide 40mg Tablet",
+    "scientificName": "Oxaliplatin",
+    "company": "Memphis",
+    "price": 437.04
+  },
+  {
+    "id": 984,
+    "tradeName": "Loperamide 800mg Granules",
+    "scientificName": "Diclofenac Potassium",
+    "company": "Arab Drug Company",
+    "price": 484.59
+  },
+  {
+    "id": 985,
+    "tradeName": "Loperamide 800mg Solution",
+    "scientificName": "Paclitaxel",
+    "company": "Spimaco",
+    "price": 542.28
+  },
+  {
+    "id": 130,
+    "tradeName": "Lopressor",
+    "scientificName": "Ganciclovir",
+    "company": "Janssen",
+    "price": 196.77
+  },
+  {
+    "id": 299,
+    "tradeName": "Lorazepam",
+    "scientificName": "Encorafenib",
+    "company": "Arab Drug Company",
+    "price": 497.11
+  },
+  {
+    "id": 147,
+    "tradeName": "Losartan",
+    "scientificName": "Docetaxel",
+    "company": "Memphis",
+    "price": 449.64
+  },
+  {
+    "id": 74,
+    "tradeName": "Losec",
+    "scientificName": "Lomustine",
+    "company": "EIPICO",
+    "price": 260.0
+  },
+  {
+    "id": 905,
+    "tradeName": "Losec 150mg Cream",
+    "scientificName": "Rimantadine",
+    "company": "Sanofi Egypt",
+    "price": 249.11
+  },
+  {
+    "id": 904,
+    "tradeName": "Losec 150mg Gel",
+    "scientificName": "Afatinib",
+    "company": "GlaxoSmithKline",
+    "price": 762.89
+  },
+  {
+    "id": 902,
+    "tradeName": "Losec 200,000 IU Syrup",
+    "scientificName": "Amantadine",
+    "company": "Hikma Egypt",
+    "price": 382.33
+  },
+  {
+    "id": 903,
+    "tradeName": "Losec 200,000 IU Tablet",
+    "scientificName": "Bupivacaine",
+    "company": "GlaxoSmithKline",
+    "price": 384.84
+  },
+  {
+    "id": 906,
+    "tradeName": "Losec 600mg Cream",
+    "scientificName": "Levocetirizine",
+    "company": "Hikma",
+    "price": 290.56
+  },
+  {
+    "id": 907,
+    "tradeName": "Losec 600mg Ointment",
+    "scientificName": "Valganciclovir",
+    "company": "LEO Pharma",
+    "price": 334.12
+  },
+  {
+    "id": 250,
+    "tradeName": "Lotemax",
+    "scientificName": "Irinotecan",
+    "company": "Chemipharm",
+    "price": 266.62
+  },
+  {
+    "id": 227,
+    "tradeName": "Lotrimin",
+    "scientificName": "Pomalidomide",
+    "company": "Memphis",
+    "price": 466.62
+  },
+  {
+    "id": 336,
+    "tradeName": "Lupron",
+    "scientificName": "Trifluridine",
+    "company": "Rameda",
+    "price": 452.04
+  },
+  {
+    "id": 392,
+    "tradeName": "MRI",
+    "scientificName": "Galantamine",
+    "company": "GlaxoSmithKline",
+    "price": 437.76
+  },
+  {
+    "id": 82,
+    "tradeName": "Maalox",
+    "scientificName": "Vandetanib",
+    "company": "Glaxo Wellcome",
+    "price": 397.95
+  },
+  {
+    "id": 955,
+    "tradeName": "Maalox 2.5mg Suspension",
+    "scientificName": "Bosutinib",
+    "company": "Global Napi",
+    "price": 309.1
+  },
+  {
+    "id": 954,
+    "tradeName": "Maalox 2.5mg Syrup",
+    "scientificName": "Methotrexate",
+    "company": "EVA",
+    "price": 765.33
+  },
+  {
+    "id": 951,
+    "tradeName": "Maalox 4mg Solution",
+    "scientificName": "Natalizumab",
+    "company": "Spimaco",
+    "price": 112.76
+  },
+  {
+    "id": 950,
+    "tradeName": "Maalox 4mg Syrup",
+    "scientificName": "Busulfan",
+    "company": "Tabuk",
+    "price": 189.15
+  },
+  {
+    "id": 953,
+    "tradeName": "Maalox 80mg Suspension",
+    "scientificName": "Podophyllotoxin",
+    "company": "GlaxoSmithKline",
+    "price": 548.71
+  },
+  {
+    "id": 952,
+    "tradeName": "Maalox 80mg Tablet",
+    "scientificName": "Regorafenib",
+    "company": "Amoun",
+    "price": 753.2
+  },
+  {
+    "id": 341,
+    "tradeName": "Marcaine",
+    "scientificName": "Nilotinib",
+    "company": "Hikma Egypt",
+    "price": 75.09
+  },
+  {
+    "id": 262,
+    "tradeName": "Marvelon",
+    "scientificName": "Memantine",
+    "company": "Dar Al Dawa",
+    "price": 178.01
+  },
+  {
+    "id": 117,
+    "tradeName": "Materna",
+    "scientificName": "Glimepiride",
+    "company": "Hikma Egypt",
+    "price": 288.08
+  },
+  {
+    "id": 460,
+    "tradeName": "Mature",
+    "scientificName": "Penciclovir",
+    "company": "EIPICO",
+    "price": 259.33
+  },
+  {
+    "id": 92,
+    "tradeName": "Mebeverine",
+    "scientificName": "Vidarabine",
+    "company": "Dar Al Dawa",
+    "price": 191.24
+  },
+  {
+    "id": 1013,
+    "tradeName": "Mebeverine 10,000 IU Granules",
+    "scientificName": "Certolizumab",
+    "company": "Takeda",
+    "price": 423.49
+  },
+  {
+    "id": 1012,
+    "tradeName": "Mebeverine 10,000 IU Injection",
+    "scientificName": "Rituximab",
+    "company": "Pharco",
+    "price": 593.78
+  },
+  {
+    "id": 1015,
+    "tradeName": "Mebeverine 750mg Gel",
+    "scientificName": "Esomeprazole",
+    "company": "CID",
+    "price": 46.47
+  },
+  {
+    "id": 1014,
+    "tradeName": "Mebeverine 750mg Suspension",
+    "scientificName": "Paclitaxel",
+    "company": "Medical Union",
+    "price": 375.5
+  },
+  {
+    "id": 1011,
+    "tradeName": "Mebeverine 80mg Powder",
+    "scientificName": "Altretamine",
+    "company": "Memphis",
+    "price": 631.83
+  },
+  {
+    "id": 1010,
+    "tradeName": "Mebeverine 80mg Syrup",
+    "scientificName": "Epinephrine",
+    "company": "Organon Egypt",
+    "price": 209.04
+  },
+  {
+    "id": 439,
+    "tradeName": "Mechanical Ventilation",
+    "scientificName": "Acyclovir",
+    "company": "Sandoz",
+    "price": 346.68
+  },
+  {
+    "id": 322,
+    "tradeName": "Medrol",
+    "scientificName": "Lenvatinib",
+    "company": "Servier",
+    "price": 349.58
+  },
+  {
+    "id": 16,
+    "tradeName": "Mefenamic",
+    "scientificName": "Anakinra",
+    "company": "Nawmed",
+    "price": 153.35
+  },
+  {
+    "id": 559,
+    "tradeName": "Mefenamic 8000 IU Cream",
+    "scientificName": "Ibuprofen",
+    "company": "Sandoz",
+    "price": 298.61
+  },
+  {
+    "id": 558,
+    "tradeName": "Mefenamic 8000 IU Gel",
+    "scientificName": "Olokizumab",
+    "company": "Takeda",
+    "price": 268.56
+  },
+  {
+    "id": 557,
+    "tradeName": "Mefenamic 80mg Gel",
+    "scientificName": "Dacarbazine",
+    "company": "Nawmed",
+    "price": 187.8
+  },
+  {
+    "id": 556,
+    "tradeName": "Mefenamic 80mg Granules",
+    "scientificName": "Epratuzumab",
+    "company": "Medical Union",
+    "price": 164.28
+  },
+  {
+    "id": 555,
+    "tradeName": "Mefenamic 8mg Gel",
+    "scientificName": "Hyoscine",
+    "company": "Pharco Biet",
+    "price": 579.01
+  },
+  {
+    "id": 554,
+    "tradeName": "Mefenamic 8mg Suppository",
+    "scientificName": "Fluticasone",
+    "company": "Nawmed",
+    "price": 357.72
+  },
+  {
+    "id": 17,
+    "tradeName": "Mefenamic Acid",
+    "scientificName": "Lenvatinib",
+    "company": "Dar Al Dawa",
+    "price": 189.88
+  },
+  {
+    "id": 563,
+    "tradeName": "Mefenamic Acid 0.5% Gel",
+    "scientificName": "Vinorelbine",
+    "company": "Kahira Pharm",
+    "price": 423.42
+  },
+  {
+    "id": 562,
+    "tradeName": "Mefenamic Acid 0.5% Solution",
+    "scientificName": "Alectinib",
+    "company": "Hikma Egypt",
+    "price": 232.59
+  },
+  {
+    "id": 561,
+    "tradeName": "Mefenamic Acid 2000 IU Granules",
+    "scientificName": "Upadacitinib",
+    "company": "Multi-Apex",
+    "price": 269.14
+  },
+  {
+    "id": 560,
+    "tradeName": "Mefenamic Acid 2000 IU Solution",
+    "scientificName": "Dobutamine",
+    "company": "LEO Pharma",
+    "price": 195.27
+  },
+  {
+    "id": 564,
+    "tradeName": "Mefenamic Acid 75mg Cream",
+    "scientificName": "Tocilizumab",
+    "company": "Novo Nordisk Egypt",
+    "price": 448.08
+  },
+  {
+    "id": 565,
+    "tradeName": "Mefenamic Acid 75mg Suspension",
+    "scientificName": "Cladribine",
+    "company": "Hikma Egypt",
+    "price": 571.76
+  },
+  {
+    "id": 35,
+    "tradeName": "Megamox 1g",
+    "scientificName": "Pazopanib",
+    "company": "Boehringer Ingelheim",
+    "price": 386.03
+  },
+  {
+    "id": 673,
+    "tradeName": "Megamox 1g 20mg Cream",
+    "scientificName": "Ribavirin",
+    "company": "LEO Pharma",
+    "price": 758.48
+  },
+  {
+    "id": 672,
+    "tradeName": "Megamox 1g 20mg Granules",
+    "scientificName": "Metoclopramide/Enzymes",
+    "company": "Bayer Egypt",
+    "price": 393.19
+  },
+  {
+    "id": 668,
+    "tradeName": "Megamox 1g 320mg Suspension",
+    "scientificName": "Lomustine",
+    "company": "CID",
+    "price": 738.39
+  },
+  {
+    "id": 669,
+    "tradeName": "Megamox 1g 320mg Tablet",
+    "scientificName": "Pegaspargase",
+    "company": "Medical Union",
+    "price": 120.53
+  },
+  {
+    "id": 670,
+    "tradeName": "Megamox 1g 400 IU Capsule",
+    "scientificName": "Clotrimazole",
+    "company": "Hikma Egypt",
+    "price": 718.3
+  },
+  {
+    "id": 671,
+    "tradeName": "Megamox 1g 400 IU Injection",
+    "scientificName": "Cobimetinib",
+    "company": "EVA",
+    "price": 427.63
+  },
+  {
+    "id": 373,
+    "tradeName": "Menactra",
+    "scientificName": "Glycopyrrolate",
+    "company": "Abbott Egypt",
+    "price": 374.28
+  },
+  {
+    "id": 345,
+    "tradeName": "Mepivacaine",
+    "scientificName": "Physostigmine",
+    "company": "Medical Union",
+    "price": 48.06
+  },
+  {
+    "id": 263,
+    "tradeName": "Mercilon",
+    "scientificName": "Fluticasone",
+    "company": "Sigma",
+    "price": 9.47
+  },
+  {
+    "id": 157,
+    "tradeName": "Metformin",
+    "scientificName": "Temozolomide",
+    "company": "Novartis Egypt",
+    "price": 382.83
+  },
+  {
+    "id": 323,
+    "tradeName": "Methylpred",
+    "scientificName": "Bisoprolol",
+    "company": "Novartis Egypt",
+    "price": 243.01
+  },
+  {
+    "id": 311,
+    "tradeName": "Meticorten",
+    "scientificName": "Vemurafenib",
+    "company": "CID",
+    "price": 310.34
+  },
+  {
+    "id": 131,
+    "tradeName": "Metoprolol",
+    "scientificName": "Cantharidin",
+    "company": "Medical Union",
+    "price": 120.7
+  },
+  {
+    "id": 278,
+    "tradeName": "Metrodin",
+    "scientificName": "Metronidazole",
+    "company": "Global Napi",
+    "price": 206.7
+  },
+  {
+    "id": 232,
+    "tradeName": "Micatin",
+    "scientificName": "Selegiline",
+    "company": "Sigma",
+    "price": 309.5
+  },
+  {
+    "id": 230,
+    "tradeName": "Miconazole",
+    "scientificName": "Brodalumab",
+    "company": "EIPICO",
+    "price": 487.25
+  },
+  {
+    "id": 404,
+    "tradeName": "Microbiology",
+    "scientificName": "Cabozantinib",
+    "company": "Boehringer Ingelheim",
+    "price": 306.46
+  },
+  {
+    "id": 264,
+    "tradeName": "Microgynon",
+    "scientificName": "Memantine",
+    "company": "Rameda",
+    "price": 307.64
+  },
+  {
+    "id": 159,
+    "tradeName": "Micronase",
+    "scientificName": "Glimepiride",
+    "company": "Eva Pharma",
+    "price": 398.23
+  },
+  {
+    "id": 97,
+    "tradeName": "Milga",
+    "scientificName": "Mitomycin",
+    "company": "Pharco Biet",
+    "price": 496.63
+  },
+  {
+    "id": 1043,
+    "tradeName": "Milga 20,000 IU Gel",
+    "scientificName": "Tiotropium",
+    "company": "Abbott Egypt",
+    "price": 364.57
+  },
+  {
+    "id": 1042,
+    "tradeName": "Milga 20,000 IU Suspension",
+    "scientificName": "Atropine",
+    "company": "Multi-Apex",
+    "price": 714.27
+  },
+  {
+    "id": 1045,
+    "tradeName": "Milga 20mg Granules",
+    "scientificName": "Sinecatechins",
+    "company": "Mina Pharm",
+    "price": 459.98
+  },
+  {
+    "id": 1044,
+    "tradeName": "Milga 20mg Suppository",
+    "scientificName": "Bupivacaine",
+    "company": "Novo Nordisk Egypt",
+    "price": 541.61
+  },
+  {
+    "id": 1040,
+    "tradeName": "Milga 625mg Gel",
+    "scientificName": "Galantamine",
+    "company": "Arab Drug Company",
+    "price": 624.41
+  },
+  {
+    "id": 1041,
+    "tradeName": "Milga 625mg Syrup",
+    "scientificName": "Diclofenac Potassium",
+    "company": "Eva Pharma",
+    "price": 40.82
+  },
+  {
+    "id": 96,
+    "tradeName": "Milga Advance",
+    "scientificName": "Acyclovir",
+    "company": "Rameda",
+    "price": 66.68
+  },
+  {
+    "id": 1034,
+    "tradeName": "Milga Advance 30mg Cream",
+    "scientificName": "Foscarnet",
+    "company": "AstraZeneca",
+    "price": 214.34
+  },
+  {
+    "id": 1035,
+    "tradeName": "Milga Advance 30mg Suppository",
+    "scientificName": "Idoxuridine",
+    "company": "Chemipharm",
+    "price": 294.92
+  },
+  {
+    "id": 1037,
+    "tradeName": "Milga Advance 400,000 IU Granules",
+    "scientificName": "Betamethasone",
+    "company": "Pharco Biet",
+    "price": 185.92
+  },
+  {
+    "id": 1036,
+    "tradeName": "Milga Advance 400,000 IU Suspension",
+    "scientificName": "Ruxolitinib",
+    "company": "CID",
+    "price": 607.48
+  },
+  {
+    "id": 1039,
+    "tradeName": "Milga Advance 40mg Cream",
+    "scientificName": "Neostigmine",
+    "company": "Abbott Egypt",
+    "price": 531.1
+  },
+  {
+    "id": 1038,
+    "tradeName": "Milga Advance 40mg Granules",
+    "scientificName": "Brigatinib",
+    "company": "Novo Nordisk Egypt",
+    "price": 408.04
+  },
+  {
+    "id": 50,
+    "tradeName": "Minocin",
+    "scientificName": "Etanercept",
+    "company": "GlaxoSmithKline",
+    "price": 234.22
+  },
+  {
+    "id": 762,
+    "tradeName": "Minocin 160mg Gel",
+    "scientificName": "Oseltamivir",
+    "company": "Arab Drug Company",
+    "price": 244.0
+  },
+  {
+    "id": 763,
+    "tradeName": "Minocin 160mg Suppository",
+    "scientificName": "Ibuprofen",
+    "company": "Sigma",
+    "price": 325.59
+  },
+  {
+    "id": 761,
+    "tradeName": "Minocin 20mg Granules",
+    "scientificName": "Ganciclovir",
+    "company": "Pharco Biet",
+    "price": 343.77
+  },
+  {
+    "id": 760,
+    "tradeName": "Minocin 20mg Suspension",
+    "scientificName": "Dabrafenib",
+    "company": "Dar Al Dawa",
+    "price": 431.74
+  },
+  {
+    "id": 758,
+    "tradeName": "Minocin 2mg Suppository",
+    "scientificName": "Vidarabine",
+    "company": "Sanofi Egypt",
+    "price": 448.81
+  },
+  {
+    "id": 759,
+    "tradeName": "Minocin 2mg Suspension",
+    "scientificName": "Metformin",
+    "company": "Chemipharm",
+    "price": 718.41
+  },
+  {
+    "id": 49,
+    "tradeName": "Minocycline",
+    "scientificName": "Clofarabine",
+    "company": "Multi-Apex",
+    "price": 85.41
+  },
+  {
+    "id": 753,
+    "tradeName": "Minocycline 100mg Ointment",
+    "scientificName": "Rivastigmine",
+    "company": "Novartis Egypt",
+    "price": 309.77
+  },
+  {
+    "id": 752,
+    "tradeName": "Minocycline 100mg Suspension",
+    "scientificName": "Glimepiride",
+    "company": "EIPICO",
+    "price": 553.31
+  },
+  {
+    "id": 757,
+    "tradeName": "Minocycline 20mg Injection",
+    "scientificName": "Imiquimod",
+    "company": "Pharco",
+    "price": 101.06
+  },
+  {
+    "id": 756,
+    "tradeName": "Minocycline 20mg Powder",
+    "scientificName": "Ketoprofen",
+    "company": "Sandoz",
+    "price": 545.46
+  },
+  {
+    "id": 754,
+    "tradeName": "Minocycline 625mg Injection",
+    "scientificName": "Nifuroxazide",
+    "company": "Organon Egypt",
+    "price": 661.22
+  },
+  {
+    "id": 755,
+    "tradeName": "Minocycline 625mg Suspension",
+    "scientificName": "Fludarabine",
+    "company": "Pfizer Egypt",
+    "price": 690.08
+  },
+  {
+    "id": 231,
+    "tradeName": "Monistat",
+    "scientificName": "Alemtuzumab",
+    "company": "Janssen",
+    "price": 76.03
+  },
+  {
+    "id": 414,
+    "tradeName": "Monitor",
+    "scientificName": "Idoxuridine",
+    "company": "Takeda",
+    "price": 488.85
+  },
+  {
+    "id": 209,
+    "tradeName": "Montelukast",
+    "scientificName": "Mitomycin",
+    "company": "Organon Egypt",
+    "price": 375.8
+  },
+  {
+    "id": 73,
+    "tradeName": "Motilium",
+    "scientificName": "Tetracaine",
+    "company": "Abbott Egypt",
+    "price": 237.13
+  },
+  {
+    "id": 900,
+    "tradeName": "Motilium 120mg Capsule",
+    "scientificName": "Montelukast",
+    "company": "Eva Pharma",
+    "price": 410.54
+  },
+  {
+    "id": 901,
+    "tradeName": "Motilium 120mg Tablet",
+    "scientificName": "Canakinumab",
+    "company": "Spimaco",
+    "price": 793.38
+  },
+  {
+    "id": 897,
+    "tradeName": "Motilium 400mg Capsule",
+    "scientificName": "Budesonide",
+    "company": "Organon Egypt",
+    "price": 698.44
+  },
+  {
+    "id": 896,
+    "tradeName": "Motilium 400mg Ointment",
+    "scientificName": "Ponatinib",
+    "company": "Tabuk",
+    "price": 85.84
+  },
+  {
+    "id": 899,
+    "tradeName": "Motilium 5mg Capsule",
+    "scientificName": "Ketoprofen",
+    "company": "AstraZeneca",
+    "price": 317.6
+  },
+  {
+    "id": 898,
+    "tradeName": "Motilium 5mg Tablet",
+    "scientificName": "Docetaxel",
+    "company": "Julphar",
+    "price": 436.07
+  },
+  {
+    "id": 20,
+    "tradeName": "Motrin",
+    "scientificName": "Etanercept",
+    "company": "CID",
+    "price": 427.4
+  },
+  {
+    "id": 581,
+    "tradeName": "Motrin 160mg Powder",
+    "scientificName": "Hyoscine",
+    "company": "Chemipharm",
+    "price": 113.82
+  },
+  {
+    "id": 580,
+    "tradeName": "Motrin 160mg Suppository",
+    "scientificName": "Sorafenib",
+    "company": "Sanofi Egypt",
+    "price": 391.88
+  },
+  {
+    "id": 582,
+    "tradeName": "Motrin 20% Gel",
+    "scientificName": "Sarilumab",
+    "company": "Pharco",
+    "price": 346.41
+  },
+  {
+    "id": 583,
+    "tradeName": "Motrin 20% Powder",
+    "scientificName": "Ofatumumab",
+    "company": "Rameda",
+    "price": 206.48
+  },
+  {
+    "id": 579,
+    "tradeName": "Motrin 2mg Gel",
+    "scientificName": "Docetaxel",
+    "company": "Novartis Egypt",
+    "price": 199.18
+  },
+  {
+    "id": 578,
+    "tradeName": "Motrin 2mg Granules",
+    "scientificName": "Upadacitinib",
+    "company": "Memphis",
+    "price": 170.92
+  },
+  {
+    "id": 102,
+    "tradeName": "Multivit",
+    "scientificName": "Idarubicin",
+    "company": "GSK Egypt",
+    "price": 436.12
+  },
+  {
+    "id": 242,
+    "tradeName": "Murine",
+    "scientificName": "Cobimetinib",
+    "company": "Arab Drug Company",
+    "price": 374.1
+  },
+  {
+    "id": 228,
+    "tradeName": "Mycelex",
+    "scientificName": "Muromonab-CD3",
+    "company": "Novo Nordisk Egypt",
+    "price": 129.01
+  },
+  {
+    "id": 83,
+    "tradeName": "Mylanta",
+    "scientificName": "Dobutamine",
+    "company": "Rameda",
+    "price": 73.61
+  },
+  {
+    "id": 957,
+    "tradeName": "Mylanta 100mg Cream",
+    "scientificName": "Valganciclovir",
+    "company": "Rameda",
+    "price": 445.84
+  },
+  {
+    "id": 956,
+    "tradeName": "Mylanta 100mg Tablet",
+    "scientificName": "Atropine",
+    "company": "Merck Egypt",
+    "price": 643.87
+  },
+  {
+    "id": 961,
+    "tradeName": "Mylanta 30% Capsule",
+    "scientificName": "Pantoprazole",
+    "company": "Hikma",
+    "price": 343.92
+  },
+  {
+    "id": 960,
+    "tradeName": "Mylanta 30% Powder",
+    "scientificName": "Famciclovir",
+    "company": "Memphis",
+    "price": 326.62
+  },
+  {
+    "id": 959,
+    "tradeName": "Mylanta 40mg Solution",
+    "scientificName": "Obinutuzumab",
+    "company": "AstraZeneca",
+    "price": 221.42
+  },
+  {
+    "id": 958,
+    "tradeName": "Mylanta 40mg Suppository",
+    "scientificName": "Pantoprazole",
+    "company": "Rameda",
+    "price": 355.54
+  },
+  {
+    "id": 23,
+    "tradeName": "Naprosyn",
+    "scientificName": "Certolizumab",
+    "company": "Pfizer Egypt",
+    "price": 55.54
+  },
+  {
+    "id": 596,
+    "tradeName": "Naprosyn 375mg Powder",
+    "scientificName": "Brodalumab",
+    "company": "Chemipharm",
+    "price": 425.32
+  },
+  {
+    "id": 597,
+    "tradeName": "Naprosyn 375mg Syrup",
+    "scientificName": "Trifluridine",
+    "company": "Multi-Apex",
+    "price": 590.66
+  },
+  {
+    "id": 599,
+    "tradeName": "Naprosyn 500mg Granules",
+    "scientificName": "Cyclophosphamide",
+    "company": "Hikma Egypt",
+    "price": 713.33
+  },
+  {
+    "id": 598,
+    "tradeName": "Naprosyn 500mg Injection",
+    "scientificName": "Hexamethylmelamine",
+    "company": "Julphar",
+    "price": 50.89
+  },
+  {
+    "id": 601,
+    "tradeName": "Naprosyn 80mg Suppository",
+    "scientificName": "Imiquimod",
+    "company": "Servier",
+    "price": 284.09
+  },
+  {
+    "id": 600,
+    "tradeName": "Naprosyn 80mg Suspension",
+    "scientificName": "Fexofenadine",
+    "company": "Kahira Pharm",
+    "price": 685.0
+  },
+  {
+    "id": 22,
+    "tradeName": "Naproxen",
+    "scientificName": "Glimepiride",
+    "company": "Bayer Egypt",
+    "price": 273.52
+  },
+  {
+    "id": 595,
+    "tradeName": "Naproxen 20mg Cream",
+    "scientificName": "Epratuzumab",
+    "company": "Kahira Pharm",
+    "price": 621.27
+  },
+  {
+    "id": 594,
+    "tradeName": "Naproxen 20mg Syrup",
+    "scientificName": "Sunitinib",
+    "company": "Novo Nordisk Egypt",
+    "price": 47.86
+  },
+  {
+    "id": 592,
+    "tradeName": "Naproxen 30% Cream",
+    "scientificName": "Etanercept",
+    "company": "Pharco Biet",
+    "price": 167.97
+  },
+  {
+    "id": 593,
+    "tradeName": "Naproxen 30% Granules",
+    "scientificName": "Clazakizumab",
+    "company": "Janssen",
+    "price": 658.63
+  },
+  {
+    "id": 591,
+    "tradeName": "Naproxen 320mg Capsule",
+    "scientificName": "Tildrakizumab",
+    "company": "Arab Drug Company",
+    "price": 59.42
+  },
+  {
+    "id": 590,
+    "tradeName": "Naproxen 320mg Suspension",
+    "scientificName": "Ruxolitinib",
+    "company": "Memphis",
+    "price": 587.77
+  },
+  {
+    "id": 429,
+    "tradeName": "Narcan",
+    "scientificName": "Ibuprofen",
+    "company": "Sanofi Egypt",
+    "price": 441.34
+  },
+  {
+    "id": 343,
+    "tradeName": "Naropin",
+    "scientificName": "Metformin",
+    "company": "Amoun",
+    "price": 124.75
+  },
+  {
+    "id": 410,
+    "tradeName": "Needle",
+    "scientificName": "Azithromycin",
+    "company": "Pharco Biet",
+    "price": 147.55
+  },
+  {
+    "id": 447,
+    "tradeName": "Neonatal",
+    "scientificName": "Busulfan",
+    "company": "GSK Egypt",
+    "price": 379.22
+  },
+  {
+    "id": 120,
+    "tradeName": "Neurobion",
+    "scientificName": "Fludarabine",
+    "company": "Abbott Egypt",
+    "price": 179.75
+  },
+  {
+    "id": 448,
+    "tradeName": "Newborn",
+    "scientificName": "Baricitinib",
+    "company": "Pharco",
+    "price": 45.25
+  },
+  {
+    "id": 67,
+    "tradeName": "Nexium 40",
+    "scientificName": "Foscarnet",
+    "company": "Dar Al Dawa",
+    "price": 187.59
+  },
+  {
+    "id": 863,
+    "tradeName": "Nexium 40 0.1% Ointment",
+    "scientificName": "Lorlatinib",
+    "company": "Global Napi",
+    "price": 26.18
+  },
+  {
+    "id": 862,
+    "tradeName": "Nexium 40 0.1% Suppository",
+    "scientificName": "Lomustine",
+    "company": "Janssen",
+    "price": 350.13
+  },
+  {
+    "id": 861,
+    "tradeName": "Nexium 40 100 IU Capsule",
+    "scientificName": "Rituximab",
+    "company": "Spimaco",
+    "price": 434.76
+  },
+  {
+    "id": 860,
+    "tradeName": "Nexium 40 100 IU Powder",
+    "scientificName": "Bleomycin",
+    "company": "Amoun",
+    "price": 621.39
+  },
+  {
+    "id": 864,
+    "tradeName": "Nexium 40 40% Powder",
+    "scientificName": "Diclofenac Potassium",
+    "company": "Abbott Egypt",
+    "price": 448.07
+  },
+  {
+    "id": 865,
+    "tradeName": "Nexium 40 40% Tablet",
+    "scientificName": "Brigatinib",
+    "company": "Memphis",
+    "price": 717.48
+  },
+  {
+    "id": 153,
+    "tradeName": "Nifedipine",
+    "scientificName": "Semustine",
+    "company": "Glaxo Wellcome",
+    "price": 26.3
+  },
+  {
+    "id": 236,
+    "tradeName": "Nizoral",
+    "scientificName": "Penciclovir",
+    "company": "Novartis Egypt",
+    "price": 33.94
+  },
+  {
+    "id": 325,
+    "tradeName": "Nolvadex",
+    "scientificName": "Memantine",
+    "company": "AstraZeneca",
+    "price": 187.17
+  },
+  {
+    "id": 433,
+    "tradeName": "Norepinephrine",
+    "scientificName": "Sinecatechins",
+    "company": "Julphar",
+    "price": 6.27
+  },
+  {
+    "id": 152,
+    "tradeName": "Norvasc",
+    "scientificName": "Encorafenib",
+    "company": "Julphar",
+    "price": 237.08
+  },
+  {
+    "id": 45,
+    "tradeName": "Ofloxacin",
+    "scientificName": "Tositumomab",
+    "company": "AstraZeneca",
+    "price": 120.75
+  },
+  {
+    "id": 732,
+    "tradeName": "Ofloxacin 0.1% Cream",
+    "scientificName": "Ketoconazole",
+    "company": "Sanofi Egypt",
+    "price": 148.35
+  },
+  {
+    "id": 733,
+    "tradeName": "Ofloxacin 0.1% Gel",
+    "scientificName": "Ketoconazole",
+    "company": "Bayer Egypt",
+    "price": 542.02
+  },
+  {
+    "id": 730,
+    "tradeName": "Ofloxacin 20mg Cream",
+    "scientificName": "Trifluridine",
+    "company": "Medical Union",
+    "price": 653.43
+  },
+  {
+    "id": 731,
+    "tradeName": "Ofloxacin 20mg Ointment",
+    "scientificName": "Bisoprolol",
+    "company": "GlaxoSmithKline",
+    "price": 633.25
+  },
+  {
+    "id": 729,
+    "tradeName": "Ofloxacin 24mg Granules",
+    "scientificName": "Tofacitinib",
+    "company": "CID",
+    "price": 420.0
+  },
+  {
+    "id": 728,
+    "tradeName": "Ofloxacin 24mg Syrup",
+    "scientificName": "Paracetamol",
+    "company": "Eva Pharma",
+    "price": 588.3
+  },
+  {
+    "id": 458,
+    "tradeName": "Old Age",
+    "scientificName": "Sorafenib",
+    "company": "Takeda",
+    "price": 146.93
+  },
+  {
+    "id": 349,
+    "tradeName": "Omnipaque",
+    "scientificName": "Vidarabine",
+    "company": "GSK Egypt",
+    "price": 429.33
+  },
+  {
+    "id": 101,
+    "tradeName": "One-A-Day",
+    "scientificName": "Ponatinib",
+    "company": "AstraZeneca",
+    "price": 183.8
+  },
+  {
+    "id": 170,
+    "tradeName": "Onglyza",
+    "scientificName": "Obinutuzumab",
+    "company": "Amoun",
+    "price": 459.44
+  },
+  {
+    "id": 312,
+    "tradeName": "Orasone",
+    "scientificName": "Bortezomib",
+    "company": "Janssen",
+    "price": 217.65
+  },
+  {
+    "id": 108,
+    "tradeName": "Osteocare",
+    "scientificName": "Famciclovir",
+    "company": "GlaxoSmithKline",
+    "price": 379.51
+  },
+  {
+    "id": 257,
+    "tradeName": "Otic Solution",
+    "scientificName": "Docetaxel",
+    "company": "Multi-Apex",
+    "price": 351.13
+  },
+  {
+    "id": 413,
+    "tradeName": "Oxygen",
+    "scientificName": "Loratadine",
+    "company": "Medical Union",
+    "price": 461.45
+  },
+  {
+    "id": 396,
+    "tradeName": "PET Scan",
+    "scientificName": "Clofarabine",
+    "company": "EVA",
+    "price": 416.55
+  },
+  {
+    "id": 3,
+    "tradeName": "Panadol Advance",
+    "scientificName": "Epratuzumab",
+    "company": "Kahira Pharm",
+    "price": 296.91
+  },
+  {
+    "id": 478,
+    "tradeName": "Panadol Advance 1% Gel",
+    "scientificName": "Basiliximab",
+    "company": "Tabuk",
+    "price": 686.06
+  },
+  {
+    "id": 479,
+    "tradeName": "Panadol Advance 1% Suspension",
+    "scientificName": "Ceritinib",
+    "company": "Novartis Egypt",
+    "price": 601.56
+  },
+  {
+    "id": 480,
+    "tradeName": "Panadol Advance 1mg Capsule",
+    "scientificName": "Vinblastine",
+    "company": "Global Napi",
+    "price": 296.43
+  },
+  {
+    "id": 481,
+    "tradeName": "Panadol Advance 1mg Suppository",
+    "scientificName": "Ipratropium",
+    "company": "CID",
+    "price": 707.17
+  },
+  {
+    "id": 477,
+    "tradeName": "Panadol Advance 8mg Powder",
+    "scientificName": "Montelukast",
+    "company": "GlaxoSmithKline",
+    "price": 494.14
+  },
+  {
+    "id": 476,
+    "tradeName": "Panadol Advance 8mg Suppository",
+    "scientificName": "Foscarnet",
+    "company": "Mina Pharm",
+    "price": 620.69
+  },
+  {
+    "id": 4,
+    "tradeName": "Panadol Joint",
+    "scientificName": "Basiliximab",
+    "company": "Multi-Apex",
+    "price": 236.7
+  },
+  {
+    "id": 483,
+    "tradeName": "Panadol Joint 100mg/ml Granules",
+    "scientificName": "Topotecan",
+    "company": "Janssen",
+    "price": 116.73
+  },
+  {
+    "id": 482,
+    "tradeName": "Panadol Joint 100mg/ml Suppository",
+    "scientificName": "Ketoprofen",
+    "company": "Memphis",
+    "price": 545.15
+  },
+  {
+    "id": 484,
+    "tradeName": "Panadol Joint 16mg Capsule",
+    "scientificName": "Ketoconazole",
+    "company": "Global Napi",
+    "price": 484.95
+  },
+  {
+    "id": 485,
+    "tradeName": "Panadol Joint 16mg Suppository",
+    "scientificName": "Methotrexate",
+    "company": "Tabuk",
+    "price": 108.7
+  },
+  {
+    "id": 486,
+    "tradeName": "Panadol Joint 800mg Capsule",
+    "scientificName": "Sirukumab",
+    "company": "Organon Egypt",
+    "price": 524.62
+  },
+  {
+    "id": 487,
+    "tradeName": "Panadol Joint 800mg Powder",
+    "scientificName": "Miconazole",
+    "company": "Arab Drug Company",
+    "price": 556.24
+  },
+  {
+    "id": 7,
+    "tradeName": "Para-plus",
+    "scientificName": "Sinecatechins",
+    "company": "Merck Egypt",
+    "price": 417.17
+  },
+  {
+    "id": 500,
+    "tradeName": "Para-plus 10mg Capsule",
+    "scientificName": "Clotrimazole",
+    "company": "Glaxo Wellcome",
+    "price": 535.3
+  },
+  {
+    "id": 501,
+    "tradeName": "Para-plus 10mg Ointment",
+    "scientificName": "Ganciclovir",
+    "company": "Sanofi Egypt",
+    "price": 226.73
+  },
+  {
+    "id": 503,
+    "tradeName": "Para-plus 20mg Injection",
+    "scientificName": "Methotrexate",
+    "company": "Nawmed",
+    "price": 505.51
+  },
+  {
+    "id": 502,
+    "tradeName": "Para-plus 20mg Ointment",
+    "scientificName": "Pantoprazole",
+    "company": "Hikma Egypt",
+    "price": 323.55
+  },
+  {
+    "id": 505,
+    "tradeName": "Para-plus 50mg Injection",
+    "scientificName": "Galantamine",
+    "company": "Chemipharm",
+    "price": 18.95
+  },
+  {
+    "id": 504,
+    "tradeName": "Para-plus 50mg Syrup",
+    "scientificName": "Epirubicin",
+    "company": "Takeda",
+    "price": 529.91
+  },
+  {
+    "id": 1064,
+    "tradeName": "Paracetamol + Caffeine",
+    "scientificName": "Paracetamol / Caffeine",
+    "company": "Rameda",
+    "price": 71.99
+  },
+  {
+    "id": 284,
+    "tradeName": "Paroxetine",
+    "scientificName": "Carfilzomib",
+    "company": "Sandoz",
+    "price": 215.8
+  },
+  {
+    "id": 283,
+    "tradeName": "Paxil",
+    "scientificName": "Idoxuridine",
+    "company": "CID",
+    "price": 328.77
+  },
+  {
+    "id": 444,
+    "tradeName": "Pediatric",
+    "scientificName": "Rivastigmine",
+    "company": "LEO Pharma",
+    "price": 434.97
+  },
+  {
+    "id": 60,
+    "tradeName": "Penicillin",
+    "scientificName": "Tofacitinib",
+    "company": "Glaxo Wellcome",
+    "price": 52.38
+  },
+  {
+    "id": 821,
+    "tradeName": "Penicillin 100mg Suppository",
+    "scientificName": "Ketoconazole",
+    "company": "LEO Pharma",
+    "price": 435.38
+  },
+  {
+    "id": 820,
+    "tradeName": "Penicillin 100mg Syrup",
+    "scientificName": "Thiotepa",
+    "company": "Multi-Apex",
+    "price": 55.86
+  },
+  {
+    "id": 823,
+    "tradeName": "Penicillin 3mg Injection",
+    "scientificName": "Nelarabine",
+    "company": "Pfizer Egypt",
+    "price": 249.21
+  },
+  {
+    "id": 822,
+    "tradeName": "Penicillin 3mg Powder",
+    "scientificName": "Bleomycin",
+    "company": "Sanofi Egypt",
+    "price": 777.93
+  },
+  {
+    "id": 818,
+    "tradeName": "Penicillin 40mg Capsule",
+    "scientificName": "Dacarbazine",
+    "company": "Amoun",
+    "price": 371.7
+  },
+  {
+    "id": 819,
+    "tradeName": "Penicillin 40mg Ointment",
+    "scientificName": "Abatacept",
+    "company": "Boehringer Ingelheim",
+    "price": 363.49
+  },
+  {
+    "id": 462,
+    "tradeName": "Pensioner",
+    "scientificName": "Procarbazine",
+    "company": "Amoun",
+    "price": 87.22
+  },
+  {
+    "id": 78,
+    "tradeName": "Pepcid",
+    "scientificName": "Vincristine",
+    "company": "EIPICO",
+    "price": 138.95
+  },
+  {
+    "id": 929,
+    "tradeName": "Pepcid 1000mg Injection",
+    "scientificName": "Procarbazine",
+    "company": "Spimaco",
+    "price": 304.29
+  },
+  {
+    "id": 928,
+    "tradeName": "Pepcid 1000mg Solution",
+    "scientificName": "Tiotropium",
+    "company": "Tabuk",
+    "price": 20.62
+  },
+  {
+    "id": 927,
+    "tradeName": "Pepcid 400,000 IU Gel",
+    "scientificName": "Alemtuzumab",
+    "company": "Mina Pharm",
+    "price": 306.57
+  },
+  {
+    "id": 926,
+    "tradeName": "Pepcid 400,000 IU Tablet",
+    "scientificName": "Tiemonium",
+    "company": "Merck Egypt",
+    "price": 543.32
+  },
+  {
+    "id": 930,
+    "tradeName": "Pepcid 600mg Capsule",
+    "scientificName": "Cabozantinib",
+    "company": "Abbott Egypt",
+    "price": 666.28
+  },
+  {
+    "id": 931,
+    "tradeName": "Pepcid 600mg Injection",
+    "scientificName": "Paclitaxel",
+    "company": "Pfizer Egypt",
+    "price": 578.64
+  },
+  {
+    "id": 90,
+    "tradeName": "Pepto-Bismol",
+    "scientificName": "Glimepiride",
+    "company": "Chemipharm",
+    "price": 336.45
+  },
+  {
+    "id": 1001,
+    "tradeName": "Pepto-Bismol 2mg Cream",
+    "scientificName": "Fusidic Acid",
+    "company": "CID",
+    "price": 448.98
+  },
+  {
+    "id": 1000,
+    "tradeName": "Pepto-Bismol 2mg Injection",
+    "scientificName": "Melphalan",
+    "company": "Pharco",
+    "price": 218.91
+  },
+  {
+    "id": 998,
+    "tradeName": "Pepto-Bismol 3mg Capsule",
+    "scientificName": "Topotecan",
+    "company": "EIPICO",
+    "price": 341.0
+  },
+  {
+    "id": 999,
+    "tradeName": "Pepto-Bismol 3mg Suspension",
+    "scientificName": "Daclizumab",
+    "company": "Hikma",
+    "price": 12.64
+  },
+  {
+    "id": 1002,
+    "tradeName": "Pepto-Bismol 500mg/ml Capsule",
+    "scientificName": "Levocetirizine",
+    "company": "LEO Pharma",
+    "price": 391.99
+  },
+  {
+    "id": 1003,
+    "tradeName": "Pepto-Bismol 500mg/ml Syrup",
+    "scientificName": "Ketoconazole",
+    "company": "LEO Pharma",
+    "price": 759.2
+  },
+  {
+    "id": 277,
+    "tradeName": "Pergonal",
+    "scientificName": "Fusidic Acid",
+    "company": "AstraZeneca",
+    "price": 236.82
+  },
+  {
+    "id": 190,
+    "tradeName": "Periactin",
+    "scientificName": "Bleomycin",
+    "company": "Sanofi Egypt",
+    "price": 94.48
+  },
+  {
+    "id": 188,
+    "tradeName": "Phenergan",
+    "scientificName": "Tildrakizumab",
+    "company": "Pharco Biet",
+    "price": 85.93
+  },
+  {
+    "id": 434,
+    "tradeName": "Phenylephrine",
+    "scientificName": "Carmustine",
+    "company": "Novo Nordisk Egypt",
+    "price": 381.3
+  },
+  {
+    "id": 172,
+    "tradeName": "Pioglitazone",
+    "scientificName": "Mitoxantrone",
+    "company": "Eva Pharma",
+    "price": 410.29
+  },
+  {
+    "id": 375,
+    "tradeName": "Plasbumin",
+    "scientificName": "Montelukast",
+    "company": "Hikma",
+    "price": 71.08
+  },
+  {
+    "id": 18,
+    "tradeName": "Ponstan",
+    "scientificName": "Pyridostigmine",
+    "company": "EIPICO",
+    "price": 176.11
+  },
+  {
+    "id": 569,
+    "tradeName": "Ponstan 2mg Cream",
+    "scientificName": "Clotrimazole",
+    "company": "Sandoz",
+    "price": 739.9
+  },
+  {
+    "id": 568,
+    "tradeName": "Ponstan 2mg Granules",
+    "scientificName": "Melphalan",
+    "company": "Eva Pharma",
+    "price": 290.87
+  },
+  {
+    "id": 567,
+    "tradeName": "Ponstan 5mg Ointment",
+    "scientificName": "Brodalumab",
+    "company": "Abbott Egypt",
+    "price": 404.29
+  },
+  {
+    "id": 566,
+    "tradeName": "Ponstan 5mg Suppository",
+    "scientificName": "Glycopyrrolate",
+    "company": "AstraZeneca",
+    "price": 498.36
+  },
+  {
+    "id": 571,
+    "tradeName": "Ponstan 80mg Suspension",
+    "scientificName": "Cisplatin",
+    "company": "Sandoz",
+    "price": 685.22
+  },
+  {
+    "id": 570,
+    "tradeName": "Ponstan 80mg Tablet",
+    "scientificName": "Mitoxantrone",
+    "company": "Tabuk",
+    "price": 474.85
+  },
+  {
+    "id": 346,
+    "tradeName": "Pontocaine",
+    "scientificName": "Metoclopramide/Enzymes",
+    "company": "Hikma Egypt",
+    "price": 387.86
+  },
+  {
+    "id": 252,
+    "tradeName": "Pred Forte",
+    "scientificName": "Alpha-Amylase",
+    "company": "Sanofi Egypt",
+    "price": 472.56
+  },
+  {
+    "id": 222,
+    "tradeName": "Prednisone",
+    "scientificName": "Erlotinib",
+    "company": "Organon Egypt",
+    "price": 363.51
+  },
+  {
+    "id": 309,
+    "tradeName": "Prednisone",
+    "scientificName": "Fluticasone",
+    "company": "Spimaco",
+    "price": 217.08
+  },
+  {
+    "id": 116,
+    "tradeName": "Pregnacare",
+    "scientificName": "Carfilzomib",
+    "company": "Sedico",
+    "price": 420.95
+  },
+  {
+    "id": 115,
+    "tradeName": "Pregnavit",
+    "scientificName": "Temozolomide",
+    "company": "Multi-Apex",
+    "price": 213.76
+  },
+  {
+    "id": 271,
+    "tradeName": "Premarin",
+    "scientificName": "Ceritinib",
+    "company": "Spimaco",
+    "price": 227.91
+  },
+  {
+    "id": 364,
+    "tradeName": "Prevnar",
+    "scientificName": "Famciclovir",
+    "company": "Pharco Biet",
+    "price": 425.97
+  },
+  {
+    "id": 75,
+    "tradeName": "Prilosec",
+    "scientificName": "Esomeprazole",
+    "company": "EIPICO",
+    "price": 481.9
+  },
+  {
+    "id": 910,
+    "tradeName": "Prilosec 1000 IU Ointment",
+    "scientificName": "Dacarbazine",
+    "company": "GlaxoSmithKline",
+    "price": 653.08
+  },
+  {
+    "id": 911,
+    "tradeName": "Prilosec 1000 IU Suspension",
+    "scientificName": "Epratuzumab",
+    "company": "Sanofi Egypt",
+    "price": 347.53
+  },
+  {
+    "id": 913,
+    "tradeName": "Prilosec 40,000 IU Capsule",
+    "scientificName": "Abatacept",
+    "company": "Hikma",
+    "price": 92.77
+  },
+  {
+    "id": 912,
+    "tradeName": "Prilosec 40,000 IU Injection",
+    "scientificName": "Vasopressin",
+    "company": "Rameda",
+    "price": 89.95
+  },
+  {
+    "id": 908,
+    "tradeName": "Prilosec 600mg Granules",
+    "scientificName": "Pyridostigmine",
+    "company": "Nawmed",
+    "price": 150.7
+  },
+  {
+    "id": 909,
+    "tradeName": "Prilosec 600mg Suspension",
+    "scientificName": "Amoxicillin/Clavulanate",
+    "company": "Janssen",
+    "price": 89.2
+  },
+  {
+    "id": 142,
+    "tradeName": "Prinivil",
+    "scientificName": "Paracetamol/Caffeine",
+    "company": "Global Napi",
+    "price": 286.36
+  },
+  {
+    "id": 199,
+    "tradeName": "ProAir",
+    "scientificName": "Vinorelbine",
+    "company": "Dar Al Dawa",
+    "price": 85.05
+  },
+  {
+    "id": 371,
+    "tradeName": "ProQuad",
+    "scientificName": "Tositumomab",
+    "company": "Nawmed",
+    "price": 61.16
+  },
+  {
+    "id": 155,
+    "tradeName": "Procardia",
+    "scientificName": "Docetaxel",
+    "company": "Global Napi",
+    "price": 281.7
+  },
+  {
+    "id": 189,
+    "tradeName": "Promethazine",
+    "scientificName": "Vinorelbine",
+    "company": "Pharco Biet",
+    "price": 405.08
+  },
+  {
+    "id": 134,
+    "tradeName": "Propranolol",
+    "scientificName": "Glycopyrrolate",
+    "company": "Hikma Egypt",
+    "price": 468.73
+  },
+  {
+    "id": 198,
+    "tradeName": "Proventil",
+    "scientificName": "Glycopyrrolate",
+    "company": "Janssen",
+    "price": 176.38
+  },
+  {
+    "id": 269,
+    "tradeName": "Provera",
+    "scientificName": "Olokizumab",
+    "company": "Organon Egypt",
+    "price": 139.81
+  },
+  {
+    "id": 279,
+    "tradeName": "Prozac",
+    "scientificName": "Lidocaine",
+    "company": "Mina Pharm",
+    "price": 6.38
+  },
+  {
+    "id": 206,
+    "tradeName": "Pulmicort",
+    "scientificName": "Thalidomide",
+    "company": "Bayer Egypt",
+    "price": 313.19
+  },
+  {
+    "id": 124,
+    "tradeName": "Pyridoxine",
+    "scientificName": "Ketoprofen",
+    "company": "Sigma",
+    "price": 171.64
+  },
+  {
+    "id": 145,
+    "tradeName": "Ramipril",
+    "scientificName": "Procarbazine",
+    "company": "Sigma",
+    "price": 40.61
+  },
+  {
+    "id": 77,
+    "tradeName": "Ranitidine",
+    "scientificName": "Phenylephrine",
+    "company": "AstraZeneca",
+    "price": 208.06
+  },
+  {
+    "id": 920,
+    "tradeName": "Ranitidine 150mg Capsule",
+    "scientificName": "Temozolomide",
+    "company": "Novo Nordisk Egypt",
+    "price": 245.39
+  },
+  {
+    "id": 921,
+    "tradeName": "Ranitidine 150mg Gel",
+    "scientificName": "Sorafenib",
+    "company": "Pfizer Egypt",
+    "price": 351.93
+  },
+  {
+    "id": 924,
+    "tradeName": "Ranitidine 4000 IU Suppository",
+    "scientificName": "Oseltamivir",
+    "company": "Mina Pharm",
+    "price": 525.92
+  },
+  {
+    "id": 925,
+    "tradeName": "Ranitidine 4000 IU Syrup",
+    "scientificName": "Doxorubicin",
+    "company": "Takeda",
+    "price": 34.33
+  },
+  {
+    "id": 923,
+    "tradeName": "Ranitidine 80mg Granules",
+    "scientificName": "L-asparaginase",
+    "company": "Eva Pharma",
+    "price": 41.54
+  },
+  {
+    "id": 922,
+    "tradeName": "Ranitidine 80mg Tablet",
+    "scientificName": "Ketoprofen",
+    "company": "Medical Union",
+    "price": 16.01
+  },
+  {
+    "id": 397,
+    "tradeName": "Reagents",
+    "scientificName": "Ibritumomab",
+    "company": "Multi-Apex",
+    "price": 314.41
+  },
+  {
+    "id": 243,
+    "tradeName": "Refresh",
+    "scientificName": "Salmeterol",
+    "company": "Mina Pharm",
+    "price": 98.97
+  },
+  {
+    "id": 84,
+    "tradeName": "Rennie",
+    "scientificName": "Tiotropium",
+    "company": "Mina Pharm",
+    "price": 481.25
+  },
+  {
+    "id": 963,
+    "tradeName": "Rennie 10,000 IU Cream",
+    "scientificName": "Anakinra",
+    "company": "Arab Drug Company",
+    "price": 752.47
+  },
+  {
+    "id": 962,
+    "tradeName": "Rennie 10,000 IU Suppository",
+    "scientificName": "Filgotinib",
+    "company": "Novartis Egypt",
+    "price": 311.2
+  },
+  {
+    "id": 966,
+    "tradeName": "Rennie 20mg Powder",
+    "scientificName": "Diosmin",
+    "company": "EVA",
+    "price": 55.9
+  },
+  {
+    "id": 967,
+    "tradeName": "Rennie 20mg Solution",
+    "scientificName": "Thiotepa",
+    "company": "Organon Egypt",
+    "price": 492.63
+  },
+  {
+    "id": 965,
+    "tradeName": "Rennie 400,000 IU Gel",
+    "scientificName": "Vidarabine",
+    "company": "Global Napi",
+    "price": 454.16
+  },
+  {
+    "id": 964,
+    "tradeName": "Rennie 400,000 IU Suspension",
+    "scientificName": "Chlorambucil",
+    "company": "AstraZeneca",
+    "price": 339.23
+  },
+  {
+    "id": 302,
+    "tradeName": "Restoril",
+    "scientificName": "Sirukumab",
+    "company": "Merck Egypt",
+    "price": 313.79
+  },
+  {
+    "id": 443,
+    "tradeName": "Resuscitation",
+    "scientificName": "Vidarabine",
+    "company": "Sandoz",
+    "price": 407.09
+  },
+  {
+    "id": 463,
+    "tradeName": "Retiree",
+    "scientificName": "Glimepiride",
+    "company": "Sandoz",
+    "price": 429.37
+  },
+  {
+    "id": 420,
+    "tradeName": "Retractor",
+    "scientificName": "Ibuprofen",
+    "company": "Sigma",
+    "price": 431.21
+  },
+  {
+    "id": 174,
+    "tradeName": "Rosiglitazone",
+    "scientificName": "Epinephrine",
+    "company": "Hikma",
+    "price": 492.85
+  },
+  {
+    "id": 367,
+    "tradeName": "RotaTeq",
+    "scientificName": "Tivozanib",
+    "company": "Multi-Apex",
+    "price": 188.44
+  },
+  {
+    "id": 366,
+    "tradeName": "Rotateq",
+    "scientificName": "Amantadine",
+    "company": "Novo Nordisk Egypt",
+    "price": 205.89
+  },
+  {
+    "id": 196,
+    "tradeName": "Salbutamol",
+    "scientificName": "Atropine",
+    "company": "Julphar",
+    "price": 170.96
+  },
+  {
+    "id": 201,
+    "tradeName": "Salmeterol",
+    "scientificName": "Epirubicin",
+    "company": "Sandoz",
+    "price": 419.92
+  },
+  {
+    "id": 1072,
+    "tradeName": "Salmeterol + Fluticasone",
+    "scientificName": "Salmeterol / Fluticasone",
+    "company": "Nawmed",
+    "price": 153.0
+  },
+  {
+    "id": 418,
+    "tradeName": "Scalpel",
+    "scientificName": "Acyclovir",
+    "company": "Takeda",
+    "price": 141.63
+  },
+  {
+    "id": 436,
+    "tradeName": "Sedation",
+    "scientificName": "Bosutinib",
+    "company": "Tabuk",
+    "price": 294.98
+  },
+  {
+    "id": 238,
+    "tradeName": "Selsun",
+    "scientificName": "Encorafenib",
+    "company": "Bayer Egypt",
+    "price": 15.96
+  },
+  {
+    "id": 237,
+    "tradeName": "Selsun Blue",
+    "scientificName": "Amoxicillin",
+    "company": "Global Napi",
+    "price": 392.54
+  },
+  {
+    "id": 455,
+    "tradeName": "Senior",
+    "scientificName": "Cisplatin",
+    "company": "Merck Egypt",
+    "price": 202.91
+  },
+  {
+    "id": 461,
+    "tradeName": "Senior Citizen",
+    "scientificName": "Daclizumab",
+    "company": "GSK Egypt",
+    "price": 402.32
+  },
+  {
+    "id": 200,
+    "tradeName": "Serevent",
+    "scientificName": "Trypsin/Chymotrypsin",
+    "company": "Sandoz",
+    "price": 165.39
+  },
+  {
+    "id": 203,
+    "tradeName": "Serevent Diskus",
+    "scientificName": "Brigatinib",
+    "company": "LEO Pharma",
+    "price": 89.45
+  },
+  {
+    "id": 406,
+    "tradeName": "Serology",
+    "scientificName": "Rimantadine",
+    "company": "Medical Union",
+    "price": 94.32
+  },
+  {
+    "id": 276,
+    "tradeName": "Serophene",
+    "scientificName": "Miconazole",
+    "company": "Sedico",
+    "price": 100.62
+  },
+  {
+    "id": 282,
+    "tradeName": "Sertraline",
+    "scientificName": "Salmeterol",
+    "company": "Pharco",
+    "price": 173.71
+  },
+  {
+    "id": 208,
+    "tradeName": "Singulair",
+    "scientificName": "Rasagiline",
+    "company": "Mina Pharm",
+    "price": 160.07
+  },
+  {
+    "id": 167,
+    "tradeName": "Sitagliptin",
+    "scientificName": "Mepivacaine",
+    "company": "Medical Union",
+    "price": 172.26
+  },
+  {
+    "id": 1070,
+    "tradeName": "Sitagliptin + Metformin",
+    "scientificName": "Sitagliptin / Metformin",
+    "company": "Mina Pharm",
+    "price": 176.1
+  },
+  {
+    "id": 326,
+    "tradeName": "Soltamox",
+    "scientificName": "Sirukumab",
+    "company": "Abbott Egypt",
+    "price": 461.14
+  },
+  {
+    "id": 316,
+    "tradeName": "Solu-Cortef",
+    "scientificName": "Pilocarpine",
+    "company": "Servier",
+    "price": 298.39
+  },
+  {
+    "id": 95,
+    "tradeName": "Spasmo-digestin",
+    "scientificName": "Ponatinib",
+    "company": "Novartis Egypt",
+    "price": 162.16
+  },
+  {
+    "id": 1029,
+    "tradeName": "Spasmo-digestin 160mg Injection",
+    "scientificName": "Ipratropium",
+    "company": "Spimaco",
+    "price": 565.82
+  },
+  {
+    "id": 1028,
+    "tradeName": "Spasmo-digestin 160mg Suppository",
+    "scientificName": "Tiotropium",
+    "company": "Tabuk",
+    "price": 67.12
+  },
+  {
+    "id": 1031,
+    "tradeName": "Spasmo-digestin 30mg Suppository",
+    "scientificName": "Domperidone",
+    "company": "Chemipharm",
+    "price": 786.56
+  },
+  {
+    "id": 1030,
+    "tradeName": "Spasmo-digestin 30mg Suspension",
+    "scientificName": "Tocilizumab",
+    "company": "Bayer Egypt",
+    "price": 301.25
+  },
+  {
+    "id": 1033,
+    "tradeName": "Spasmo-digestin 8000 IU Capsule",
+    "scientificName": "Oxaliplatin",
+    "company": "Bayer Egypt",
+    "price": 759.2
+  },
+  {
+    "id": 1032,
+    "tradeName": "Spasmo-digestin 8000 IU Powder",
+    "scientificName": "Rasagiline",
+    "company": "LEO Pharma",
+    "price": 394.61
+  },
+  {
+    "id": 212,
+    "tradeName": "Spiriva",
+    "scientificName": "Clotrimazole",
+    "company": "Amoun",
+    "price": 374.59
+  },
+  {
+    "id": 165,
+    "tradeName": "Starlix",
+    "scientificName": "Ruxolitinib",
+    "company": "Mina Pharm",
+    "price": 374.52
+  },
+  {
+    "id": 224,
+    "tradeName": "Sterapred",
+    "scientificName": "Baricitinib",
+    "company": "Merck Egypt",
+    "price": 354.95
+  },
+  {
+    "id": 313,
+    "tradeName": "Sterapred",
+    "scientificName": "Vandetanib",
+    "company": "Servier",
+    "price": 25.17
+  },
+  {
+    "id": 99,
+    "tradeName": "Supradyn",
+    "scientificName": "Levocetirizine",
+    "company": "LEO Pharma",
+    "price": 67.84
+  },
+  {
+    "id": 1053,
+    "tradeName": "Supradyn 120mg Solution",
+    "scientificName": "Dopamine",
+    "company": "Pharco",
+    "price": 563.42
+  },
+  {
+    "id": 1052,
+    "tradeName": "Supradyn 120mg Syrup",
+    "scientificName": "Famciclovir",
+    "company": "AstraZeneca",
+    "price": 251.34
+  },
+  {
+    "id": 1056,
+    "tradeName": "Supradyn 20,000 IU Cream",
+    "scientificName": "Bupivacaine",
+    "company": "Sandoz",
+    "price": 128.46
+  },
+  {
+    "id": 1057,
+    "tradeName": "Supradyn 20,000 IU Powder",
+    "scientificName": "Cladribine",
+    "company": "EVA",
+    "price": 655.32
+  },
+  {
+    "id": 1055,
+    "tradeName": "Supradyn 30mg Capsule",
+    "scientificName": "Tiotropium",
+    "company": "Abbott Egypt",
+    "price": 353.92
+  },
+  {
+    "id": 1054,
+    "tradeName": "Supradyn 30mg Tablet",
+    "scientificName": "Vandetanib",
+    "company": "Rameda",
+    "price": 55.09
+  },
+  {
+    "id": 417,
+    "tradeName": "Sutures",
+    "scientificName": "Podophyllotoxin",
+    "company": "Novo Nordisk Egypt",
+    "price": 298.94
+  },
+  {
+    "id": 365,
+    "tradeName": "Synflorix",
+    "scientificName": "Vincristine",
+    "company": "Sedico",
+    "price": 453.83
+  },
+  {
+    "id": 304,
+    "tradeName": "Synthroid",
+    "scientificName": "Valacyclovir",
+    "company": "Servier",
+    "price": 412.23
+  },
+  {
+    "id": 409,
+    "tradeName": "Syringe",
+    "scientificName": "Procarbazine",
+    "company": "Boehringer Ingelheim",
+    "price": 314.02
+  },
+  {
+    "id": 244,
+    "tradeName": "Systane",
+    "scientificName": "Tofacitinib",
+    "company": "Rameda",
+    "price": 26.1
+  },
+  {
+    "id": 80,
+    "tradeName": "Tagamet",
+    "scientificName": "Ponatinib",
+    "company": "CID",
+    "price": 118.03
+  },
+  {
+    "id": 942,
+    "tradeName": "Tagamet 100mg Suppository",
+    "scientificName": "Thiotepa",
+    "company": "Tabuk",
+    "price": 568.49
+  },
+  {
+    "id": 943,
+    "tradeName": "Tagamet 100mg Suspension",
+    "scientificName": "Tositumomab",
+    "company": "Nawmed",
+    "price": 580.61
+  },
+  {
+    "id": 941,
+    "tradeName": "Tagamet 10mg Gel",
+    "scientificName": "Obinutuzumab",
+    "company": "Multi-Apex",
+    "price": 691.39
+  },
+  {
+    "id": 940,
+    "tradeName": "Tagamet 10mg Syrup",
+    "scientificName": "Pazopanib",
+    "company": "Organon Egypt",
+    "price": 232.81
+  },
+  {
+    "id": 939,
+    "tradeName": "Tagamet 80mg Capsule",
+    "scientificName": "Filgotinib",
+    "company": "Eva Pharma",
+    "price": 739.97
+  },
+  {
+    "id": 938,
+    "tradeName": "Tagamet 80mg Ointment",
+    "scientificName": "Amoxicillin",
+    "company": "Global Napi",
+    "price": 101.47
+  },
+  {
+    "id": 324,
+    "tradeName": "Tamoxifen",
+    "scientificName": "Etoposide",
+    "company": "Kahira Pharm",
+    "price": 64.95
+  },
+  {
+    "id": 424,
+    "tradeName": "Tape",
+    "scientificName": "Topotecan",
+    "company": "Arab Drug Company",
+    "price": 185.51
+  },
+  {
+    "id": 46,
+    "tradeName": "Tarivid",
+    "scientificName": "Norepinephrine",
+    "company": "Amoun",
+    "price": 467.85
+  },
+  {
+    "id": 736,
+    "tradeName": "Tarivid 0.5% Gel",
+    "scientificName": "Tocilizumab",
+    "company": "Merck Egypt",
+    "price": 323.23
+  },
+  {
+    "id": 737,
+    "tradeName": "Tarivid 0.5% Solution",
+    "scientificName": "Binimetinib",
+    "company": "Novo Nordisk Egypt",
+    "price": 353.29
+  },
+  {
+    "id": 738,
+    "tradeName": "Tarivid 125mg Cream",
+    "scientificName": "Paracetamol/Caffeine",
+    "company": "Dar Al Dawa",
+    "price": 257.05
+  },
+  {
+    "id": 739,
+    "tradeName": "Tarivid 125mg Granules",
+    "scientificName": "Ruxolitinib",
+    "company": "Janssen",
+    "price": 78.68
+  },
+  {
+    "id": 734,
+    "tradeName": "Tarivid 200 IU Granules",
+    "scientificName": "Topotecan",
+    "company": "Nawmed",
+    "price": 615.18
+  },
+  {
+    "id": 735,
+    "tradeName": "Tarivid 200 IU Powder",
+    "scientificName": "Semustine",
+    "company": "Nawmed",
+    "price": 457.95
+  },
+  {
+    "id": 44,
+    "tradeName": "Tavanic",
+    "scientificName": "Nifuroxazide",
+    "company": "Arab Drug Company",
+    "price": 129.88
+  },
+  {
+    "id": 726,
+    "tradeName": "Tavanic 320mg Gel",
+    "scientificName": "Mebeverine",
+    "company": "Sandoz",
+    "price": 40.43
+  },
+  {
+    "id": 727,
+    "tradeName": "Tavanic 320mg Injection",
+    "scientificName": "Epratuzumab",
+    "company": "Rameda",
+    "price": 501.43
+  },
+  {
+    "id": 725,
+    "tradeName": "Tavanic 40% Cream",
+    "scientificName": "Rituximab",
+    "company": "Chemipharm",
+    "price": 479.24
+  },
+  {
+    "id": 724,
+    "tradeName": "Tavanic 40% Tablet",
+    "scientificName": "Ibuprofen",
+    "company": "Kahira Pharm",
+    "price": 165.34
+  },
+  {
+    "id": 723,
+    "tradeName": "Tavanic 800mg Capsule",
+    "scientificName": "Doxorubicin",
+    "company": "Servier",
+    "price": 257.03
+  },
+  {
+    "id": 722,
+    "tradeName": "Tavanic 800mg Ointment",
+    "scientificName": "Imiquimod",
+    "company": "LEO Pharma",
+    "price": 785.46
+  },
+  {
+    "id": 184,
+    "tradeName": "Tavist",
+    "scientificName": "Amoxicillin/Clavulanate",
+    "company": "Medical Union",
+    "price": 197.42
+  },
+  {
+    "id": 176,
+    "tradeName": "Telfast 180",
+    "scientificName": "Rimantadine",
+    "company": "Memphis",
+    "price": 162.66
+  },
+  {
+    "id": 303,
+    "tradeName": "Temazepam",
+    "scientificName": "Atropine",
+    "company": "Chemipharm",
+    "price": 51.68
+  },
+  {
+    "id": 133,
+    "tradeName": "Tenormin",
+    "scientificName": "Axitinib",
+    "company": "Glaxo Wellcome",
+    "price": 405.53
+  },
+  {
+    "id": 233,
+    "tradeName": "Terazol",
+    "scientificName": "Daclizumab",
+    "company": "Novo Nordisk Egypt",
+    "price": 145.68
+  },
+  {
+    "id": 399,
+    "tradeName": "Tests",
+    "scientificName": "Pazopanib",
+    "company": "Pharco",
+    "price": 294.6
+  },
+  {
+    "id": 347,
+    "tradeName": "Tetracaine",
+    "scientificName": "Dobutamine",
+    "company": "Novo Nordisk Egypt",
+    "price": 431.94
+  },
+  {
+    "id": 51,
+    "tradeName": "Tetracycline",
+    "scientificName": "Procarbazine",
+    "company": "Tabuk",
+    "price": 490.14
+  },
+  {
+    "id": 767,
+    "tradeName": "Tetracycline 0.1% Injection",
+    "scientificName": "Vandetanib",
+    "company": "Organon Egypt",
+    "price": 582.02
+  },
+  {
+    "id": 766,
+    "tradeName": "Tetracycline 0.1% Suppository",
+    "scientificName": "Metronidazole",
+    "company": "Organon Egypt",
+    "price": 691.58
+  },
+  {
+    "id": 765,
+    "tradeName": "Tetracycline 1g/100ml Injection",
+    "scientificName": "Ifosfamide",
+    "company": "Julphar",
+    "price": 481.28
+  },
+  {
+    "id": 764,
+    "tradeName": "Tetracycline 1g/100ml Suppository",
+    "scientificName": "Physostigmine",
+    "company": "Hikma Egypt",
+    "price": 230.86
+  },
+  {
+    "id": 769,
+    "tradeName": "Tetracycline 750mg Injection",
+    "scientificName": "Glycopyrrolate",
+    "company": "Hikma",
+    "price": 307.87
+  },
+  {
+    "id": 768,
+    "tradeName": "Tetracycline 750mg Suppository",
+    "scientificName": "Vinorelbine",
+    "company": "Rameda",
+    "price": 682.6
+  },
+  {
+    "id": 123,
+    "tradeName": "Thiamine",
+    "scientificName": "Pazopanib",
+    "company": "Rameda",
+    "price": 39.11
+  },
+  {
+    "id": 386,
+    "tradeName": "Thrombin",
+    "scientificName": "Etoposide",
+    "company": "Nawmed",
+    "price": 99.9
+  },
+  {
+    "id": 307,
+    "tradeName": "Thyroxine",
+    "scientificName": "Dopamine",
+    "company": "GlaxoSmithKline",
+    "price": 496.98
+  },
+  {
+    "id": 213,
+    "tradeName": "Tiotropium",
+    "scientificName": "Cisplatin",
+    "company": "CID",
+    "price": 294.01
+  },
+  {
+    "id": 1073,
+    "tradeName": "Tiotropium + Olodaterol",
+    "scientificName": "Tiotropium / Olodaterol",
+    "company": "Hikma Egypt",
+    "price": 57.06
+  },
+  {
+    "id": 66,
+    "tradeName": "Tobramycin",
+    "scientificName": "Rimantadine",
+    "company": "Glaxo Wellcome",
+    "price": 130.46
+  },
+  {
+    "id": 246,
+    "tradeName": "Tobramycin",
+    "scientificName": "Paclitaxel",
+    "company": "Glaxo Wellcome",
+    "price": 218.5
+  },
+  {
+    "id": 854,
+    "tradeName": "Tobramycin 10% Granules",
+    "scientificName": "Obinutuzumab",
+    "company": "Mina Pharm",
+    "price": 424.59
+  },
+  {
+    "id": 855,
+    "tradeName": "Tobramycin 10% Solution",
+    "scientificName": "Lomustine",
+    "company": "Mina Pharm",
+    "price": 640.55
+  },
+  {
+    "id": 856,
+    "tradeName": "Tobramycin 250mg Injection",
+    "scientificName": "Miconazole",
+    "company": "Hikma Egypt",
+    "price": 650.2
+  },
+  {
+    "id": 857,
+    "tradeName": "Tobramycin 250mg Suppository",
+    "scientificName": "Glycopyrrolate",
+    "company": "Sanofi Egypt",
+    "price": 19.01
+  },
+  {
+    "id": 858,
+    "tradeName": "Tobramycin 4000 IU Injection",
+    "scientificName": "Doxorubicin",
+    "company": "Sanofi Egypt",
+    "price": 653.84
+  },
+  {
+    "id": 859,
+    "tradeName": "Tobramycin 4000 IU Powder",
+    "scientificName": "Vasopressin",
+    "company": "AstraZeneca",
+    "price": 485.97
+  },
+  {
+    "id": 245,
+    "tradeName": "Tobrex",
+    "scientificName": "Pemetrexed",
+    "company": "Boehringer Ingelheim",
+    "price": 378.36
+  },
+  {
+    "id": 29,
+    "tradeName": "Tolgesic",
+    "scientificName": "Alectinib",
+    "company": "Nawmed",
+    "price": 73.84
+  },
+  {
+    "id": 632,
+    "tradeName": "Tolgesic 30mg Granules",
+    "scientificName": "Alectinib",
+    "company": "LEO Pharma",
+    "price": 111.94
+  },
+  {
+    "id": 633,
+    "tradeName": "Tolgesic 30mg Suspension",
+    "scientificName": "Cantharidin",
+    "company": "Servier",
+    "price": 197.45
+  },
+  {
+    "id": 635,
+    "tradeName": "Tolgesic 400mg Powder",
+    "scientificName": "Bosutinib",
+    "company": "EIPICO",
+    "price": 727.52
+  },
+  {
+    "id": 634,
+    "tradeName": "Tolgesic 400mg Solution",
+    "scientificName": "Phenylephrine",
+    "company": "GSK Egypt",
+    "price": 501.11
+  },
+  {
+    "id": 636,
+    "tradeName": "Tolgesic 50mg Suppository",
+    "scientificName": "Tildrakizumab",
+    "company": "Arab Drug Company",
+    "price": 323.78
+  },
+  {
+    "id": 637,
+    "tradeName": "Tolgesic 50mg Tablet",
+    "scientificName": "Podophyllin",
+    "company": "Novartis Egypt",
+    "price": 297.18
+  },
+  {
+    "id": 30,
+    "tradeName": "Tolmetin",
+    "scientificName": "Carfilzomib",
+    "company": "Janssen",
+    "price": 338.29
+  },
+  {
+    "id": 642,
+    "tradeName": "Tolmetin 160mg Granules",
+    "scientificName": "Idarubicin",
+    "company": "Novartis Egypt",
+    "price": 619.91
+  },
+  {
+    "id": 643,
+    "tradeName": "Tolmetin 160mg Powder",
+    "scientificName": "Cobimetinib",
+    "company": "Sanofi Egypt",
+    "price": 169.14
+  },
+  {
+    "id": 640,
+    "tradeName": "Tolmetin 500mg Granules",
+    "scientificName": "Canakinumab",
+    "company": "Amoun",
+    "price": 366.11
+  },
+  {
+    "id": 641,
+    "tradeName": "Tolmetin 500mg Suppository",
+    "scientificName": "Pyridostigmine",
+    "company": "Boehringer Ingelheim",
+    "price": 627.23
+  },
+  {
+    "id": 639,
+    "tradeName": "Tolmetin 8mg Solution",
+    "scientificName": "Lomustine",
+    "company": "Pharco",
+    "price": 758.62
+  },
+  {
+    "id": 638,
+    "tradeName": "Tolmetin 8mg Suppository",
+    "scientificName": "Secukinumab",
+    "company": "Janssen",
+    "price": 144.25
+  },
+  {
+    "id": 268,
+    "tradeName": "Triphasil",
+    "scientificName": "Cytarabine",
+    "company": "Global Napi",
+    "price": 374.55
+  },
+  {
+    "id": 85,
+    "tradeName": "Tums",
+    "scientificName": "Axitinib",
+    "company": "Spimaco",
+    "price": 185.43
+  },
+  {
+    "id": 971,
+    "tradeName": "Tums 1mg Powder",
+    "scientificName": "Axitinib",
+    "company": "Pharco Biet",
+    "price": 480.99
+  },
+  {
+    "id": 970,
+    "tradeName": "Tums 1mg Solution",
+    "scientificName": "Muromonab-CD3",
+    "company": "Nawmed",
+    "price": 370.54
+  },
+  {
+    "id": 972,
+    "tradeName": "Tums 20mg Ointment",
+    "scientificName": "Ixazomib",
+    "company": "Memphis",
+    "price": 250.94
+  },
+  {
+    "id": 973,
+    "tradeName": "Tums 20mg Syrup",
+    "scientificName": "Cyclophosphamide",
+    "company": "Servier",
+    "price": 23.36
+  },
+  {
+    "id": 969,
+    "tradeName": "Tums 40% Granules",
+    "scientificName": "Certolizumab",
+    "company": "Pharco",
+    "price": 91.65
+  },
+  {
+    "id": 968,
+    "tradeName": "Tums 40% Suppository",
+    "scientificName": "Zanamivir",
+    "company": "Hikma",
+    "price": 85.41
+  },
+  {
+    "id": 361,
+    "tradeName": "Twinrix",
+    "scientificName": "Penciclovir",
+    "company": "Global Napi",
+    "price": 414.15
+  },
+  {
+    "id": 15,
+    "tradeName": "Tylenol",
+    "scientificName": "Baricitinib",
+    "company": "Bayer Egypt",
+    "price": 43.1
+  },
+  {
+    "id": 551,
+    "tradeName": "Tylenol 10mg Gel",
+    "scientificName": "Ibritumomab",
+    "company": "Julphar",
+    "price": 321.42
+  },
+  {
+    "id": 550,
+    "tradeName": "Tylenol 10mg Tablet",
+    "scientificName": "Dacarbazine",
+    "company": "Sedico",
+    "price": 406.98
+  },
+  {
+    "id": 552,
+    "tradeName": "Tylenol 20mg Cream",
+    "scientificName": "Adalimumab",
+    "company": "Chemipharm",
+    "price": 433.07
+  },
+  {
+    "id": 553,
+    "tradeName": "Tylenol 20mg Gel",
+    "scientificName": "Nifuroxazide",
+    "company": "Pharco Biet",
+    "price": 624.01
+  },
+  {
+    "id": 548,
+    "tradeName": "Tylenol 40mg Suspension",
+    "scientificName": "Temozolomide",
+    "company": "EIPICO",
+    "price": 377.74
+  },
+  {
+    "id": 549,
+    "tradeName": "Tylenol 40mg Tablet",
+    "scientificName": "Ganciclovir",
+    "company": "Arab Drug Company",
+    "price": 355.02
+  },
+  {
+    "id": 395,
+    "tradeName": "Ultrasound",
+    "scientificName": "Lomustine",
+    "company": "Takeda",
+    "price": 286.31
+  },
+  {
+    "id": 350,
+    "tradeName": "Ultravist",
+    "scientificName": "Neostigmine",
+    "company": "Chemipharm",
+    "price": 441.55
+  },
+  {
+    "id": 1075,
+    "tradeName": "Umeclidinium + Vilanterol",
+    "scientificName": "Umeclidinium / Vilanterol",
+    "company": "Servier",
+    "price": 276.82
+  },
+  {
+    "id": 234,
+    "tradeName": "Vagistat-1",
+    "scientificName": "Ipratropium",
+    "company": "Hikma",
+    "price": 38.95
+  },
+  {
+    "id": 296,
+    "tradeName": "Valium",
+    "scientificName": "Anakinra",
+    "company": "Rameda",
+    "price": 336.73
+  },
+  {
+    "id": 149,
+    "tradeName": "Valsartan",
+    "scientificName": "Tositumomab",
+    "company": "LEO Pharma",
+    "price": 402.02
+  },
+  {
+    "id": 370,
+    "tradeName": "Varivax",
+    "scientificName": "Dacarbazine",
+    "company": "Boehringer Ingelheim",
+    "price": 359.93
+  },
+  {
+    "id": 435,
+    "tradeName": "Vasopressin",
+    "scientificName": "Abatacept",
+    "company": "Merck Egypt",
+    "price": 12.98
+  },
+  {
+    "id": 144,
+    "tradeName": "Vasotec",
+    "scientificName": "Chlorambucil",
+    "company": "EIPICO",
+    "price": 280.66
+  },
+  {
+    "id": 290,
+    "tradeName": "Venlafaxine",
+    "scientificName": "Podophyllin",
+    "company": "Sigma",
+    "price": 496.57
+  },
+  {
+    "id": 412,
+    "tradeName": "Ventilator",
+    "scientificName": "Binimetinib",
+    "company": "Eva Pharma",
+    "price": 88.81
+  },
+  {
+    "id": 195,
+    "tradeName": "Ventolin",
+    "scientificName": "Glimepiride",
+    "company": "Organon Egypt",
+    "price": 151.72
+  },
+  {
+    "id": 48,
+    "tradeName": "Vibramycin",
+    "scientificName": "Dacarbazine",
+    "company": "Sedico",
+    "price": 151.09
+  },
+  {
+    "id": 751,
+    "tradeName": "Vibramycin 150mg Injection",
+    "scientificName": "Carfilzomib",
+    "company": "Arab Drug Company",
+    "price": 640.88
+  },
+  {
+    "id": 750,
+    "tradeName": "Vibramycin 150mg Powder",
+    "scientificName": "Bleomycin",
+    "company": "EIPICO",
+    "price": 730.01
+  },
+  {
+    "id": 749,
+    "tradeName": "Vibramycin 24mg Granules",
+    "scientificName": "Ganciclovir",
+    "company": "EVA",
+    "price": 761.75
+  },
+  {
+    "id": 748,
+    "tradeName": "Vibramycin 24mg Ointment",
+    "scientificName": "Glimepiride",
+    "company": "Julphar",
+    "price": 202.51
+  },
+  {
+    "id": 747,
+    "tradeName": "Vibramycin 75mg Solution",
+    "scientificName": "Bortezomib",
+    "company": "Sedico",
+    "price": 133.15
+  },
+  {
+    "id": 746,
+    "tradeName": "Vibramycin 75mg Suppository",
+    "scientificName": "Axitinib",
+    "company": "Global Napi",
+    "price": 260.9
+  },
+  {
+    "id": 248,
+    "tradeName": "Vigamox",
+    "scientificName": "Fexofenadine",
+    "company": "Memphis",
+    "price": 218.86
+  },
+  {
+    "id": 169,
+    "tradeName": "Vildagliptin",
+    "scientificName": "Busulfan",
+    "company": "Janssen",
+    "price": 294.37
+  },
+  {
+    "id": 72,
+    "tradeName": "Visceralgine",
+    "scientificName": "Alpha-Amylase",
+    "company": "Pfizer Egypt",
+    "price": 43.66
+  },
+  {
+    "id": 894,
+    "tradeName": "Visceralgine 125mg Capsule",
+    "scientificName": "Norepinephrine",
+    "company": "Amoun",
+    "price": 558.2
+  },
+  {
+    "id": 895,
+    "tradeName": "Visceralgine 125mg Ointment",
+    "scientificName": "Diclofenac Sodium",
+    "company": "Hikma Egypt",
+    "price": 374.72
+  },
+  {
+    "id": 893,
+    "tradeName": "Visceralgine 40mg Capsule",
+    "scientificName": "Bleomycin",
+    "company": "Julphar",
+    "price": 526.8
+  },
+  {
+    "id": 892,
+    "tradeName": "Visceralgine 40mg Powder",
+    "scientificName": "Basiliximab",
+    "company": "Sigma",
+    "price": 568.68
+  },
+  {
+    "id": 890,
+    "tradeName": "Visceralgine 5mg Granules",
+    "scientificName": "Alectinib",
+    "company": "Arab Drug Company",
+    "price": 659.61
+  },
+  {
+    "id": 891,
+    "tradeName": "Visceralgine 5mg Suspension",
+    "scientificName": "Physostigmine",
+    "company": "GlaxoSmithKline",
+    "price": 514.34
+  },
+  {
+    "id": 240,
+    "tradeName": "Visine",
+    "scientificName": "Esomeprazole",
+    "company": "Takeda",
+    "price": 181.12
+  },
+  {
+    "id": 186,
+    "tradeName": "Vistaril",
+    "scientificName": "Ofatumumab",
+    "company": "Hikma Egypt",
+    "price": 401.16
+  },
+  {
+    "id": 118,
+    "tradeName": "Vitafol",
+    "scientificName": "Rilonacept",
+    "company": "EIPICO",
+    "price": 330.35
+  },
+  {
+    "id": 119,
+    "tradeName": "Vitafol Plus",
+    "scientificName": "Azithromycin",
+    "company": "EIPICO",
+    "price": 329.78
+  },
+  {
+    "id": 104,
+    "tradeName": "Vitamin C",
+    "scientificName": "Valganciclovir",
+    "company": "Multi-Apex",
+    "price": 419.27
+  },
+  {
+    "id": 106,
+    "tradeName": "Vitamin D",
+    "scientificName": "Bupivacaine",
+    "company": "Bayer Egypt",
+    "price": 42.39
+  },
+  {
+    "id": 103,
+    "tradeName": "Vitamins ABC",
+    "scientificName": "Donepezil",
+    "company": "Hikma",
+    "price": 377.9
+  },
+  {
+    "id": 10,
+    "tradeName": "Voltaren 100",
+    "scientificName": "Thiotepa",
+    "company": "Glaxo Wellcome",
+    "price": 346.01
+  },
+  {
+    "id": 520,
+    "tradeName": "Voltaren 100 250mg Suspension",
+    "scientificName": "Tivozanib",
+    "company": "Global Napi",
+    "price": 715.55
+  },
+  {
+    "id": 521,
+    "tradeName": "Voltaren 100 250mg Tablet",
+    "scientificName": "Azithromycin",
+    "company": "EVA",
+    "price": 569.3
+  },
+  {
+    "id": 519,
+    "tradeName": "Voltaren 100 500mg Powder",
+    "scientificName": "Semustine",
+    "company": "Boehringer Ingelheim",
+    "price": 487.91
+  },
+  {
+    "id": 518,
+    "tradeName": "Voltaren 100 500mg Tablet",
+    "scientificName": "Pilocarpine",
+    "company": "Bayer Egypt",
+    "price": 611.39
+  },
+  {
+    "id": 523,
+    "tradeName": "Voltaren 100 800 IU Gel",
+    "scientificName": "Mitoxantrone",
+    "company": "Kahira Pharm",
+    "price": 240.39
+  },
+  {
+    "id": 522,
+    "tradeName": "Voltaren 100 800 IU Suppository",
+    "scientificName": "Nilotinib",
+    "company": "Boehringer Ingelheim",
+    "price": 364.06
+  },
+  {
+    "id": 384,
+    "tradeName": "Von Willebrand",
+    "scientificName": "Alectinib",
+    "company": "Rameda",
+    "price": 329.43
+  },
+  {
+    "id": 293,
+    "tradeName": "Wellbutrin",
+    "scientificName": "Tiemonium",
+    "company": "Rameda",
+    "price": 456.58
+  },
+  {
+    "id": 426,
+    "tradeName": "Wound Care",
+    "scientificName": "Dasatinib",
+    "company": "GSK Egypt",
+    "price": 382.55
+  },
+  {
+    "id": 394,
+    "tradeName": "X-Ray",
+    "scientificName": "Pegaspargase",
+    "company": "Merck Egypt",
+    "price": 59.91
+  },
+  {
+    "id": 294,
+    "tradeName": "Xanax",
+    "scientificName": "Glimepiride",
+    "company": "Global Napi",
+    "price": 56.87
+  },
+  {
+    "id": 339,
+    "tradeName": "Xylocaine",
+    "scientificName": "Scopolamine",
+    "company": "CID",
+    "price": 110.16
+  },
+  {
+    "id": 260,
+    "tradeName": "Yasmin",
+    "scientificName": "Trypsin/Chymotrypsin",
+    "company": "Eva Pharma",
+    "price": 409.09
+  },
+  {
+    "id": 261,
+    "tradeName": "Yaz",
+    "scientificName": "Golimumab",
+    "company": "Organon Egypt",
+    "price": 32.58
+  },
+  {
+    "id": 211,
+    "tradeName": "Zafirlukast",
+    "scientificName": "Alectinib",
+    "company": "Multi-Apex",
+    "price": 105.3
+  },
+  {
+    "id": 76,
+    "tradeName": "Zantac",
+    "scientificName": "Secukinumab",
+    "company": "Pharco Biet",
+    "price": 375.69
+  },
+  {
+    "id": 915,
+    "tradeName": "Zantac 1000 IU Syrup",
+    "scientificName": "Rituximab",
+    "company": "Glaxo Wellcome",
+    "price": 351.51
+  },
+  {
+    "id": 914,
+    "tradeName": "Zantac 1000 IU Tablet",
+    "scientificName": "Cladribine",
+    "company": "Abbott Egypt",
+    "price": 543.98
+  },
+  {
+    "id": 919,
+    "tradeName": "Zantac 10mg Capsule",
+    "scientificName": "Teniposide",
+    "company": "Julphar",
+    "price": 485.15
+  },
+  {
+    "id": 918,
+    "tradeName": "Zantac 10mg Ointment",
+    "scientificName": "Busulfan",
+    "company": "LEO Pharma",
+    "price": 682.78
+  },
+  {
+    "id": 917,
+    "tradeName": "Zantac 200,000 IU Cream",
+    "scientificName": "Tocilizumab",
+    "company": "Sedico",
+    "price": 782.45
+  },
+  {
+    "id": 916,
+    "tradeName": "Zantac 200,000 IU Injection",
+    "scientificName": "Risankizumab",
+    "company": "Kahira Pharm",
+    "price": 121.22
+  },
+  {
+    "id": 139,
+    "tradeName": "Zebeta",
+    "scientificName": "L-asparaginase",
+    "company": "Julphar",
+    "price": 66.03
+  },
+  {
+    "id": 141,
+    "tradeName": "Zestril",
+    "scientificName": "Fluticasone",
+    "company": "GlaxoSmithKline",
+    "price": 80.6
+  },
+  {
+    "id": 37,
+    "tradeName": "Zithromax 500",
+    "scientificName": "Tositumomab",
+    "company": "Boehringer Ingelheim",
+    "price": 239.05
+  },
+  {
+    "id": 682,
+    "tradeName": "Zithromax 500 10% Cream",
+    "scientificName": "Atropine",
+    "company": "Memphis",
+    "price": 194.56
+  },
+  {
+    "id": 683,
+    "tradeName": "Zithromax 500 10% Granules",
+    "scientificName": "Alpha-Amylase",
+    "company": "Chemipharm",
+    "price": 41.58
+  },
+  {
+    "id": 685,
+    "tradeName": "Zithromax 500 100mg/ml Capsule",
+    "scientificName": "Memantine",
+    "company": "Bayer Egypt",
+    "price": 699.38
+  },
+  {
+    "id": 684,
+    "tradeName": "Zithromax 500 100mg/ml Tablet",
+    "scientificName": "Tiotropium",
+    "company": "Sandoz",
+    "price": 184.42
+  },
+  {
+    "id": 681,
+    "tradeName": "Zithromax 500 5mg Injection",
+    "scientificName": "Zanamivir",
+    "company": "Merck Egypt",
+    "price": 789.25
+  },
+  {
+    "id": 680,
+    "tradeName": "Zithromax 500 5mg Powder",
+    "scientificName": "Rivastigmine",
+    "company": "Arab Drug Company",
+    "price": 576.25
+  },
+  {
+    "id": 334,
+    "tradeName": "Zoladex",
+    "scientificName": "Diclofenac Sodium",
+    "company": "Sigma",
+    "price": 167.05
+  },
+  {
+    "id": 281,
+    "tradeName": "Zoloft",
+    "scientificName": "Lidocaine",
+    "company": "Merck Egypt",
+    "price": 370.04
+  },
+  {
+    "id": 372,
+    "tradeName": "Zostavax",
+    "scientificName": "Golimumab",
+    "company": "Sigma",
+    "price": 27.59
+  },
+  {
+    "id": 249,
+    "tradeName": "Zymar",
+    "scientificName": "Azithromycin",
+    "company": "Nawmed",
+    "price": 74.9
+  },
+  {
+    "id": 178,
+    "tradeName": "Zyrtec",
+    "scientificName": "Fluorouracil",
+    "company": "Chemipharm",
+    "price": 487.73
+  },
+  {
+    "id": 194,
+    "tradeName": "Zyrtec-D",
+    "scientificName": "Trypsin/Chymotrypsin",
+    "company": "CID",
+    "price": 109.24
+  }
+]

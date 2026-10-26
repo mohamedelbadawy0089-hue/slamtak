@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline Storage Demo - 100% Offline Speed Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #0066cc;
+            --success: #00c853;
+            --warning: #ffd600;
+            --bg-dark: #0a1628;
+            --bg-panel: #111d32;
+            --bg-card: #1a2744;
+            --text: #ffffff;
+            --text-muted: #8b9dc3;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid var(--primary);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+        
+        .status-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: var(--bg-panel);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--success);
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+        
+        .panel {
+            background: var(--bg-panel);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .panel-title {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 5px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #004499);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #00a344);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #c7a500);
+            color: #000;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .log-container {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .log-entry.success { color: var(--success); }
+        .log-entry.info { color: var(--primary); }
+        .log-entry.warn { color: var(--warning); }
+        .log-entry.error { color: #ff1744; }
+        
+        .performance-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .perf-card {
+            background: var(--bg-card);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .perf-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--success);
+        }
+        
+        .perf-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .offline-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 200, 83, 0.2);
+            border: 1px solid var(--success);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--success);
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            background: var(--bg-card);
+            color: var(--text);
+            font-size: 1rem;
+        }
+        
+        .results-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .result-item {
+            padding: 10px;
+            background: var(--bg-card);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+    <link rel="stylesheet" href="libs/font-awesome.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-bolt"></i> Offline Storage Speed Test</h1>
+            <p class="subtitle">100% Offline Operation | IndexedDB Performance Demo</p>
+            <div class="offline-badge" style="margin-top: 15px;">
+                <i class="fas fa-wifi-slash"></i>
+                <span>Offline Mode Active - No Internet Required</span>
+            </div>
+        </header>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="stat-card">
+                <div class="stat-value" id="totalItems">0</div>
+                <div class="stat-label">Items Stored</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="cacheHitRate">0%</div>
+                <div class="stat-label">Cache Hit Rate</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avgReadTime">0</div>
+                <div class="stat-label">Avg Read Time (ms)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="storageMode">-</div>
+                <div class="stat-label">Storage Mode</div>
+            </div>
+        </div>
+
+        <!-- Load Test Panel -->
+        <div class="panel">
+            <div class="panel-title">
+                <i class="fas fa-database"></i>
+                Massive Data Load Test
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <button class="btn btn-primary" onclick="loadTestData(1000)">
+                    <i class="fas fa-plus"></i> Load 1,000 Items
+                </button>
+                <button class="btn btn-success" onclick="loadTestData(10000)">
+                    <i class="fas fa-plus"></i> Load 10,000 Items
+                </button>
+                <button class="btn btn-warning" onclick="loadTestData(100000)">
+                    <i class="fas fa-plus"></i> Load 100,000 Items
+                </button>
+                <button class="btn btn-primary" onclick="clearAllData()" style="float: left;">
+                    <i class="fas fa-trash"></i> Clear All
+                </button>
+            </div>
+            
+            <div class="progress-bar" id="progressBar" style="display: none;">
+                <div class="progress-fill" id="progressFill" style="width: 0%">0%</div>
+            </div>
+            
+            <div class="performance-grid">
+                <div class="perf-card">
+                    <div class="perf-value" id="loadTime">0</div>
+                    <div class="perf-label">Load Time (sec)</div>
+                </div>
+                <div class="perf-card">
+                    <div class="perf-value" id="itemsPerSec">0</div>
+                    <div class="perf-label">Items/Second</div>
+                </div>
+                <div class="perf-card">
+                    <div class="perf-value" id="storageSize">0</div>
+                    <div class="perf-label">Storage Size</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Speed Test Panel -->
+        <div class="panel">
+            <div class="panel-title">
+                <i class="fas fa-search"></i>
+                Speed Test: Search Performance
+            </div>
+            
+            <div class="search-box">
+                <input type="text" class="search-input" id="searchInput" placeholder="Enter drug name or voice alias...">
+                <button class="btn btn-primary" onclick="performSearch()">
+                    <i class="fas fa-search"></i> Search
+                </button>
+                <button class="btn btn-success" onclick="performRandomReads()">
+                    <i class="fas fa-random"></i> Random Reads (1000x)
+                </button>
+            </div>
+            
+            <div class="results-list" id="searchResults"></div>
+        </div>
+
+        <!-- Log Panel -->
+        <div class="panel">
+            <div class="panel-title">
+                <i class="fas fa-terminal"></i>
+                Activity Log
+            </div>
+            <div class="log-container" id="logContainer">
+                <div class="log-entry info">🚀 Demo initialized. Ready for offline testing...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="offline-storage-engine.js"></script>
+    
+    <script>
+        // Demo Controller
+        let storage = null;
+        let drugManager = null;
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initializeDemo();
+        });
+        
+        async function initializeDemo() {
+            log('🚀 Initializing Offline Storage Demo...', 'info');
+            
+            try {
+                // Initialize storage
+                storage = new OfflineStorageEngine();
+                await storage.initialize();
+                
+                // Initialize drug manager
+                drugManager = new DrugStorageManager();
+                await drugManager.initialize();
+                
+                updateStats();
+                
+                log('✅ Storage Engine Ready!', 'success');
+                log('📊 IndexedDB initialized successfully', 'info');
+                log('💾 100% Offline capability confirmed', 'success');
+                log('🚀 Multi-level caching active (L1 + L2 + L3)', 'info');
+                
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Load test data
+        async function loadTestData(count) {
+            log(`📦 Loading ${count.toLocaleString()} test items...`, 'info');
+            
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = document.getElementById('progressFill');
+            progressBar.style.display = 'block';
+            
+            const startTime = performance.now();
+            const batchSize = 1000;
+            const batches = Math.ceil(count / batchSize);
+            
+            for (let b = 0; b < batches; b++) {
+                const batch = [];
+                const start = b * batchSize;
+                const end = Math.min(start + batchSize, count);
+                
+                for (let i = start; i < end; i++) {
+                    batch.push(generateTestDrug(i));
+                }
+                
+                await storage.saveMany('drugs', batch);
+                
+                const progress = Math.round(((b + 1) / batches) * 100);
+                progressFill.style.width = `${progress}%`;
+                progressFill.textContent = `${progress}%`;
+                
+                // Allow UI to update
+                await new Promise(r => setTimeout(r, 0));
+            }
+            
+            const endTime = performance.now();
+            const duration = ((endTime - startTime) / 1000).toFixed(2);
+            const rate = (count / parseFloat(duration)).toFixed(0);
+            
+            // Rebuild index
+            await drugManager.rebuildPhoneticIndex();
+            
+            document.getElementById('loadTime').textContent = duration;
+            document.getElementById('itemsPerSec').textContent = rate;
+            
+            progressBar.style.display = 'none';
+            
+            log(`✅ Loaded ${count.toLocaleString()} items in ${duration}s`, 'success');
+            log(`⚡ Speed: ${rate} items/second`, 'success');
+            
+            updateStats();
+        }
+        
+        // Generate test drug
+        function generateTestDrug(index) {
+            const prefixes = ['Pana', 'Aug', 'Bru', 'Cata', 'Amoxi', 'Ibup', 'Para', 'Diclo', 'Cipro', 'Metro'];
+            const suffixes = ['dol', 'mentin', 'fen', 'flam', 'cillin', 'profen', 'cetamol', 'fenac', 'flox', 'nidazole'];
+            
+            const prefix = prefixes[index % prefixes.length];
+            const suffix = suffixes[index % suffixes.length];
+            
+            return {
+                id: `drug_${index}`,
+                tradeName: `${prefix}${suffix}_${index}`,
+                scientificName: `Scientific_${prefix}${suffix}_${index}`,
+                company: `Company_${index % 50}`,
+                price: 10 + (index % 100),
+                category: index % 2 === 0 ? 'Analgesic' : 'Antibiotic',
+                voiceAliases: [
+                    `${prefix}${suffix}`.toLowerCase(),
+                    `${prefix}${index}`.toLowerCase()
+                ]
+            };
+        }
+        
+        // Perform search
+        async function performSearch() {
+            const query = document.getElementById('searchInput').value;
+            if (!query) {
+                log('⚠️ Please enter a search query', 'warn');
+                return;
+            }
+            
+            const startTime = performance.now();
+            
+            // Use phonetic index search
+            const results = await drugManager.findByVoiceInput(query);
+            
+            const endTime = performance.now();
+            const duration = (endTime - startTime).toFixed(2);
+            
+            displayResults(results, duration);
+            
+            log(`🔍 Search "${query}" completed in ${duration}ms - ${results.length} results`, 'success');
+        }
+        
+        // Display results
+        function displayResults(results, duration) {
+            const container = document.getElementById('searchResults');
+            
+            if (results.length === 0) {
+                container.innerHTML = '<div class="result-item"><span>No results found</span></div>';
+                return;
+            }
+            
+            container.innerHTML = results.slice(0, 10).map(r => `
+                <div class="result-item">
+                    <span><strong>${r.tradeName}</strong> - ${r.scientificName}</span>
+                    <span style="color: var(--success);">${r.price} EGP</span>
+                </div>
+            `).join('');
+            
+            container.innerHTML += `
+                <div class="result-item" style="background: rgba(0,200,83,0.1); border: 1px solid var(--success);">
+                    <span>⏱️ Search completed in ${duration}ms</span>
+                    <span>Found ${results.length} results</span>
+                </div>
+            `;
+        }
+        
+        // Random reads test
+        async function performRandomReads() {
+            log('🎲 Starting random read performance test...', 'info');
+            
+            const totalItems = parseInt(document.getElementById('totalItems').textContent);
+            if (totalItems === 0) {
+                log('❌ No data loaded. Please load test data first.', 'error');
+                return;
+            }
+            
+            const startTime = performance.now();
+            const iterations = 1000;
+            
+            for (let i = 0; i < iterations; i++) {
+                const randomIndex = Math.floor(Math.random() * totalItems);
+                const id = `drug_${randomIndex}`;
+                await storage.get('drugs', id);
+            }
+            
+            const endTime = performance.now();
+            const totalDuration = endTime - startTime;
+            const avgTime = (totalDuration / iterations).toFixed(3);
+            
+            log(`⚡ Random Read Test: ${iterations} reads`, 'success');
+            log(`   Total time: ${totalDuration.toFixed(2)}ms`, 'info');
+            log(`   Average: ${avgTime}ms per read`, 'success');
+            
+            document.getElementById('avgReadTime').textContent = avgTime;
+            
+            updateStats();
+        }
+        
+        // Clear all data
+        async function clearAllData() {
+            if (!confirm('Are you sure you want to clear all data?')) return;
+            
+            log('🗑️ Clearing all data...', 'warn');
+            
+            await storage.clear('drugs');
+            await drugManager.rebuildPhoneticIndex();
+            
+            document.getElementById('searchResults').innerHTML = '';
+            document.getElementById('loadTime').textContent = '0';
+            document.getElementById('itemsPerSec').textContent = '0';
+            
+            log('✅ All data cleared', 'success');
+            
+            updateStats();
+        }
+        
+        // Update stats display
+        function updateStats() {
+            storage.count('drugs').then(count => {
+                document.getElementById('totalItems').textContent = count.toLocaleString();
+            });
+            
+            const stats = storage.getStats();
+            document.getElementById('cacheHitRate').textContent = stats.cacheHitRate;
+            document.getElementById('storageMode').textContent = stats.isIndexedDB ? 'IndexedDB' : 'LocalStorage';
+            
+            // Estimate storage size
+            navigator.storage?.estimate?.().then(estimate => {
+                if (estimate) {
+                    const used = (estimate.usage / 1024 / 1024).toFixed(1);
+                    const total = (estimate.quota / 1024 / 1024).toFixed(0);
+                    document.getElementById('storageSize').textContent = `${used} MB`;
+                }
+            });
+        }
+        
+        // Logging
+        function log(message, type = 'info') {
+            console.log(`[Demo] ${message}`);
+            
+            const container = document.getElementById('logContainer');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        // Handle Enter key in search
+        document.getElementById('searchInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performSearch();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تصحيح معرف المخزن</title>
+    <script src="libs/supabase.min.js"></script>
+</head>
+<body>
+    <h1>تصحيح معرف المخزن</h1>
+    <button onclick="fixWarehouseId()">تصحيح المعرف</button>
+    <div id="result"></div>
+
+    <script>
+        const supabaseUrl = 'https://iksjhjxwphmvthryfeae.supabase.co';
+        const supabaseKey = 'sb_publishable_0DUy2mtXS6m5S8PwTDAANQ_XWlzbu0G';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        async function fixWarehouseId() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'جاري التصحيح...';
+
+            try {
+                // مسح localStorage القديم
+                localStorage.removeItem('currentWarehouseId');
+                localStorage.removeItem('current_warehouse_id');
+                resultDiv.innerHTML += '<br>✅ تم مسح localStorage القديم';
+
+                // الحصول على الجلسة
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session) {
+                    resultDiv.innerHTML += '<br>❌ لا توجد جلسة. يرجى تسجيل الدخول أولاً';
+                    return;
+                }
+                resultDiv.innerHTML += '<br>✅ تم الحصول على الجلسة: ' + session.user.email;
+
+                // الحصول على معرف المخزن من السيرفر
+                const { data: warehouseData, error } = await supabaseClient
+                    .from('warehouses')
+                    .select('id, warehouse_name')
+                    .eq('user_id', session.user.id)
+                    .maybeSingle();
+
+                if (error || !warehouseData) {
+                    resultDiv.innerHTML += '<br>❌ لم يتم العثور على مخزن: ' + (error?.message || 'غير معروف');
+                    return;
+                }
+
+                resultDiv.innerHTML += '<br>✅ تم العثور على المخزن: ' + warehouseData.warehouse_name;
+                resultDiv.innerHTML += '<br>🆔 معرف المخزن: ' + warehouseData.id;
+
+                // حفظ المعرف الصحيح في localStorage
+                localStorage.setItem('currentWarehouseId', warehouseData.id);
+                resultDiv.innerHTML += '<br>✅ تم حفظ المعرف الصحيح في localStorage';
+
+                resultDiv.innerHTML += '<br><br><strong>✅ تم التصحيح بنجاح! يمكنك الآن العودة إلى stock.html</strong>';
+
+            } catch (error) {
+                resultDiv.innerHTML += '<br>❌ خطأ: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

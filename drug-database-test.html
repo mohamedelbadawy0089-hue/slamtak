@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار قاعدة بيانات الأدوية الموسعة</title>
+    <script src="data/drug-data.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            min-width: 150px;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+
+        .controls {
+            padding: 30px;
+            background: #fff;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 300px;
+            padding: 12px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e9ecef;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .filter-btn:hover {
+            background: #f8f9fa;
+        }
+
+        .filter-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .results {
+            padding: 30px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .drug-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .drug-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .drug-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .drug-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .drug-scientific {
+            color: #7f8c8d;
+            font-style: italic;
+            margin-bottom: 8px;
+        }
+
+        .drug-company {
+            color: #3498db;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .drug-price {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 8px;
+        }
+
+        .drug-category {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #ecf0f1;
+            border-radius: 15px;
+            font-size: 0.85em;
+            color: #7f8c8d;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 50px;
+            color: #7f8c8d;
+            font-size: 1.2em;
+        }
+
+        .company-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .company-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+
+        .category-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .category-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #7f8c8d;
+        }
+
+        @media (max-width: 768px) {
+            .stats {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .stat-card {
+                width: 100%;
+                max-width: 300px;
+                margin-bottom: 20px;
+            }
+            
+            .search-box {
+                flex-direction: column;
+            }
+            
+            .search-input {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 قاعدة بيانات الأدوية الموسعة</h1>
+            <p>اختبار قاعدة بيانات الأدوية المصرية والدولية</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalDrugs">0</div>
+                <div class="stat-label">إجمالي الأدوية</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalCompanies">0</div>
+                <div class="stat-label">عدد الشركات</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalCategories">0</div>
+                <div class="stat-label">عدد الفئات</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="avgPrice">0</div>
+                <div class="stat-label">متوسط السعر</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" class="search-input" id="searchInput" placeholder="ابحث عن دواء بالاسم التجاري أو العلمي...">
+                <select class="search-input" id="companyFilter" style="flex: 0 0 200px;">
+                    <option value="">جميع الشركات</option>
+                </select>
+                <select class="search-input" id="categoryFilter" style="flex: 0 0 200px;">
+                    <option value="">جميع الفئات</option>
+                </select>
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-category="all">الكل</button>
+                <button class="filter-btn" data-category="Antibiotic">مضادات حيوية</button>
+                <button class="filter-btn" data-category="Analgesic">مسكنات</button>
+                <button class="filter-btn" data-category="NSAID">مضادات الالتهاب</button>
+                <button class="filter-btn" data-category="Diabetes">سكري</button>
+                <button class="filter-btn" data-category="Hypertension">ضغط دم</button>
+                <button class="filter-btn" data-category="Anti-ulcer">قرحة</button>
+            </div>
+        </div>
+
+        <div class="results">
+            <div id="loadingMessage" class="loading">جاري تحميل البيانات...</div>
+            <div id="drugGrid" class="drug-grid" style="display: none;"></div>
+            <div id="noResults" class="no-results" style="display: none;">
+                لا توجد نتائج مطابقة للبحث
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allDrugs = [];
+        let filteredDrugs = [];
+        let companies = new Set();
+        let categories = new Set();
+
+        // Initialize the application
+        function init() {
+            // Wait for the drug data to load
+            if (typeof window.MASTER_DRUG_DATA === 'undefined') {
+                setTimeout(init, 100);
+                return;
+            }
+
+            allDrugs = window.MASTER_DRUG_DATA;
+            filteredDrugs = [...allDrugs];
+            
+            extractCompaniesAndCategories();
+            updateStats();
+            populateFilters();
+            displayDrugs();
+            setupEventListeners();
+            
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('drugGrid').style.display = 'grid';
+        }
+
+        function extractCompaniesAndCategories() {
+            allDrugs.forEach(drug => {
+                companies.add(drug.company);
+                categories.add(drug.category);
+            });
+        }
+
+        function updateStats() {
+            document.getElementById('totalDrugs').textContent = allDrugs.length;
+            document.getElementById('totalCompanies').textContent = companies.size;
+            document.getElementById('totalCategories').textContent = categories.size;
+            
+            const avgPrice = allDrugs.reduce((sum, drug) => sum + drug.price, 0) / allDrugs.length;
+            document.getElementById('avgPrice').textContent = avgPrice.toFixed(2) + ' ج.م';
+        }
+
+        function populateFilters() {
+            const companyFilter = document.getElementById('companyFilter');
+            const categoryFilter = document.getElementById('categoryFilter');
+            
+            // Populate company filter
+            Array.from(companies).sort().forEach(company => {
+                const option = document.createElement('option');
+                option.value = company;
+                option.textContent = company;
+                companyFilter.appendChild(option);
+            });
+            
+            // Populate category filter
+            Array.from(categories).sort().forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = getCategoryArabicName(category);
+                categoryFilter.appendChild(option);
+            });
+        }
+
+        function getCategoryArabicName(category) {
+            const categoryMap = {
+                'Antibiotic': 'مضادات حيوية',
+                'Analgesic': 'مسكنات',
+                'NSAID': 'مضادات الالتهاب',
+                'Diabetes': 'سكري',
+                'Hypertension': 'ضغط دم',
+                'Anti-ulcer': 'قرحة',
+                'Antidiarrheal': 'إسهال',
+                'Digestive': 'هضمي',
+                'Vascular': 'وعائي',
+                'Cholesterol': 'كوليسترول',
+                'Vitamins': 'فيتامينات',
+                'Multivitamins': 'متعدد الفيتامينات',
+                'Anti-inflammatory': 'مضاد التهاب',
+                'Antispasmodic': 'مضاد تشنج',
+                'Antiemetic': 'مضاد قيء',
+                'Decongestant': 'مزيل احتقان',
+                'Topical Antibiotic/Steroid': 'مضاد حيوي/ستيرويد موضعي',
+                'Topical Combination': 'تركيب موضعي',
+                'Topical Steroid': 'ستيرويد موضعي',
+                'Cough Syrup': 'شرح سعال',
+                'Gout': 'نقرس',
+                'Diuretic': 'مدر بول',
+                'IBS': 'متلازمة القولون العصبي',
+                'Urological': 'مسالك بولية',
+                'Antacid': 'مضاد حموضة',
+                'Neuropathy': 'اعتلال أعصاب',
+                'Corticosteroid': 'كورتيكوستيرويد',
+                'Asthma': 'ربو',
+                'Antifungal': 'مضاد فطري',
+                'Chemotherapy': 'علاج كيميائي',
+                'Antiviral': 'مضاد فيروسي',
+                'Topical NSAID': 'مضاد التهاب موضعي',
+                'Erectile Dysfunction': 'ضعف انتصاب',
+                'Anxiolytic': 'مضاد قلق',
+                'Antidepressant': 'مضاد اكتئاب',
+                'Analgesic/Antiplatelet': 'مسكن/مضاد صفيحات'
+            };
+            return categoryMap[category] || category;
+        }
+
+        function displayDrugs() {
+            const grid = document.getElementById('drugGrid');
+            const noResults = document.getElementById('noResults');
+            
+            if (filteredDrugs.length === 0) {
+                grid.style.display = 'none';
+                noResults.style.display = 'block';
+                return;
+            }
+            
+            grid.style.display = 'grid';
+            noResults.style.display = 'none';
+            
+            grid.innerHTML = filteredDrugs.map(drug => `
+                <div class="drug-card">
+                    <div class="drug-name">${drug.tradeName}</div>
+                    <div class="drug-scientific">${drug.scientificName}</div>
+                    <div class="drug-company">${drug.company}</div>
+                    <div class="drug-price">${drug.price.toFixed(2)} ج.م</div>
+                    <div class="drug-category">${getCategoryArabicName(drug.category)}</div>
+                </div>
+            `).join('');
+        }
+
+        function filterDrugs() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const companyFilter = document.getElementById('companyFilter').value;
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            
+            filteredDrugs = allDrugs.filter(drug => {
+                const matchesSearch = drug.tradeName.toLowerCase().includes(searchTerm) || 
+                                    drug.scientificName.toLowerCase().includes(searchTerm);
+                const matchesCompany = !companyFilter || drug.company === companyFilter;
+                const matchesCategory = !categoryFilter || drug.category === categoryFilter;
+                
+                return matchesSearch && matchesCompany && matchesCategory;
+            });
+            
+            displayDrugs();
+        }
+
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', filterDrugs);
+            document.getElementById('companyFilter').addEventListener('change', filterDrugs);
+            document.getElementById('categoryFilter').addEventListener('change', filterDrugs);
+            
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const category = this.dataset.category;
+                    if (category === 'all') {
+                        document.getElementById('categoryFilter').value = '';
+                    } else {
+                        document.getElementById('categoryFilter').value = category;
+                    }
+                    
+                    filterDrugs();
+                });
+            });
+        }
+
+        // Start the application
+        init();
+    </script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مثال - المساعد الذكي</title>
+    <script src="navigation.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .info-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-right: 5px solid #667eea;
+        }
+        .info-box h3 {
+            color: #333;
+            margin-top: 0;
+        }
+        .info-box p {
+            color: #666;
+            line-height: 1.8;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: all 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .feature-list li:before {
+            content: "✅ ";
+            margin-left: 10px;
+        }
+        .shortcut-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .shortcut-box strong {
+            color: #1565c0;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 مثال على المساعد الذكي</h1>
+
+        <div class="info-box">
+            <h3>📋 المميزات المفعّلة:</h3>
+            <ul class="feature-list">
+                <li>التعرف الصوتي باللهجة المصرية</li>
+                <li>الرد الصوتي الطبيعي</li>
+                <li>التحقق التلقائي من المدخلات</li>
+                <li>تنبيهات صوتية ومرئية</li>
+                <li>بحث ذكي سريع</li>
+                <li>قاعدة معرفة شاملة</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h3>🎤 جرب الأوامر الصوتية:</h3>
+            <p>
+                اضغط على أيقونة المساعد الذكي 🤖 في الأسفل، ثم اضغط على الميكروفون وقل:
+            </p>
+            <ul>
+                <li>"إزاي أسجل مخزن؟"</li>
+                <li>"عايز أضيف صيدلية"</li>
+                <li>"كيف أرفع منتجات كتير؟"</li>
+                <li>"مشكلة في الطباعة"</li>
+            </ul>
+        </div>
+
+        <form id="testForm" onsubmit="handleSubmit(event)">
+            <h3>📝 نموذج تجريبي مع التحقق التلقائي:</h3>
+            
+            <div class="form-group">
+                <label>الاسم (حرفين على الأقل):</label>
+                <input type="text" id="name" placeholder="أدخل الاسم">
+            </div>
+
+            <div class="form-group">
+                <label>رقم الهاتف (11 رقم يبدأ بصفر):</label>
+                <input type="text" id="phone" placeholder="01012345678">
+            </div>
+
+            <div class="form-group">
+                <label>البريد الإلكتروني:</label>
+                <input type="text" id="email" placeholder="example@domain.com">
+            </div>
+
+            <div class="form-group">
+                <label>الباسورد (6 أحرف على الأقل):</label>
+                <input type="password" id="password" placeholder="••••••">
+            </div>
+
+            <div class="form-group">
+                <label>الكمية (رقم موجب):</label>
+                <input type="text" id="quantity" placeholder="100">
+            </div>
+
+            <button type="submit">إرسال</button>
+        </form>
+
+        <div class="shortcut-box">
+            <strong>⌨️ اختصار سريع: Ctrl+Shift+A</strong>
+            <p style="margin: 10px 0 0 0; color: #666;">لفتح المساعد الذكي مباشرة</p>
+        </div>
+    </div>
+
+    <!-- المساعد الذكي المتكامل -->
+    <script src="ai-core.js"></script>
+    <script src="ai-validation.js"></script>
+    <script src="ai-speech.js"></script>
+    <script src="ai-database.js"></script>
+    <script src="ai-ui.js"></script>
+    <script src="ai-assistant.js"></script>
+
+    <script>
+        // تفعيل التحقق التلقائي على النموذج
+        if (window.AIValidation) {
+            AIValidation.enableAutoValidation('testForm', {
+                'name': 'name',
+                'phone': 'phone',
+                'email': 'email',
+                'password': 'password',
+                'quantity': 'number'
+            });
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            
+            // إذا وصلنا هنا، فجميع الحقول صحيحة
+            if (window.AIValidation) {
+                AIValidation.beep('success');
+                AIValidation.showToast('✅ تم الإرسال بنجاح!', 'success');
+                AIValidation.speak('تم الإرسال بنجاح');
+            }
+
+            console.log('Form submitted successfully!');
+        }
+
+        // رسالة ترحيبية
+        console.log('%c🤖 المساعد الذكي جاهز!', 'color: #667eea; font-size: 20px; font-weight: bold;');
+        console.log('%cاضغط Ctrl+Shift+A لفتح المساعد', 'color: #764ba2; font-size: 14px;');
+    </script>
+</body>
+</html>

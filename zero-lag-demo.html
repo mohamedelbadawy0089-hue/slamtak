@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zero-Lag UI Demo - 60fps Guaranteed</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #0066cc;
+            --success: #00c853;
+            --warning: #ffd600;
+            --accent: #ff6b35;
+            --bg-dark: #0a1628;
+            --bg-panel: #111d32;
+            --bg-card: #1a2744;
+            --text: #ffffff;
+            --text-muted: #8b9dc3;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* FPS Counter */
+        .fps-counter {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.8);
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            z-index: 1000;
+            border: 2px solid var(--success);
+        }
+        
+        .fps-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--success);
+        }
+        
+        .fps-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .fps-counter.warning {
+            border-color: var(--warning);
+        }
+        
+        .fps-counter.warning .fps-value {
+            color: var(--warning);
+        }
+        
+        .fps-counter.danger {
+            border-color: #ff1744;
+        }
+        
+        .fps-counter.danger .fps-value {
+            color: #ff1744;
+        }
+        
+        /* Header */
+        header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 2px solid var(--primary);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: var(--text-muted);
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+        
+        /* Animation Demo */
+        .animation-demo {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 150px;
+            height: 150px;
+            z-index: 1000;
+        }
+        
+        .spinning-circle {
+            width: 100%;
+            height: 100%;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top-color: var(--success);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .animation-label {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 900px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Panels */
+        .panel {
+            background: var(--bg-panel);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .panel-title {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 5px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #004499);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #00a344);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #c7a500);
+            color: #000;
+        }
+        
+        .btn-accent {
+            background: linear-gradient(135deg, var(--accent), #e55a2b);
+            color: white;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Progress */
+        .progress-section {
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        
+        /* Status Cards */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .status-card {
+            background: var(--bg-card);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .status-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--success);
+        }
+        
+        .status-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+        
+        /* Thread Visualizer */
+        .thread-viz {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .thread {
+            flex: 1;
+            background: var(--bg-card);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .thread.active {
+            border-color: var(--success);
+            box-shadow: 0 0 20px rgba(0, 200, 83, 0.3);
+        }
+        
+        .thread.working {
+            border-color: var(--accent);
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(255, 107, 53, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(255, 107, 53, 0.8); }
+        }
+        
+        .thread-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .thread-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .thread-status {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        /* Log */
+        .log-container {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .log-entry.success { color: var(--success); }
+        .log-entry.info { color: var(--primary); }
+        .log-entry.warn { color: var(--warning); }
+        .log-entry.accent { color: var(--accent); }
+        
+        /* Interactive Elements */
+        .interactive-demo {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        
+        .color-btn {
+            width: 60px;
+            height: 60px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+        
+        .color-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-btn:active {
+            transform: scale(0.95);
+        }
+    </style>
+    <link rel="stylesheet" href="libs/font-awesome.min.css">
+</head>
+<body>
+    <!-- FPS Counter -->
+    <div class="fps-counter" id="fpsCounter">
+        <div class="fps-value" id="fpsValue">60</div>
+        <div class="fps-label">FPS</div>
+    </div>
+    
+    <!-- Animation Demo -->
+    <div class="animation-demo">
+        <div class="spinning-circle"></div>
+        <div class="animation-label">60fps Animation</div>
+    </div>
+    
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-bolt"></i> Zero-Lag UI Demo</h1>
+            <p class="subtitle">Heavy operations in Worker Thread | UI stays at 60fps</p>
+        </header>
+        
+        <div class="main-grid">
+            <!-- Left Panel: Worker Operations -->
+            <div class="panel">
+                <div class="panel-title">
+                    <i class="fas fa-cogs"></i>
+                    Worker Thread Operations
+                </div>
+                
+                <!-- Thread Visualizer -->
+                <div class="thread-viz">
+                    <div class="thread active" id="uiThread">
+                        <div class="thread-icon">🎮</div>
+                        <div class="thread-name">UI Thread</div>
+                        <div class="thread-status">60fps Smooth</div>
+                    </div>
+                    <div class="thread" id="workerThread">
+                        <div class="thread-icon">🧵</div>
+                        <div class="thread-name">Worker Thread</div>
+                        <div class="thread-status">Idle</div>
+                    </div>
+                </div>
+                
+                <!-- Operations -->
+                <div style="margin: 20px 0;">
+                    <button class="btn btn-primary" onclick="loadDataWorker(10000)">
+                        <i class="fas fa-database"></i> Load 10K (Worker)
+                    </button>
+                    <button class="btn btn-success" onclick="loadDataWorker(100000)">
+                        <i class="fas fa-database"></i> Load 100K (Worker)
+                    </button>
+                    <button class="btn btn-accent" onclick="indexData()">
+                        <i class="fas fa-search"></i> Build Index (Worker)
+                    </button>
+                </div>
+                
+                <!-- Progress -->
+                <div class="progress-section" id="progressSection" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%">0%</div>
+                    </div>
+                    <div class="progress-stats">
+                        <span id="progressText">Processing...</span>
+                        <span id="progressTime">0s</span>
+                    </div>
+                </div>
+                
+                <!-- Status -->
+                <div class="status-grid">
+                    <div class="status-card">
+                        <div class="status-value" id="itemsLoaded">0</div>
+                        <div class="status-label">Items Loaded</div>
+                    </div>
+                    <div class="status-card">
+                        <div class="status-value" id="indexSize">0</div>
+                        <div class="status-label">Index Size</div>
+                    </div>
+                    <div class="status-card">
+                        <div class="status-value" id="cacheHitRate">0%</div>
+                        <div class="status-label">Cache Hit Rate</div>
+                    </div>
+                    <div class="status-card">
+                        <div class="status-value" id="avgResponse">0</div>
+                        <div class="status-label">Avg Response (ms)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Panel: Interactive UI -->
+            <div class="panel">
+                <div class="panel-title">
+                    <i class="fas fa-mouse-pointer"></i>
+                    Interactive UI (Test Responsiveness)
+                    <span style="color: var(--success); font-size: 0.9rem;">(Click during operations!)</span>
+                </div>
+                
+                <!-- Color Buttons -->
+                <p style="color: var(--text-muted); margin-bottom: 10px;">
+                    Click buttons while data loads - UI stays responsive!
+                </p>
+                <div class="interactive-demo" id="colorButtons">
+                    <button class="color-btn" style="background: #ff6b6b" onclick="flashColor('#ff6b6b')"></button>
+                    <button class="color-btn" style="background: #4ecdc4" onclick="flashColor('#4ecdc4')"></button>
+                    <button class="color-btn" style="background: #45b7d1" onclick="flashColor('#45b7d1')"></button>
+                    <button class="color-btn" style="background: #f9ca24" onclick="flashColor('#f9ca24')"></button>
+                    <button class="color-btn" style="background: #6c5ce7" onclick="flashColor('#6c5ce7')"></button>
+                    <button class="color-btn" style="background: #a29bfe" onclick="flashColor('#a29bfe')"></button>
+                    <button class="color-btn" style="background: #fd79a8" onclick="flashColor('#fd79a8')"></button>
+                    <button class="color-btn" style="background: #00b894" onclick="flashColor('#00b894')"></button>
+                </div>
+                
+                <!-- Click Counter -->
+                <div class="status-grid">
+                    <div class="status-card">
+                        <div class="status-value" id="clickCount">0</div>
+                        <div class="status-label">Clicks Detected</div>
+                    </div>
+                    <div class="status-card">
+                        <div class="status-value" id="responseTime">0</div>
+                        <div class="status-label">UI Response (ms)</div>
+                    </div>
+                </div>
+                
+                <!-- Slider Demo -->
+                <div style="margin: 20px 0;">
+                    <label style="color: var(--text-muted); display: block; margin-bottom: 10px;">
+                        Test Slider While Loading:
+                    </label>
+                    <input type="range" min="0" max="100" value="50" 
+                           style="width: 100%; height: 40px; cursor: pointer;"
+                           oninput="updateSliderValue(this.value)">
+                    <div id="sliderValue" style="text-align: center; margin-top: 10px; font-size: 1.2rem; color: var(--success);">
+                        50
+                    </div>
+                </div>
+                
+                <!-- Log -->
+                <div class="log-container" id="logContainer">
+                    <div class="log-entry info">🎮 Zero-Lag UI Demo initialized</div>
+                    <div class="log-entry success">🧵 Worker Thread ready</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Load Worker Manager -->
+    <script src="worker-storage-manager.js"></script>
+    
+    <script>
+        // ============================================
+        // Zero-Lag UI Demo Controller
+        // ============================================
+        
+        let workerManager = null;
+        let clickCounter = 0;
+        let operationStartTime = 0;
+        
+        // FPS Monitoring
+        let fps = 60;
+        let lastTime = performance.now();
+        let frameCount = 0;
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initializeDemo();
+            startFPSCounter();
+        });
+        
+        async function initializeDemo() {
+            log('🚀 Initializing Zero-Lag UI Demo...', 'info');
+            
+            try {
+                // Initialize Worker Manager
+                workerManager = new WorkerDrugManager();
+                await workerManager.initialize();
+                
+                log('✅ Worker Manager ready', 'success');
+                log('🎮 UI Thread: Unblocked', 'success');
+                log('⚡ 60fps: Guaranteed', 'accent');
+                
+                updateStats();
+                
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Load data using Worker
+        async function loadDataWorker(count) {
+            log(`📦 Loading ${count.toLocaleString()} items in Worker...`, 'info');
+            
+            operationStartTime = performance.now();
+            
+            // Show progress
+            document.getElementById('progressSection').style.display = 'block';
+            document.getElementById('workerThread').classList.add('working');
+            document.getElementById('workerThread').querySelector('.thread-status').textContent = 'Working...';
+            
+            // Generate test data
+            const drugs = [];
+            for (let i = 0; i < count; i++) {
+                drugs.push(generateTestDrug(i));
+            }
+            
+            // Load in worker
+            const result = await workerManager.saveManyDrugs(drugs, (progress) => {
+                updateProgress(progress.progress, progress.processed, progress.total);
+            });
+            
+            // Complete
+            const duration = ((performance.now() - operationStartTime) / 1000).toFixed(2);
+            
+            document.getElementById('workerThread').classList.remove('working');
+            document.getElementById('workerThread').querySelector('.thread-status').textContent = 'Idle';
+            document.getElementById('progressSection').style.display = 'none';
+            
+            log(`✅ Loaded ${result.completed} items in ${duration}s`, 'success');
+            log(`⚡ UI stayed at ${Math.round(fps)}fps during operation`, 'accent');
+            
+            updateStats();
+        }
+        
+        // Build index
+        async function indexData() {
+            log('🔤 Building phonetic index in Worker...', 'info');
+            
+            operationStartTime = performance.now();
+            
+            document.getElementById('workerThread').classList.add('working');
+            document.getElementById('workerThread').querySelector('.thread-status').textContent = 'Indexing...';
+            
+            const drugs = await workerManager.storage.getFromStore('drugs');
+            
+            if (drugs.length === 0) {
+                log('⚠️ No data to index. Load data first.', 'warn');
+                document.getElementById('workerThread').classList.remove('working');
+                return;
+            }
+            
+            const result = await workerManager.rebuildIndex(drugs, (progress) => {
+                document.getElementById('indexSize').textContent = progress.progress + '%';
+            });
+            
+            const duration = ((performance.now() - operationStartTime) / 1000).toFixed(2);
+            
+            document.getElementById('workerThread').classList.remove('working');
+            document.getElementById('workerThread').querySelector('.thread-status').textContent = 'Idle';
+            
+            log(`✅ Index built: ${result.totalCodes} phonetic codes in ${duration}s`, 'success');
+            
+            updateStats();
+        }
+        
+        // Update progress
+        function updateProgress(percent, processed, total) {
+            const fill = document.getElementById('progressFill');
+            const text = document.getElementById('progressText');
+            const time = document.getElementById('progressTime');
+            
+            fill.style.width = `${percent}%`;
+            fill.textContent = `${percent}%`;
+            text.textContent = `Processed: ${processed.toLocaleString()} / ${total.toLocaleString()}`;
+            
+            const elapsed = ((performance.now() - operationStartTime) / 1000).toFixed(1);
+            time.textContent = `${elapsed}s`;
+        }
+        
+        // Generate test drug
+        function generateTestDrug(index) {
+            const prefixes = ['Pana', 'Aug', 'Bru', 'Cata', 'Amoxi', 'Ibup', 'Para', 'Diclo'];
+            const suffixes = ['dol', 'mentin', 'fen', 'flam', 'cillin', 'profen', 'cetamol', 'fenac'];
+            
+            const prefix = prefixes[index % prefixes.length];
+            const suffix = suffixes[index % suffixes.length];
+            
+            return {
+                id: `drug_${index}`,
+                tradeName: `${prefix}${suffix}_${index}`,
+                scientificName: `Scientific_${prefix}${suffix}_${index}`,
+                company: `Company_${index % 50}`,
+                price: 10 + (index % 100),
+                category: index % 2 === 0 ? 'Analgesic' : 'Antibiotic',
+                voiceAliases: [
+                    `${prefix}${suffix}`.toLowerCase(),
+                    `${prefix}${index}`.toLowerCase()
+                ]
+            };
+        }
+        
+        // Flash color (interaction test)
+        function flashColor(color) {
+            const start = performance.now();
+            
+            clickCounter++;
+            document.getElementById('clickCount').textContent = clickCounter;
+            
+            // Flash the container
+            const container = document.querySelector('.panel:last-child');
+            container.style.background = color + '20';
+            
+            setTimeout(() => {
+                container.style.background = '';
+            }, 100);
+            
+            const responseTime = (performance.now() - start).toFixed(2);
+            document.getElementById('responseTime').textContent = responseTime;
+            
+            log(`🎨 Color clicked! Response: ${responseTime}ms`, 'accent');
+        }
+        
+        // Update slider
+        function updateSliderValue(value) {
+            document.getElementById('sliderValue').textContent = value;
+        }
+        
+        // FPS Counter
+        function startFPSCounter() {
+            function countFrame() {
+                frameCount++;
+                const currentTime = performance.now();
+                
+                if (currentTime >= lastTime + 1000) {
+                    fps = Math.round((frameCount * 1000) / (currentTime - lastTime));
+                    frameCount = 0;
+                    lastTime = currentTime;
+                    
+                    updateFPSDisplay();
+                }
+                
+                requestAnimationFrame(countFrame);
+            }
+            
+            requestAnimationFrame(countFrame);
+        }
+        
+        function updateFPSDisplay() {
+            const fpsValue = document.getElementById('fpsValue');
+            const fpsCounter = document.getElementById('fpsCounter');
+            
+            fpsValue.textContent = fps;
+            
+            // Color coding
+            fpsCounter.classList.remove('warning', 'danger');
+            if (fps < 30) {
+                fpsCounter.classList.add('danger');
+            } else if (fps < 50) {
+                fpsCounter.classList.add('warning');
+            }
+        }
+        
+        // Update stats
+        function updateStats() {
+            workerManager.storage.count('drugs').then(count => {
+                document.getElementById('itemsLoaded').textContent = count.toLocaleString();
+            });
+            
+            const stats = workerManager.getStats();
+            document.getElementById('cacheHitRate').textContent = stats.cacheHitRate;
+            document.getElementById('avgResponse').textContent = parseFloat(stats.avgResponseTime).toFixed(2);
+        }
+        
+        // Logging
+        function log(message, type = 'info') {
+            console.log(`[ZeroLag] ${message}`);
+            
+            const container = document.getElementById('logContainer');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
+        }
+    </script>
+</body>
+</html>

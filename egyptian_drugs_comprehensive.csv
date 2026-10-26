@@ -1,0 +1,550 @@
+id,tradeName,scientificName,company,category,price,currency,dosageForm,strength,requiresPrescription,availability,description
+drug_00001,Augmentin 1g,Amoxicillin/Clavulanate,GSK,Antibiotics,146.02,EGP,Tablet,1g,True,Out of Stock,Augmentin 1g - Antibiotics medication by GSK
+drug_00002,Augmentin 625mg,Amoxicillin/Clavulanate,GSK,Antibiotics,110.39,EGP,Tablet,625mg,True,Out of Stock,Augmentin 625mg - Antibiotics medication by GSK
+drug_00003,Augmentin Duo,Amoxicillin/Clavulanate,GSK,Antibiotics,192.93,EGP,Tablet,,True,Out of Stock,Augmentin Duo - Antibiotics medication by GSK
+drug_00004,Curam 1g,Unknown,Sandoz,Antibiotics,160.34,EGP,Tablet,1g,True,Available,Curam 1g - Antibiotics medication by Sandoz
+drug_00005,Curam 625mg,Unknown,Sandoz,Antibiotics,176.81,EGP,Tablet,625mg,True,Available,Curam 625mg - Antibiotics medication by Sandoz
+drug_00006,Hibiotic 1g,Unknown,Bayer,Antibiotics,157.78,EGP,Tablet,1g,True,Out of Stock,Hibiotic 1g - Antibiotics medication by Bayer
+drug_00007,Hibiotic 625mg,Unknown,Sanofi,Antibiotics,70.88,EGP,Tablet,625mg,True,Out of Stock,Hibiotic 625mg - Antibiotics medication by Sanofi
+drug_00008,Megamox 1g,Unknown,Hikma,Antibiotics,100.93,EGP,Tablet,1g,True,Out of Stock,Megamox 1g - Antibiotics medication by Hikma
+drug_00009,Megamox 625mg,Unknown,Hikma,Antibiotics,145.44,EGP,Tablet,625mg,True,Available,Megamox 625mg - Antibiotics medication by Hikma
+drug_00010,Klavox 1g,Unknown,Sandoz,Antibiotics,21.18,EGP,Tablet,1g,True,Limited,Klavox 1g - Antibiotics medication by Sandoz
+drug_00011,Klavox 625mg,Unknown,Sandoz,Antibiotics,58.08,EGP,Tablet,625mg,True,Available,Klavox 625mg - Antibiotics medication by Sandoz
+drug_00012,E-Mox 500,Unknown,EIPICO,Antibiotics,70.89,EGP,Tablet,,True,Out of Stock,E-Mox 500 - Antibiotics medication by EIPICO
+drug_00013,E-Mox 250,Unknown,EIPICO,Antibiotics,191.99,EGP,Tablet,,True,Available,E-Mox 250 - Antibiotics medication by EIPICO
+drug_00014,Amoxil 500,Unknown,Servier,Antibiotics,184.59,EGP,Tablet,,True,Out of Stock,Amoxil 500 - Antibiotics medication by Servier
+drug_00015,Amoxil 250,Unknown,Pfizer,Antibiotics,75.94,EGP,Tablet,,True,Available,Amoxil 250 - Antibiotics medication by Pfizer
+drug_00016,Zithromax 500,Azithromycin,Novartis,Antibiotics,49.05,EGP,Tablet,,True,Limited,Zithromax 500 - Antibiotics medication by Novartis
+drug_00017,Zithromax 250,Azithromycin,Novartis,Antibiotics,139.03,EGP,Tablet,,True,Available,Zithromax 250 - Antibiotics medication by Novartis
+drug_00018,Azithromycin 500,Unknown,Abbott,Antibiotics,62.27,EGP,Tablet,,True,Available,Azithromycin 500 - Antibiotics medication by Abbott
+drug_00019,Azithromycin 250,Unknown,Eva Pharma,Antibiotics,58.55,EGP,Tablet,,True,Out of Stock,Azithromycin 250 - Antibiotics medication by Eva Pharma
+drug_00020,Flagyl 500,Metronidazole,Sanofi,Antibiotics,32.15,EGP,Tablet,,True,Available,Flagyl 500 - Antibiotics medication by Sanofi
+drug_00021,Flagyl 250,Metronidazole,Sanofi,Antibiotics,151.9,EGP,Tablet,,True,Limited,Flagyl 250 - Antibiotics medication by Sanofi
+drug_00022,Metronidazole 500,Unknown,Sedico,Antibiotics,157.32,EGP,Tablet,,True,Available,Metronidazole 500 - Antibiotics medication by Sedico
+drug_00023,Metronidazole 250,Unknown,Global Napi,Antibiotics,23.93,EGP,Tablet,,True,Available,Metronidazole 250 - Antibiotics medication by Global Napi
+drug_00024,Ciprofloxacin 500,Ciprofloxacin,GlaxoSmithKline,Antibiotics,156.67,EGP,Tablet,,True,Limited,Ciprofloxacin 500 - Antibiotics medication by GlaxoSmithKline
+drug_00025,Ciprofloxacin 250,Ciprofloxacin,Servier,Antibiotics,112.83,EGP,Tablet,,True,Available,Ciprofloxacin 250 - Antibiotics medication by Servier
+drug_00026,Ciproxin 500,Unknown,Boehringer Ingelheim,Antibiotics,85.82,EGP,Tablet,,True,Out of Stock,Ciproxin 500 - Antibiotics medication by Boehringer Ingelheim
+drug_00027,Ciproxin 250,Unknown,Servier,Antibiotics,20.91,EGP,Tablet,,True,Available,Ciproxin 250 - Antibiotics medication by Servier
+drug_00028,Levofloxacin 500,Unknown,Pfizer,Antibiotics,41.62,EGP,Tablet,,True,Available,Levofloxacin 500 - Antibiotics medication by Pfizer
+drug_00029,Levofloxacin 250,Unknown,Amoun,Antibiotics,46.95,EGP,Tablet,,True,Available,Levofloxacin 250 - Antibiotics medication by Amoun
+drug_00030,Tavanic 500,Unknown,Medical Union,Antibiotics,30.41,EGP,Tablet,,True,Available,Tavanic 500 - Antibiotics medication by Medical Union
+drug_00031,Tavanic 250,Unknown,Servier,Antibiotics,61.17,EGP,Tablet,,True,Out of Stock,Tavanic 250 - Antibiotics medication by Servier
+drug_00032,Moxifloxacin 400,Moxifloxacin,Spimaco,Antibiotics,177.14,EGP,Tablet,,True,Available,Moxifloxacin 400 - Antibiotics medication by Spimaco
+drug_00033,Avelox 400,Unknown,Spimaco,Antibiotics,15.47,EGP,Tablet,,True,Out of Stock,Avelox 400 - Antibiotics medication by Spimaco
+drug_00034,Clarithromycin 500,Unknown,Sedico,Antibiotics,144.53,EGP,Tablet,,True,Out of Stock,Clarithromycin 500 - Antibiotics medication by Sedico
+drug_00035,Klacid 500,Unknown,AstraZeneca,Antibiotics,60.35,EGP,Tablet,,True,Out of Stock,Klacid 500 - Antibiotics medication by AstraZeneca
+drug_00036,Doxycycline 100,Unknown,Amoun,Antibiotics,31.74,EGP,Tablet,,True,Limited,Doxycycline 100 - Antibiotics medication by Amoun
+drug_00037,Vibramycin 100,Unknown,Sanofi,Antibiotics,90.03,EGP,Tablet,,True,Out of Stock,Vibramycin 100 - Antibiotics medication by Sanofi
+drug_00038,Minocycline 100,Unknown,GSK,Antibiotics,185.35,EGP,Tablet,,True,Limited,Minocycline 100 - Antibiotics medication by GSK
+drug_00039,Minocin 100,Unknown,Spimaco,Antibiotics,37.73,EGP,Tablet,,True,Limited,Minocin 100 - Antibiotics medication by Spimaco
+drug_00040,Cefixime 400,Unknown,Pfizer,Antibiotics,143.92,EGP,Tablet,,True,Available,Cefixime 400 - Antibiotics medication by Pfizer
+drug_00041,Suprax 400,Unknown,CID,Antibiotics,168.92,EGP,Tablet,,True,Out of Stock,Suprax 400 - Antibiotics medication by CID
+drug_00042,Cefuroxime 500,Unknown,Global Napi,Antibiotics,47.46,EGP,Tablet,,True,Available,Cefuroxime 500 - Antibiotics medication by Global Napi
+drug_00043,Zinnat 500,Unknown,Merck,Antibiotics,42.84,EGP,Tablet,,True,Out of Stock,Zinnat 500 - Antibiotics medication by Merck
+drug_00044,Ceftriaxone 1g,Unknown,Abbott,Antibiotics,181.93,EGP,Tablet,1g,True,Limited,Ceftriaxone 1g - Antibiotics medication by Abbott
+drug_00045,Rocephin 1g,Unknown,Spimaco,Antibiotics,113.58,EGP,Tablet,1g,True,Limited,Rocephin 1g - Antibiotics medication by Spimaco
+drug_00046,Ceftazidime 1g,Unknown,Tabuk,Antibiotics,163.44,EGP,Tablet,1g,True,Limited,Ceftazidime 1g - Antibiotics medication by Tabuk
+drug_00047,Fortum 1g,Unknown,Merck,Antibiotics,125.3,EGP,Tablet,1g,True,Limited,Fortum 1g - Antibiotics medication by Merck
+drug_00048,Cefepime 1g,Unknown,Pharco,Antibiotics,140.67,EGP,Tablet,1g,True,Limited,Cefepime 1g - Antibiotics medication by Pharco
+drug_00049,Maxipime 1g,Unknown,Sedico,Antibiotics,16.04,EGP,Tablet,1g,True,Out of Stock,Maxipime 1g - Antibiotics medication by Sedico
+drug_00050,Piperacillin/Tazobactam,Unknown,LEO Pharma,Antibiotics,67.01,EGP,Tablet,,True,Available,Piperacillin/Tazobactam - Antibiotics medication by LEO Pharma
+drug_00051,Tazocin 4.5g,Unknown,Novartis,Antibiotics,56.64,EGP,Tablet,4.5g,True,Out of Stock,Tazocin 4.5g - Antibiotics medication by Novartis
+drug_00052,Imipenem/Cilastatin,Unknown,LEO Pharma,Antibiotics,35.21,EGP,Tablet,,True,Limited,Imipenem/Cilastatin - Antibiotics medication by LEO Pharma
+drug_00053,Tienam 500,Unknown,Boehringer Ingelheim,Antibiotics,175.58,EGP,Tablet,,True,Available,Tienam 500 - Antibiotics medication by Boehringer Ingelheim
+drug_00054,Meropenem,Unknown,Sandoz,Antibiotics,18.93,EGP,Tablet,,True,Out of Stock,Meropenem - Antibiotics medication by Sandoz
+drug_00055,Meronem 1g,Unknown,CID,Antibiotics,19.98,EGP,Tablet,1g,True,Available,Meronem 1g - Antibiotics medication by CID
+drug_00056,Linezolid,Unknown,AstraZeneca,Antibiotics,81.79,EGP,Tablet,,True,Available,Linezolid - Antibiotics medication by AstraZeneca
+drug_00057,Zyvox 600,Unknown,EIPICO,Antibiotics,134.91,EGP,Tablet,,True,Available,Zyvox 600 - Antibiotics medication by EIPICO
+drug_00058,Vancomycin,Unknown,Novartis,Antibiotics,50.57,EGP,Tablet,,True,Available,Vancomycin - Antibiotics medication by Novartis
+drug_00059,Vancocin 1g,Unknown,Sanofi,Antibiotics,147.03,EGP,Tablet,1g,True,Available,Vancocin 1g - Antibiotics medication by Sanofi
+drug_00060,Panadol Advance,Paracetamol,Global Napi,Pain & Inflammation,83.94,EGP,Tablet,,False,Limited,Panadol Advance - Pain & Inflammation medication by Global Napi
+drug_00061,Panadol Extra,Paracetamol,Sedico,Pain & Inflammation,98.46,EGP,Tablet,,False,Available,Panadol Extra - Pain & Inflammation medication by Sedico
+drug_00062,Panadol Joint,Paracetamol,Novartis,Pain & Inflammation,103.84,EGP,Tablet,,False,Out of Stock,Panadol Joint - Pain & Inflammation medication by Novartis
+drug_00063,Panadol ActiFast,Paracetamol,CID,Pain & Inflammation,81.72,EGP,Tablet,,False,Available,Panadol ActiFast - Pain & Inflammation medication by CID
+drug_00064,Cetal,Unknown,EIPICO,Pain & Inflammation,93.69,EGP,Tablet,,False,Out of Stock,Cetal - Pain & Inflammation medication by EIPICO
+drug_00065,Adol 500,Unknown,Julphar,Pain & Inflammation,42.18,EGP,Tablet,,False,Limited,Adol 500 - Pain & Inflammation medication by Julphar
+drug_00066,Adol 250,Unknown,Julphar,Pain & Inflammation,89.04,EGP,Tablet,,False,Available,Adol 250 - Pain & Inflammation medication by Julphar
+drug_00067,Abimol,Unknown,GlaxoSmithKline,Pain & Inflammation,60.18,EGP,Tablet,,False,Out of Stock,Abimol - Pain & Inflammation medication by GlaxoSmithKline
+drug_00068,Para-plus,Unknown,Medical Union,Pain & Inflammation,67.33,EGP,Tablet,,False,Limited,Para-plus - Pain & Inflammation medication by Medical Union
+drug_00069,Fludrex,Unknown,Tabuk,Pain & Inflammation,84.48,EGP,Tablet,,False,Out of Stock,Fludrex - Pain & Inflammation medication by Tabuk
+drug_00070,Voltaren 100,Diclofenac,Novartis,Pain & Inflammation,62.82,EGP,Tablet,,False,Limited,Voltaren 100 - Pain & Inflammation medication by Novartis
+drug_00071,Voltaren 50,Diclofenac,Novartis,Pain & Inflammation,34.53,EGP,Tablet,,False,Available,Voltaren 50 - Pain & Inflammation medication by Novartis
+drug_00072,Voltaren Emulgel,Diclofenac,Novartis,Pain & Inflammation,118.2,EGP,Tablet,,False,Available,Voltaren Emulgel - Pain & Inflammation medication by Novartis
+drug_00073,Diclofenac Sodium,Diclofenac,Novartis,Pain & Inflammation,11.02,EGP,Tablet,,False,Limited,Diclofenac Sodium - Pain & Inflammation medication by Novartis
+drug_00074,Catafast 50,Unknown,Novartis,Pain & Inflammation,114.43,EGP,Tablet,,False,Available,Catafast 50 - Pain & Inflammation medication by Novartis
+drug_00075,Catafast 25,Unknown,Novartis,Pain & Inflammation,120.97,EGP,Tablet,,False,Limited,Catafast 25 - Pain & Inflammation medication by Novartis
+drug_00076,Brufen 400,Ibuprofen,Abbott,Pain & Inflammation,87.88,EGP,Tablet,,False,Out of Stock,Brufen 400 - Pain & Inflammation medication by Abbott
+drug_00077,Brufen 600,Ibuprofen,Abbott,Pain & Inflammation,70.35,EGP,Tablet,,False,Out of Stock,Brufen 600 - Pain & Inflammation medication by Abbott
+drug_00078,Ibuprofen 400,Ibuprofen,Julphar,Pain & Inflammation,96.26,EGP,Tablet,,False,Out of Stock,Ibuprofen 400 - Pain & Inflammation medication by Julphar
+drug_00079,Ketofan,Unknown,Amoun,Pain & Inflammation,19.39,EGP,Tablet,,False,Out of Stock,Ketofan - Pain & Inflammation medication by Amoun
+drug_00080,Ketoprofen,Unknown,AstraZeneca,Pain & Inflammation,104.76,EGP,Tablet,,False,Limited,Ketoprofen - Pain & Inflammation medication by AstraZeneca
+drug_00081,Naprogesic,Unknown,Janssen,Pain & Inflammation,28.54,EGP,Tablet,,False,Limited,Naprogesic - Pain & Inflammation medication by Janssen
+drug_00082,Naproxen 500,Unknown,Sedico,Pain & Inflammation,68.33,EGP,Tablet,,False,Out of Stock,Naproxen 500 - Pain & Inflammation medication by Sedico
+drug_00083,Naproxen 250,Unknown,Pfizer,Pain & Inflammation,22.75,EGP,Tablet,,False,Out of Stock,Naproxen 250 - Pain & Inflammation medication by Pfizer
+drug_00084,Celebrex 200,Unknown,Amoun,Pain & Inflammation,92.02,EGP,Tablet,,False,Available,Celebrex 200 - Pain & Inflammation medication by Amoun
+drug_00085,Celecoxib 200,Unknown,Julphar,Pain & Inflammation,52.92,EGP,Tablet,,False,Out of Stock,Celecoxib 200 - Pain & Inflammation medication by Julphar
+drug_00086,Arcoxia 90,Unknown,EIPICO,Pain & Inflammation,132.77,EGP,Tablet,,False,Out of Stock,Arcoxia 90 - Pain & Inflammation medication by EIPICO
+drug_00087,Etoricoxib 90,Unknown,Servier,Pain & Inflammation,23.88,EGP,Tablet,,False,Available,Etoricoxib 90 - Pain & Inflammation medication by Servier
+drug_00088,Lyrica 75,Unknown,Servier,Pain & Inflammation,26.41,EGP,Tablet,,False,Out of Stock,Lyrica 75 - Pain & Inflammation medication by Servier
+drug_00089,Lyrica 150,Unknown,Spimaco,Pain & Inflammation,135.42,EGP,Tablet,,False,Out of Stock,Lyrica 150 - Pain & Inflammation medication by Spimaco
+drug_00090,Pregabalin 75,Unknown,Sedico,Pain & Inflammation,54.87,EGP,Tablet,,False,Out of Stock,Pregabalin 75 - Pain & Inflammation medication by Sedico
+drug_00091,Pregabalin 150,Unknown,Novartis,Pain & Inflammation,79.71,EGP,Tablet,,False,Limited,Pregabalin 150 - Pain & Inflammation medication by Novartis
+drug_00092,Neurontin 300,Unknown,GlaxoSmithKline,Pain & Inflammation,100.01,EGP,Tablet,,False,Out of Stock,Neurontin 300 - Pain & Inflammation medication by GlaxoSmithKline
+drug_00093,Gabapentin 300,Unknown,GlaxoSmithKline,Pain & Inflammation,35.38,EGP,Tablet,,False,Limited,Gabapentin 300 - Pain & Inflammation medication by GlaxoSmithKline
+drug_00094,Tramal 50,Unknown,Sanofi,Pain & Inflammation,142.1,EGP,Tablet,,False,Available,Tramal 50 - Pain & Inflammation medication by Sanofi
+drug_00095,Tramal 100,Unknown,Spimaco,Pain & Inflammation,69.36,EGP,Tablet,,False,Out of Stock,Tramal 100 - Pain & Inflammation medication by Spimaco
+drug_00096,Tramadol 50,Unknown,Global Napi,Pain & Inflammation,85.99,EGP,Tablet,,False,Limited,Tramadol 50 - Pain & Inflammation medication by Global Napi
+drug_00097,Tramadol HCL,Unknown,AstraZeneca,Pain & Inflammation,146.4,EGP,Tablet,,False,Limited,Tramadol HCL - Pain & Inflammation medication by AstraZeneca
+drug_00098,Doloprane,Unknown,Servier,Pain & Inflammation,50.59,EGP,Tablet,,False,Out of Stock,Doloprane - Pain & Inflammation medication by Servier
+drug_00099,Dolowin,Unknown,Boehringer Ingelheim,Pain & Inflammation,83.49,EGP,Tablet,,False,Limited,Dolowin - Pain & Inflammation medication by Boehringer Ingelheim
+drug_00100,Dolorex,Unknown,Takeda,Pain & Inflammation,83.45,EGP,Tablet,,False,Out of Stock,Dolorex - Pain & Inflammation medication by Takeda
+drug_00101,Dolostop,Unknown,Bayer,Pain & Inflammation,141.28,EGP,Tablet,,False,Limited,Dolostop - Pain & Inflammation medication by Bayer
+drug_00102,Myospaz,Unknown,Julphar,Pain & Inflammation,87.35,EGP,Tablet,,False,Available,Myospaz - Pain & Inflammation medication by Julphar
+drug_00103,Myospaz Forte,Unknown,AstraZeneca,Pain & Inflammation,10.35,EGP,Tablet,,False,Available,Myospaz Forte - Pain & Inflammation medication by AstraZeneca
+drug_00104,Spasmoproxyvon,Unknown,Sedico,Pain & Inflammation,103.79,EGP,Tablet,,False,Available,Spasmoproxyvon - Pain & Inflammation medication by Sedico
+drug_00105,Spasmoproxyvon Plus,Unknown,GSK,Pain & Inflammation,132.37,EGP,Tablet,,False,Available,Spasmoproxyvon Plus - Pain & Inflammation medication by GSK
+drug_00106,Buscopan,Unknown,Boehringer Ingelheim,Pain & Inflammation,124.23,EGP,Tablet,,False,Limited,Buscopan - Pain & Inflammation medication by Boehringer Ingelheim
+drug_00107,Buscopan Plus,Unknown,Boehringer Ingelheim,Pain & Inflammation,84.38,EGP,Tablet,,False,Limited,Buscopan Plus - Pain & Inflammation medication by Boehringer Ingelheim
+drug_00108,Visceralgine,Unknown,Sedico,Pain & Inflammation,88.68,EGP,Tablet,,False,Limited,Visceralgine - Pain & Inflammation medication by Sedico
+drug_00109,Hyoscine,Unknown,Spimaco,Pain & Inflammation,130.14,EGP,Tablet,,False,Out of Stock,Hyoscine - Pain & Inflammation medication by Spimaco
+drug_00110,Tiemonium,Unknown,CID,Pain & Inflammation,62.56,EGP,Tablet,,False,Out of Stock,Tiemonium - Pain & Inflammation medication by CID
+drug_00111,Colospa,Unknown,Amoun,Pain & Inflammation,64.31,EGP,Tablet,,False,Limited,Colospa - Pain & Inflammation medication by Amoun
+drug_00112,Colospa Mylan,Unknown,Global Napi,Pain & Inflammation,138.5,EGP,Tablet,,False,Available,Colospa Mylan - Pain & Inflammation medication by Global Napi
+drug_00113,Duspatalin 200 Retard,Unknown,Abbott,Pain & Inflammation,146.79,EGP,Tablet,,False,Out of Stock,Duspatalin 200 Retard - Pain & Inflammation medication by Abbott
+drug_00114,Mebeverine,Unknown,EIPICO,Pain & Inflammation,127.5,EGP,Tablet,,False,Available,Mebeverine - Pain & Inflammation medication by EIPICO
+drug_00115,No-Spa,Unknown,GlaxoSmithKline,Pain & Inflammation,87.35,EGP,Tablet,,False,Limited,No-Spa - Pain & Inflammation medication by GlaxoSmithKline
+drug_00116,No-Spa Forte,Unknown,Bayer,Pain & Inflammation,102.7,EGP,Tablet,,False,Available,No-Spa Forte - Pain & Inflammation medication by Bayer
+drug_00117,Drotaverine,Unknown,Medical Union,Pain & Inflammation,121.08,EGP,Tablet,,False,Available,Drotaverine - Pain & Inflammation medication by Medical Union
+drug_00118,Drotin,Unknown,EIPICO,Pain & Inflammation,14.33,EGP,Tablet,,False,Out of Stock,Drotin - Pain & Inflammation medication by EIPICO
+drug_00119,Drotaverine HCL,Unknown,Hikma,Pain & Inflammation,86.98,EGP,Tablet,,False,Out of Stock,Drotaverine HCL - Pain & Inflammation medication by Hikma
+drug_00120,Nexium 40,Esomeprazole,GSK,Gastrointestinal,60.8,EGP,Tablet,,False,Available,Nexium 40 - Gastrointestinal medication by GSK
+drug_00121,Nexium 20,Esomeprazole,GSK,Gastrointestinal,126.81,EGP,Tablet,,False,Out of Stock,Nexium 20 - Gastrointestinal medication by GSK
+drug_00122,Esomeprazole 40,Unknown,Novartis,Gastrointestinal,107.63,EGP,Tablet,,False,Limited,Esomeprazole 40 - Gastrointestinal medication by Novartis
+drug_00123,Esomeprazole 20,Unknown,Amoun,Gastrointestinal,77.71,EGP,Tablet,,False,Out of Stock,Esomeprazole 20 - Gastrointestinal medication by Amoun
+drug_00124,Controloc 40,Pantoprazole,Takeda,Gastrointestinal,90.06,EGP,Tablet,,False,Limited,Controloc 40 - Gastrointestinal medication by Takeda
+drug_00125,Controloc 20,Pantoprazole,Takeda,Gastrointestinal,208.11,EGP,Tablet,,False,Limited,Controloc 20 - Gastrointestinal medication by Takeda
+drug_00126,Pantoprazole 40,Unknown,Amoun,Gastrointestinal,35.35,EGP,Tablet,,False,Limited,Pantoprazole 40 - Gastrointestinal medication by Amoun
+drug_00127,Pantoprazole 20,Unknown,Julphar,Gastrointestinal,80.57,EGP,Tablet,,False,Limited,Pantoprazole 20 - Gastrointestinal medication by Julphar
+drug_00128,Losec 20,Unknown,AstraZeneca,Gastrointestinal,98.8,EGP,Tablet,,False,Out of Stock,Losec 20 - Gastrointestinal medication by AstraZeneca
+drug_00129,Omeprazole 20,Omeprazole,Hikma,Gastrointestinal,27.66,EGP,Tablet,,False,Available,Omeprazole 20 - Gastrointestinal medication by Hikma
+drug_00130,Omeprazole 40,Omeprazole,Spimaco,Gastrointestinal,111.87,EGP,Tablet,,False,Out of Stock,Omeprazole 40 - Gastrointestinal medication by Spimaco
+drug_00131,Prilosec 20,Unknown,GlaxoSmithKline,Gastrointestinal,201.29,EGP,Tablet,,False,Available,Prilosec 20 - Gastrointestinal medication by GlaxoSmithKline
+drug_00132,Zantac 150,Unknown,Tabuk,Gastrointestinal,124.44,EGP,Tablet,,False,Available,Zantac 150 - Gastrointestinal medication by Tabuk
+drug_00133,Zantac 300,Unknown,Sigma,Gastrointestinal,166.37,EGP,Tablet,,False,Limited,Zantac 300 - Gastrointestinal medication by Sigma
+drug_00134,Ranitidine 150,Unknown,EIPICO,Gastrointestinal,196.07,EGP,Tablet,,False,Out of Stock,Ranitidine 150 - Gastrointestinal medication by EIPICO
+drug_00135,Ranitidine 300,Unknown,EIPICO,Gastrointestinal,57.84,EGP,Tablet,,False,Limited,Ranitidine 300 - Gastrointestinal medication by EIPICO
+drug_00136,Motilium,Domperidone,Janssen,Gastrointestinal,244.26,EGP,Tablet,,False,Limited,Motilium - Gastrointestinal medication by Janssen
+drug_00137,Domperidone 10,Unknown,Julphar,Gastrointestinal,59.28,EGP,Tablet,,False,Limited,Domperidone 10 - Gastrointestinal medication by Julphar
+drug_00138,Domperidone,Unknown,Amoun,Gastrointestinal,81.72,EGP,Tablet,,False,Limited,Domperidone - Gastrointestinal medication by Amoun
+drug_00139,Motilium 10,Domperidone,Janssen,Gastrointestinal,224.27,EGP,Tablet,,False,Available,Motilium 10 - Gastrointestinal medication by Janssen
+drug_00140,Spasmo-digestin,Unknown,Pharco,Gastrointestinal,21.35,EGP,Tablet,,False,Limited,Spasmo-digestin - Gastrointestinal medication by Pharco
+drug_00141,Spasmo-digestin Forte,Unknown,Pharco,Gastrointestinal,112.01,EGP,Tablet,,False,Out of Stock,Spasmo-digestin Forte - Gastrointestinal medication by Pharco
+drug_00142,Metoclopramide 10,Unknown,EIPICO,Gastrointestinal,27.82,EGP,Tablet,,False,Out of Stock,Metoclopramide 10 - Gastrointestinal medication by EIPICO
+drug_00143,Maxilase,Unknown,Sanofi,Gastrointestinal,153.48,EGP,Tablet,,False,Limited,Maxilase - Gastrointestinal medication by Sanofi
+drug_00144,Alphintern,Unknown,Amoun,Gastrointestinal,177.52,EGP,Tablet,,False,Available,Alphintern - Gastrointestinal medication by Amoun
+drug_00145,Ambezim-G,Unknown,Global Napi,Gastrointestinal,148.97,EGP,Tablet,,False,Available,Ambezim-G - Gastrointestinal medication by Global Napi
+drug_00146,Trypsin/Chymotrypsin,Unknown,Pfizer,Gastrointestinal,37.91,EGP,Tablet,,False,Out of Stock,Trypsin/Chymotrypsin - Gastrointestinal medication by Pfizer
+drug_00147,Creon 25000,Unknown,Merck,Gastrointestinal,214.51,EGP,Tablet,,False,Available,Creon 25000 - Gastrointestinal medication by Merck
+drug_00148,Creon 10000,Unknown,Pharco,Gastrointestinal,173.22,EGP,Tablet,,False,Out of Stock,Creon 10000 - Gastrointestinal medication by Pharco
+drug_00149,Pancrease MT,Unknown,Merck,Gastrointestinal,98.01,EGP,Tablet,,False,Available,Pancrease MT - Gastrointestinal medication by Merck
+drug_00150,Pancrease MT 16,Unknown,Sanofi,Gastrointestinal,183.15,EGP,Tablet,,False,Available,Pancrease MT 16 - Gastrointestinal medication by Sanofi
+drug_00151,Gaviscon,Unknown,Hikma,Gastrointestinal,207.73,EGP,Tablet,,False,Out of Stock,Gaviscon - Gastrointestinal medication by Hikma
+drug_00152,Gaviscon Advance,Unknown,Servier,Gastrointestinal,46.85,EGP,Tablet,,False,Out of Stock,Gaviscon Advance - Gastrointestinal medication by Servier
+drug_00153,Mucogel,Unknown,Sedico,Gastrointestinal,45.94,EGP,Tablet,,False,Available,Mucogel - Gastrointestinal medication by Sedico
+drug_00154,Almagate,Unknown,Merck,Gastrointestinal,191.5,EGP,Tablet,,False,Limited,Almagate - Gastrointestinal medication by Merck
+drug_00155,Maalox,Unknown,Boehringer Ingelheim,Gastrointestinal,65.06,EGP,Tablet,,False,Out of Stock,Maalox - Gastrointestinal medication by Boehringer Ingelheim
+drug_00156,Phosphalugel,Unknown,EIPICO,Gastrointestinal,229.2,EGP,Tablet,,False,Out of Stock,Phosphalugel - Gastrointestinal medication by EIPICO
+drug_00157,Aluminium Phosphate Gel,Gel,LEO Pharma,Gastrointestinal,219.8,EGP,Gel,,False,Available,Aluminium Phosphate Gel - Gastrointestinal medication by LEO Pharma
+drug_00158,Lansoprazole 30,Unknown,LEO Pharma,Gastrointestinal,104.32,EGP,Tablet,,False,Limited,Lansoprazole 30 - Gastrointestinal medication by LEO Pharma
+drug_00159,Prevacid 30,Unknown,Sedico,Gastrointestinal,164.35,EGP,Tablet,,False,Limited,Prevacid 30 - Gastrointestinal medication by Sedico
+drug_00160,Rabeprazole 20,Unknown,Hikma,Gastrointestinal,246.45,EGP,Tablet,,False,Out of Stock,Rabeprazole 20 - Gastrointestinal medication by Hikma
+drug_00161,Pariet 20,Unknown,Tabuk,Gastrointestinal,77.7,EGP,Tablet,,False,Out of Stock,Pariet 20 - Gastrointestinal medication by Tabuk
+drug_00162,Dexilant 60,Unknown,Novartis,Gastrointestinal,204.97,EGP,Tablet,,False,Available,Dexilant 60 - Gastrointestinal medication by Novartis
+drug_00163,Dexlansoprazole 60,Unknown,Pfizer,Gastrointestinal,36.86,EGP,Tablet,,False,Limited,Dexlansoprazole 60 - Gastrointestinal medication by Pfizer
+drug_00164,Sucralfate,Unknown,Spimaco,Gastrointestinal,98.61,EGP,Tablet,,False,Limited,Sucralfate - Gastrointestinal medication by Spimaco
+drug_00165,Carafate,Unknown,Spimaco,Gastrointestinal,143.76,EGP,Tablet,,False,Limited,Carafate - Gastrointestinal medication by Spimaco
+drug_00166,Sucralate,Unknown,Sedico,Gastrointestinal,94.79,EGP,Tablet,,False,Limited,Sucralate - Gastrointestinal medication by Sedico
+drug_00167,Bismuth Subcitrate,Unknown,Amoun,Gastrointestinal,187.99,EGP,Tablet,,False,Out of Stock,Bismuth Subcitrate - Gastrointestinal medication by Amoun
+drug_00168,De-Nol,Unknown,Pfizer,Gastrointestinal,151.87,EGP,Tablet,,False,Out of Stock,De-Nol - Gastrointestinal medication by Pfizer
+drug_00169,Quadruple Therapy,Unknown,Medical Union,Gastrointestinal,141.98,EGP,Tablet,,False,Out of Stock,Quadruple Therapy - Gastrointestinal medication by Medical Union
+drug_00170,H. Pylori Kit,Unknown,Global Napi,Gastrointestinal,177.29,EGP,Tablet,,False,Available,H. Pylori Kit - Gastrointestinal medication by Global Napi
+drug_00171,Concor 5,Bisoprolol,Merck,Cardiovascular,188.1,EGP,Tablet,,True,Available,Concor 5 - Cardiovascular medication by Merck
+drug_00172,Concor 10,Bisoprolol,Merck,Cardiovascular,85.58,EGP,Tablet,,True,Available,Concor 10 - Cardiovascular medication by Merck
+drug_00173,Bisoprolol 5,Bisoprolol,Abbott,Cardiovascular,173.34,EGP,Tablet,,True,Limited,Bisoprolol 5 - Cardiovascular medication by Abbott
+drug_00174,Bisoprolol 10,Bisoprolol,Hikma,Cardiovascular,114.45,EGP,Tablet,,True,Available,Bisoprolol 10 - Cardiovascular medication by Hikma
+drug_00175,Lopressor 50,Unknown,GlaxoSmithKline,Cardiovascular,35.15,EGP,Tablet,,True,Limited,Lopressor 50 - Cardiovascular medication by GlaxoSmithKline
+drug_00176,Lopressor 100,Unknown,Pharco,Cardiovascular,168.74,EGP,Tablet,,True,Limited,Lopressor 100 - Cardiovascular medication by Pharco
+drug_00177,Metoprolol 50,Metoprolol,Pfizer,Cardiovascular,234.66,EGP,Tablet,,True,Limited,Metoprolol 50 - Cardiovascular medication by Pfizer
+drug_00178,Metoprolol 100,Metoprolol,Julphar,Cardiovascular,287.13,EGP,Tablet,,True,Available,Metoprolol 100 - Cardiovascular medication by Julphar
+drug_00179,Atenolol 50,Unknown,GSK,Cardiovascular,76.3,EGP,Tablet,,True,Limited,Atenolol 50 - Cardiovascular medication by GSK
+drug_00180,Atenolol 100,Unknown,Sandoz,Cardiovascular,121.54,EGP,Tablet,,True,Limited,Atenolol 100 - Cardiovascular medication by Sandoz
+drug_00181,Tenormin 50,Unknown,Takeda,Cardiovascular,293.64,EGP,Tablet,,True,Out of Stock,Tenormin 50 - Cardiovascular medication by Takeda
+drug_00182,Tenormin 100,Unknown,Tabuk,Cardiovascular,70.9,EGP,Tablet,,True,Out of Stock,Tenormin 100 - Cardiovascular medication by Tabuk
+drug_00183,Propranolol 40,Unknown,Sedico,Cardiovascular,26.77,EGP,Tablet,,True,Limited,Propranolol 40 - Cardiovascular medication by Sedico
+drug_00184,Inderal 40,Unknown,EIPICO,Cardiovascular,263.02,EGP,Tablet,,True,Out of Stock,Inderal 40 - Cardiovascular medication by EIPICO
+drug_00185,Carvedilol 6.25,Unknown,Novartis,Cardiovascular,100.59,EGP,Tablet,,True,Out of Stock,Carvedilol 6.25 - Cardiovascular medication by Novartis
+drug_00186,Carvedilol 12.5,Unknown,Global Napi,Cardiovascular,30.64,EGP,Tablet,,True,Limited,Carvedilol 12.5 - Cardiovascular medication by Global Napi
+drug_00187,Cozaar 50,Unknown,Novartis,Cardiovascular,248.77,EGP,Tablet,,True,Limited,Cozaar 50 - Cardiovascular medication by Novartis
+drug_00188,Cozaar 100,Unknown,Novartis,Cardiovascular,103.83,EGP,Tablet,,True,Limited,Cozaar 100 - Cardiovascular medication by Novartis
+drug_00189,Losartan 50,Losartan,Janssen,Cardiovascular,235.01,EGP,Tablet,,True,Out of Stock,Losartan 50 - Cardiovascular medication by Janssen
+drug_00190,Losartan 100,Losartan,Pharco,Cardiovascular,284.7,EGP,Tablet,,True,Out of Stock,Losartan 100 - Cardiovascular medication by Pharco
+drug_00191,Diovan 80,Unknown,Novartis,Cardiovascular,109.06,EGP,Tablet,,True,Limited,Diovan 80 - Cardiovascular medication by Novartis
+drug_00192,Diovan 160,Unknown,Novartis,Cardiovascular,218.22,EGP,Tablet,,True,Available,Diovan 160 - Cardiovascular medication by Novartis
+drug_00193,Valsartan 80,Unknown,Sandoz,Cardiovascular,282.5,EGP,Tablet,,True,Available,Valsartan 80 - Cardiovascular medication by Sandoz
+drug_00194,Valsartan 160,Unknown,CID,Cardiovascular,219.01,EGP,Tablet,,True,Available,Valsartan 160 - Cardiovascular medication by CID
+drug_00195,Micardis 80,Unknown,Merck,Cardiovascular,284.52,EGP,Tablet,,True,Limited,Micardis 80 - Cardiovascular medication by Merck
+drug_00196,Micardis 40,Unknown,Spimaco,Cardiovascular,58.9,EGP,Tablet,,True,Limited,Micardis 40 - Cardiovascular medication by Spimaco
+drug_00197,Telmisartan 80,Unknown,Pfizer,Cardiovascular,155.64,EGP,Tablet,,True,Limited,Telmisartan 80 - Cardiovascular medication by Pfizer
+drug_00198,Telmisartan 40,Unknown,Spimaco,Cardiovascular,94.15,EGP,Tablet,,True,Out of Stock,Telmisartan 40 - Cardiovascular medication by Spimaco
+drug_00199,Norvasc 5,Unknown,Pfizer,Cardiovascular,101.22,EGP,Tablet,,True,Limited,Norvasc 5 - Cardiovascular medication by Pfizer
+drug_00200,Norvasc 10,Unknown,Pfizer,Cardiovascular,263.04,EGP,Tablet,,True,Out of Stock,Norvasc 10 - Cardiovascular medication by Pfizer
+drug_00201,Amlodipine 5,Amlodipine,Eva Pharma,Cardiovascular,71.82,EGP,Tablet,,True,Out of Stock,Amlodipine 5 - Cardiovascular medication by Eva Pharma
+drug_00202,Amlodipine 10,Amlodipine,AstraZeneca,Cardiovascular,284.51,EGP,Tablet,,True,Available,Amlodipine 10 - Cardiovascular medication by AstraZeneca
+drug_00203,Adalat 10,Unknown,GSK,Cardiovascular,155.2,EGP,Tablet,,True,Limited,Adalat 10 - Cardiovascular medication by GSK
+drug_00204,Adalat 20,Unknown,Sigma,Cardiovascular,80.03,EGP,Tablet,,True,Out of Stock,Adalat 20 - Cardiovascular medication by Sigma
+drug_00205,Nifedipine 10,Unknown,Amoun,Cardiovascular,196.58,EGP,Tablet,,True,Out of Stock,Nifedipine 10 - Cardiovascular medication by Amoun
+drug_00206,Nifedipine 20,Unknown,Sandoz,Cardiovascular,216.1,EGP,Tablet,,True,Limited,Nifedipine 20 - Cardiovascular medication by Sandoz
+drug_00207,Lipitor 20,Atorvastatin,Pfizer,Cardiovascular,270.83,EGP,Tablet,,True,Out of Stock,Lipitor 20 - Cardiovascular medication by Pfizer
+drug_00208,Lipitor 40,Atorvastatin,Pfizer,Cardiovascular,173.57,EGP,Tablet,,True,Available,Lipitor 40 - Cardiovascular medication by Pfizer
+drug_00209,Atorvastatin 20,Atorvastatin,Sigma,Cardiovascular,132.17,EGP,Tablet,,True,Available,Atorvastatin 20 - Cardiovascular medication by Sigma
+drug_00210,Atorvastatin 40,Atorvastatin,Eva Pharma,Cardiovascular,229.32,EGP,Tablet,,True,Out of Stock,Atorvastatin 40 - Cardiovascular medication by Eva Pharma
+drug_00211,Crestor 10,Unknown,AstraZeneca,Cardiovascular,49.3,EGP,Tablet,,True,Limited,Crestor 10 - Cardiovascular medication by AstraZeneca
+drug_00212,Crestor 20,Unknown,AstraZeneca,Cardiovascular,69.26,EGP,Tablet,,True,Out of Stock,Crestor 20 - Cardiovascular medication by AstraZeneca
+drug_00213,Rosuvastatin 10,Unknown,Sanofi,Cardiovascular,297.28,EGP,Tablet,,True,Out of Stock,Rosuvastatin 10 - Cardiovascular medication by Sanofi
+drug_00214,Rosuvastatin 20,Unknown,Boehringer Ingelheim,Cardiovascular,46.91,EGP,Tablet,,True,Out of Stock,Rosuvastatin 20 - Cardiovascular medication by Boehringer Ingelheim
+drug_00215,Zocor 20,Unknown,Novartis,Cardiovascular,259.14,EGP,Tablet,,True,Out of Stock,Zocor 20 - Cardiovascular medication by Novartis
+drug_00216,Zocor 40,Unknown,Eva Pharma,Cardiovascular,289.97,EGP,Tablet,,True,Limited,Zocor 40 - Cardiovascular medication by Eva Pharma
+drug_00217,Simvastatin 20,Unknown,Servier,Cardiovascular,267.34,EGP,Tablet,,True,Out of Stock,Simvastatin 20 - Cardiovascular medication by Servier
+drug_00218,Simvastatin 40,Unknown,EIPICO,Cardiovascular,89.51,EGP,Tablet,,True,Available,Simvastatin 40 - Cardiovascular medication by EIPICO
+drug_00219,Plavix 75,Clopidogrel,Sanofi,Cardiovascular,77.25,EGP,Tablet,,True,Out of Stock,Plavix 75 - Cardiovascular medication by Sanofi
+drug_00220,Clopidogrel 75,Unknown,Sanofi,Cardiovascular,137.38,EGP,Tablet,,True,Available,Clopidogrel 75 - Cardiovascular medication by Sanofi
+drug_00221,Aspirin 75,Unknown,Sedico,Cardiovascular,162.81,EGP,Tablet,,True,Out of Stock,Aspirin 75 - Cardiovascular medication by Sedico
+drug_00222,Aspirin 81,Unknown,Global Napi,Cardiovascular,48.69,EGP,Tablet,,True,Available,Aspirin 81 - Cardiovascular medication by Global Napi
+drug_00223,Ecotrin 81,Unknown,Pfizer,Cardiovascular,75.71,EGP,Tablet,,True,Limited,Ecotrin 81 - Cardiovascular medication by Pfizer
+drug_00224,Warfarin 5,Unknown,Abbott,Cardiovascular,291.76,EGP,Tablet,,True,Limited,Warfarin 5 - Cardiovascular medication by Abbott
+drug_00225,Coumadin 5,Unknown,GSK,Cardiovascular,155.35,EGP,Tablet,,True,Out of Stock,Coumadin 5 - Cardiovascular medication by GSK
+drug_00226,Xarelto 20,Unknown,Bayer,Cardiovascular,208.79,EGP,Tablet,,True,Out of Stock,Xarelto 20 - Cardiovascular medication by Bayer
+drug_00227,Rivaroxaban 20,Unknown,LEO Pharma,Cardiovascular,206.52,EGP,Tablet,,True,Limited,Rivaroxaban 20 - Cardiovascular medication by LEO Pharma
+drug_00228,Pradaxa 110,Unknown,Boehringer Ingelheim,Cardiovascular,205.75,EGP,Tablet,,True,Limited,Pradaxa 110 - Cardiovascular medication by Boehringer Ingelheim
+drug_00229,Pradaxa 150,Unknown,Boehringer Ingelheim,Cardiovascular,260.62,EGP,Tablet,,True,Available,Pradaxa 150 - Cardiovascular medication by Boehringer Ingelheim
+drug_00230,Dabigatran 110,Unknown,Novartis,Cardiovascular,163.71,EGP,Tablet,,True,Available,Dabigatran 110 - Cardiovascular medication by Novartis
+drug_00231,Dabigatran 150,Unknown,Spimaco,Cardiovascular,146.28,EGP,Tablet,,True,Limited,Dabigatran 150 - Cardiovascular medication by Spimaco
+drug_00232,Fraxiparine,Unknown,AstraZeneca,Cardiovascular,129.81,EGP,Tablet,,True,Out of Stock,Fraxiparine - Cardiovascular medication by AstraZeneca
+drug_00233,Clexane,Unknown,Amoun,Cardiovascular,91.86,EGP,Tablet,,True,Limited,Clexane - Cardiovascular medication by Amoun
+drug_00234,Enoxaparin,Unknown,Novartis,Cardiovascular,235.44,EGP,Tablet,,True,Out of Stock,Enoxaparin - Cardiovascular medication by Novartis
+drug_00235,Heparin,Unknown,GSK,Cardiovascular,138.2,EGP,Tablet,,True,Available,Heparin - Cardiovascular medication by GSK
+drug_00236,Lovenox,Unknown,AstraZeneca,Cardiovascular,94.48,EGP,Tablet,,True,Available,Lovenox - Cardiovascular medication by AstraZeneca
+drug_00237,Glucophage 1000,Metformin,Merck,Diabetes,283.44,EGP,Tablet,,True,Out of Stock,Glucophage 1000 - Diabetes medication by Merck
+drug_00238,Glucophage 500,Metformin,Merck,Diabetes,425.09,EGP,Tablet,,True,Out of Stock,Glucophage 500 - Diabetes medication by Merck
+drug_00239,Metformin 1000,Metformin,Sanofi,Diabetes,188.86,EGP,Tablet,,True,Limited,Metformin 1000 - Diabetes medication by Sanofi
+drug_00240,Metformin 500,Metformin,Novartis,Diabetes,307.93,EGP,Tablet,,True,Out of Stock,Metformin 500 - Diabetes medication by Novartis
+drug_00241,Metformin XR 500,Metformin,Pharco,Diabetes,315.91,EGP,Tablet,,True,Out of Stock,Metformin XR 500 - Diabetes medication by Pharco
+drug_00242,Metformin XR 1000,Metformin,GSK,Diabetes,416.32,EGP,Tablet,,True,Out of Stock,Metformin XR 1000 - Diabetes medication by GSK
+drug_00243,Glucophage XR,Metformin,Merck,Diabetes,153.96,EGP,Tablet,,True,Limited,Glucophage XR - Diabetes medication by Merck
+drug_00244,Amaryl 2mg,Glimepiride,Sanofi,Diabetes,212.1,EGP,Tablet,2mg,True,Limited,Amaryl 2mg - Diabetes medication by Sanofi
+drug_00245,Amaryl 1mg,Glimepiride,Sanofi,Diabetes,250.84,EGP,Tablet,1mg,True,Out of Stock,Amaryl 1mg - Diabetes medication by Sanofi
+drug_00246,Glimepiride 2mg,Glimepiride,Sanofi,Diabetes,264.49,EGP,Tablet,2mg,True,Available,Glimepiride 2mg - Diabetes medication by Sanofi
+drug_00247,Glimepiride 1mg,Glimepiride,Tabuk,Diabetes,497.35,EGP,Tablet,1mg,True,Out of Stock,Glimepiride 1mg - Diabetes medication by Tabuk
+drug_00248,Daonil 5mg,Unknown,Julphar,Diabetes,249.05,EGP,Tablet,5mg,True,Out of Stock,Daonil 5mg - Diabetes medication by Julphar
+drug_00249,Glibenclamide 5mg,Unknown,Medical Union,Diabetes,135.81,EGP,Tablet,5mg,True,Available,Glibenclamide 5mg - Diabetes medication by Medical Union
+drug_00250,Glibenclamide,Unknown,GlaxoSmithKline,Diabetes,104.36,EGP,Tablet,,True,Out of Stock,Glibenclamide - Diabetes medication by GlaxoSmithKline
+drug_00251,Diamicron,Unknown,Servier,Diabetes,61.67,EGP,Tablet,,True,Available,Diamicron - Diabetes medication by Servier
+drug_00252,Januvia 100,Sitagliptin,Merck,Diabetes,346.05,EGP,Tablet,,True,Available,Januvia 100 - Diabetes medication by Merck
+drug_00253,Januvia 50,Sitagliptin,Merck,Diabetes,450.33,EGP,Tablet,,True,Limited,Januvia 50 - Diabetes medication by Merck
+drug_00254,Sitagliptin 100,Sitagliptin,Takeda,Diabetes,165.8,EGP,Tablet,,True,Limited,Sitagliptin 100 - Diabetes medication by Takeda
+drug_00255,Sitagliptin 50,Sitagliptin,AstraZeneca,Diabetes,451.66,EGP,Tablet,,True,Available,Sitagliptin 50 - Diabetes medication by AstraZeneca
+drug_00256,Galvus 50,Unknown,Novartis,Diabetes,341.94,EGP,Tablet,,True,Out of Stock,Galvus 50 - Diabetes medication by Novartis
+drug_00257,Vildagliptin 50,Unknown,Sigma,Diabetes,222.37,EGP,Tablet,,True,Available,Vildagliptin 50 - Diabetes medication by Sigma
+drug_00258,Onglyza 5,Unknown,AstraZeneca,Diabetes,293.07,EGP,Tablet,,True,Available,Onglyza 5 - Diabetes medication by AstraZeneca
+drug_00259,Saxagliptin 5,Unknown,Eva Pharma,Diabetes,241.12,EGP,Tablet,,True,Available,Saxagliptin 5 - Diabetes medication by Eva Pharma
+drug_00260,Tradjenta 5,Unknown,Boehringer Ingelheim,Diabetes,369.94,EGP,Tablet,,True,Out of Stock,Tradjenta 5 - Diabetes medication by Boehringer Ingelheim
+drug_00261,Linagliptin 5,Unknown,Sedico,Diabetes,31.37,EGP,Tablet,,True,Available,Linagliptin 5 - Diabetes medication by Sedico
+drug_00262,Nesina 25,Unknown,Takeda,Diabetes,208.82,EGP,Tablet,,True,Out of Stock,Nesina 25 - Diabetes medication by Takeda
+drug_00263,Alogliptin 25,Unknown,Eva Pharma,Diabetes,343.06,EGP,Tablet,,True,Available,Alogliptin 25 - Diabetes medication by Eva Pharma
+drug_00264,Victoza,Unknown,Novo Nordisk,Diabetes,186.91,EGP,Tablet,,True,Out of Stock,Victoza - Diabetes medication by Novo Nordisk
+drug_00265,Liraglutide,Unknown,Sandoz,Diabetes,80.98,EGP,Tablet,,True,Limited,Liraglutide - Diabetes medication by Sandoz
+drug_00266,Byetta,Unknown,AstraZeneca,Diabetes,308.7,EGP,Tablet,,True,Available,Byetta - Diabetes medication by AstraZeneca
+drug_00267,Exenatide,Unknown,Global Napi,Diabetes,352.3,EGP,Tablet,,True,Out of Stock,Exenatide - Diabetes medication by Global Napi
+drug_00268,Trulicity,Unknown,Eli Lilly,Diabetes,387.2,EGP,Tablet,,True,Limited,Trulicity - Diabetes medication by Eli Lilly
+drug_00269,Dulaglutide,Unknown,CID,Diabetes,198.39,EGP,Tablet,,True,Out of Stock,Dulaglutide - Diabetes medication by CID
+drug_00270,Lantus 100U/ml,Unknown,Sanofi,Diabetes,179.73,EGP,Injection,100U/ml,True,Limited,Lantus 100U/ml - Diabetes medication by Sanofi
+drug_00271,Lantus SoloStar,Unknown,Sanofi,Diabetes,361.75,EGP,Tablet,,True,Out of Stock,Lantus SoloStar - Diabetes medication by Sanofi
+drug_00272,Insulin Glargine,Unknown,Pfizer,Diabetes,154.13,EGP,Tablet,,True,Out of Stock,Insulin Glargine - Diabetes medication by Pfizer
+drug_00273,Toujeo,Unknown,Bayer,Diabetes,197.91,EGP,Tablet,,True,Out of Stock,Toujeo - Diabetes medication by Bayer
+drug_00274,Humalog 100U/ml,Unknown,Eli Lilly,Diabetes,301.02,EGP,Injection,100U/ml,True,Limited,Humalog 100U/ml - Diabetes medication by Eli Lilly
+drug_00275,Insulin Lispro,Unknown,Sedico,Diabetes,323.36,EGP,Tablet,,True,Limited,Insulin Lispro - Diabetes medication by Sedico
+drug_00276,NovoRapid,Unknown,Novo Nordisk,Diabetes,339.49,EGP,Tablet,,True,Available,NovoRapid - Diabetes medication by Novo Nordisk
+drug_00277,Insulin Aspart,Unknown,Sedico,Diabetes,382.25,EGP,Tablet,,True,Available,Insulin Aspart - Diabetes medication by Sedico
+drug_00278,Actrapid,Unknown,Novo Nordisk,Diabetes,420.47,EGP,Tablet,,True,Out of Stock,Actrapid - Diabetes medication by Novo Nordisk
+drug_00279,Insulin Human,Unknown,Takeda,Diabetes,211.16,EGP,Tablet,,True,Out of Stock,Insulin Human - Diabetes medication by Takeda
+drug_00280,Mixtard 30,Unknown,Novo Nordisk,Diabetes,458.67,EGP,Tablet,,True,Out of Stock,Mixtard 30 - Diabetes medication by Novo Nordisk
+drug_00281,NovoMix 30,Unknown,Novo Nordisk,Diabetes,343.24,EGP,Tablet,,True,Limited,NovoMix 30 - Diabetes medication by Novo Nordisk
+drug_00282,Acarbose 50,Unknown,Bayer,Diabetes,352.66,EGP,Tablet,,True,Available,Acarbose 50 - Diabetes medication by Bayer
+drug_00283,Glucobay 50,Unknown,Bayer,Diabetes,112.89,EGP,Tablet,,True,Out of Stock,Glucobay 50 - Diabetes medication by Bayer
+drug_00284,Precose 50,Unknown,CID,Diabetes,282.19,EGP,Tablet,,True,Limited,Precose 50 - Diabetes medication by CID
+drug_00285,Acarbose,Unknown,Bayer,Diabetes,292.88,EGP,Tablet,,True,Out of Stock,Acarbose - Diabetes medication by Bayer
+drug_00286,Ventolin 100mcg,Salbutamol,GSK,Respiratory,53.86,EGP,Tablet,100mcg,True,Out of Stock,Ventolin 100mcg - Respiratory medication by GSK
+drug_00287,Ventolin Evohaler,Salbutamol,GSK,Respiratory,115.52,EGP,Inhaler,,True,Limited,Ventolin Evohaler - Respiratory medication by GSK
+drug_00288,Salbutamol 100mcg,Salbutamol,Eva Pharma,Respiratory,267.5,EGP,Tablet,100mcg,True,Limited,Salbutamol 100mcg - Respiratory medication by Eva Pharma
+drug_00289,Albuterol,Unknown,Julphar,Respiratory,237.33,EGP,Tablet,,True,Out of Stock,Albuterol - Respiratory medication by Julphar
+drug_00290,Seretide 250,Fluticasone/Salmeterol,GSK,Respiratory,309.23,EGP,Tablet,,True,Out of Stock,Seretide 250 - Respiratory medication by GSK
+drug_00291,Seretide 125,Fluticasone/Salmeterol,GSK,Respiratory,222.93,EGP,Tablet,,True,Out of Stock,Seretide 125 - Respiratory medication by GSK
+drug_00292,Advair 250,Unknown,Merck,Respiratory,223.16,EGP,Tablet,,True,Out of Stock,Advair 250 - Respiratory medication by Merck
+drug_00293,Advair 125,Unknown,Hikma,Respiratory,263.99,EGP,Tablet,,True,Available,Advair 125 - Respiratory medication by Hikma
+drug_00294,Symbicort 160/4.5,Unknown,AstraZeneca,Respiratory,227.3,EGP,Tablet,160/4.5,True,Available,Symbicort 160/4.5 - Respiratory medication by AstraZeneca
+drug_00295,Symbicort 80/4.5,Unknown,Medical Union,Respiratory,24.63,EGP,Tablet,80/4.5,True,Available,Symbicort 80/4.5 - Respiratory medication by Medical Union
+drug_00296,DuoResp Spiromax,Unknown,CID,Respiratory,176.64,EGP,Tablet,,True,Available,DuoResp Spiromax - Respiratory medication by CID
+drug_00297,Pulmicort 200,Unknown,Bayer,Respiratory,210.91,EGP,Tablet,,True,Limited,Pulmicort 200 - Respiratory medication by Bayer
+drug_00298,Pulmicort 400,Unknown,Abbott,Respiratory,88.77,EGP,Tablet,,True,Limited,Pulmicort 400 - Respiratory medication by Abbott
+drug_00299,Budesonide 200,Budesonide,Amoun,Respiratory,38.4,EGP,Tablet,,True,Available,Budesonide 200 - Respiratory medication by Amoun
+drug_00300,Budesonide 400,Budesonide,Hikma,Respiratory,32.56,EGP,Tablet,,True,Available,Budesonide 400 - Respiratory medication by Hikma
+drug_00301,Flixotide 125,Unknown,Sigma,Respiratory,385.34,EGP,Tablet,,True,Limited,Flixotide 125 - Respiratory medication by Sigma
+drug_00302,Flixotide 250,Unknown,CID,Respiratory,35.19,EGP,Tablet,,True,Available,Flixotide 250 - Respiratory medication by CID
+drug_00303,Fluticasone 125,Fluticasone,LEO Pharma,Respiratory,250.1,EGP,Tablet,,True,Limited,Fluticasone 125 - Respiratory medication by LEO Pharma
+drug_00304,Fluticasone 250,Fluticasone,Merck,Respiratory,151.04,EGP,Tablet,,True,Limited,Fluticasone 250 - Respiratory medication by Merck
+drug_00305,Singulair 10,Montelukast,Takeda,Respiratory,378.91,EGP,Tablet,,True,Limited,Singulair 10 - Respiratory medication by Takeda
+drug_00306,Singulair 4,Montelukast,Amoun,Respiratory,336.46,EGP,Tablet,,True,Out of Stock,Singulair 4 - Respiratory medication by Amoun
+drug_00307,Montelukast 10,Montelukast,Amoun,Respiratory,204.19,EGP,Tablet,,True,Limited,Montelukast 10 - Respiratory medication by Amoun
+drug_00308,Montelukast 4,Montelukast,Takeda,Respiratory,72.29,EGP,Tablet,,True,Limited,Montelukast 4 - Respiratory medication by Takeda
+drug_00309,Telfast 180,Fexofenadine,Sanofi,Respiratory,194.1,EGP,Tablet,,True,Available,Telfast 180 - Respiratory medication by Sanofi
+drug_00310,Telfast 120,Fexofenadine,Sanofi,Respiratory,263.08,EGP,Tablet,,True,Available,Telfast 120 - Respiratory medication by Sanofi
+drug_00311,Allegra 180,Unknown,Takeda,Respiratory,338.72,EGP,Tablet,,True,Limited,Allegra 180 - Respiratory medication by Takeda
+drug_00312,Fexofenadine 180,Fexofenadine,Abbott,Respiratory,376.4,EGP,Tablet,,True,Available,Fexofenadine 180 - Respiratory medication by Abbott
+drug_00313,Claritine,Loratadine,Bayer,Respiratory,260.75,EGP,Tablet,,True,Out of Stock,Claritine - Respiratory medication by Bayer
+drug_00314,Claritin,Unknown,EIPICO,Respiratory,102.26,EGP,Tablet,,True,Out of Stock,Claritin - Respiratory medication by EIPICO
+drug_00315,Loratadine 10,Loratadine,Pfizer,Respiratory,368.63,EGP,Tablet,,True,Available,Loratadine 10 - Respiratory medication by Pfizer
+drug_00316,Alavert,Unknown,Boehringer Ingelheim,Respiratory,117.99,EGP,Tablet,,True,Limited,Alavert - Respiratory medication by Boehringer Ingelheim
+drug_00317,Zyrtec,Cetirizine,GSK,Respiratory,252.77,EGP,Tablet,,True,Limited,Zyrtec - Respiratory medication by GSK
+drug_00318,Cetirizine 10,Cetirizine,AstraZeneca,Respiratory,185.55,EGP,Tablet,,True,Out of Stock,Cetirizine 10 - Respiratory medication by AstraZeneca
+drug_00319,Reactine,Unknown,Pfizer,Respiratory,309.49,EGP,Tablet,,True,Out of Stock,Reactine - Respiratory medication by Pfizer
+drug_00320,Levostiv,Unknown,Global Napi,Respiratory,25.65,EGP,Tablet,,True,Available,Levostiv - Respiratory medication by Global Napi
+drug_00321,Levocetirizine 5,Unknown,GSK,Respiratory,21.34,EGP,Tablet,,True,Limited,Levocetirizine 5 - Respiratory medication by GSK
+drug_00322,Xyzal 5,Unknown,Servier,Respiratory,120.11,EGP,Tablet,,True,Limited,Xyzal 5 - Respiratory medication by Servier
+drug_00323,Xyzal,Unknown,GlaxoSmithKline,Respiratory,341.38,EGP,Tablet,,True,Out of Stock,Xyzal - Respiratory medication by GlaxoSmithKline
+drug_00324,Desloratadine 5,Unknown,Global Napi,Respiratory,301.81,EGP,Tablet,,True,Out of Stock,Desloratadine 5 - Respiratory medication by Global Napi
+drug_00325,Aerius 5,Unknown,Global Napi,Respiratory,64.29,EGP,Tablet,,True,Out of Stock,Aerius 5 - Respiratory medication by Global Napi
+drug_00326,Atrovent,Unknown,Merck,Respiratory,96.8,EGP,Tablet,,True,Out of Stock,Atrovent - Respiratory medication by Merck
+drug_00327,Ipratropium,Unknown,EIPICO,Respiratory,235.9,EGP,Tablet,,True,Available,Ipratropium - Respiratory medication by EIPICO
+drug_00328,Combivent,Unknown,Boehringer Ingelheim,Respiratory,264.91,EGP,Tablet,,True,Out of Stock,Combivent - Respiratory medication by Boehringer Ingelheim
+drug_00329,Ipratropium/Albuterol,Unknown,Spimaco,Respiratory,166.56,EGP,Tablet,,True,Available,Ipratropium/Albuterol - Respiratory medication by Spimaco
+drug_00330,Spiriva,Unknown,Boehringer Ingelheim,Respiratory,259.51,EGP,Tablet,,True,Available,Spiriva - Respiratory medication by Boehringer Ingelheim
+drug_00331,Tiotropium,Unknown,Bayer,Respiratory,296.65,EGP,Tablet,,True,Available,Tiotropium - Respiratory medication by Bayer
+drug_00332,Incresync,Unknown,Boehringer Ingelheim,Respiratory,296.22,EGP,Tablet,,True,Out of Stock,Incresync - Respiratory medication by Boehringer Ingelheim
+drug_00333,Olodaterol/Tiotropium,Unknown,Boehringer Ingelheim,Respiratory,381.78,EGP,Tablet,,True,Available,Olodaterol/Tiotropium - Respiratory medication by Boehringer Ingelheim
+drug_00334,Breo Ellipta,Unknown,GSK,Respiratory,186.42,EGP,Tablet,,True,Limited,Breo Ellipta - Respiratory medication by GSK
+drug_00335,Anoro Ellipta,Unknown,GSK,Respiratory,211.45,EGP,Tablet,,True,Limited,Anoro Ellipta - Respiratory medication by GSK
+drug_00336,Incruse Ellipta,Unknown,GSK,Respiratory,393.74,EGP,Tablet,,True,Available,Incruse Ellipta - Respiratory medication by GSK
+drug_00337,Milga Advance,Unknown,Eva Pharma,Vitamins & Supplements,175.43,EGP,Tablet,,False,Out of Stock,Milga Advance - Vitamins & Supplements medication by Eva Pharma
+drug_00338,Milga,Unknown,Eva Pharma,Vitamins & Supplements,81.08,EGP,Tablet,,False,Out of Stock,Milga - Vitamins & Supplements medication by Eva Pharma
+drug_00339,Vitamin B Complex,Unknown,Julphar,Vitamins & Supplements,29.77,EGP,Tablet,,False,Out of Stock,Vitamin B Complex - Vitamins & Supplements medication by Julphar
+drug_00340,Vitamin B12,Unknown,Sedico,Vitamins & Supplements,96.99,EGP,Tablet,,False,Limited,Vitamin B12 - Vitamins & Supplements medication by Sedico
+drug_00341,Vitamin D3 1000,Unknown,GlaxoSmithKline,Vitamins & Supplements,85.76,EGP,Tablet,,False,Out of Stock,Vitamin D3 1000 - Vitamins & Supplements medication by GlaxoSmithKline
+drug_00342,Vitamin D3 2000,Unknown,Merck,Vitamins & Supplements,38.09,EGP,Tablet,,False,Limited,Vitamin D3 2000 - Vitamins & Supplements medication by Merck
+drug_00343,Vitamin D3 4000,Unknown,Global Napi,Vitamins & Supplements,155.59,EGP,Tablet,,False,Out of Stock,Vitamin D3 4000 - Vitamins & Supplements medication by Global Napi
+drug_00344,Calcium 600,Unknown,Pharco,Vitamins & Supplements,147.07,EGP,Tablet,,False,Out of Stock,Calcium 600 - Vitamins & Supplements medication by Pharco
+drug_00345,Calcium 1200,Unknown,Janssen,Vitamins & Supplements,112.04,EGP,Tablet,,False,Limited,Calcium 1200 - Vitamins & Supplements medication by Janssen
+drug_00346,Calcium + Vitamin D,Unknown,GSK,Vitamins & Supplements,105.44,EGP,Tablet,,False,Limited,Calcium + Vitamin D - Vitamins & Supplements medication by GSK
+drug_00347,Iron 65mg,Unknown,Takeda,Vitamins & Supplements,36.63,EGP,Tablet,65mg,False,Limited,Iron 65mg - Vitamins & Supplements medication by Takeda
+drug_00348,Iron 325mg,Unknown,LEO Pharma,Vitamins & Supplements,43.64,EGP,Tablet,325mg,False,Out of Stock,Iron 325mg - Vitamins & Supplements medication by LEO Pharma
+drug_00349,Ferrous Sulfate,Unknown,CID,Vitamins & Supplements,163.54,EGP,Tablet,,False,Out of Stock,Ferrous Sulfate - Vitamins & Supplements medication by CID
+drug_00350,Feosol,Unknown,Novartis,Vitamins & Supplements,112.05,EGP,Tablet,,False,Available,Feosol - Vitamins & Supplements medication by Novartis
+drug_00351,Folic Acid 400mcg,Unknown,Merck,Vitamins & Supplements,66.84,EGP,Tablet,400mcg,False,Out of Stock,Folic Acid 400mcg - Vitamins & Supplements medication by Merck
+drug_00352,Folic Acid 800mcg,Unknown,GlaxoSmithKline,Vitamins & Supplements,102.97,EGP,Tablet,800mcg,False,Limited,Folic Acid 800mcg - Vitamins & Supplements medication by GlaxoSmithKline
+drug_00353,Folate 400mcg,Unknown,Sedico,Vitamins & Supplements,104.49,EGP,Tablet,400mcg,False,Limited,Folate 400mcg - Vitamins & Supplements medication by Sedico
+drug_00354,Vitamin C 500,Unknown,Spimaco,Vitamins & Supplements,112.11,EGP,Tablet,,False,Available,Vitamin C 500 - Vitamins & Supplements medication by Spimaco
+drug_00355,Vitamin C 1000,Unknown,Novartis,Vitamins & Supplements,76.76,EGP,Tablet,,False,Out of Stock,Vitamin C 1000 - Vitamins & Supplements medication by Novartis
+drug_00356,Ascorbic Acid 500,Unknown,Sedico,Vitamins & Supplements,163.79,EGP,Tablet,,False,Out of Stock,Ascorbic Acid 500 - Vitamins & Supplements medication by Sedico
+drug_00357,Zinc 50mg,Unknown,CID,Vitamins & Supplements,47.27,EGP,Tablet,50mg,False,Out of Stock,Zinc 50mg - Vitamins & Supplements medication by CID
+drug_00358,Zinc 25mg,Unknown,Sanofi,Vitamins & Supplements,142.37,EGP,Tablet,25mg,False,Available,Zinc 25mg - Vitamins & Supplements medication by Sanofi
+drug_00359,Zinc Gluconate,Unknown,Sandoz,Vitamins & Supplements,141.59,EGP,Tablet,,False,Available,Zinc Gluconate - Vitamins & Supplements medication by Sandoz
+drug_00360,Zinc Sulfate,Unknown,Novartis,Vitamins & Supplements,121.88,EGP,Tablet,,False,Limited,Zinc Sulfate - Vitamins & Supplements medication by Novartis
+drug_00361,Magnesium 400mg,Unknown,LEO Pharma,Vitamins & Supplements,155.39,EGP,Tablet,400mg,False,Out of Stock,Magnesium 400mg - Vitamins & Supplements medication by LEO Pharma
+drug_00362,Magnesium 200mg,Unknown,Janssen,Vitamins & Supplements,100.94,EGP,Tablet,200mg,False,Available,Magnesium 200mg - Vitamins & Supplements medication by Janssen
+drug_00363,Magnesium Oxide,Unknown,Novartis,Vitamins & Supplements,82.46,EGP,Tablet,,False,Available,Magnesium Oxide - Vitamins & Supplements medication by Novartis
+drug_00364,Omega-3 1000,Unknown,Julphar,Vitamins & Supplements,44.11,EGP,Tablet,,False,Out of Stock,Omega-3 1000 - Vitamins & Supplements medication by Julphar
+drug_00365,Omega-3 1200,Unknown,LEO Pharma,Vitamins & Supplements,30.5,EGP,Tablet,,False,Limited,Omega-3 1200 - Vitamins & Supplements medication by LEO Pharma
+drug_00366,Fish Oil 1000,Unknown,LEO Pharma,Vitamins & Supplements,187.95,EGP,Tablet,,False,Available,Fish Oil 1000 - Vitamins & Supplements medication by LEO Pharma
+drug_00367,EPA/DHA,Unknown,Spimaco,Vitamins & Supplements,139.72,EGP,Tablet,,False,Out of Stock,EPA/DHA - Vitamins & Supplements medication by Spimaco
+drug_00368,Coenzyme Q10 100,Unknown,Sedico,Vitamins & Supplements,176.0,EGP,Tablet,,False,Out of Stock,Coenzyme Q10 100 - Vitamins & Supplements medication by Sedico
+drug_00369,Coenzyme Q10 200,Unknown,GSK,Vitamins & Supplements,161.22,EGP,Tablet,,False,Available,Coenzyme Q10 200 - Vitamins & Supplements medication by GSK
+drug_00370,Ubiquinol 100,Unknown,Servier,Vitamins & Supplements,50.35,EGP,Tablet,,False,Out of Stock,Ubiquinol 100 - Vitamins & Supplements medication by Servier
+drug_00371,Probiotics,Unknown,Medical Union,Vitamins & Supplements,118.53,EGP,Tablet,,False,Out of Stock,Probiotics - Vitamins & Supplements medication by Medical Union
+drug_00372,Lactobacillus,Unknown,Amoun,Vitamins & Supplements,134.76,EGP,Tablet,,False,Out of Stock,Lactobacillus - Vitamins & Supplements medication by Amoun
+drug_00373,Bifidobacterium,Unknown,Servier,Vitamins & Supplements,147.67,EGP,Tablet,,False,Limited,Bifidobacterium - Vitamins & Supplements medication by Servier
+drug_00374,Acidophilus,Unknown,GlaxoSmithKline,Vitamins & Supplements,153.78,EGP,Tablet,,False,Limited,Acidophilus - Vitamins & Supplements medication by GlaxoSmithKline
+drug_00375,Collagen,Unknown,Global Napi,Vitamins & Supplements,95.62,EGP,Tablet,,False,Out of Stock,Collagen - Vitamins & Supplements medication by Global Napi
+drug_00376,Collagen Peptides,Unknown,Merck,Vitamins & Supplements,80.89,EGP,Tablet,,False,Out of Stock,Collagen Peptides - Vitamins & Supplements medication by Merck
+drug_00377,Hydrolyzed Collagen,Unknown,Sedico,Vitamins & Supplements,116.07,EGP,Tablet,,False,Limited,Hydrolyzed Collagen - Vitamins & Supplements medication by Sedico
+drug_00378,Multivitamin,Unknown,Eva Pharma,Vitamins & Supplements,134.78,EGP,Tablet,,False,Limited,Multivitamin - Vitamins & Supplements medication by Eva Pharma
+drug_00379,Centrum,Unknown,Amoun,Vitamins & Supplements,104.87,EGP,Tablet,,False,Available,Centrum - Vitamins & Supplements medication by Amoun
+drug_00380,One A Day,Unknown,Janssen,Vitamins & Supplements,48.02,EGP,Tablet,,False,Available,One A Day - Vitamins & Supplements medication by Janssen
+drug_00381,Multivitamins,Unknown,Sanofi,Vitamins & Supplements,23.81,EGP,Tablet,,False,Available,Multivitamins - Vitamins & Supplements medication by Sanofi
+drug_00382,Prenatal Vitamins,Unknown,Boehringer Ingelheim,Vitamins & Supplements,20.53,EGP,Tablet,,False,Available,Prenatal Vitamins - Vitamins & Supplements medication by Boehringer Ingelheim
+drug_00383,Pregnancy Vitamins,Unknown,Amoun,Vitamins & Supplements,196.47,EGP,Tablet,,False,Out of Stock,Pregnancy Vitamins - Vitamins & Supplements medication by Amoun
+drug_00384,Materna,Unknown,Sanofi,Vitamins & Supplements,135.14,EGP,Tablet,,False,Out of Stock,Materna - Vitamins & Supplements medication by Sanofi
+drug_00385,Children Vitamins,Unknown,Spimaco,Vitamins & Supplements,85.22,EGP,Tablet,,False,Available,Children Vitamins - Vitamins & Supplements medication by Spimaco
+drug_00386,Pediatric Vitamins,Unknown,Tabuk,Vitamins & Supplements,97.13,EGP,Tablet,,False,Out of Stock,Pediatric Vitamins - Vitamins & Supplements medication by Tabuk
+drug_00387,Flintstones,Unknown,EIPICO,Vitamins & Supplements,37.88,EGP,Tablet,,False,Limited,Flintstones - Vitamins & Supplements medication by EIPICO
+drug_00388,Fucidin Ointment,Fusidic Acid,LEO Pharma,Dermatology,37.87,EGP,Ointment,,False,Limited,Fucidin Ointment - Dermatology medication by LEO Pharma
+drug_00389,Fucidin H,Fusidic Acid,LEO Pharma,Dermatology,98.68,EGP,Tablet,,False,Available,Fucidin H - Dermatology medication by LEO Pharma
+drug_00390,Fusidic Acid,Unknown,Bayer,Dermatology,79.89,EGP,Tablet,,False,Out of Stock,Fusidic Acid - Dermatology medication by Bayer
+drug_00391,Fusidin,Unknown,Pfizer,Dermatology,68.9,EGP,Tablet,,False,Limited,Fusidin - Dermatology medication by Pfizer
+drug_00392,Betnovate,Betamethasone,GSK,Dermatology,72.79,EGP,Tablet,,False,Available,Betnovate - Dermatology medication by GSK
+drug_00393,Betamethasone,Betamethasone,AstraZeneca,Dermatology,47.17,EGP,Tablet,,False,Available,Betamethasone - Dermatology medication by AstraZeneca
+drug_00394,Dermovate,Unknown,Pharco,Dermatology,80.47,EGP,Tablet,,False,Limited,Dermovate - Dermatology medication by Pharco
+drug_00395,Clobetasol,Clobetasol,Abbott,Dermatology,83.9,EGP,Tablet,,False,Limited,Clobetasol - Dermatology medication by Abbott
+drug_00396,Elocon,Unknown,Janssen,Dermatology,73.0,EGP,Tablet,,False,Out of Stock,Elocon - Dermatology medication by Janssen
+drug_00397,Mometasone,Mometasone,LEO Pharma,Dermatology,31.74,EGP,Tablet,,False,Available,Mometasone - Dermatology medication by LEO Pharma
+drug_00398,Mometasone Furoate,Mometasone,CID,Dermatology,54.37,EGP,Tablet,,False,Limited,Mometasone Furoate - Dermatology medication by CID
+drug_00399,Elocon Cream,Cream,Abbott,Dermatology,51.88,EGP,Cream,,False,Available,Elocon Cream - Dermatology medication by Abbott
+drug_00400,Hydrocortisone 1%,Hydrocortisone,LEO Pharma,Dermatology,75.4,EGP,Tablet,1%,False,Limited,Hydrocortisone 1% - Dermatology medication by LEO Pharma
+drug_00401,Hydrocortisone 2.5%,Hydrocortisone,Pharco,Dermatology,86.9,EGP,Tablet,2.5%,False,Limited,Hydrocortisone 2.5% - Dermatology medication by Pharco
+drug_00402,Cortaid,Unknown,Julphar,Dermatology,29.97,EGP,Tablet,,False,Limited,Cortaid - Dermatology medication by Julphar
+drug_00403,Clotrimazole 1%,Clotrimazole,Bayer,Dermatology,36.78,EGP,Tablet,1%,False,Out of Stock,Clotrimazole 1% - Dermatology medication by Bayer
+drug_00404,Canesten,Unknown,GSK,Dermatology,22.83,EGP,Tablet,,False,Out of Stock,Canesten - Dermatology medication by GSK
+drug_00405,Lotrimin,Unknown,Boehringer Ingelheim,Dermatology,71.26,EGP,Tablet,,False,Available,Lotrimin - Dermatology medication by Boehringer Ingelheim
+drug_00406,Clotrimazole Cream,Clotrimazole,Pharco,Dermatology,66.77,EGP,Cream,,False,Out of Stock,Clotrimazole Cream - Dermatology medication by Pharco
+drug_00407,Miconazole 2%,Miconazole,Hikma,Dermatology,16.63,EGP,Tablet,2%,False,Limited,Miconazole 2% - Dermatology medication by Hikma
+drug_00408,Monistat,Miconazole,Janssen,Dermatology,31.44,EGP,Tablet,,False,Available,Monistat - Dermatology medication by Janssen
+drug_00409,Miconazole Cream,Miconazole,Eva Pharma,Dermatology,68.52,EGP,Cream,,False,Out of Stock,Miconazole Cream - Dermatology medication by Eva Pharma
+drug_00410,Daktarin,Unknown,Servier,Dermatology,80.63,EGP,Tablet,,False,Available,Daktarin - Dermatology medication by Servier
+drug_00411,Terbinafine 1%,Terbinafine,Merck,Dermatology,49.36,EGP,Tablet,1%,False,Limited,Terbinafine 1% - Dermatology medication by Merck
+drug_00412,Lamisil,Unknown,Julphar,Dermatology,46.91,EGP,Tablet,,False,Limited,Lamisil - Dermatology medication by Julphar
+drug_00413,Terbinafine Cream,Terbinafine,Bayer,Dermatology,11.31,EGP,Cream,,False,Available,Terbinafine Cream - Dermatology medication by Bayer
+drug_00414,Lamisil AT,Unknown,Spimaco,Dermatology,62.98,EGP,Tablet,,False,Available,Lamisil AT - Dermatology medication by Spimaco
+drug_00415,Acyclovir 5%,Acyclovir,Spimaco,Dermatology,95.73,EGP,Tablet,5%,False,Limited,Acyclovir 5% - Dermatology medication by Spimaco
+drug_00416,Zovirax,Unknown,GSK,Dermatology,61.72,EGP,Tablet,,False,Available,Zovirax - Dermatology medication by GSK
+drug_00417,Acyclovir Cream,Acyclovir,Boehringer Ingelheim,Dermatology,60.89,EGP,Cream,,False,Out of Stock,Acyclovir Cream - Dermatology medication by Boehringer Ingelheim
+drug_00418,Herpes Cream,Cream,Pharco,Dermatology,52.22,EGP,Cream,,False,Limited,Herpes Cream - Dermatology medication by Pharco
+drug_00419,Retin-A,Unknown,GSK,Dermatology,71.3,EGP,Tablet,,False,Available,Retin-A - Dermatology medication by GSK
+drug_00420,Tretinoin,Tretinoin,GSK,Dermatology,97.75,EGP,Tablet,,False,Limited,Tretinoin - Dermatology medication by GSK
+drug_00421,Renova,Unknown,Tabuk,Dermatology,59.14,EGP,Tablet,,False,Available,Renova - Dermatology medication by Tabuk
+drug_00422,Tretinoin Cream,Tretinoin,Janssen,Dermatology,16.09,EGP,Cream,,False,Available,Tretinoin Cream - Dermatology medication by Janssen
+drug_00423,Benzoyl Peroxide 5%,Unknown,Boehringer Ingelheim,Dermatology,97.88,EGP,Tablet,5%,False,Available,Benzoyl Peroxide 5% - Dermatology medication by Boehringer Ingelheim
+drug_00424,Benzoyl Peroxide 10%,Unknown,Takeda,Dermatology,50.59,EGP,Tablet,10%,False,Limited,Benzoyl Peroxide 10% - Dermatology medication by Takeda
+drug_00425,Clearasil,Unknown,LEO Pharma,Dermatology,99.83,EGP,Tablet,,False,Available,Clearasil - Dermatology medication by LEO Pharma
+drug_00426,Salicylic Acid 2%,Unknown,Servier,Dermatology,81.42,EGP,Tablet,2%,False,Available,Salicylic Acid 2% - Dermatology medication by Servier
+drug_00427,Salicylic Acid 6%,Unknown,Pharco,Dermatology,51.5,EGP,Tablet,6%,False,Out of Stock,Salicylic Acid 6% - Dermatology medication by Pharco
+drug_00428,Wart Remover,Unknown,AstraZeneca,Dermatology,14.86,EGP,Tablet,,False,Out of Stock,Wart Remover - Dermatology medication by AstraZeneca
+drug_00429,Calamine Lotion,Lotion,Servier,Dermatology,62.55,EGP,Lotion,,False,Limited,Calamine Lotion - Dermatology medication by Servier
+drug_00430,Caladryl,Unknown,Sedico,Dermatology,33.92,EGP,Tablet,,False,Available,Caladryl - Dermatology medication by Sedico
+drug_00431,Anti-Itch Cream,Cream,Novartis,Dermatology,86.76,EGP,Cream,,False,Limited,Anti-Itch Cream - Dermatology medication by Novartis
+drug_00432,Aloe Vera Gel,Gel,Novartis,Dermatology,17.37,EGP,Gel,,False,Out of Stock,Aloe Vera Gel - Dermatology medication by Novartis
+drug_00433,Aloe Vera Lotion,Lotion,Julphar,Dermatology,85.92,EGP,Lotion,,False,Out of Stock,Aloe Vera Lotion - Dermatology medication by Julphar
+drug_00434,After Sun Lotion,Lotion,Abbott,Dermatology,27.41,EGP,Lotion,,False,Available,After Sun Lotion - Dermatology medication by Abbott
+drug_00435,Sunscreen SPF 30,Unknown,Boehringer Ingelheim,Dermatology,38.39,EGP,Tablet,,False,Available,Sunscreen SPF 30 - Dermatology medication by Boehringer Ingelheim
+drug_00436,Sunscreen SPF 50,Unknown,Bayer,Dermatology,41.38,EGP,Tablet,,False,Limited,Sunscreen SPF 50 - Dermatology medication by Bayer
+drug_00437,Sunblock,Unknown,Abbott,Dermatology,60.4,EGP,Tablet,,False,Available,Sunblock - Dermatology medication by Abbott
+drug_00438,Moisturizer,Unknown,Merck,Dermatology,60.32,EGP,Tablet,,False,Available,Moisturizer - Dermatology medication by Merck
+drug_00439,Lotion,Lotion,Eva Pharma,Dermatology,30.31,EGP,Lotion,,False,Out of Stock,Lotion - Dermatology medication by Eva Pharma
+drug_00440,Cream,Cream,LEO Pharma,Dermatology,88.65,EGP,Cream,,False,Available,Cream - Dermatology medication by LEO Pharma
+drug_00441,Ointment,Ointment,Hikma,Dermatology,89.56,EGP,Ointment,,False,Limited,Ointment - Dermatology medication by Hikma
+drug_00442,Gel,Gel,CID,Dermatology,11.88,EGP,Gel,,False,Out of Stock,Gel - Dermatology medication by CID
+drug_00443,Tobrex,Unknown,Sigma,Eye & Ear,93.2,EGP,Tablet,,True,Limited,Tobrex - Eye & Ear medication by Sigma
+drug_00444,Tobramycin Eye Drops,Tobramycin,Pfizer,Eye & Ear,181.15,EGP,Drops,,True,Limited,Tobramycin Eye Drops - Eye & Ear medication by Pfizer
+drug_00445,Tobramycin Ophthalmic,Tobramycin,Julphar,Eye & Ear,130.23,EGP,Tablet,,True,Available,Tobramycin Ophthalmic - Eye & Ear medication by Julphar
+drug_00446,Vigamox,Unknown,Novartis,Eye & Ear,171.66,EGP,Tablet,,True,Available,Vigamox - Eye & Ear medication by Novartis
+drug_00447,Moxifloxacin Eye Drops,Moxifloxacin,Bayer,Eye & Ear,113.82,EGP,Drops,,True,Available,Moxifloxacin Eye Drops - Eye & Ear medication by Bayer
+drug_00448,Moxifloxacin Ophthalmic,Moxifloxacin,Medical Union,Eye & Ear,96.11,EGP,Tablet,,True,Out of Stock,Moxifloxacin Ophthalmic - Eye & Ear medication by Medical Union
+drug_00449,Zylet,Unknown,Bausch + Lomb,Eye & Ear,103.13,EGP,Tablet,,True,Available,Zylet - Eye & Ear medication by Bausch + Lomb
+drug_00450,Loteprednol/Tobramycin,Tobramycin,Julphar,Eye & Ear,215.11,EGP,Tablet,,True,Available,Loteprednol/Tobramycin - Eye & Ear medication by Julphar
+drug_00451,Loteprednol Eye Drops,Unknown,Sigma,Eye & Ear,166.83,EGP,Drops,,True,Available,Loteprednol Eye Drops - Eye & Ear medication by Sigma
+drug_00452,Refresh Tears,Unknown,Alcon,Eye & Ear,197.04,EGP,Tablet,,True,Out of Stock,Refresh Tears - Eye & Ear medication by Alcon
+drug_00453,Artificial Tears,Unknown,Hikma,Eye & Ear,203.48,EGP,Tablet,,True,Limited,Artificial Tears - Eye & Ear medication by Hikma
+drug_00454,Lubricating Eye Drops,Unknown,AstraZeneca,Eye & Ear,214.07,EGP,Drops,,True,Out of Stock,Lubricating Eye Drops - Eye & Ear medication by AstraZeneca
+drug_00455,Systane,Unknown,Alcon,Eye & Ear,78.44,EGP,Tablet,,True,Available,Systane - Eye & Ear medication by Alcon
+drug_00456,Systane Ultra,Unknown,Alcon,Eye & Ear,216.1,EGP,Tablet,,True,Available,Systane Ultra - Eye & Ear medication by Alcon
+drug_00457,Systane Hydration,Unknown,Alcon,Eye & Ear,123.09,EGP,Tablet,,True,Out of Stock,Systane Hydration - Eye & Ear medication by Alcon
+drug_00458,Visine,Unknown,Johnson & Johnson,Eye & Ear,218.99,EGP,Tablet,,True,Limited,Visine - Eye & Ear medication by Johnson & Johnson
+drug_00459,Visine Original,Unknown,Johnson & Johnson,Eye & Ear,99.74,EGP,Tablet,,True,Limited,Visine Original - Eye & Ear medication by Johnson & Johnson
+drug_00460,Visine Advanced,Unknown,Johnson & Johnson,Eye & Ear,18.1,EGP,Tablet,,True,Available,Visine Advanced - Eye & Ear medication by Johnson & Johnson
+drug_00461,Clear Eyes,Unknown,Bausch + Lomb,Eye & Ear,195.55,EGP,Tablet,,True,Available,Clear Eyes - Eye & Ear medication by Bausch + Lomb
+drug_00462,Clear Eyes Redness Relief,Unknown,Bausch + Lomb,Eye & Ear,22.4,EGP,Tablet,,True,Limited,Clear Eyes Redness Relief - Eye & Ear medication by Bausch + Lomb
+drug_00463,Naphcon-A,Unknown,Abbott,Eye & Ear,235.56,EGP,Tablet,,True,Limited,Naphcon-A - Eye & Ear medication by Abbott
+drug_00464,Alphagan,Unknown,Allergan,Eye & Ear,214.46,EGP,Tablet,,True,Available,Alphagan - Eye & Ear medication by Allergan
+drug_00465,Brimonidine,Unknown,GSK,Eye & Ear,53.64,EGP,Tablet,,True,Available,Brimonidine - Eye & Ear medication by GSK
+drug_00466,Alphagan P,Unknown,Allergan,Eye & Ear,149.7,EGP,Tablet,,True,Available,Alphagan P - Eye & Ear medication by Allergan
+drug_00467,Xalatan,Unknown,Pfizer,Eye & Ear,234.77,EGP,Tablet,,True,Available,Xalatan - Eye & Ear medication by Pfizer
+drug_00468,Latanoprost,Latanoprost,Hikma,Eye & Ear,213.88,EGP,Tablet,,True,Limited,Latanoprost - Eye & Ear medication by Hikma
+drug_00469,Xalacom,Unknown,Pfizer,Eye & Ear,47.49,EGP,Tablet,,True,Available,Xalacom - Eye & Ear medication by Pfizer
+drug_00470,Latanoprost/Timolol,Latanoprost,Sedico,Eye & Ear,99.45,EGP,Tablet,,True,Available,Latanoprost/Timolol - Eye & Ear medication by Sedico
+drug_00471,Timoptic,Unknown,Merck,Eye & Ear,183.29,EGP,Tablet,,True,Limited,Timoptic - Eye & Ear medication by Merck
+drug_00472,Timolol,Timolol,Global Napi,Eye & Ear,56.71,EGP,Tablet,,True,Limited,Timolol - Eye & Ear medication by Global Napi
+drug_00473,Timolol Eye Drops,Timolol,GSK,Eye & Ear,160.84,EGP,Drops,,True,Out of Stock,Timolol Eye Drops - Eye & Ear medication by GSK
+drug_00474,Timolol Ophthalmic,Timolol,Sigma,Eye & Ear,123.69,EGP,Tablet,,True,Limited,Timolol Ophthalmic - Eye & Ear medication by Sigma
+drug_00475,Cosopt,Unknown,Merck,Eye & Ear,155.48,EGP,Tablet,,True,Out of Stock,Cosopt - Eye & Ear medication by Merck
+drug_00476,Dorzolamide/Timolol,Timolol,Merck,Eye & Ear,55.88,EGP,Tablet,,True,Limited,Dorzolamide/Timolol - Eye & Ear medication by Merck
+drug_00477,Dorzolamide Eye Drops,Dorzolamide,EIPICO,Eye & Ear,74.89,EGP,Drops,,True,Out of Stock,Dorzolamide Eye Drops - Eye & Ear medication by EIPICO
+drug_00478,Azopt,Unknown,Alcon,Eye & Ear,180.82,EGP,Tablet,,True,Out of Stock,Azopt - Eye & Ear medication by Alcon
+drug_00479,Brinzolamide,Unknown,Tabuk,Eye & Ear,197.67,EGP,Tablet,,True,Limited,Brinzolamide - Eye & Ear medication by Tabuk
+drug_00480,Brinzolamide Eye Drops,Unknown,Novartis,Eye & Ear,233.3,EGP,Drops,,True,Limited,Brinzolamide Eye Drops - Eye & Ear medication by Novartis
+drug_00481,Ocuflox,Unknown,Allergan,Eye & Ear,150.89,EGP,Tablet,,True,Available,Ocuflox - Eye & Ear medication by Allergan
+drug_00482,Ofloxacin Eye Drops,Unknown,Novartis,Eye & Ear,52.96,EGP,Drops,,True,Limited,Ofloxacin Eye Drops - Eye & Ear medication by Novartis
+drug_00483,Ofloxacin Ophthalmic,Unknown,Pfizer,Eye & Ear,47.83,EGP,Tablet,,True,Out of Stock,Ofloxacin Ophthalmic - Eye & Ear medication by Pfizer
+drug_00484,Ciloxan,Unknown,Alcon,Eye & Ear,198.79,EGP,Tablet,,True,Out of Stock,Ciloxan - Eye & Ear medication by Alcon
+drug_00485,Ciprofloxacin Eye Drops,Ciprofloxacin,Pfizer,Eye & Ear,226.57,EGP,Drops,,True,Out of Stock,Ciprofloxacin Eye Drops - Eye & Ear medication by Pfizer
+drug_00486,Ciprofloxacin Ophthalmic,Ciprofloxacin,GlaxoSmithKline,Eye & Ear,84.33,EGP,Tablet,,True,Available,Ciprofloxacin Ophthalmic - Eye & Ear medication by GlaxoSmithKline
+drug_00487,Pred Forte,Unknown,Allergan,Eye & Ear,213.23,EGP,Tablet,,True,Available,Pred Forte - Eye & Ear medication by Allergan
+drug_00488,Prednisolone Acetate,Unknown,Pharco,Eye & Ear,249.99,EGP,Tablet,,True,Available,Prednisolone Acetate - Eye & Ear medication by Pharco
+drug_00489,Prednisolone Eye Drops,Unknown,Pharco,Eye & Ear,103.44,EGP,Drops,,True,Limited,Prednisolone Eye Drops - Eye & Ear medication by Pharco
+drug_00490,Omnipred,Unknown,Alcon,Eye & Ear,16.5,EGP,Tablet,,True,Out of Stock,Omnipred - Eye & Ear medication by Alcon
+drug_00491,Prednisolone Sodium Phosphate,Unknown,Novartis,Eye & Ear,190.72,EGP,Tablet,,True,Out of Stock,Prednisolone Sodium Phosphate - Eye & Ear medication by Novartis
+drug_00492,Prednisolone Ophthalmic,Unknown,Sandoz,Eye & Ear,173.29,EGP,Tablet,,True,Limited,Prednisolone Ophthalmic - Eye & Ear medication by Sandoz
+drug_00493,Duphaston,Dydrogesterone,Abbott,Women's Health,229.43,EGP,Tablet,,True,Out of Stock,Duphaston - Women's Health medication by Abbott
+drug_00494,Dydrogesterone 10mg,Dydrogesterone,Medical Union,Women's Health,29.16,EGP,Tablet,10mg,True,Out of Stock,Dydrogesterone 10mg - Women's Health medication by Medical Union
+drug_00495,Progesterone 10mg,Progesterone,Tabuk,Women's Health,303.23,EGP,Tablet,10mg,True,Available,Progesterone 10mg - Women's Health medication by Tabuk
+drug_00496,Primolut-N,Unknown,Bayer,Women's Health,239.22,EGP,Tablet,,True,Available,Primolut-N - Women's Health medication by Bayer
+drug_00497,Norethisterone 5mg,Norethisterone,Bayer,Women's Health,274.15,EGP,Tablet,5mg,True,Available,Norethisterone 5mg - Women's Health medication by Bayer
+drug_00498,Norethindrone,Norethindrone,Sandoz,Women's Health,207.52,EGP,Tablet,,True,Available,Norethindrone - Women's Health medication by Sandoz
+drug_00499,Provera,Unknown,Pfizer,Women's Health,301.2,EGP,Tablet,,True,Available,Provera - Women's Health medication by Pfizer
+drug_00500,Medroxyprogesterone 10mg,Medroxyprogesterone,Sanofi,Women's Health,283.25,EGP,Tablet,10mg,True,Limited,Medroxyprogesterone 10mg - Women's Health medication by Sanofi
+drug_00501,Medroxyprogesterone Acetate,Medroxyprogesterone,Novartis,Women's Health,146.27,EGP,Tablet,,True,Out of Stock,Medroxyprogesterone Acetate - Women's Health medication by Novartis
+drug_00502,Clomid,Clomiphene,Sanofi,Women's Health,262.45,EGP,Tablet,,True,Available,Clomid - Women's Health medication by Sanofi
+drug_00503,Clomiphene 50mg,Clomiphene,Amoun,Women's Health,316.05,EGP,Tablet,50mg,True,Available,Clomiphene 50mg - Women's Health medication by Amoun
+drug_00504,Clomiphene Citrate,Clomiphene,Servier,Women's Health,69.31,EGP,Tablet,,True,Limited,Clomiphene Citrate - Women's Health medication by Servier
+drug_00505,Duphaston 10mg,Dydrogesterone,Abbott,Women's Health,161.3,EGP,Tablet,10mg,True,Limited,Duphaston 10mg - Women's Health medication by Abbott
+drug_00506,Dydrogesterone,Dydrogesterone,Novartis,Women's Health,278.63,EGP,Tablet,,True,Available,Dydrogesterone - Women's Health medication by Novartis
+drug_00507,Progesterone,Progesterone,Servier,Women's Health,397.24,EGP,Tablet,,True,Limited,Progesterone - Women's Health medication by Servier
+drug_00508,Estrace,Estradiol,Abbott,Women's Health,330.33,EGP,Tablet,,True,Out of Stock,Estrace - Women's Health medication by Abbott
+drug_00509,Estradiol 2mg,Estradiol,GSK,Women's Health,50.15,EGP,Tablet,2mg,True,Out of Stock,Estradiol 2mg - Women's Health medication by GSK
+drug_00510,Estradiol Valerate,Estradiol,Takeda,Women's Health,47.06,EGP,Tablet,,True,Limited,Estradiol Valerate - Women's Health medication by Takeda
+drug_00511,Premarin,Conjugated Estrogens,Pfizer,Women's Health,388.96,EGP,Tablet,,True,Out of Stock,Premarin - Women's Health medication by Pfizer
+drug_00512,Conjugated Estrogens,Conjugated Estrogens,Medical Union,Women's Health,172.45,EGP,Tablet,,True,Available,Conjugated Estrogens - Women's Health medication by Medical Union
+drug_00513,Estrogen,Unknown,Abbott,Women's Health,161.57,EGP,Tablet,,True,Limited,Estrogen - Women's Health medication by Abbott
+drug_00514,Prometrium,Progesterone,Abbott,Women's Health,90.83,EGP,Tablet,,True,Out of Stock,Prometrium - Women's Health medication by Abbott
+drug_00515,Progesterone 200mg,Progesterone,Hikma,Women's Health,115.89,EGP,Tablet,200mg,True,Available,Progesterone 200mg - Women's Health medication by Hikma
+drug_00516,Micronized Progesterone,Progesterone,EIPICO,Women's Health,133.91,EGP,Tablet,,True,Available,Micronized Progesterone - Women's Health medication by EIPICO
+drug_00517,Yasmin,Drospirenone/Ethinyl Estradiol,Bayer,Women's Health,283.35,EGP,Tablet,,True,Limited,Yasmin - Women's Health medication by Bayer
+drug_00518,Yaz,Drospirenone/Ethinyl Estradiol,Bayer,Women's Health,150.74,EGP,Tablet,,True,Limited,Yaz - Women's Health medication by Bayer
+drug_00519,Drospirenone/Ethinyl Estradiol,Estradiol,Medical Union,Women's Health,54.16,EGP,Tablet,,True,Out of Stock,Drospirenone/Ethinyl Estradiol - Women's Health medication by Medical Union
+drug_00520,Marvelon,Desogestrel/Ethinyl Estradiol,Merck,Women's Health,297.01,EGP,Tablet,,True,Available,Marvelon - Women's Health medication by Merck
+drug_00521,Desogestrel/Ethinyl Estradiol,Estradiol,Boehringer Ingelheim,Women's Health,108.82,EGP,Tablet,,True,Limited,Desogestrel/Ethinyl Estradiol - Women's Health medication by Boehringer Ingelheim
+drug_00522,Desogen,Unknown,Merck,Women's Health,207.12,EGP,Tablet,,True,Limited,Desogen - Women's Health medication by Merck
+drug_00523,Lo Loestrin,Norethindrone/Ethinyl Estradiol,Actavis,Women's Health,330.43,EGP,Tablet,,True,Limited,Lo Loestrin - Women's Health medication by Actavis
+drug_00524,Loestrin 24 Fe,Unknown,Merck,Women's Health,176.31,EGP,Tablet,,True,Available,Loestrin 24 Fe - Women's Health medication by Merck
+drug_00525,Norethindrone/Ethinyl Estradiol,Estradiol,Medical Union,Women's Health,241.64,EGP,Tablet,,True,Available,Norethindrone/Ethinyl Estradiol - Women's Health medication by Medical Union
+drug_00526,Ortho Tri-Cyclen,Norgestimate/Ethinyl Estradiol,Janssen,Women's Health,145.64,EGP,Tablet,,True,Available,Ortho Tri-Cyclen - Women's Health medication by Janssen
+drug_00527,Ortho Cyclen,Unknown,Janssen,Women's Health,71.04,EGP,Tablet,,True,Out of Stock,Ortho Cyclen - Women's Health medication by Janssen
+drug_00528,Norgestimate/Ethinyl Estradiol,Estradiol,LEO Pharma,Women's Health,85.33,EGP,Tablet,,True,Out of Stock,Norgestimate/Ethinyl Estradiol - Women's Health medication by LEO Pharma
+drug_00529,NuvaRing,Etonogestrel/Ethinyl Estradiol,Merck,Women's Health,113.73,EGP,Ring,,True,Out of Stock,NuvaRing - Women's Health medication by Merck
+drug_00530,Etonogestrel/Ethinyl Estradiol,Estradiol,Sanofi,Women's Health,193.71,EGP,Tablet,,True,Available,Etonogestrel/Ethinyl Estradiol - Women's Health medication by Sanofi
+drug_00531,Vaginal Ring,Unknown,AstraZeneca,Women's Health,114.44,EGP,Ring,,True,Available,Vaginal Ring - Women's Health medication by AstraZeneca
+drug_00532,Mirena,Levonorgestrel,Bayer,Women's Health,267.3,EGP,Tablet,,True,Limited,Mirena - Women's Health medication by Bayer
+drug_00533,Levonorgestrel IUD,Levonorgestrel,Novartis,Women's Health,347.9,EGP,IUD,,True,Out of Stock,Levonorgestrel IUD - Women's Health medication by Novartis
+drug_00534,Intrauterine Device,Unknown,GSK,Women's Health,210.82,EGP,Tablet,,True,Out of Stock,Intrauterine Device - Women's Health medication by GSK
+drug_00535,Plan B,Levonorgestrel,Teva,Women's Health,73.21,EGP,Tablet,,True,Out of Stock,Plan B - Women's Health medication by Teva
+drug_00536,Levonorgestrel 1.5mg,Levonorgestrel,Sigma,Women's Health,200.2,EGP,Tablet,1.5mg,True,Limited,Levonorgestrel 1.5mg - Women's Health medication by Sigma
+drug_00537,Emergency Contraception,Unknown,Medical Union,Women's Health,41.32,EGP,Tablet,,True,Out of Stock,Emergency Contraception - Women's Health medication by Medical Union
+drug_00538,Ella,Ulipristal Acetate,Actavis,Women's Health,55.34,EGP,Tablet,,True,Out of Stock,Ella - Women's Health medication by Actavis
+drug_00539,Ulipristal Acetate 30mg,Ulipristal,EIPICO,Women's Health,327.78,EGP,Tablet,30mg,True,Limited,Ulipristal Acetate 30mg - Women's Health medication by EIPICO
+drug_00540,Emergency Contraceptive,Unknown,Global Napi,Women's Health,289.36,EGP,Tablet,,True,Available,Emergency Contraceptive - Women's Health medication by Global Napi
+drug_00541,Diflucan,Fluconazole,Pfizer,Women's Health,365.35,EGP,Tablet,,True,Out of Stock,Diflucan - Women's Health medication by Pfizer
+drug_00542,Fluconazole 150mg,Fluconazole,Novartis,Women's Health,294.61,EGP,Tablet,150mg,True,Out of Stock,Fluconazole 150mg - Women's Health medication by Novartis
+drug_00543,Yeast Infection Treatment,Unknown,LEO Pharma,Women's Health,276.67,EGP,Tablet,,True,Limited,Yeast Infection Treatment - Women's Health medication by LEO Pharma
+drug_00544,Monistat 3,Miconazole,Janssen,Women's Health,343.26,EGP,Tablet,,True,Available,Monistat 3 - Women's Health medication by Janssen
+drug_00545,Miconazole 3,Miconazole,Sedico,Women's Health,222.3,EGP,Tablet,,True,Limited,Miconazole 3 - Women's Health medication by Sedico
+drug_00546,Vaginal Antifungal,Unknown,Sandoz,Women's Health,53.41,EGP,Tablet,,True,Available,Vaginal Antifungal - Women's Health medication by Sandoz
+drug_00547,Gyne-Lotrimin,Clotrimazole,Bayer,Women's Health,250.61,EGP,Tablet,,True,Out of Stock,Gyne-Lotrimin - Women's Health medication by Bayer
+drug_00548,Clotrimazole 3,Clotrimazole,Medical Union,Women's Health,233.44,EGP,Tablet,,True,Out of Stock,Clotrimazole 3 - Women's Health medication by Medical Union
+drug_00549,Vaginal Cream,Cream,Amoun,Women's Health,146.22,EGP,Cream,,True,Limited,Vaginal Cream - Women's Health medication by Amoun

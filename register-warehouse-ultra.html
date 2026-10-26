@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سلامتك - تسجيل مخزن جديد</title>
+<!-- Critical CSS - Inline for fastest render -->
+<style>body{margin:0;padding:0;background:#f8f9fa;color:#000;font-family:Arial,sans-serif}header{background:#28a745;color:#fff;padding:20px;text-align:center}.container{max-width:500px;margin:50px auto;padding:30px;background:#fff;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.1)}.btn{display:inline-block;padding:15px 30px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;font-size:16px;margin:10px;width:100%}.btn-success{background:#28a745;color:#fff}.btn-secondary{background:#6c757d;color:#fff}.field{margin-bottom:20px;text-align:right}label{display:block;margin-bottom:10px;font-weight:bold}input[type="text"],input[type="password"],input[type="email"],select{width:100%;padding:12px;border:2px solid #28a745;border-radius:6px;box-sizing:border-box;font-size:16px}h1{margin:0;font-size:24px}</style>
+<!-- Preload Critical Resources -->
+<script src="navigation.js"></script>
+<!-- DNS Prefetch -->
+<link rel="dns-prefetch" href="//supabase.co">
+<link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+<!-- Preconnect -->
+<link rel="preconnect" href="https://slamtak.supabase.co">
+<!-- GZip Compression Headers -->
+<meta http-equiv="Content-Encoding" content="gzip">
+</head>
+<body>
+<header>
+<h1>🏭 تسجيل مخزن جديد</h1>
+</header>
+<div class="container">
+<form id="warehouseForm">
+<div class="field">
+<label for="storeName">اسم المخزن *</label>
+<input type="text" id="storeName" required placeholder="أدخل اسم المخزن">
+</div>
+<div class="field">
+<label for="phone">رقم التليفون *</label>
+<input type="text" id="phone" required placeholder="11 رقم فقط" maxlength="11">
+</div>
+<div class="field">
+<label for="governorate">المحافظة *</label>
+<select id="governorate" required>
+<option value="">اختر المحافظة</option>
+<option value="الرياض">الرياض</option>
+<option value="جدة">جدة</option>
+<option value="الدمام">الدمام</option>
+<option value="مكة">مكة</option>
+<option value="المدينة">المدينة المنورة</option>
+<option value="الطائف">الطائف</option>
+<option value="تبوك">تبوك</option>
+<option value="أبها">أبها</option>
+<option value="خميس مشيط">خميس مشيط</option>
+<option value="نجران">نجران</option>
+<option value="حائل">حائل</option>
+<option value="القصيم">القصيم</option>
+<option value="جازان">جازان</option>
+<option value="الحدود الشمالية">الحدود الشمالية</option>
+<option value="الجوف">الجوف</option>
+<option value="الباحة">الباحة</option>
+</select>
+</div>
+<div class="field">
+<label for="email">البريد الإلكتروني *</label>
+<input type="email" id="email" required placeholder="example@email.com">
+</div>
+<div class="field">
+<label for="password">كلمة المرور *</label>
+<input type="password" id="password" required placeholder="8 أحرف على الأقل">
+<button type="button" class="show-btn" onclick="togglePassword('password')">إظهار</button>
+</div>
+<div class="field">
+<label for="confirmPassword">تأكيد كلمة المرور *</label>
+<input type="password" id="confirmPassword" required placeholder="أعد كتابة كلمة المرور">
+<button type="button" class="show-btn" onclick="togglePassword('confirmPassword')">إظهار</button>
+</div>
+<button class="btn btn-success" type="submit">تسجيل المخزن</button>
+<div class="error" id="generalError"></div>
+</form>
+<button class="btn btn-secondary" onclick="window.location.href='warehouse-login.html'">لدي حساب بالفعل</button>
+</div>
+<!-- Supabase SDK -->
+<script src="libs/supabase.min.js"></script>
+<!-- Bundled JS -->
+<script src="bundle.js?v=10.0"></script>
+<!-- Main App Logic -->
+<script>
+// استمارة تسجيل المخازن - مع نظام الهوية (Auth) - Ultra Performance
+document.addEventListener('DOMContentLoaded',function(){
+    console.log('📝 تهيئة استمارة تسجيل المخازن (Ultra Performance Mode)');
+    const form=document.getElementById('warehouseForm');
+    if(!form){
+        console.error('❌ لم يتم العثور على استمارة التسجيل');
+        return
+    }
+    const supabaseUrl='https://iksjhjxwphmvthryfeae.supabase.co';
+    const supabaseKey='sb_publishable_0DUy2mtXS6m5S8PwTDAANQ_XWlzbu0G';
+    const supabase=window.supabase.createClient(supabaseUrl,supabaseKey);
+    
+    form.addEventListener('submit',async function(e){
+        console.log('🔄 بدء معالجة استمارة التسجيل');
+        const formData={
+            name:document.getElementById('storeName').value.trim(),
+            phone:document.getElementById('phone').value.trim(),
+            region:document.getElementById('governorate').value.trim(),
+            email:document.getElementById('email').value.trim(),
+            password:document.getElementById('password').value,
+            confirm_password:document.getElementById('confirmPassword').value
+        };
+        console.log('📋 البيانات المدخلة:',formData);
+        if(!formData.name||!formData.phone||!formData.email||!formData.password){
+            showCustomAlert('يرجى ملء جميع الحقول المطلوبة','error');
+            return
+        }
+        if(!validatePhone(formData.phone)){
+            showCustomAlert('التليفون يجب أن يكون 11 رقم','error');
+            return
+        }
+        if(!validateEmail(formData.email)){
+            showCustomAlert('البريد الإلكتروني غير صحيح','error');
+            return
+        }
+        if(formData.password!==formData.confirm_password){
+            showCustomAlert('كلمتا المرور غير متطابقتين','error');
+            return
+        }
+        try{
+            console.log('🔐 جاري إنشاء حساب المستخدم...');
+            const{data:authData,error:authError}=await supabase.auth.signUp({
+                email:formData.email,
+                password:formData.password,
+                options:{
+                    data:{
+                        name:formData.name,
+                        phone:formData.phone,
+                        region:formData.region
+                    }
+                }
+            });
+            if(authError){
+                console.error('❌ خطأ في إنشاء حساب المستخدم:',authError);
+                showCustomAlert('فشل إنشاء الحساب: '+authError.message,'error');
+                return
+            }
+            console.log('✅ تم إنشاء حساب المستخدم بنجاح:',authData);
+            console.log('💾 جاري حفظ بيانات المخزن...');
+            const{data:warehouseData,error:warehouseError}=await supabase.from('warehouses').insert([{
+                id:authData.user.id,
+                name:formData.name,
+                phone:formData.phone,
+                region:formData.region,
+                email:formData.email
+            }]);
+            if(warehouseError){
+                console.error('❌ خطأ في حفظ بيانات المخزن:',warehouseError);
+                showCustomAlert('فشل حفظ بيانات المخزن: '+warehouseError.message,'error');
+                return
+            }
+            console.log('✅ تم حفظ بيانات المخزن بنجاح:',warehouseData);
+            localStorage.setItem('warehouseData',JSON.stringify({...formData,user_id:authData.user.id}));
+            
+            // ✅ إضافة متغيرات الجلسة للهجين
+            localStorage.setItem('slamtak-user-id', authData.user.id);
+            localStorage.setItem('slamtak-user-email', formData.email);
+            localStorage.setItem('slamtak-auth-status', 'authenticated');
+            localStorage.setItem('current_warehouse_id', authData.user.id);
+            localStorage.setItem('slamtak-warehouse-id', authData.user.id);
+            localStorage.setItem('localAuth', 'true');
+            
+            if (authData.session) {
+                const session = authData.session;
+                localStorage.setItem('slamtak-auth-token', JSON.stringify(session));
+                localStorage.setItem('hybrid-auth-session', JSON.stringify(session));
+                localStorage.setItem('hybrid-auth-user', JSON.stringify(authData.user));
+                localStorage.setItem('hybrid-auth-warehouse', authData.user.id);
+            }
+            
+            const currentUserData = {
+                id: authData.user.id,
+                email: formData.email,
+                phone: formData.phone,
+                warehouseId: authData.user.id,
+                userType: 'admin'
+            };
+            
+            localStorage.setItem('currentUser', JSON.stringify(currentUserData));
+            sessionStorage.setItem('currentUser', JSON.stringify(currentUserData));
+            
+            console.log('✅ تم حفظ نسخة احتياطية في localStorage');
+            showCustomAlert('تم التسجيل بنجاح! تم إنشاء حسابك الشخصي.','success');
+            console.log('Attempting to redirect...');
+            setTimeout(()=>{window.location.href='https://slamtak.pages.dev/dashboard.html'},1500)
+        }catch(error){
+            console.error('❌ خطأ غير متوقع:',error);
+            showCustomAlert('حدث خطأ أثناء التسجيل','error')
+        }
+    });
+    console.log('✅ تم تهيئة استمارة التسجيل بنجاح')
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+PATTERN function enforceServerOnlySave IDX 189040
+mber = idx;
+    }
+    if (map.supplier_invoice === undefined) {
+        const idx = getNextFreeIndex(0);
+        if (idx !== null) map.supplier_invoice = idx;
+    }
+    
+    return map;
+}
+
+// دالة التشغيل الموحدة عند الضغط على زر حفظ البيانات مع قفل لمنع التكرار
+const SERVER_ONLY_SAVE_MODE = true;
+
+function enforceServerOnlySave() {
+    if (!SERVER_ONLY_SAVE_MODE) {
+        return;
+    }
+    try {
+        const client = ensureSupabase();
+        if (!client || typeof client.rpc !== 'function') {
+            throw new Error('حفظ البيانات مسموح فقط عبر السيرفر، لا توجد اتصال Supabase صالح.');
+        }
+    } catch (err) {
+        throw new Error('حفظ البيانات مسموح فقط عبر السيرفر، لا توجد اتصال Supabase صالح.');
+    }
+}
+
+let _isSavingPastedData = false;
+function triggerSavePastedData() {
+    if (_isSavingPastedData) {
+        console.warn('⚠️ عملية حفظ البيانات قيد التشغيل بالفعل، تم تجاهل الضغطة المكررة.');
+        return;
+    }
+    _isSavingPastedData = true;
+    (async () => {
+        try {
+            enforceServerOnlySave();
+            await window.savePreviewedData();
+        } catch (err) {
+            console.error('❌ خطأ في حفظ البيانات:', err);
+            alert('❌ حدث خطأ: ' + err.message);
+        } finally {
+            _isSavingPastedData = false;
+        }
+    })();
+}
+
+window.savePreviewedData = async function savePreviewedData() {
+    enforceServerOnlySave();
+    const saveButton = document.getElementById('savePastedDataButton');
+
+    console.log('🧾 savePrevie
+
+---END---
+
+PATTERN async function getWarehouseId IDX 268333
+= client;
+    return client;
+}
+
+// متغير عام لتخزين معرف المخزن الحالي (Global Warehouse ID)
+let currentWarehouseId = null;
+
+// دالة للحصول على warehouse_id من جلسة المستخدم
+// تقرأ أولاً من localStorage، ثم من IndexedDB، ثم من السيرفر
+// النظام يعتمد بنسبة 100% على مستودعات حقيقية مسجلة بصيغة UUID
+async function getWarehouseId() {
+    try {
+        if (!supabaseClient) {
+            console.warn('⚠️ Supabase client not available in getWarehouseId');
+            return null;
+        }
+
+        console.log('🔍 getWarehouseId called');
+
+        // الحصول على الجلسة أولاً
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        console.log('🔍 Session:', session);
+        if (!session) {
+            console.log('❌ No session found');
+            return null;
+        }
+
+        console.log('🔍 User ID from session:', session.user.id);
+
+        // الحل المؤقت: استخدام أول مخزن موجود بغض النظر عن user_id
+        // (لتجاوز مشكلة سياسات RLS)
+        const { data: warehouses, error: listError } = await supabaseClient
+            .from('warehouses')
+            .select('id, warehouse_name, user_id')
+            .order('created_at', { ascending: false })
+            .limit(1);
+
+        console.log('🔍 All warehouses:', warehouses);
+        console.log('🔍 List error:', listError);
+
+        if (listError || !warehouses || warehouses.length === 0) {
+            console.log('❌ No warehouses found');
+            return null;
+        }
+
+        const warehouseData = 
+
+---END---
+
+PATTERN const resolveSupabaseClient IDX -1
+PATTERN let supabaseClient = null IDX 266986
+ate || ''}</td>
+            <td>${formatDateForDisplay(drug.expiry_date || '')}</td>
+            <td>${drug.category || ''}</td>
+        `;
+        row.setAttribute('data-index', drugIndex);
+    }
+
+    // إزالة البيانات الأصلية للسطر من الكائن
+    delete originalRowDataMap[id];
+}
+
+// إعداد Supabase
+let supabaseClient = null;
+try {
+    const supabaseUrl = 'https://iksjhjxwphmvthryfeae.supabase.co';
+    const supabaseKey = 'sb_publishable_0DUy2mtXS6m5S8PwTDAANQ_XWlzbu0G';
+    const supabaseLib = window.supabase || (globalThis && globalThis.supabase);
+    if (supabaseLib && typeof supabaseLib.createClient === 'function') {
+        supabaseClient = supabaseLib.createClient(supabaseUrl, supabaseKey);
+        window.supabaseClient = supabaseClient;
+        globalThis.supabaseClient = supabaseClient;
+    } else {
+        console.warn('⚠️ Supabase client not available');
+    }
+} catch (e) {
+    console.warn('⚠️ Failed to initialize Supabase client:', e);
+}
+
+function ensureSupabase() {
+    const client = window.supabaseClient || supabaseClient || (globalThis && globalThis.supabaseClient);
+    if (!client || typeof client.rpc !== 'function') {
+        throw new Error('Supabase client is not initialized or RPC is unavailable');
+    }
+    if (!window.supabaseClient) window.supabaseClient = client;
+    if (!supabaseClient) supabaseClient = client;
+    return client;
+}
+
+// متغير عام لتخزين معرف المخزن الحالي (Global Warehouse ID)
+let currentWarehouseId = null;
+
+// دالة للحصول على warehouse
+
+---END---
+
+PATTERN window.supabaseClient = IDX 267399
+pabaseKey = 'sb_publishable_0DUy2mtXS6m5S8PwTDAANQ_XWlzbu0G';
+    const supabaseLib = window.supabase || (globalThis && globalThis.supabase);
+    if (supabaseLib && typeof supabaseLib.createClient === 'function') {
+        supabaseClient = supabaseLib.createClient(supabaseUrl, supabaseKey);
+        window.supabaseClient = supabaseClient;
+        globalThis.supabaseClient = supabaseClient;
+    } else {
+        console.warn('⚠️ Supabase client not available');
+    }
+} catch (e) {
+    console.warn('⚠️ Failed to initialize Supabase client:', e);
+}
+
+function ensureSupabase() {
+    const client = window.supabaseClient || supabaseClient || (globalThis && globalThis.supabaseClient);
+    if (!client || typeof client.rpc !== 'function') {
+        throw new Error('Supabase client is not initialized or RPC is unavailable');
+    }
+    if (!window.supabaseClient) window.supabaseClient = client;
+    if (!supabaseClient) supabaseClient = client;
+    return client;
+}
+
+// متغير عام لتخزين معرف المخزن الحالي (Global Warehouse ID)
+let currentWarehouseId = null;
+
+// دالة للحصول على warehouse_id من جلسة المستخدم
+// تقرأ أولاً من localStorage، ثم من IndexedDB، ثم من السيرفر
+// النظام يعتمد بنسبة 100% على مستودعات حقيقية مسجلة بصيغة UUID
+async function getWarehouseId() {
+    try {
+        if (!supabaseClient) {
+            console.warn('⚠️ Supabase client not available in getWarehouseId');
+            return null;
+        }
+
+        console.log('🔍 getWarehouseId called');
+
+        // الحصول على الجل
+
+---END---
+
+PATTERN globalThis.supabaseClient IDX 267447
+NQ_XWlzbu0G';
+    const supabaseLib = window.supabase || (globalThis && globalThis.supabase);
+    if (supabaseLib && typeof supabaseLib.createClient === 'function') {
+        supabaseClient = supabaseLib.createClient(supabaseUrl, supabaseKey);
+        window.supabaseClient = supabaseClient;
+        globalThis.supabaseClient = supabaseClient;
+    } else {
+        console.warn('⚠️ Supabase client not available');
+    }
+} catch (e) {
+    console.warn('⚠️ Failed to initialize Supabase client:', e);
+}
+
+function ensureSupabase() {
+    const client = window.supabaseClient || supabaseClient || (globalThis && globalThis.supabaseClient);
+    if (!client || typeof client.rpc !== 'function') {
+        throw new Error('Supabase client is not initialized or RPC is unavailable');
+    }
+    if (!window.supabaseClient) window.supabaseClient = client;
+    if (!supabaseClient) supabaseClient = client;
+    return client;
+}
+
+// متغير عام لتخزين معرف المخزن الحالي (Global Warehouse ID)
+let currentWarehouseId = null;
+
+// دالة للحصول على warehouse_id من جلسة المستخدم
+// تقرأ أولاً من localStorage، ثم من IndexedDB، ثم من السيرفر
+// النظام يعتمد بنسبة 100% على مستودعات حقيقية مسجلة بصيغة UUID
+async function getWarehouseId() {
+    try {
+        if (!supabaseClient) {
+            console.warn('⚠️ Supabase client not available in getWarehouseId');
+            return null;
+        }
+
+        console.log('🔍 getWarehouseId called');
+
+        // الحصول على الجلسة أولاً
+        const { data: { session } } = a
+
+---END---

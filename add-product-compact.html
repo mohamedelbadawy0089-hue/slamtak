@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سلامتك - إضافة منتج جديد (v=10.0)</title>
+<!-- Critical CSS - Inline for fastest render -->
+<style>body{margin:0;padding:0;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}.form-container{background:rgba(255,255,255,0.95);border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,0.1);padding:30px;margin-top:30px;backdrop-filter:blur(10px)}.form-header{text-align:center;margin-bottom:30px;color:#333}.form-header h1{font-size:2rem;font-weight:bold;margin-bottom:8px;background:linear-gradient(45deg,#667eea,#764ba2);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.form-group{margin-bottom:20px}.form-label{font-weight:600;color:#555;margin-bottom:6px;display:block;font-size:14px}.form-control{border:2px solid #e0e0e0;border-radius:8px;padding:10px 12px;font-size:15px;transition:all 0.3s ease}.form-control:focus{border-color:#667eea;box-shadow:0 0 0 0.2rem rgba(102,126,234,0.25)}.btn-primary{background:linear-gradient(45deg,#667eea,#764ba2);border:none;border-radius:8px;padding:12px;font-size:16px;font-weight:600;color:white;transition:all 0.3s ease;width:100%}.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(102,126,234,0.3)}.btn-secondary{background:#6c757d;border:none;border-radius:8px;padding:12px;font-size:16px;font-weight:600;color:white;transition:all 0.3s ease;width:100%;margin-top:8px}.voice-btn{background:linear-gradient(45deg,#28a745,#20c997);border:none;border-radius:8px;padding:12px;font-size:16px;font-weight:600;color:white;transition:all 0.3s ease;width:100%;margin-top:15px}.voice-btn:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(40,167,69,0.3)}.voice-btn.listening{background:linear-gradient(45deg,#dc3545,#c82333);animation:pulse 1.5s infinite}@keyframes pulse{0%{opacity:1}50%{opacity:0.7}100%{opacity:1}}.date-inputs{display:flex;gap:8px}.date-inputs .form-control{flex:1}.alert{border-radius:8px;margin-top:15px}.row{display:flex;flex-wrap:wrap;margin-right:-10px;margin-left:-10px}.col-md-6{position:relative;width:100%;padding-right:10px;padding-left:10px}.col-md-8{position:relative;width:100%;padding-right:10px;padding-left:10px}.col-lg-6{position:relative;width:100%;padding-right:10px;padding-left:10px}@media (min-width:768px){.col-md-6{flex:0 0 50%;max-width:50%}.col-md-8{flex:0 0 66.666667%;max-width:66.666667%}}@media (min-width:992px){.col-lg-6{flex:0 0 50%;max-width:50%}}.container{width:100%;padding-right:10px;padding-left:10px;margin-right:auto;margin-left:auto}@media (min-width:576px){.container{max-width:540px}}@media (min-width:768px){.container{max-width:600px}}@media (min-width:992px){.container{max-width:700px}}@media (min-width:1200px){.container{max-width:800px}}.justify-content-center{justify-content:center!important}</style>
+<!-- Preload Critical Resources -->
+<link rel="preload" href="libs/supabase.min.js" as="script">
+<!-- DNS Prefetch -->
+<link rel="dns-prefetch" href="//supabase.co">
+<link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+<link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+<!-- Preconnect -->
+<link rel="preconnect" href="https://iksjhjxwphmvthryfeae.supabase.co">
+</head>
+<body>
+<div class="container">
+<div class="row justify-content-center">
+<div class="col-md-8 col-lg-6">
+<div class="form-container">
+<div class="form-header">
+<h1><i class="fas fa-plus-circle"></i> إضافة منتج جديد</h1>
+<p class="text-muted">أدخل بيانات المنتج</p>
+</div>
+
+<form id="productForm">
+<div class="form-group">
+<label for="productName" class="form-label">
+<i class="fas fa-tag"></i> اسم المنتج
+</label>
+<input type="text" class="form-control" id="productName" required placeholder="أدخل اسم المنتج">
+</div>
+
+<div class="row">
+<div class="col-md-6">
+<div class="form-group">
+<label for="price" class="form-label">
+<i class="fas fa-dollar-sign"></i> السعر
+</label>
+<input type="number" class="form-control" id="price" step="0.01" required placeholder="0.00">
+</div>
+</div>
+<div class="col-md-6">
+<div class="form-group">
+<label for="quantity" class="form-label">
+<i class="fas fa-boxes"></i> الكمية
+</label>
+<input type="number" class="form-control" id="quantity" min="1" required placeholder="1">
+</div>
+</div>
+</div>
+
+<div class="form-group">
+<label for="discount" class="form-label">
+<i class="fas fa-percentage"></i> الخصم (%)
+</label>
+<input type="number" class="form-control" id="discount" min="0" max="100" value="0" placeholder="0">
+</div>
+
+<div class="form-group">
+<label class="form-label">
+<i class="fas fa-calendar"></i> تاريخ الانتهاء
+</label>
+<div class="date-inputs">
+<input type="number" class="form-control" id="expDay" placeholder="يوم" min="1" max="31">
+<input type="number" class="form-control" id="expMonth" placeholder="شهر" min="1" max="12">
+<input type="number" class="form-control" id="expYear" placeholder="سنة" min="2024" max="2030">
+</div>
+</div>
+
+<button type="submit" class="btn btn-primary" id="submitBtn">
+<i class="fas fa-save"></i> إضافة المنتج
+</button>
+
+<button type="button" class="btn btn-secondary" onclick="goBack()">
+<i class="fas fa-arrow-left"></i> العودة
+</button>
+
+<button type="button" class="voice-btn" id="voiceInputBtn">
+<i class="fas fa-microphone"></i> إدخال صوتي
+</button>
+</form>
+
+<div id="alertContainer"></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="libs/font-awesome.min.css">
+<!-- Supabase SDK -->
+<script src="libs/supabase.min.js"></script>
+<!-- Supabase Singleton Module -->
+<script src="supabase-singleton.js"></script>
+<!-- Voice Input System -->
+<script src="voice-input.js?v=10.0"></script>
+<!-- Bundled Utilities -->
+<script src="bundle.js?v=10.0"></script>
+<!-- Main App Logic -->
+<script>
+// التحقق من الجلسة عند تحميل الصفحة (مع منع Infinite Loop و try-catch)
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('🔍 التحقق من الجلسة في add-product-compact.html...');
+    
+    try {
+        // استخدام Supabase Singleton للتحقق السريع
+        const isAuthenticated = await SupabaseSingleton.SessionManager.ensureAuthenticated();
+        
+        if (!isAuthenticated) {
+            console.log('❌ المستخدم غير مسجل دخول');
+            
+            // عرض رسالة خطأ بدلاً من الصفحة البيضاء
+            document.body.innerHTML = `
+                <div style="text-align: center; padding: 50px; font-family: Arial, sans-serif; direction: rtl;">
+                    <h2 style="color: #dc3545;">❌ غير مصرح بالدخول</h2>
+                    <p style="color: #6c757d;">يجب تسجيل الدخول أولاً للوصول إلى هذه الصفحة</p>
+                    <button onclick="if(typeof window.showOfflineToast === 'function') window.showOfflineToast();" style="background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 10px;">
+                        تسجيل الدخول
+                    </button>
+                    <button onclick="window.location.reload()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 10px;">
+                        إعادة تحميل
+                    </button>
+                </div>
+            `;
+            return;
+        }
+        
+        console.log('✅ المستخدم مسجل دخول، تحميل الصفحة...');
+        
+        // Initialize Supabase connection
+        async function initDB(){
+            try {
+                if (!window.SupabaseSingleton || !window.SupabaseSingleton.getClient()) {
+                    console.error('Supabase not available');
+                    return;
+                }
+                console.log('??? Supabase initialized for add-product-compact');
+            } catch (error) {
+                console.error('Error initializing Supabase:', error);
+            }
+        }
+
+        // ?????? ?? ?????? ??????
+        function checkFormValidity(){
+            const productName=document.getElementById('productName').value;
+            const price=document.getElementById('price').value;
+            const qty=document.getElementById('quantity').value;
+            const submitBtn=document.getElementById('submitBtn');
+            
+            if(productName&&price&&qty){
+                submitBtn.disabled=false;
+            }else{
+                submitBtn.disabled=true;
+            }
+        }
+        
+        // ?????? ?? Supabase
+        async function saveToSupabase(productData) {
+            try {
+                const supabaseClient = window.SupabaseSingleton.getClient();
+                const currentWarehouseId = localStorage.getItem('current_warehouse_id') || localStorage.getItem('slamtak-user-id');
+                
+                const productWithWarehouse = {
+                    ...productData,
+                    warehouse_id: currentWarehouseId,
+                    product_name: productData.productName,
+                    price: productData.price,
+                    discount: productData.discount || 0,
+                    quantity: productData.quantity,
+                    is_unlimited: !productData.quantity,
+                    created_at: new Date().toISOString()
+                };
+                
+                const { data, error } = await supabaseClient
+                    .from('products')
+                    .insert([productWithWarehouse])
+                    .select();
+                
+                if (error) throw error;
+                
+                console.log('??? ????? ??????? ?? Supabase:', data);
+                
+            } catch (error) {
+                console.error('??? ?? ??? ??????? ?? Supabase:', error);
+            }
+        }
+
+// معالجة تقديم النموذج
+function handleSubmit(e){
+    e.preventDefault();
+    
+    const productData={
+        productName:document.getElementById('productName').value,
+        price:parseFloat(document.getElementById('price').value),
+        discount:parseFloat(document.getElementById('discount').value)||0,
+        quantity:parseInt(document.getElementById('quantity').value),
+        expiryDate:getSplitDate('exp'),
+        addedDate:new Date().toISOString()
+    };
+    
+    // حفظ في Supabase
+    saveToSupabase(productData);
+    
+    // حفظ في localStorage كنسخة احتياطية
+    const products=JSON.parse(localStorage.getItem('products'))||[];
+    productData.id=Date.now();
+    products.push(productData);
+    localStorage.setItem('products',JSON.stringify(products));
+    
+    // حفظ في Supabase
+    saveToSupabase(productData);
+    
+    // عرض رسالة نجاح
+    showCustomAlert('تم إضافة المنتج بنجاح!','success');
+    
+    // إعادة تعيين النموذج
+    document.getElementById('productForm').reset();
+    checkFormValidity();
+}
+
+// حفظ في Supabase
+async function saveToSupabase(productData){
+    try{
+        const{data,error}=await supabase.from('products').insert([productData]);
+        if(error){
+            console.error('خطأ في حفظ المنتج:',error);
+            alert('حدث خطأ أثناء حفظ المنتج');
+            return;
+        }
+        console.log('تم حفظ المنتج بنجاح:',data);
+        alert('تم حفظ المنتج بنجاح');
+        document.getElementById('productForm').reset();
+    }catch(error){
+        console.error('خطأ غير متوقع في حفظ المنتج:',error);
+        alert('حدث خطأ غير متوقع، يرجى المحاولة مرة أخرى');
+    }
+}
+
+// الحصول على التاريخ المقسم
+function getSplitDate(prefix){
+    const day=document.getElementById(prefix+'Day').value||'01';
+    const month=document.getElementById(prefix+'Month').value||'01';
+    const year=document.getElementById(prefix+'Year').value||'2024';
+    return`${year}-${month}-${day}`;
+}
+
+// العودة للصفحة السابقة
+function goBack(){
+    window.history.back();
+}
+
+// إضافة مستمعي الأحداث
+document.addEventListener('DOMContentLoaded',function(){
+    // تهيئة Supabase
+    initDB();
+    
+    const form=document.getElementById('productForm');
+    const inputs=form.querySelectorAll('input');
+    
+    // مستمع تقديم النموذج
+    form.addEventListener('submit',handleSubmit);
+    
+    // مستمعي التحقق من صحة النموذج
+    inputs.forEach(input=>{
+        input.addEventListener('input',checkFormValidity);
+        input.addEventListener('change',checkFormValidity);
+    });
+    
+    // التحقق الأولي
+    checkFormValidity();
+    
+    console.log('✅ تم تهيئة صفحة إضافة المنتجات (مضغوطة) مع جميع الميزات');
+});
+</script>
+</body>
+</html>

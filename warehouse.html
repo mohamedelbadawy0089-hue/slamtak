@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="سلامتك - بوابة مخازن التوزيع">
+    <title>سلامتك - بوابة المخزن</title>
+    <link href="libs/cairo.css" rel="stylesheet">
+    <script src="navigation.js"></script>
+    <script src="sidebar.js"></script>
+    <!-- Supabase SDK -->
+    <script src="libs/supabase.min.js"></script>
+    <script>
+        // ✅ تهيئة Supabase عالمياً (بدون const لتجنب التعارض)
+        window.SUPABASE_URL = 'https://iksjhjxwphmvthryfeae.supabase.co';
+        window.SUPABASE_KEY = 'sb_publishable_0DUy2mtXS6m5S8PwTDAANQ_XWlzbu0G';
+        window.supabaseClient = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
+        console.log('✅ Supabase initialized globally');
+    </script>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #6C63FF;
+            --accent: #FF6B6B;
+            --accent-dark: #EE5A24;
+            --glass-bg: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.45);
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            min-height: 100vh;
+            background: #0a0a1a;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background */
+        .bg-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(255, 107, 107, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(108, 99, 255, 0.1) 0%, transparent 50%),
+                linear-gradient(180deg, #0a0a1a 0%, #0d0d2b 50%, #0a0a1a 100%);
+        }
+
+        .orb {
+            position: fixed; border-radius: 50%; filter: blur(80px); z-index: 0;
+            animation: orb-drift 20s ease-in-out infinite;
+        }
+        .orb-1 { width: 350px; height: 350px; background: rgba(255, 107, 107, 0.12); top: -80px; right: -80px; }
+        .orb-2 { width: 250px; height: 250px; background: rgba(108, 99, 255, 0.08); bottom: -40px; left: -40px; animation-delay: -10s; }
+
+        @keyframes orb-drift {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(25px, -35px) scale(1.1); }
+            66% { transform: translate(-15px, 15px) scale(0.95); }
+        }
+
+        /* Main Content */
+        .page-wrapper {
+            position: relative; z-index: 1;
+            width: 100%; max-width: 460px;
+            padding: 24px;
+            animation: fade-up 0.8s ease-out;
+        }
+
+        @keyframes fade-up {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Back Button */
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            color: var(--text-secondary); text-decoration: none;
+            font-size: 14px; font-weight: 600;
+            margin-bottom: 32px;
+            transition: color 0.3s;
+        }
+
+        .back-btn:hover { color: var(--text-primary); }
+
+        /* Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-icon {
+            width: 80px; height: 80px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 40px rgba(255, 107, 107, 0.3);
+            animation: icon-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes icon-pulse {
+            0%, 100% { box-shadow: 0 10px 40px rgba(255, 107, 107, 0.3); }
+            50% { box-shadow: 0 15px 50px rgba(255, 107, 107, 0.5); }
+        }
+
+        .page-title {
+            font-size: 26px; font-weight: 800;
+            background: linear-gradient(135deg, #fff, rgba(255,255,255,0.8));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            font-size: 15px; color: var(--text-muted);
+        }
+
+        /* Card */
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            background: rgba(0,0,0,0.2);
+            border-radius: var(--radius-sm);
+            padding: 4px;
+            margin-bottom: 28px;
+        }
+
+        .tab-btn {
+            flex: 1; padding: 10px;
+            border: none; border-radius: calc(var(--radius-sm) - 4px);
+            background: transparent;
+            color: var(--text-muted);
+            font-family: 'Cairo', sans-serif;
+            font-size: 14px; font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: white;
+        }
+
+        /* Form */
+        .form-group { margin-bottom: 18px; }
+
+        .form-group label {
+            display: block;
+            font-size: 12px; font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 7px;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group label .required {
+            color: #FF6B6B;
+            margin-right: 3px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%; padding: 12px 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: 'Cairo', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s, background 0.3s;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .form-group select option {
+            background: #1a1a3a;
+            color: var(--text-primary);
+        }
+
+        .form-group input::placeholder { color: var(--text-muted); }
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--accent);
+            background: rgba(255, 107, 107, 0.06);
+        }
+
+        /* 2-column grid for register form */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 16px;
+        }
+
+        .form-grid .form-group { margin-bottom: 18px; }
+        .form-grid .full-width { grid-column: 1 / -1; }
+
+        /* Section divider inside form */
+        .form-section-label {
+            grid-column: 1 / -1;
+            font-size: 11px; font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent);
+            padding: 6px 0 4px;
+            border-bottom: 1px solid rgba(255, 107, 107, 0.2);
+            margin-bottom: 4px;
+        }
+
+        /* Select arrow */
+        .select-wrap { position: relative; }
+        .select-wrap::after {
+            content: '▾';
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+            font-size: 12px;
+        }
+
+        .submit-btn {
+            width: 100%; padding: 15px;
+            border: none; border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: white;
+            font-family: 'Cairo', sans-serif;
+            font-size: 16px; font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 4px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 107, 107, 0.4);
+        }
+
+        .submit-btn:active { transform: translateY(0); }
+
+        /* Wider card for register */
+        .card { max-width: 600px; width: 100%; }
+        .page-wrapper { max-width: 640px; }
+
+        /* Error / Success */
+        .alert {
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 14px; font-weight: 600;
+            margin-bottom: 20px;
+            display: none;
+            animation: fade-up 0.3s ease-out;
+        }
+
+        .alert-error {
+            background: rgba(255, 107, 107, 0.15);
+            border: 1px solid rgba(255, 107, 107, 0.4);
+            color: #ff8080;
+        }
+
+        .alert-success {
+            background: rgba(0, 212, 170, 0.15);
+            border: 1px solid rgba(0, 212, 170, 0.4);
+            color: #00d4aa;
+        }
+
+        /* Divider */
+        .divider {
+            display: flex; align-items: center; gap: 12px;
+            margin: 20px 0;
+            color: var(--text-muted); font-size: 13px;
+        }
+        .divider::before, .divider::after {
+            content: ''; flex: 1;
+            height: 1px; background: var(--glass-border);
+        }
+
+        /* Hidden */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="bg-canvas"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <div class="page-wrapper">
+
+        <!-- Header -->
+        <div class="page-header">
+            <div class="page-icon">🏭</div>
+            <h1 class="page-title">بوابة المخزن</h1>
+            <p class="page-subtitle">سجّل دخولك أو أنشئ حساب مخزن جديد</p>
+        </div>
+
+        <!-- Card -->
+        <div class="card">
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">تسجيل الدخول</button>
+                <button class="tab-btn" id="tab-register" onclick="switchTab('register')">مخزن جديد</button>
+            </div>
+
+            <!-- Alert -->
+            <div id="alertBox" class="alert"></div>
+
+            <!-- Login Form -->
+            <div id="login" class="tab-content active">
+                <div class="form-group">
+                    <label for="loginEmail">البريد الإلكتروني</label>
+                    <input type="email" id="loginEmail" placeholder="example@email.com" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">كلمة المرور</label>
+                    <input type="password" id="loginPassword" placeholder="أدخل كلمة المرور" autocomplete="current-password">
+                </div>
+                <button class="submit-btn" onclick="handleLogin()">تسجيل الدخول</button>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register" class="tab-content">
+                <div class="form-grid">
+
+                    <!-- ── بيانات المخزن ── -->
+                    <div class="form-section-label">📦 بيانات المخزن</div>
+
+                    <div class="form-group full-width">
+                        <label for="regName">اسم المخزن <span class="required">*</span></label>
+                        <input type="text" id="regName" placeholder="مثال: مخزن النور للتوزيع">
+                    </div>
+
+                    <!-- ── بيانات التواصل ── -->
+                    <div class="form-section-label">📞 بيانات التواصل</div>
+
+                    <div class="form-group">
+                        <label for="regPhone">رقم الهاتف <span class="required">*</span></label>
+                        <input type="tel" id="regPhone" placeholder="010xxxxxxxx">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regEmail">البريد الإلكتروني <span class="required">*</span></label>
+                        <input type="email" id="regEmail" placeholder="example@email.com" autocomplete="email">
+                    </div>
+
+                    <!-- ── العنوان ── -->
+                    <div class="form-section-label">📍 المحافظة</div>
+
+                    <div class="form-group full-width">
+                        <label>المحافظة <span class="required">*</span></label>
+                        <!-- hidden real value -->
+                        <input type="hidden" id="regGov">
+                        <!-- Searchable Dropdown -->
+                        <div class="searchable-select" id="govDropdown">
+                            <div class="ss-trigger" id="govTrigger" onclick="toggleGovDropdown()">
+                                <span id="govDisplay">اختر المحافظة</span>
+                                <span class="ss-arrow">▾</span>
+                            </div>
+                            <div class="ss-panel" id="govPanel">
+                                <div class="ss-search-wrap">
+                                    <input type="text" id="govSearch" class="ss-search" placeholder="🔍  ابحث عن محافظة..." oninput="filterGov(this.value)" autocomplete="off">
+                                </div>
+                                <ul class="ss-list" id="govList"></ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── بيانات الحساب ── -->
+                    <div class="form-section-label">🔐 بيانات الحساب</div>
+
+                    <div class="form-group">
+                        <label for="regPassword">كلمة المرور <span class="required">*</span></label>
+                        <input type="password" id="regPassword" placeholder="6 أحرف على الأقل" autocomplete="new-password">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regConfirm">تأكيد كلمة المرور <span class="required">*</span></label>
+                        <input type="password" id="regConfirm" placeholder="أعد كتابة كلمة المرور">
+                    </div>
+
+                    <!-- ── بيانات المدير ── -->
+                    <div class="form-section-label">👤 بيانات المدير</div>
+
+                    <div class="form-group">
+                        <label for="regAdminPassword">كلمة سر المدير <span class="required">*</span></label>
+                        <input type="password" id="regAdminPassword" placeholder="6 أحرف على الأقل" autocomplete="new-password">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regAdminConfirm">تأكيد كلمة سر المدير <span class="required">*</span></label>
+                        <input type="password" id="regAdminConfirm" placeholder="أعد كتابة كلمة سر المدير">
+                        <div id="adminPasswordError" style="color: #dc3545; font-size: 13px; margin-top: 5px; display: none;">⚠️ كلمتا سر المدير غير متطابقتين</div>
+                    </div>
+
+                    <button class="submit-btn" id="registerBtn" onclick="handleRegister(event)">🏭 إنشاء حساب المخزن</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Section (for logged-in warehouse) -->
+        <div id="ordersSection" class="card" style="display: none; margin-top: 20px;">
+            <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 20px; color: var(--text-primary);">📋 الطلبات الواردة</h2>
+            <div id="ordersList" style="max-height: 400px; overflow-y: auto;">
+                <div style="text-align: center; color: var(--text-muted); padding: 20px;">لا توجد طلبات حالياً</div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .order-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .order-header h3 {
+            font-size: 14px;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .order-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+        
+        .status-approved {
+            background: rgba(0, 212, 170, 0.2);
+            color: #00d4aa;
+        }
+        
+        .status-rejected {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff8080;
+        }
+        
+        .order-items {
+            margin-bottom: 12px;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        
+        .order-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-approve {
+            flex: 1;
+            padding: 10px;
+            background: rgba(0, 212, 170, 0.2);
+            border: 1px solid rgba(0, 212, 170, 0.4);
+            border-radius: var(--radius-sm);
+            color: #00d4aa;
+            font-family: 'Cairo', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-approve:hover {
+            background: rgba(0, 212, 170, 0.3);
+        }
+        
+        .btn-reject {
+            flex: 1;
+            padding: 10px;
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid rgba(255, 107, 107, 0.4);
+            border-radius: var(--radius-sm);
+            color: #ff8080;
+            font-family: 'Cairo', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-reject:hover {
+            background: rgba(255, 107, 107, 0.3);
+        }
+        
+        .order-total {
+            text-align: left;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+    </style>
+
+    <style>
+        .searchable-select { position: relative; width: 100%; }
+
+        .ss-trigger {
+            width: 100%; padding: 12px 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: 'Cairo', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: space-between;
+            transition: border-color 0.3s, background 0.3s;
+            user-select: none;
+        }
+
+        .ss-trigger:hover,
+        .searchable-select.open .ss-trigger {
+            border-color: var(--accent);
+            background: rgba(255, 107, 107, 0.06);
+        }
+
+        .ss-trigger .ss-arrow {
+            font-size: 12px; color: var(--text-muted);
+            transition: transform 0.25s;
+        }
+
+        .searchable-select.open .ss-arrow { transform: rotate(180deg); }
+
+        /* Panel */
+        .ss-panel {
+            display: none;
+            position: absolute;
+            top: calc(100% + 6px); left: 0; right: 0;
+            background: #1a1a3a;
+            border: 1px solid var(--accent);
+            border-radius: var(--radius-sm);
+            z-index: 500;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+            animation: ss-open 0.2s ease-out;
+        }
+
+        @keyframes ss-open {
+            from { opacity:0; transform: translateY(-6px); }
+            to   { opacity:1; transform: translateY(0); }
+        }
+
+        .searchable-select.open .ss-panel { display: block; }
+
+        /* Search box inside panel */
+        .ss-search-wrap { padding: 10px 10px 6px; }
+
+        .ss-search {
+            width: 100%; padding: 9px 12px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid var(--glass-border);
+            border-radius: calc(var(--radius-sm) - 4px);
+            color: var(--text-primary);
+            font-family: 'Cairo', sans-serif;
+            font-size: 13px; outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .ss-search:focus { border-color: var(--accent); }
+        .ss-search::placeholder { color: var(--text-muted); }
+
+        /* List */
+        .ss-list {
+            list-style: none;
+            max-height: 220px;
+            overflow-y: auto;
+            padding: 4px 0 8px;
+            margin: 0;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,107,107,0.4) transparent;
+        }
+
+        .ss-list::-webkit-scrollbar { width: 4px; }
+        .ss-list::-webkit-scrollbar-thumb { background: rgba(255,107,107,0.4); border-radius: 2px; }
+
+        .ss-list li {
+            padding: 9px 16px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-size: 14px;
+            color: var(--text-secondary);
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .ss-list li:hover { background: rgba(255,107,107,0.12); color: var(--text-primary); }
+        .ss-list li.selected { background: rgba(255,107,107,0.2); color: var(--accent); font-weight: 700; }
+        .ss-list li.hidden { display: none; }
+
+        .ss-no-results {
+            padding: 12px 16px; color: var(--text-muted);
+            font-size: 13px; text-align: center;
+            display: none;
+        }
+    </style>
+
+    <script>
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+            document.getElementById('tab-' + tab).classList.add('active');
+            document.getElementById('alertBox').style.display = 'none';
+        }
+
+        function showAlert(message, type = 'error') {
+            const box = document.getElementById('alertBox');
+            // Use innerHTML for HTML content, fallback to textContent for plain text
+            if (message.includes('<') && message.includes('>')) {
+                box.innerHTML = message;
+            } else {
+                box.textContent = message;
+            }
+            box.className = 'alert alert-' + type;
+            box.style.display = 'block';
+            setTimeout(() => box.style.display = 'none', 6000);
+        }
+
+        async function handleLogin() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+
+            if (!email || !password) {
+                showAlert('يرجى إدخال البريد الإلكتروني وكلمة المرور');
+                return;
+            }
+
+            // ✅ تسجيل الدخول باستخدام Supabase Auth
+            const { data, error } = await window.supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+            if (error) {
+                showAlert('البريد الإلكتروني أو كلمة المرور غير صحيحة', 'error');
+                return;
+            }
+
+            if (data.session) {
+                // ✅ جلب ملف تعريف المستخدم (Profile) لمعرفة الدور والمخزن
+                const { data: profile, error: profileError } = await window.supabaseClient
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', data.user.id)
+                    .single();
+
+                if (profileError || !profile) {
+                    console.warn('⚠️ No profile found for user:', profileError);
+                }
+
+                const userRole = profile?.role || 'employee';
+                const warehouseId = profile?.warehouse_id || data.user.id;
+
+                // ✅ حفظ الجلسة في النظام الهجين
+                if (window.HybridAuth) {
+                    window.HybridAuth.saveLocalSession(data.session, data.user, warehouseId);
+                    localStorage.setItem('slamtak-user-role', userRole);
+                }
+
+                // ✅ عرض معلومات المخزن الحالي
+                displayCurrentWarehouseInfo(profile?.warehouse_name || email, email);
+
+                showAlert('تم تسجيل الدخول بنجاح! جاري التحويل...', 'success');
+                setTimeout(() => window.location.replace('stock.html'), 1200);
+            }
+        }
+
+        async function handleRegister(event) {
+            // ✅ التأكد من وجود الحدث قبل استخدام preventDefault
+            if (event) event.preventDefault();
+            console.log('🔄 handleRegister started');
+            
+            // ✅ التحقق من وجود supabase
+            console.log('🔍 Checking supabase:', typeof supabase, supabase);
+            if (typeof supabase === 'undefined' || !supabase) {
+                console.error('❌ supabase is not defined!');
+                showAlert('⚠️ خطأ: مكتبة Supabase غير محملة. يرجى تحديث الصفحة.');
+                return;
+            }
+
+            // ✅ تعطيل الزر لمنع التكرار
+            const submitBtn = document.getElementById('registerBtn') || document.querySelector('.submit-btn');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = '⏳ جاري الحفظ...';
+                submitBtn.style.opacity = '0.7';
+                submitBtn.style.cursor = 'not-allowed';
+            }
+
+            const name     = document.getElementById('regName').value.trim();
+            const phone    = document.getElementById('regPhone').value.trim();
+            const email    = document.getElementById('regEmail').value.trim();
+            const gov      = document.getElementById('regGov').value;
+            const password = document.getElementById('regPassword').value.trim();
+            const confirm  = document.getElementById('regConfirm').value.trim();
+            const adminPassword = document.getElementById('regAdminPassword').value.trim();
+            const adminConfirm = document.getElementById('regAdminConfirm').value.trim();
+            console.log('📋 Values:', { name, phone, email, gov, password: '***', adminPassword: '***' });
+
+            // Validate required fields
+            if (!name || !phone || !email || !gov || !password || !confirm || !adminPassword || !adminConfirm) {
+                showAlert('⚠️ يرجى ملء جميع الحقول الإلزامية (المميزة بـ *)');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🏭 إنشاء حساب المخزن';
+                return;
+            }
+            if (!/^[\w.+-]+@[\w-]+\.[\w.]+$/.test(email)) {
+                showAlert('⚠️ صيغة البريد الإلكتروني غير صحيحة');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🏭 إنشاء حساب المخزن';
+                return;
+            }
+            if (!/^01[0125][0-9]{8}$/.test(phone)) {
+                showAlert('⚠️ رقم الهاتف يجب أن يكون 11 رقم ويبدأ بـ 010 أو 011 أو 012 أو 015');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🏭 إنشاء حساب المخزن';
+                return;
+            }
+            if (password.length < 6) {
+                showAlert('⚠️ كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🏭 إنشاء حساب المخزن';
+                return;
+            }
+            if (password !== confirm) {
+                showAlert('⚠️ كلمتا المرور غير متطابقتين');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🏭 إنشاء حساب المخزن';
+                return;
+            }
+
+            // ✅ التحقق من كلمة سر المدير
+            if (adminPassword.length < 6) {
+                showAlert('⚠️ كلمة سر المدير يجب أن تكون 6 أحرف على الأقل');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🏭 إنشاء حساب المخزن';
+                return;
+            }
+            if (adminPassword !== adminConfirm) {
+                document.getElementById('adminPasswordError').textContent = '⚠️ كلمتا سر المدير غير متطابقتين';
+                document.getElementById('adminPasswordError').style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🏭 إنشاء حساب المخزن';
+                return;
+            }
+            // إخفاء رسالة الخطأ إذا كان كل شيء صحيحاً
+            document.getElementById('adminPasswordError').style.display = 'none';
+
+            try {
+                console.log('📡 Sending data to Supabase...');
+
+                // ✅ إنشاء حساب في Supabase Auth مع الميتاداتا الكاملة
+                // إرسال جميع البيانات الحقيقية التي أدخلها المستخدم
+                // السيرفر يقرأ هذه البيانات عبر Trigger ويسجلها في قاعدة البيانات
+                console.log('🔐 Creating Supabase auth user with metadata...');
+                const { data: authData, error: authError } = await window.supabaseClient.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            warehouse_name: name,
+                            phone: phone,
+                            governorate: gov,
+                            admin_key: adminPassword,
+                            role: 'owner'
+                        }
+                    }
+                });
+
+                if (authError) {
+                    console.error('Auth Error:', authError);
+                    
+                    // Handle specific "User already registered" error
+                    if (authError.message?.includes('User already registered') ||
+                        authError.message?.includes('user_already_exists') ||
+                        authError.code === 'user_already_exists') {
+                        
+                        const friendlyMessage = `
+                            <div style="text-align: right; line-height: 1.8;">
+                                <h4 style="color: #dc3545; margin-bottom: 15px;">{userEmail} exists in the system</h4>
+                                <p style="margin-bottom: 15px;">This email is already registered. Available options:</p>
+                                <ol style="margin-right: 20px; margin-bottom: 15px;">
+                                    <li>Use a different email address</li>
+                                    <li>If you forgot your password, use "Forgot Password"</li>
+                                    <li>Contact the administrator to recover the account</li>
+                                </ol>
+                                <button onclick="switchTab('login')" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+                                    Go to Login
+                                </button>
+                            </div>
+                        `.replace('{userEmail}', email);
+                        
+                        showAlert(friendlyMessage);
+                        
+                        // Auto-switch to login tab after 3 seconds
+                        setTimeout(() => {
+                            switchTab('login');
+                        }, 3000);
+                        
+                    } else {
+                        // Generic error
+                        showAlert('' + (authError.message || 'Error creating account'));
+                    }
+                    
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Create Warehouse Account';
+                    return;
+                }
+
+                // ✅ إذا لم يتم إرجاع جلسة من التسجيل (بسبب إعدادات الإيميل مثلاً)، نحاول تسجيل الدخول فوراً
+                if (!authData.session) {
+                    console.log('🔄 No session returned from signUp, attempting immediate sign in...');
+                    const { data: signInData, error: signInError } = await window.supabaseClient.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+                    
+                    if (!signInError && signInData.session) {
+                        authData.session = signInData.session;
+                        authData.user = signInData.user;
+                        console.log('✅ Signed in successfully after registration');
+                    } else {
+                        console.warn('⚠️ Could not auto-signin after registration:', signInError);
+                    }
+                }
+
+                console.log('✅ Auth user created:', authData.user?.id);
+
+                // ✅ استدعاء RPC function لإنشاء سجل المستخدم والمخزن
+                console.log('🏭 Setting up user and warehouse...');
+                const { data: setupData, error: setupError } = await window.supabaseClient.rpc('setup_user_after_signup', {
+                    p_user_id: authData.user.id,
+                    p_email: email,
+                    p_phone: phone
+                });
+
+                if (setupError) {
+                    console.error('Setup Error:', setupError);
+                    showAlert('⚠️ تم التسجيل بنجاح، لكن حدث خطأ في إعداد المخزن. يرجى المحاولة مرة أخرى أو التواصل مع الدعم.');
+                    // نستمر لأن التسجيل تم بنجاح، لكن نحذر المستخدم
+                } else if (!setupData.success) {
+                    console.error('Setup failed:', setupData.error);
+                    showAlert('⚠️ تم التسجيل بنجاح، لكن حدث خطأ في إعداد المخزن: ' + (setupData.error || 'Unknown error'));
+                } else {
+                    console.log('✅ User and warehouse setup completed:', setupData);
+                }
+
+                // ✅ حفظ معرف المخزن الصحيح (من setupData أو معرف المستخدم كاحتياطي)
+                const actualWarehouseId = setupData?.warehouse_id || authData.user?.id;
+                
+                // حفظ في جميع مفاتيح localStorage المطلوبة
+                const warehouseKeys = ['currentWarehouseId', 'current_warehouse_id', 'slamtak-warehouse-id', 'warehouse_id'];
+                warehouseKeys.forEach(key => {
+                    localStorage.setItem(key, actualWarehouseId);
+                });
+                
+                console.log('✅ Warehouse ID saved to localStorage:', actualWarehouseId);
+
+                // ✅ حفظ في localStorage للاستخدام المحلي
+                const newUser = {
+                    warehouseName: name,
+                    email: email,
+                    password: password,
+                    phone: phone,
+                    governorate: gov,
+                    userType: 'admin',
+                    admin_key: adminPassword,
+                    employees: [],
+                    createdAt: new Date().toISOString()
+                };
+
+                const users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+                users.push(newUser);
+                localStorage.setItem('registeredUsers', JSON.stringify(users));
+                sessionStorage.setItem('currentUser', JSON.stringify(newUser));
+
+                // ✅ تسجيل الدخول التلقائي + حفظ admin_key بشكل آمن
+                console.log('🔐 Saving admin session...');
+                localStorage.setItem('slamtak-admin-key', adminPassword);  // مؤقت للمدير
+                localStorage.setItem('slamtak-user-id', authData.user?.id);
+                localStorage.setItem('slamtak-user-email', email);
+                localStorage.setItem('slamtak-auth-status', 'authenticated');
+                localStorage.setItem('slamtak-is-admin', 'true');
+
+                // ✅ حفظ معرف المخزن الصحيح (من setupData أو معرف المستخدم كاحتياطي)
+                // تم تعريف actualWarehouseId مسبقاً في السطر 906
+                localStorage.setItem('current_warehouse_id', actualWarehouseId);
+                localStorage.setItem('currentWarehouseId', actualWarehouseId);
+                localStorage.setItem('slamtak-warehouse-id', actualWarehouseId);
+                localStorage.setItem('localAuth', 'true');
+                
+                // ✅ إضافة متغيرات الجلسة للهجين
+                if (authData.session) {
+                    const session = authData.session;
+                    localStorage.setItem('slamtak-auth-token', JSON.stringify(session));
+                    localStorage.setItem('hybrid-auth-session', JSON.stringify(session));
+                    localStorage.setItem('hybrid-auth-user', JSON.stringify(authData.user));
+                    localStorage.setItem('hybrid-auth-warehouse', authData.user?.id);
+                }
+
+                showAlert('✅ تم تسجيل المخزن بنجاح! جاري فتح لوحة تحكم المخزن...', 'success');
+                console.log('🎉 Success! Redirecting to warehouse dashboard...');
+
+                setTimeout(() => {
+                    window.location.href = 'stock.html';
+                }, 1500);
+
+            } catch (error) {
+                console.error('❌ Catch Error:', error);
+                showAlert('⚠️ حدث خطأ: ' + error.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🏭 إنشاء حساب المخزن';
+            }
+        }
+
+        // Enter key support
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const activeTab = document.querySelector('.tab-content.active').id;
+                if (activeTab === 'login') handleLogin();
+                else handleRegister();
+            }
+        });
+
+        // ══════════════════════════════════════════
+        //  Searchable Governorate Dropdown
+        // ══════════════════════════════════════════
+        const GOV_LIST = [
+            'القاهرة','الجيزة','الإسكندرية','الدقهلية','البحيرة',
+            'الغربية','المنوفية','الشرقية','القليوبية','كفر الشيخ',
+            'دمياط','الفيوم','بني سويف','المنيا','أسيوط',
+            'سوهاج','قنا','الأقصر','أسوان','البحر الأحمر',
+            'شمال سيناء','جنوب سيناء','السويس','الإسماعيلية',
+            'بورسعيد','مطروح','الوادي الجديد'
+        ];
+
+        // Build list items once
+        (function buildGovList() {
+            const ul = document.getElementById('govList');
+            GOV_LIST.forEach(gov => {
+                const li = document.createElement('li');
+                li.textContent = gov;
+                li.dataset.value = gov;
+                li.onclick = () => selectGov(gov, li);
+                ul.appendChild(li);
+            });
+            // No-results row
+            const noRes = document.createElement('li');
+            noRes.className = 'ss-no-results';
+            noRes.id = 'govNoResults';
+            noRes.textContent = 'لا توجد نتائج مطابقة';
+            noRes.style.cssText = 'display:none;cursor:default;color:var(--text-muted);text-align:center;';
+            ul.appendChild(noRes);
+        })();
+
+        function toggleGovDropdown() {
+            const dd = document.getElementById('govDropdown');
+            const isOpen = dd.classList.toggle('open');
+            if (isOpen) {
+                // Reset search and show all
+                const s = document.getElementById('govSearch');
+                s.value = '';
+                filterGov('');
+                setTimeout(() => s.focus(), 80);
+            }
+        }
+
+        function filterGov(q) {
+            const items = document.querySelectorAll('#govList li:not(.ss-no-results)');
+            const noRes = document.getElementById('govNoResults');
+            let visible = 0;
+            const term = q.trim();
+            items.forEach(li => {
+                const match = !term || li.textContent.includes(term);
+                li.classList.toggle('hidden', !match);
+                if (match) visible++;
+            });
+            noRes.style.display = visible === 0 ? 'block' : 'none';
+        }
+
+        function selectGov(value, liEl) {
+            // Update hidden input & display
+            document.getElementById('regGov').value = value;
+            document.getElementById('govDisplay').textContent = value;
+            document.getElementById('govDisplay').style.color = 'var(--text-primary)';
+            // Mark selected
+            document.querySelectorAll('#govList li').forEach(li => li.classList.remove('selected'));
+            liEl.classList.add('selected');
+            // Close
+            document.getElementById('govDropdown').classList.remove('open');
+        }
+
+        // Close on outside click
+        document.addEventListener('click', (e) => {
+            const dd = document.getElementById('govDropdown');
+            if (dd && !dd.contains(e.target)) {
+                dd.classList.remove('open');
+            }
+        });
+
+        // دالة عرض معلومات المخزن الحالي
+        function displayCurrentWarehouseInfo(name, email) {
+            const infoDiv = document.getElementById('currentWarehouseInfo');
+            const nameEl = document.getElementById('currentWarehouseName');
+            const emailEl = document.getElementById('currentWarehouseEmail');
+            
+            if (infoDiv && nameEl && emailEl) {
+                nameEl.textContent = name;
+                emailEl.textContent = email;
+                infoDiv.style.display = 'block';
+                
+                // إخفاء نموذج تسجيل الدخول/التسجيل
+                document.querySelector('.card').style.display = 'none';
+                
+                // عرض قسم الطلبات
+                document.getElementById('ordersSection').style.display = 'block';
+                
+                // جلب الطلبات
+                fetchWarehouseOrders();
+            }
+        }
+
+        // جلب طلبات المخزن
+        async function fetchWarehouseOrders() {
+            const warehouseId = localStorage.getItem('currentWarehouseId');
+            if (!warehouseId) return;
+
+            try {
+                // جلب الطلبات من localStorage مؤقتاً
+                const orders = JSON.parse(localStorage.getItem('ORDERS_STORE') || '[]');
+                renderOrders(orders);
+            } catch (error) {
+                console.error('Error fetching orders:', error);
+            }
+        }
+
+        // عرض الطلبات
+        function renderOrders(orders) {
+            const ordersList = document.getElementById('ordersList');
+            if (!ordersList) return;
+
+            if (orders.length === 0) {
+                ordersList.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">لا توجد طلبات حالياً</div>';
+                return;
+            }
+
+            ordersList.innerHTML = '';
+            orders.forEach(order => {
+                const orderCard = document.createElement('div');
+                orderCard.className = 'order-card';
+                
+                const statusClass = order.status === 'approved' ? 'status-approved' : 
+                                   order.status === 'rejected' ? 'status-rejected' : 'status-pending';
+ const statusText = order.status === 'approved' ? 'موافق عليه' : 
+                                  order.status === 'rejected' ? 'مرفوض' : 'قيد الانتظار';
+
+                let itemsHtml = '';
+                order.items.forEach(item => {
+                    itemsHtml += `
+                        <div class="order-item">
+                            <span>${item.tradeName} × ${item.quantity}</span>
+                            <span>${(item.price * item.quantity).toFixed(2)} ج.م</span>
+                        </div>
+                    `;
+                });
+
+                const actionsHtml = order.status === 'pending' ? `
+                    <div class="order-actions">
+                        <button class="btn-approve" onclick="approveOrder(${order.id})">✅ موافقة</button>
+                        <button class="btn-reject" onclick="rejectOrder(${order.id})">❌ رفض</button>
+                    </div>
+                ` : '';
+
+                orderCard.innerHTML = `
+                    <div class="order-header">
+                        <h3>طلب #${order.id}</h3>
+                        <span class="order-status ${statusClass}">${statusText}</span>
+                    </div>
+                    <div class="order-items">
+                        ${itemsHtml}
+                    </div>
+                    <div class="order-total">الإجمالي: ${order.total.toFixed(2)} ج.م</div>
+                    ${actionsHtml}
+                `;
+
+                ordersList.appendChild(orderCard);
+            });
+        }
+
+        // موافقة على طلب
+        function approveOrder(orderId) {
+            let orders = JSON.parse(localStorage.getItem('ORDERS_STORE') || '[]');
+            const orderIndex = orders.findIndex(o => o.id === orderId);
+            
+            if (orderIndex !== -1) {
+                orders[orderIndex].status = 'approved';
+                localStorage.setItem('ORDERS_STORE', JSON.stringify(orders));
+                fetchWarehouseOrders();
+                alert('✅ تمت الموافقة على الطلب');
+            }
+        }
+
+        // رفض طلب
+        function rejectOrder(orderId) {
+            if (!confirm('هل أنت متأكد من رفض هذا الطلب؟')) return;
+            
+            let orders = JSON.parse(localStorage.getItem('ORDERS_STORE') || '[]');
+            const orderIndex = orders.findIndex(o => o.id === orderId);
+            
+            if (orderIndex !== -1) {
+                orders[orderIndex].status = 'rejected';
+                localStorage.setItem('ORDERS_STORE', JSON.stringify(orders));
+                fetchWarehouseOrders();
+                alert('❌ تم رفض الطلب');
+            }
+        }
+
+        // دالة تسجيل خروج المخزن
+        function logoutWarehouse() {
+            localStorage.removeItem('slamtak-admin-key');
+            localStorage.removeItem('slamtak-user-id');
+            localStorage.removeItem('slamtak-user-email');
+            localStorage.removeItem('slamtak-auth-status');
+            localStorage.removeItem('slamtak-is-admin');
+            localStorage.removeItem('current_warehouse_id');
+            localStorage.removeItem('currentWarehouseId');
+            localStorage.removeItem('localAuth');
+            localStorage.removeItem('slamtak-auth-token');
+            localStorage.removeItem('hybrid-auth-session');
+            localStorage.removeItem('hybrid-auth-user');
+            localStorage.removeItem('hybrid-auth-warehouse');
+            localStorage.removeItem('slamtak-user-role');
+            
+            // تسجيل الخروج من Supabase
+            if (window.supabaseClient) {
+                window.supabaseClient.auth.signOut();
+            }
+            
+            // إعادة تحميل الصفحة
+            window.location.reload();
+        }
+
+        // التحقق من وجود جلسة نشطة عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            const isAuth = localStorage.getItem('slamtak-auth-status') === 'authenticated';
+            const warehouseId = localStorage.getItem('currentWarehouseId');
+            const userEmail = localStorage.getItem('slamtak-user-email');
+            
+            if (isAuth && warehouseId && userEmail) {
+                // جلب بيانات المخزن من localStorage أو Supabase
+                const warehouseName = localStorage.getItem('warehouse_name') || userEmail;
+                displayCurrentWarehouseInfo(warehouseName, userEmail);
+            }
+        });
+    </script>
+
+    <script src="ai-core.js"></script>
+    <script src="ai-validation.js"></script>
+    <script src="ai-speech.js"></script>
+    <script src="ai-database.js"></script>
+    <script src="ai-ui.js"></script>
+    <script src="ai-assistant.js"></script>
+</body>
+</html>

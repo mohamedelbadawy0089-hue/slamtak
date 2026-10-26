@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدخال جماعي للمنتجات</title>
+    <script src="navigation.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .bulk-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .bulk-table th,
+        .bulk-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        .bulk-table th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+        }
+        .bulk-table input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .add-row-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .add-row-btn:hover {
+            background: #218838;
+        }
+        .save-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 20px auto;
+            display: block;
+        }
+        .save-btn:hover {
+            background: #0056b3;
+        }
+        .info-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-right: 4px solid #2196f3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 إدخال جماعي للمنتجات</h1>
+        
+        <div class="info-box">
+            <strong>📋 ملاحظات:</strong><br>
+            1. المساعد الذكي سيفتح تلقائياً عند تحميل الصفحة<br>
+            2. المساعد ينتظر طلبك لإدخال البيانات<br>
+            3. يمكنك نسخ بيانات المنتجات ولصقها في المربع أدناه<br>
+            4. المساعد سيقوم بتحليل البيانات وإدخالها عند الطلب<br>
+            5. أو استخدم الأزرار للاختبار اليدوي
+        </div>
+
+        <!-- منطقة لصق البيانات المنسوخة -->
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 2px dashed #007bff;">
+            <h3 style="color: #007bff; margin-bottom: 10px;">📋 نسخ ولصق البيانات</h3>
+            <textarea id="pasteData" placeholder="انسخ بيانات المنتجات من Excel أو أي مصدر آخر والصقها هنا..." 
+                      style="width: 100%; height: 120px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; resize: vertical;"></textarea>
+            <div style="margin-top: 10px; display: flex; gap: 10px;">
+                <button class="add-row-btn" onclick="pasteAndProcessData()" style="background: #17a2b8;">📥 لصق ومعالجة البيانات</button>
+                <button class="add-row-btn" onclick="copyTableData()" style="background: #ffc107; color: black;">📋 نسخ البيانات من الجدول</button>
+                <button class="add-row-btn" onclick="clearPasteArea()" style="background: #dc3545;">🗑️ مسح المربع</button>
+            </div>
+        </div>
+
+        <!-- بيانات المورد (بيانات عامة للفاتورة) -->
+        <div style="background: #fff9db; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #fab005;">
+            <h3 style="color: #f08c00; margin-bottom: 10px;"><i class="fas fa-file-invoice"></i> بيانات المورد والفاتورة (تطبق على الكل)</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <div>
+                    <label style="display: block; font-size: 13px; color: #666;">اسم المورد</label>
+                    <input type="text" id="globalSupplierName" placeholder="مثال: شركة المتحدة" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 13px; color: #666;">تليفون المورد</label>
+                    <input type="text" id="globalSupplierPhone" placeholder="01xxxxxxxxx" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 13px; color: #666;">عنوان المورد</label>
+                    <input type="text" id="globalSupplierAddress" placeholder="المحافظة / المدينة" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 13px; color: #666;">رقم الفاتورة</label>
+                    <input type="text" id="globalInvoiceNumber" placeholder="رقم الفاتورة" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- منطقة استيراد الملفات -->
+        <div style="background: #e8f5e8; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 2px dashed #28a745;">
+            <h3 style="color: #28a745; margin-bottom: 10px;">📁 استيراد من ملف</h3>
+            <p style="color: #666; margin-bottom: 15px;">اختر ملف من أي برنامج إدارة مخازن الأدوية (Excel, CSV, TXT) والمساعد سيقوم باستيراد البيانات تلقائياً</p>
+            
+            <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.txt" style="display: none;" onchange="handleFileSelect(event)">
+            
+            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px;">
+                <button class="add-row-btn" onclick="document.getElementById('fileInput').click()" style="background: #28a745;">📁 اختر ملف</button>
+                <span id="fileName" style="color: #666; font-size: 14px;">لم يتم اختيار ملف</span>
+            </div>
+            
+            <div id="filePreview" style="display: none; background: white; padding: 15px; border-radius: 5px; border: 1px solid #ddd;">
+                <h4 style="margin-bottom: 10px; color: #333;">📊 معاينة البيانات:</h4>
+                <div id="previewContent" style="max-height: 200px; overflow-y: auto; font-family: monospace; font-size: 12px;"></div>
+                <div style="margin-top: 15px; display: flex; gap: 10px;">
+                    <button class="add-row-btn" onclick="importFromFile()" style="background: #007bff;">🚀 استيراد وإدخال البيانات</button>
+                    <button class="add-row-btn" onclick="clearFile()" style="background: #dc3545;">🗑️ مسح الملف</button>
+                </div>
+            </div>
+        </div>
+
+        <button class="add-row-btn" onclick="addNewRow()">➕ إضافة صف جديد</button>
+        <button class="add-row-btn" onclick="testAssistant()" style="background: #667eea; margin-right: 10px;">🤖 اختبار المساعد</button>
+        <button class="add-row-btn" onclick="startBulkEntry()" style="background: #28a745; margin-right: 10px;">🤖 إدخال جماعي تلقائي</button>
+        <button class="add-row-btn" onclick="saveToDatabase()" style="background: #6f42c1; margin-right: 10px;">💾 حفظ في قاعدة البيانات</button>
+        
+        <table class="bulk-table" id="bulkTable">
+            <thead>
+                <tr>
+                    <th>اسم المنتج</th>
+                    <th>السعر</th>
+                    <th>الكمية</th>
+                    <th>الخصم (%)</th>
+                    <th>الباركود</th>
+                    <th>شهر الانتهاء</th>
+                    <th>سنة الانتهاء</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr>
+                    <td><input type="text" id="productName_1" placeholder="اسم المنتج"></td>
+                    <td><input type="number" id="price_1" placeholder="السعر" step="0.01"></td>
+                    <td><input type="number" id="quantity_1" placeholder="الكمية"></td>
+                    <td><input type="number" id="discount_1" placeholder="الخصم"></td>
+                    <td><input type="text" id="barcode_1" placeholder="الباركود"></td>
+                    <td><input type="number" id="expiryMonth_1" placeholder="الشهر" min="1" max="12"></td>
+                    <td><input type="number" id="expiryYear_1" placeholder="السنة" min="2024" max="2030"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button class="save-btn" onclick="saveBulkData()">💾 حفظ جميع البيانات</button>
+    </div>
+
+    <!-- تحميل ملفات المساعد الذكي -->
+    <script src="ai-core.js"></script>
+    <script src="ai-validation.js"></script>
+    <script src="ai-speech.js"></script>
+    <script src="ai-database.js"></script>
+    <script src="ai-ui.js"></script>
+    <script src="ai-assistant.js"></script>
+
+    <script>
+        let rowCount = 1;
+
+        // تهيئة المساعد الذكي لصفحة الإدخال الجماعي
+        function initializeBulkAssistant() {
+            console.log('🚀 بدء تهيئة المساعد الذكي للإدخال الجماعي...');
+            
+            // التحقق من تحميل جميع مكونات المساعد
+            const components = ['AICore', 'AIUI', 'AISpeech', 'AIDatabase', 'AIValidation'];
+            let allLoaded = true;
+            
+            components.forEach(comp => {
+                if (!window[comp]) {
+                    console.error(`❌ ${comp} غير محمّل`);
+                    allLoaded = false;
+                } else {
+                    console.log(`✅ ${comp} محمّل`);
+                }
+            });
+            
+            if (!allLoaded) {
+                console.error('❌ بعض مكونات المساعد لم يتم تحميلها');
+                return;
+            }
+            
+            // تهيئة المكونات
+            try {
+                if (window.AIDatabase) {
+                    window.AIDatabase.init();
+                    console.log('✅ تم تهيئة قاعدة البيانات');
+                }
+                
+                if (window.AISpeech) {
+                    window.AISpeech.init();
+                    console.log('✅ تم تهيئة المحرك الصوتي');
+                }
+                
+                // فتح المساعد تلقائياً
+                setTimeout(() => {
+                    if (window.AIUI && !window.AIUI.isOpen) {
+                        window.AIUI.open();
+                        console.log('✅ تم فتح المساعد تلقائياً');
+                        
+                        // إرسال رسالة ترحيبية
+                        const welcomeMessage = "📊 <strong>أهلاً بك في صفحة الإدخال الجماعي!</strong><br>أنا هنا لمساعدتك. يرجى إدخال بيانات المنتجات أو طلب مني المساعدة.";
+                        window.AIUI.addMessage(welcomeMessage, 'bot', true);
+                        
+                        if (window.AISpeech) {
+                            window.AISpeech.speak("أهلاً بك، أنا جاهز لمساعدتك في إدخال المنتجات");
+                        }
+                        
+                        console.log('✅ تم إرسال رسالة الترحيب');
+                    }
+                }, 2000);
+                
+            } catch (error) {
+                console.error('❌ خطأ في تهيئة المساعد:', error);
+            }
+        }
+
+        // دالة اختبار المساعد
+        function testAssistant() {
+            console.log('🤖 بدء اختبار المساعد الذكي...');
+            
+            if (!window.AIUI) {
+                console.error('❌ المساعد الذكي UI غير محمّل');
+                alert('❌ المساعد الذكي غير متاح');
+                return;
+            }
+            
+            if (!window.AICore) {
+                console.error('❌ المساعد الذكي Core غير محمّل');
+                alert('❌ محرك المساعد غير متاح');
+                return;
+            }
+            
+            try {
+                // فتح المساعد
+                window.AIUI.open();
+                console.log('✅ تم فتح المساعد');
+                
+                // إرسال رسالة اختبار
+                const testMessage = "🧪 <strong>اختبار المساعد!</strong><br>المساعد يعمل بشكل صحيح في صفحة الإدخال الجماعي.";
+                window.AIUI.addMessage(testMessage, 'bot', true);
+                
+                if (window.AISpeech) {
+                    window.AISpeech.speak("المساعد يعمل بشكل صحيح");
+                }
+                
+                // اختبار التركيز على أول حقل
+                setTimeout(() => {
+                    const firstField = document.getElementById('productName_1');
+                    if (firstField) {
+                        firstField.focus();
+                        console.log('✅ تم التركيز على أول حقل');
+                    }
+                }, 1000);
+                
+                alert('✅ المساعد يعمل بشكل صحيح!');
+                
+            } catch (error) {
+                console.error('❌ خطأ في اختبار المساعد:', error);
+                alert('❌ حدث خطأ في المساعد: ' + error.message);
+            }
+        }
+
+        // وظيفة الإدخال الجماعي التلقائي (للاختبار فقط)
+        function startBulkEntry() {
+            console.log('🚀 بدء الإدخال الجماعي التلقائي...');
+            
+            if (!window.AIUI) {
+                console.error('❌ المساعد الذكي غير متاح');
+                alert('❌ المساعد الذكي غير متاح');
+                return;
+            }
+            
+            if (!window.AICore) {
+                console.error('❌ محرك المساعد غير متاح');
+                alert('❌ محرك المساعد غير متاح');
+                return;
+            }
+            
+            // فتح المساعد
+            window.AIUI.open();
+            
+            // إرسال رسالة بدء الإدخال الجماعي
+            const startMessage = "🤖 <strong>جاهز للإدخال الجماعي!</strong><br>يرجى إدخال بيانات المنتجات أو استيرادها من ملف.";
+            window.AIUI.addMessage(startMessage, 'bot', true);
+            
+            if (window.AISpeech) {
+                window.AISpeech.speak("أنا جاهز للإدخال الجماعي، يرجى إدخال البيانات");
+            }
+            
+            // مسح الجدول الحالي
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            rowCount = 0;
+            
+            // إضافة صفوف فارغة للإدخال اليدوي
+            for (let i = 0; i < 5; i++) {
+                addNewRow();
+            }
+            
+            // إرسال رسالة للمساعدة
+            const helpMessage = "💡 <strong>كيفية الإدخال:</strong><br>1. أدخل البيانات يدوياً في الجدول<br>2. أو انسخ البيانات والصقها<br>3. أو استورد من ملف Excel/CSV/TXT<br>4. أو اطلب مني إدخال منتجات محددة";
+            window.AIUI.addMessage(helpMessage, 'bot', true);
+            
+            console.log('✅ تم تهيئة الجدول للإدخال اليدوي');
+        }
+
+        // متغيرات لمعالجة الملفات
+        let selectedFile = null;
+        let fileData = null;
+
+        // وظيفة اختيار الملف
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            selectedFile = file;
+            document.getElementById('fileName').textContent = file.name;
+            
+            // قراءة الملف
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                fileData = e.target.result;
+                previewFileData(fileData, file.name);
+            };
+            
+            // تحديد طريقة القراءة حسب نوع الملف
+            if (file.name.endsWith('.csv') || file.name.endsWith('.txt')) {
+                reader.readAsText(file);
+            } else if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+                // للملفات الكبيرة، سنستخدم طريقة بسيطة
+                reader.readAsText(file);
+            }
+        }
+
+        // معاينة بيانات الملف
+        function previewFileData(data, fileName) {
+            const previewContent = document.getElementById('previewContent');
+            const filePreview = document.getElementById('filePreview');
+            
+            // تقسيم البيانات إلى أسطر
+            const lines = data.split('\n').filter(line => line.trim());
+            
+            // عرض أول 10 أسطر كمعاينة
+            const previewLines = lines.slice(0, 10);
+            let previewHTML = '';
+            
+            previewLines.forEach((line, index) => {
+                const cleanLine = line.trim();
+                if (cleanLine) {
+                    previewHTML += `<div style="padding: 5px; border-bottom: 1px solid #eee; background: ${index % 2 === 0 ? '#f9f9f9' : 'white'}">${cleanLine}</div>`;
+                }
+            });
+            
+            if (lines.length > 10) {
+                previewHTML += `<div style="padding: 10px; text-align: center; color: #666; font-style: italic;">... و ${lines.length - 10} صفوف أخرى</div>`;
+            }
+            
+            previewContent.innerHTML = previewHTML;
+            filePreview.style.display = 'block';
+            
+            // إرسال رسالة للمساعد
+            if (window.AIUI) {
+                const message = `📁 تم تحميل الملف: ${fileName}<br>📊 يحتوي على ${lines.length} صف من البيانات`;
+                window.AIUI.addMessage(message, 'bot', true);
+                
+                if (window.AISpeech) {
+                    window.AISpeech.speak(`تم تحميل ملف يحتوي على ${lines.length} صف من البيانات`);
+                }
+            }
+        }
+
+        // استيراد البيانات من الملف
+        function importFromFile() {
+            if (!fileData) {
+                alert('❌ لم يتم اختيار ملف');
+                return;
+            }
+            
+            if (!window.AIUI) {
+                alert('❌ المساعد الذكي غير متاح');
+                return;
+            }
+            
+            // فتح المساعد
+            window.AIUI.open();
+            
+            // رسالة بدء الاستيراد
+            const startMessage = "🚀 <strong>بدء استيراد البيانات من الملف!</strong><br>سأقوم الآن بتحليل وإدخال البيانات تلقائياً.";
+            window.AIUI.addMessage(startMessage, 'bot', true);
+            
+            if (window.AISpeech) {
+                window.AISpeech.speak("سأقوم الآن باستيراد البيانات من الملف");
+            }
+            
+            // تحليل البيانات
+            const lines = fileData.split('\n').filter(line => line.trim());
+            const products = [];
+            
+            lines.forEach((line, index) => {
+                const cleanLine = line.trim();
+                if (!cleanLine) return;
+                
+                // محاولة تحليل السطر كمنتج
+                const product = parseProductLine(cleanLine);
+                if (product) {
+                    products.push(product);
+                }
+            });
+            
+            if (products.length === 0) {
+                const errorMessage = "❌ لم يتم التعرف على أي بيانات صالحة في الملف.<br>تأكد من أن الملف يحتوي على بيانات المنتجات بالتنسيق الصحيح.";
+                window.AIUI.addMessage(errorMessage, 'bot', true);
+                
+                if (window.AISpeech) {
+                    window.AISpeech.speak("لم يتم التعرف على بيانات صالحة في الملف");
+                }
+                return;
+            }
+            
+            // مسح الجدول الحالي
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            rowCount = 0;
+            
+            // إدخال المنتجات المستوردة
+            let currentProductIndex = 0;
+            
+            function addNextImportedProduct() {
+                if (currentProductIndex >= products.length) {
+                    // انتهاء الاستيراد
+                    const completeMessage = `✅ <strong>تم الاستيراد بنجاح!</strong><br>تم استيراد وإدخال ${products.length} منتج من الملف.`;
+                    window.AIUI.addMessage(completeMessage, 'bot', true);
+                    
+                    if (window.AISpeech) {
+                        window.AISpeech.speak(`تم استيراد ${products.length} منتج بنجاح`);
+                    }
+                    
+                    console.log('✅ انتهى استيراد الملف');
+                    return;
+                }
+                
+                const product = products[currentProductIndex];
+                currentProductIndex++;
+                
+                // إضافة صف جديد
+                addNewRow();
+                
+                // ملء بيانات المنتج المستورد
+                setTimeout(() => {
+                    const row = rowCount;
+                    
+                    // إدخال البيانات بشكل متتالي
+                    setTimeout(() => {
+                        const nameField = document.getElementById(`productName_${row}`);
+                        if (nameField && product.name) {
+                            nameField.value = product.name;
+                            nameField.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                    }, 200);
+                    
+                    setTimeout(() => {
+                        const priceField = document.getElementById(`price_${row}`);
+                        if (priceField && product.price) {
+                            priceField.value = product.price;
+                            priceField.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                    }, 400);
+                    
+                    setTimeout(() => {
+                        const quantityField = document.getElementById(`quantity_${row}`);
+                        if (quantityField && product.quantity) {
+                            quantityField.value = product.quantity;
+                            quantityField.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                    }, 600);
+                    
+                    setTimeout(() => {
+                        const discountField = document.getElementById(`discount_${row}`);
+                        if (discountField && product.discount) {
+                            discountField.value = product.discount;
+                            discountField.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                    }, 800);
+                    
+                    setTimeout(() => {
+                        const barcodeField = document.getElementById(`barcode_${row}`);
+                        if (barcodeField && product.barcode) {
+                            barcodeField.value = product.barcode;
+                            barcodeField.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                    }, 1000);
+                    
+                    setTimeout(() => {
+                        const expMonthField = document.getElementById(`expiryMonth_${row}`);
+                        if (expMonthField && product.expMonth) {
+                            expMonthField.value = product.expMonth;
+                            expMonthField.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                    }, 1200);
+                    
+                    setTimeout(() => {
+                        const expYearField = document.getElementById(`expiryYear_${row}`);
+                        if (expYearField && product.expYear) {
+                            expYearField.value = product.expYear;
+                            expYearField.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                    }, 1400);
+                    
+                    // إرسال رسالة المنتج الحالي
+                    setTimeout(() => {
+                        const productMessage = `📦 <strong>تم استيراد:</strong> ${product.name || 'منتج غير معروف'}<br>السعر: ${product.price || 'غير محدد'} جنيه | الكمية: ${product.quantity || 'غير محدد'}`;
+                        window.AIUI.addMessage(productMessage, 'bot', true);
+                        
+                        if (window.AISpeech && product.name) {
+                            window.AISpeech.speak(`تم استيراد ${product.name}`);
+                        }
+                        
+                        // الانتقال للمنتج التالي
+                        setTimeout(addNextImportedProduct, 1000);
+                    }, 1600);
+                    
+                }, 100);
+            }
+            
+            // بدء الاستيراد
+            setTimeout(addNextImportedProduct, 1000);
+        }
+
+        // وظيفة لصق ومعالجة البيانات
+        function pasteAndProcessData() {
+            const pasteArea = document.getElementById('pasteData');
+            const rawData = pasteArea.value.trim();
+            
+            if (!rawData) {
+                alert('⚠️ يرجى لصق البيانات أولاً');
+                return;
+            }
+
+            const lines = rawData.split('\n').filter(line => line.trim());
+            const products = [];
+
+            lines.forEach(line => {
+                // استخدام المحرك الذكي إذا كان متاحاً، وإلا نستخدم المحلل البسيط
+                let productData = null;
+                if (window.AICore && typeof window.AICore.smartParsePaste === 'function') {
+                    const smart = window.AICore.smartParsePaste(line);
+                    if (smart && smart.productName) {
+                        // تحويل الصيغة لتناسب الجدول
+                        productData = {
+                            name: smart.productName,
+                            price: smart.price || 0,
+                            quantity: smart.quantity || 1,
+                            discount: smart.discount || 0,
+                            barcode: smart.barcode || '',
+                            expMonth: '',
+                            expYear: ''
+                        };
+                        
+                        // محاولة استخراج الشهر والسنة من التاريخ الذكي
+                        if (smart.expiryDate) {
+                            const dateParts = smart.expiryDate.split(/[\/\-]/);
+                            if (dateParts.length >= 2) {
+                                productData.expMonth = parseInt(dateParts[0]);
+                                productData.expYear = dateParts[1].length === 2 ? '20' + dateParts[1] : dateParts[1];
+                            }
+                        }
+                    }
+                }
+
+                if (!productData) {
+                    productData = parseProductLine(line);
+                }
+
+                if (productData) {
+                    products.push(productData);
+                }
+            });
+
+            if (products.length > 0) {
+                // مسح الجدول الحالي أو الإضافة عليه؟ المستخدم طلب إدخال جماعي، سنضيفهم
+                products.forEach(p => {
+                    addNewRow();
+                    const row = rowCount;
+                    document.getElementById(`productName_${row}`).value = p.name;
+                    document.getElementById(`price_${row}`).value = p.price;
+                    document.getElementById(`quantity_${row}`).value = p.quantity;
+                    document.getElementById(`discount_${row}`).value = p.discount;
+                    document.getElementById(`barcode_${row}`).value = p.barcode;
+                    if (p.expMonth) document.getElementById(`expiryMonth_${row}`).value = p.expMonth;
+                    if (p.expYear) document.getElementById(`expiryYear_${row}`).value = p.expYear;
+                });
+
+                if (window.AIUI) {
+                    window.AIUI.addMessage(`✅ تم استخراج ${products.length} منتج بنجاح باستخدام اللصق الذكي`, 'bot', true);
+                }
+                pasteArea.value = ''; // مسح المربع بعد النجاح
+            } else {
+                alert('❌ لم أتمكن من فهم البيانات الملحقة. يرجى التأكد من التنسيق.');
+            }
+        }
+
+        function clearPasteArea() {
+            document.getElementById('pasteData').value = '';
+        }
+
+        function copyTableData() {
+            const tbody = document.getElementById('tableBody');
+            const rows = tbody.querySelectorAll('tr');
+            let text = "المنتج\tالسعر\tالكمية\tالخصم\tالباركود\tالتاريخ\n";
+            
+            rows.forEach((row, i) => {
+                const n = row.querySelector(`#productName_${i+1}`)?.value || '';
+                const p = row.querySelector(`#price_${i+1}`)?.value || '';
+                const q = row.querySelector(`#quantity_${i+1}`)?.value || '';
+                if (n) text += `${n}\t${p}\t${q}\n`;
+            });
+
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ تم نسخ بيانات الجدول إلى الحافظة');
+            });
+        }
+
+        // تحليل سطر المنتج (المحلل القديم كاحتياطي)
+        function parseProductLine(line) {
+            // محاولة تقسيم السطر بفواصل مختلفة
+            let parts = [];
+            
+            // تجربة TAB
+            if (line.includes('\t')) {
+                parts = line.split('\t');
+            }
+            // تجربة الفاصلة المنقوطة
+            else if (line.includes(';')) {
+                parts = line.split(';');
+            }
+            // تجربة الفاصلة
+            else if (line.includes(',')) {
+                parts = line.split(',');
+            }
+            // تجاءة المسافات المتعددة
+            else {
+                parts = line.split(/\s+/);
+            }
+            
+            // تنظيف الأجزاء
+            parts = parts.map(part => part.trim()).filter(part => part);
+            
+            if (parts.length < 2) return null;
+            
+            // إنشاء كائن المنتج
+            const product = {
+                name: parts[0] || '',
+                price: parseFloat(parts[1]) || 0,
+                quantity: parseInt(parts[2]) || 1,
+                discount: parseFloat(parts[3]) || 0,
+                barcode: parts[4] || '',
+                expMonth: parseInt(parts[5]) || '',
+                expYear: parseInt(parts[6]) || ''
+            };
+            
+            return product;
+        }
+
+        // مسح الملف
+        function clearFile() {
+            selectedFile = null;
+            fileData = null;
+            document.getElementById('fileInput').value = '';
+            document.getElementById('fileName').textContent = 'لم يتم اختيار ملف';
+            document.getElementById('filePreview').style.display = 'none';
+            
+            if (window.AIUI) {
+                window.AIUI.addMessage('🗑️ تم مسح الملف المختار', 'bot', true);
+            }
+        }
+
+        // حفظ البيانات في قاعدة البيانات
+        async function saveToDatabase() {
+            if (!window.SupabaseManager) {
+                // تحميل مكتبة Supabase إذا لم تكن محملة
+                if (window.AIUI) {
+                    window.AIUI.addMessage('🔄 <strong>جاري تحميل مكتبة قاعدة البيانات...</strong>', 'bot', true);
+                }
+                
+                const script = document.createElement('script');
+                script.src = 'supabase-config.js';
+                script.onload = async () => {
+                    await performSaveToDatabase();
+                };
+                script.onerror = () => {
+                    if (window.AIUI) {
+                        window.AIUI.addMessage('❌ <strong>فشل تحميل مكتبة قاعدة البيانات!</strong>', 'bot', true);
+                    }
+                };
+                document.head.appendChild(script);
+            } else {
+                await performSaveToDatabase();
+            }
+        }
+
+        // تنفيذ عملية الحفظ
+        async function performSaveToDatabase() {
+            if (!window.SupabaseManager) {
+                if (window.AIUI) {
+                    window.AIUI.addMessage('❌ <strong>مدير قاعدة البيانات غير متاح!</strong>', 'bot', true);
+                }
+                return;
+            }
+
+            // التحقق من الاتصال
+            if (!window.SupabaseManager.isConnected) {
+                const success = await window.SupabaseManager.init();
+                if (!success) {
+                    if (window.AIUI) {
+                        window.AIUI.addMessage('❌ <strong>فشل الاتصال بقاعدة البيانات!</strong><br>يرجى التحقق من إعدادات Supabase', 'bot', true);
+                    }
+                    return;
+                }
+            }
+
+            // بيانات المورد العامة
+            const gSupName = document.getElementById('globalSupplierName').value;
+            const gSupPhone = document.getElementById('globalSupplierPhone').value;
+            const gSupAddress = document.getElementById('globalSupplierAddress').value;
+            const gInvoice = document.getElementById('globalInvoiceNumber').value;
+
+            rows.forEach((row, index) => {
+                const productName = row.querySelector(`#productName_${index + 1}`)?.value;
+                const price = row.querySelector(`#price_${index + 1}`)?.value;
+                const quantity = row.querySelector(`#quantity_${index + 1}`)?.value;
+                const discount = row.querySelector(`#discount_${index + 1}`)?.value;
+                const barcode = row.querySelector(`#barcode_${index + 1}`)?.value;
+                const expMonth = row.querySelector(`#expiryMonth_${index + 1}`)?.value;
+                const expYear = row.querySelector(`#expiryYear_${index + 1}`)?.value;
+
+                if (productName && price) {
+                    products.push({
+                        name_en: productName, // Changed to name_en to match schema
+                        price: parseFloat(price) || 0,
+                        quantity: parseInt(quantity) || 0,
+                        discount: parseFloat(discount) || 0,
+                        batch_number: barcode || null,
+                        expiry_date: (expYear && expMonth) ? `${expYear}-${expMonth}-01` : null,
+                        supplier_name: gSupName || null,
+                        supplier_phone: gSupPhone || null,
+                        supplier_address: gSupAddress || null,
+                        invoice_number: gInvoice || null,
+                        warehouse_id: warehouseId,
+                        category: 'أدوية'
+                    });
+                }
+            });
+
+            if (products.length === 0) {
+                if (window.AIUI) {
+                    window.AIUI.addMessage('⚠️ <strong>لا توجد بيانات للحفظ!</strong><br>يرجى إدخال بيانات المنتجات أولاً', 'bot', true);
+                    if (window.AISpeech) {
+                        window.AISpeech.speak('لا توجد بيانات للحفظ');
+                    }
+                }
+                return;
+            }
+
+            try {
+                // حفظ المنتجات في قاعدة البيانات
+                // استخدام جدول warehouse_custom_products لأن المنتجات في هذا الجدول يدوية غالباً
+                const { error } = await window.SupabaseManager.supabase
+                    .from('warehouse_custom_products')
+                    .insert(products);
+
+                if (error) throw error;
+                if (confirm('تم حفظ البيانات بنجاح! هل تريد مسح الجدول؟')) {
+                    tbody.innerHTML = '';
+                    rowCount = 0;
+                    
+                    if (window.AIUI) {
+                        window.AIUI.addMessage('🗑️ <strong>تم مسح الجدول!</strong><br>يمكنك إدخال بيانات جديدة', 'bot', true);
+                    }
+                }
+                
+            } catch (error) {
+                console.error('❌ خطأ في حفظ البيانات:', error);
+                if (window.AIUI) {
+                    window.AIUI.addMessage('❌ <strong>حدث خطأ أثناء الحفظ!</strong><br>يرجى المحاولة مرة أخرى', 'bot', true);
+                }
+            }
+        }
+
+        // إعادة تهيئة عند إضافة صف جديد
+        function addNewRow() {
+            rowCount++;
+            const tbody = document.getElementById('tableBody');
+            const newRow = document.createElement('tr');
+            
+            newRow.innerHTML = `
+                <td><input type="text" id="productName_${rowCount}" placeholder="اسم المنتج"></td>
+                <td><input type="number" id="price_${rowCount}" placeholder="السعر" step="0.01"></td>
+                <td><input type="number" id="quantity_${rowCount}" placeholder="الكمية"></td>
+                <td><input type="number" id="discount_${rowCount}" placeholder="الخصم"></td>
+                <td><input type="text" id="barcode_${rowCount}" placeholder="الباركود"></td>
+                <td><input type="number" id="expiryMonth_${rowCount}" placeholder="الشهر" min="1" max="12"></td>
+                <td><input type="number" id="expiryYear_${rowCount}" placeholder="السنة" min="2024" max="2030"></td>
+            `;
+            
+            tbody.appendChild(newRow);
+            
+            // التركيز على أول حقل في الصف الجديد
+            setTimeout(() => {
+                document.getElementById(`productName_${rowCount}`).focus();
+            }, 100);
+            
+            console.log(`✅ تم إضافة صف جديد رقم ${rowCount}`);
+        }
+
+        function saveBulkData() {
+            const data = [];
+            const rows = document.querySelectorAll('#tableBody tr');
+            
+            rows.forEach((row, index) => {
+                const rowData = {
+                    productName: row.querySelector(`#productName_${index + 1}`)?.value || '',
+                    price: row.querySelector(`#price_${index + 1}`)?.value || '',
+                    quantity: row.querySelector(`#quantity_${index + 1}`)?.value || '',
+                    discount: row.querySelector(`#discount_${index + 1}`)?.value || '',
+                    barcode: row.querySelector(`#barcode_${index + 1}`)?.value || '',
+                    expiryMonth: row.querySelector(`#expiryMonth_${index + 1}`)?.value || '',
+                    expiryYear: row.querySelector(`#expiryYear_${index + 1}`)?.value || ''
+                };
+                
+                if (rowData.productName || rowData.price) {
+                    data.push(rowData);
+                }
+            });
+            
+            console.log('💾 البيانات المحفوظة:', data);
+            
+            if (window.AIUI) {
+                window.AIUI.addMessage(`✅ تم حفظ ${data.length} منتج بنجاح!`, 'bot', true);
+                if (window.AISpeech) {
+                    window.AISpeech.speak(`تم حفظ ${data.length} منتج بنجاح`);
+                }
+            }
+        }
+
+        // بدء التهيئة عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('📊 صفحة الإدخال الجماعي جاهزة لتحميل المساعد');
+            setTimeout(initializeBulkAssistant, 1000);
+        });
+
+        // بدء التهيئة أيضاً بعد تحميل الصفحة بالكامل
+        window.addEventListener('load', () => {
+            console.log('📊 صفحة الإدخال الجماعي محملة بالكامل');
+            setTimeout(initializeBulkAssistant, 500);
+            
+            // رسالة توضيحية عند تحميل الصفحة
+            console.log('📊 صفحة الإدخال الجماعي جاهزة');
+            console.log('💡 المساعد الذكي سيتم تهيئته تلقائياً');
+            console.log('🤖 المساعد ينتظر طلبك للإدخال');
+        });
+    </script>
+</body>
+</html>

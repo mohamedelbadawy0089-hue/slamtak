@@ -1,0 +1,683 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار المساعد الذكي</title>
+    <script src="navigation.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 32px;
+        }
+        .test-section {
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .test-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        .test-item {
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-right: 4px solid #ddd;
+        }
+        .test-item.success {
+            border-right-color: #28a745;
+            background: #d4edda;
+        }
+        .test-item.error {
+            border-right-color: #dc3545;
+            background: #f8d7da;
+        }
+        .test-item.warning {
+            border-right-color: #ffc107;
+            background: #fff3cd;
+        }
+        .test-button {
+            padding: 12px 25px;
+            margin: 5px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .status-badge.success {
+            background: #28a745;
+            color: white;
+        }
+        .status-badge.error {
+            background: #dc3545;
+            color: white;
+        }
+        .status-badge.warning {
+            background: #ffc107;
+            color: #333;
+        }
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .results {
+            margin-top: 15px;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 8px;
+            display: none;
+        }
+        .results.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 اختبار المساعد الذكي الشامل</h1>
+
+        <!-- اختبار التحميل -->
+        <div class="test-section">
+            <h2>📦 1. اختبار تحميل المكونات</h2>
+            <div id="loadTest"></div>
+            <button class="test-button" onclick="testLoading()">▶️ تشغيل الاختبار</button>
+        </div>
+
+        <!-- اختبار دعم المتصفح -->
+        <div class="test-section">
+            <h2>🌐 2. اختبار دعم المتصفح</h2>
+            <div id="browserTest"></div>
+            <button class="test-button" onclick="testBrowser()">▶️ تشغيل الاختبار</button>
+        </div>
+
+        <!-- اختبار قاعدة المعرفة -->
+        <div class="test-section">
+            <h2>🧠 3. اختبار قاعدة المعرفة</h2>
+            <div id="knowledgeTest"></div>
+            <button class="test-button" onclick="testKnowledge()">▶️ تشغيل الاختبار</button>
+        </div>
+
+        <!-- اختبار التحقق من المدخلات -->
+        <div class="test-section">
+            <h2>✅ 4. اختبار التحقق من المدخلات</h2>
+            <div id="validationTest"></div>
+            <button class="test-button" onclick="testValidation()">▶️ تشغيل الاختبار</button>
+        </div>
+
+        <!-- اختبار الصوت -->
+        <div class="test-section">
+            <h2>🎤 5. اختبار الصوت</h2>
+            <div id="speechTest"></div>
+            <button class="test-button" onclick="testSpeech()">▶️ اختبار الرد الصوتي</button>
+            <button class="test-button" onclick="testRecognition()">▶️ اختبار التعرف الصوتي</button>
+        </div>
+
+        <!-- اختبار البحث -->
+        <div class="test-section">
+            <h2>🔍 6. اختبار البحث</h2>
+            <div id="searchTest"></div>
+            <button class="test-button" onclick="testSearch()">▶️ تشغيل الاختبار</button>
+        </div>
+
+        <!-- اختبار الواجهة -->
+        <div class="test-section">
+            <h2>🎨 7. اختبار الواجهة</h2>
+            <div id="uiTest"></div>
+            <button class="test-button" onclick="testUI()">▶️ تشغيل الاختبار</button>
+        </div>
+
+        <!-- اختبار حقول إدخال المنتجات -->
+        <div class="test-section">
+            <h2>📝 8. اختبار حقول إدخال المنتجات</h2>
+            <div id="inputFieldsTest"></div>
+            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                <strong>📋 التعليمات:</strong><br>
+                1. انقر على أي حقل من الحقول أدناه<br>
+                2. يجب أن يفتح المساعد الذكي تلقائياً<br>
+                3. يجب أن يقرأ المساعد رسالة توجيهية لكل حقل<br>
+                4. حقول التاريخ ستوجه لإدخال اليوم والشهر والسنة<br>
+                5. <strong>ملاحظة:</strong> قراءة البيانات المدخلة معطلة في صفحة إضافة منتج<br>
+                6. استخدم أزرار الاختبار المختلفة للتحقق من الوظائف
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">اسم المنتج:</label>
+                    <input type="text" id="productName" placeholder="اكتب اسم المنتج..." 
+                           style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">السعر:</label>
+                    <input type="number" id="price" placeholder="أدخل السعر..." step="0.01"
+                           style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">الكمية:</label>
+                    <input type="number" id="quantity" placeholder="أدخل الكمية..."
+                           style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">الخصم (%):</label>
+                    <input type="number" id="discount" placeholder="نسبة الخصم..." step="0.01"
+                           style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">الباركود:</label>
+                    <input type="text" id="barcode" placeholder="أدخل الباركود..."
+                           style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">شهر الانتهاء:</label>
+                    <select id="expiryMonth" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                        <option value="">اختر الشهر</option>
+                        <option value="1">يناير</option>
+                        <option value="2">فبراير</option>
+                        <option value="3">مارس</option>
+                        <option value="4">أبريل</option>
+                        <option value="5">مايو</option>
+                        <option value="6">يونيو</option>
+                        <option value="7">يوليو</option>
+                        <option value="8">أغسطس</option>
+                        <option value="9">سبتمبر</option>
+                        <option value="10">أكتوبر</option>
+                        <option value="11">نوفمبر</option>
+                        <option value="12">ديسمبر</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">سنة الانتهاء:</label>
+                    <input type="number" id="expiryYear" placeholder="أدخل السنة..." min="2024" max="2030"
+                           style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">تاريخ الإنتاج:</label>
+                    <input type="date" id="productionDate"
+                           style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">تاريخ الإنتاج (يدوي):</label>
+                    <input type="text" id="productionDateManual" placeholder="أدخل اليوم والشهر والسنة..."
+                           style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">تاريخ الانتهاء (يدوي):</label>
+                    <input type="text" id="expiryDateManual" placeholder="أدخل اليوم والشهر والسنة..."
+                           style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                </div>
+            </div>
+            <button class="test-button" onclick="testInputFields()">▶️ اختبار الحقول</button>
+            <button class="test-button" onclick="testVoiceFieldNames()">🔊 اختبار القراءة الصوتية</button>
+            <button class="test-button" onclick="testReadingInputData()">📖 اختبار قراءة البيانات</button>
+            <button class="test-button" onclick="clearInputFields()">🗑️ مسح الحقول</button>
+        </div>
+
+        <!-- تشغيل جميع الاختبارات -->
+        <div class="test-section" style="text-align: center;">
+            <button class="test-button" onclick="runAllTests()" style="font-size: 18px; padding: 15px 40px;">
+                🚀 تشغيل جميع الاختبارات
+            </button>
+        </div>
+    </div>
+
+    <!-- المساعد الذكي -->
+    <script src="ai-core.js"></script>
+    <script src="ai-validation.js"></script>
+    <script src="ai-speech.js"></script>
+    <script src="ai-database.js"></script>
+    <script src="ai-ui.js"></script>
+    <script src="ai-assistant.js"></script>
+
+    <script>
+        // دوال الاختبار
+        function addResult(containerId, message, status) {
+            const container = document.getElementById(containerId);
+            const badge = status === 'success' ? '✅' : status === 'error' ? '❌' : '⚠️';
+            const item = document.createElement('div');
+            item.className = 'test-item ' + status;
+            item.innerHTML = `<span class="status-badge ${status}">${badge}</span>${message}`;
+            container.appendChild(item);
+        }
+
+        function clearResults(containerId) {
+            document.getElementById(containerId).innerHTML = '';
+        }
+
+        // 1. اختبار التحميل
+        function testLoading() {
+            clearResults('loadTest');
+            
+            const components = [
+                { name: 'AICore', obj: window.AICore },
+                { name: 'AIValidation', obj: window.AIValidation },
+                { name: 'AISpeech', obj: window.AISpeech },
+                { name: 'AIDatabase', obj: window.AIDatabase },
+                { name: 'AIUI', obj: window.AIUI }
+            ];
+
+            components.forEach(comp => {
+                if (comp.obj) {
+                    addResult('loadTest', `${comp.name} تم تحميله بنجاح`, 'success');
+                } else {
+                    addResult('loadTest', `${comp.name} فشل التحميل`, 'error');
+                }
+            });
+        }
+
+        // 2. اختبار دعم المتصفح
+        function testBrowser() {
+            clearResults('browserTest');
+
+            const features = [
+                { name: 'localStorage', check: 'localStorage' in window },
+                { name: 'speechSynthesis', check: 'speechSynthesis' in window },
+                { name: 'SpeechRecognition', check: ('webkitSpeechRecognition' in window) || ('SpeechRecognition' in window) },
+                { name: 'AudioContext', check: 'AudioContext' in window || 'webkitAudioContext' in window },
+                { name: 'fetch', check: 'fetch' in window },
+                { name: 'Promise', check: 'Promise' in window },
+                { name: 'async/await', check: true }
+            ];
+
+            features.forEach(feature => {
+                if (feature.check) {
+                    addResult('browserTest', `${feature.name} مدعوم`, 'success');
+                } else {
+                    addResult('browserTest', `${feature.name} غير مدعوم`, 'warning');
+                }
+            });
+
+            // اختبار HTTPS
+            if (location.protocol === 'https:') {
+                addResult('browserTest', 'HTTPS مفعّل (الميكروفون سيعمل)', 'success');
+            } else {
+                addResult('browserTest', 'HTTP (الميكروفون لن يعمل - يحتاج HTTPS)', 'warning');
+            }
+        }
+
+        // 3. اختبار قاعدة المعرفة
+        function testKnowledge() {
+            clearResults('knowledgeTest');
+
+            if (!window.AICore) {
+                addResult('knowledgeTest', 'AICore غير محمّل', 'error');
+                return;
+            }
+
+            const testQueries = [
+                'إزاي أسجل مخزن؟',
+                'كيف أضيف صيدلية؟',
+                'عايز أرفع منتجات كتير',
+                'مشكلة في الطباعة',
+                'كيف أحذف منتج؟'
+            ];
+
+            testQueries.forEach(query => {
+                const result = AICore.findAnswer(query);
+                if (result) {
+                    addResult('knowledgeTest', `"${query}" - تم العثور على إجابة`, 'success');
+                } else {
+                    addResult('knowledgeTest', `"${query}" - لم يتم العثور على إجابة`, 'error');
+                }
+            });
+
+            addResult('knowledgeTest', `إجمالي المواضيع: ${AICore.knowledgeBase.length}`, 'success');
+        }
+
+        // 4. اختبار التحقق
+        function testValidation() {
+            clearResults('validationTest');
+
+            if (!window.AIValidation) {
+                addResult('validationTest', 'AIValidation غير محمّل', 'error');
+                return;
+            }
+
+            const tests = [
+                { rule: 'phone', value: '01012345678', expected: true },
+                { rule: 'phone', value: '123', expected: false },
+                { rule: 'email', value: 'test@example.com', expected: true },
+                { rule: 'email', value: 'invalid', expected: false },
+                { rule: 'number', value: '100', expected: true },
+                { rule: 'number', value: 'abc', expected: false }
+            ];
+
+            tests.forEach(test => {
+                const input = document.createElement('input');
+                input.value = test.value;
+                const result = AIValidation.rules[test.rule].validate(test.value);
+                
+                if (result === test.expected) {
+                    addResult('validationTest', `${test.rule}: "${test.value}" - صحيح`, 'success');
+                } else {
+                    addResult('validationTest', `${test.rule}: "${test.value}" - خطأ`, 'error');
+                }
+            });
+        }
+
+        // 5. اختبار الصوت
+        function testSpeech() {
+            clearResults('speechTest');
+
+            if (!window.AISpeech) {
+                addResult('speechTest', 'AISpeech غير محمّل', 'error');
+                return;
+            }
+
+            const support = AISpeech.isSupported();
+            
+            if (support.synthesis) {
+                addResult('speechTest', 'الرد الصوتي مدعوم', 'success');
+                AISpeech.speak('مرحباً، أنا المساعد الذكي. هذا اختبار للصوت.');
+                addResult('speechTest', 'تم تشغيل رسالة صوتية تجريبية', 'success');
+            } else {
+                addResult('speechTest', 'الرد الصوتي غير مدعوم', 'error');
+            }
+        }
+
+        function testRecognition() {
+            clearResults('speechTest');
+
+            if (!window.AISpeech) {
+                addResult('speechTest', 'AISpeech غير محمّل', 'error');
+                return;
+            }
+
+            const support = AISpeech.isSupported();
+            
+            if (support.recognition) {
+                addResult('speechTest', 'التعرف الصوتي مدعوم', 'success');
+                addResult('speechTest', 'اضغط على زر الميكروفون في المساعد للاختبار', 'warning');
+            } else {
+                addResult('speechTest', 'التعرف الصوتي غير مدعوم', 'error');
+            }
+        }
+
+        // 6. اختبار البحث
+        function testSearch() {
+            clearResults('searchTest');
+
+            if (!window.AIDatabase) {
+                addResult('searchTest', 'AIDatabase غير محمّل', 'error');
+                return;
+            }
+
+            // تحميل بيانات فارغة للاختبار
+            localStorage.setItem('products', JSON.stringify([]));
+
+            AIDatabase.loadLocalData();
+
+            const searchTests = [
+                'باراسيتامول',
+                'أسبرين',
+                'فيتامين'
+            ];
+
+            searchTests.forEach(query => {
+                const results = AIDatabase.searchProducts(query);
+                if (results.length > 0) {
+                    addResult('searchTest', `البحث عن "${query}" - وجد ${results.length} نتيجة`, 'success');
+                } else {
+                    addResult('searchTest', `البحث عن "${query}" - لم يجد نتائج`, 'warning');
+                }
+            });
+        }
+
+        // 7. اختبار الواجهة
+        function testUI() {
+            clearResults('uiTest');
+
+            if (!window.AIUI) {
+                addResult('uiTest', 'AIUI غير محمّل', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('aiAssistantBtn');
+            const panel = document.getElementById('aiAssistantPanel');
+
+            if (btn) {
+                addResult('uiTest', 'زر المساعد موجود', 'success');
+            } else {
+                addResult('uiTest', 'زر المساعد غير موجود', 'error');
+            }
+
+            if (panel) {
+                addResult('uiTest', 'لوحة المساعد موجودة', 'success');
+            } else {
+                addResult('uiTest', 'لوحة المساعد غير موجودة', 'error');
+            }
+
+            // اختبار فتح المساعد
+            AIUI.open();
+            setTimeout(() => {
+                if (AIUI.isOpen) {
+                    addResult('uiTest', 'فتح المساعد يعمل', 'success');
+                    AIUI.close();
+                } else {
+                    addResult('uiTest', 'فتح المساعد لا يعمل', 'error');
+                }
+            }, 500);
+        }
+
+        // 8. اختبار حقول الإدخال
+        function testInputFields() {
+            clearResults('inputFieldsTest');
+            
+            // التحقق من وجود المساعد
+            if (!window.AIUI) {
+                addResult('inputFieldsTest', 'المساعد الذكي غير محمّل', 'error');
+                return;
+            }
+            
+            addResult('inputFieldsTest', 'المساعد الذكي محمّل بنجاح', 'success');
+            
+            // التحقق من وجود المساعد الصوتي
+            if (window.AISpeech) {
+                addResult('inputFieldsTest', 'المساعد الصوتي متاح', 'success');
+            } else {
+                addResult('inputFieldsTest', 'المساعد الصوتي غير متاح', 'warning');
+            }
+            
+            // التحقق من وجود الحقول
+            const fields = ['productName', 'price', 'quantity', 'discount', 'barcode', 'expiryMonth', 'expiryYear', 'productionDate'];
+            let fieldsFound = 0;
+            
+            fields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    fieldsFound++;
+                    addResult('inputFieldsTest', `حقل ${fieldId} موجود`, 'success');
+                } else {
+                    addResult('inputFieldsTest', `حقل ${fieldId} غير موجود`, 'error');
+                }
+            });
+            
+            addResult('inputFieldsTest', `تم العثور على ${fieldsFound}/${fields.length} حقل`, 'success');
+            
+            // اختبار التركيز التلقائي مع القراءة الصوتية
+            setTimeout(() => {
+                const productNameField = document.getElementById('productName');
+                if (productNameField) {
+                    productNameField.focus();
+                    addResult('inputFieldsTest', 'تم التركيز على حقل اسم المنتج - يجب أن يفتح المساعد ويقرأ الاسم', 'warning');
+                }
+            }, 1000);
+            
+            // اختبار النقر على حقل السعر
+            setTimeout(() => {
+                const priceField = document.getElementById('price');
+                if (priceField) {
+                    priceField.click();
+                    addResult('inputFieldsTest', 'تم النقر على حقل السعر - يجب أن يقرأ المساعد "حقل السعر"', 'warning');
+                }
+            }, 2000);
+        }
+
+        function testVoiceFieldNames() {
+            clearResults('inputFieldsTest');
+            
+            if (!window.AISpeech) {
+                addResult('inputFieldsTest', 'المساعد الصوتي غير متاح', 'error');
+                return;
+            }
+            
+            addResult('inputFieldsTest', 'بدء اختبار قراءة أسماء الحقول مع رسائل مخصصة...', 'success');
+            
+            const fieldTests = [
+                { id: 'productName', expectedMessage: 'ادخل اسم المنتج' },
+                { id: 'price', expectedMessage: 'ادخل سعر المنتج' },
+                { id: 'quantity', expectedMessage: 'ادخل كمية المنتج' },
+                { id: 'discount', expectedMessage: 'ادخل نسبة الخصم' },
+                { id: 'productionDateManual', expectedMessage: 'اختر تاريخ الإنتاج، ادخل اليوم والشهر والسنة' },
+                { id: 'expiryDateManual', expectedMessage: 'اختر تاريخ الانتهاء، ادخل اليوم والشهر والسنة' },
+                { id: 'expiryMonth', expectedMessage: 'اختر شهر انتهاء الصلاحية' },
+                { id: 'expiryYear', expectedMessage: 'اختر سنة انتهاء الصلاحية' }
+            ];
+            
+            fieldTests.forEach((test, index) => {
+                setTimeout(() => {
+                    const field = document.getElementById(test.id);
+                    if (field) {
+                        // اختبار التركيز
+                        field.focus();
+                        addResult('inputFieldsTest', `التركيز على ${test.id} - يجب أن يُقرأ "${test.expectedMessage}"`, 'success');
+                        
+                        // اختبار النقر بعد فترة بسيطة
+                        setTimeout(() => {
+                            field.click();
+                            addResult('inputFieldsTest', `النقر على ${test.id} - يجب أن يُقرأ "${test.expectedMessage}" (نفس رسالة التركيز)`, 'success');
+                        }, 800);
+                    }
+                }, (index + 1) * 2000);
+            });
+        }
+
+        function testReadingInputData() {
+            clearResults('inputFieldsTest');
+            
+            if (!window.AISpeech) {
+                addResult('inputFieldsTest', 'المساعد الصوتي غير متاح', 'error');
+                return;
+            }
+            
+            addResult('inputFieldsTest', 'بدء اختبار قراءة البيانات المدخلة...', 'success');
+            
+            // التحقق من الصفحة الحالية
+            const isAddProductPage = window.location.pathname.includes('add-product') || 
+                                 window.location.href.includes('add-product');
+            
+            if (isAddProductPage) {
+                addResult('inputFieldsTest', '⚠️ قراءة البيانات المدخلة معطلة في صفحة إضافة منتج', 'warning');
+                addResult('inputFieldsTest', '✅ سيتم اختبار قراءة أسماء الحقول فقط', 'success');
+            } else {
+                addResult('inputFieldsTest', '✅ قراءة البيانات المدخلة مفعلة في هذه الصفحة', 'success');
+            }
+            
+            // اختبار إدخال البيانات وقراءتها (إذا كانت مفعلة)
+            const testData = [
+                { id: 'productName', value: 'باراسيتامول', expected: 'اسم المنتج: باراسيتامول' },
+                { id: 'price', value: '25.50', expected: 'السعر: 25.5 جنيه' },
+                { id: 'quantity', value: '100', expected: 'الكمية: 100 قطعة' },
+                { id: 'discount', value: '10', expected: 'الخصم: 10 بالمئة' },
+                { id: 'barcode', value: '123456789', expected: 'الباركود: 123456789' },
+                { id: 'expiryMonth', value: '12', expected: 'شهر الانتهاء: ديسمبر' },
+                { id: 'expiryYear', value: '2025', expected: 'سنة الانتهاء: 2025' }
+            ];
+            
+            testData.forEach((test, index) => {
+                setTimeout(() => {
+                    const field = document.getElementById(test.id);
+                    if (field) {
+                        field.value = test.value;
+                        field.dispatchEvent(new Event('input', { bubbles: true }));
+                        
+                        if (isAddProductPage) {
+                            addResult('inputFieldsTest', `إدخال ${test.expected} - لن يُقرأ (معطلة في صفحة إضافة منتج)`, 'warning');
+                        } else {
+                            addResult('inputFieldsTest', `إدخال ${test.expected} - يجب أن يُقرأ`, 'success');
+                        }
+                    }
+                }, (index + 1) * 2000);
+            });
+        }
+
+        function clearInputFields() {
+            const fields = ['productName', 'price', 'quantity', 'discount', 'barcode', 'expiryMonth', 'expiryYear', 'productionDate', 'productionDateManual', 'expiryDateManual'];
+            fields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.value = '';
+                }
+            });
+            clearResults('inputFieldsTest');
+            addResult('inputFieldsTest', 'تم مسح جميع الحقول', 'success');
+        }
+
+        // تشغيل جميع الاختبارات
+        function runAllTests() {
+            testLoading();
+            setTimeout(() => testBrowser(), 500);
+            setTimeout(() => testKnowledge(), 1000);
+            setTimeout(() => testValidation(), 1500);
+            setTimeout(() => testSearch(), 2000);
+            setTimeout(() => testUI(), 2500);
+            setTimeout(() => testInputFields(), 3000);
+            
+            // رسالة نهائية
+            setTimeout(() => {
+                if (window.AIValidation) {
+                    AIValidation.showToast('✅ اكتملت جميع الاختبارات', 'success');
+                }
+            }, 3000);
+        }
+
+        // تشغيل تلقائي عند التحميل
+        window.addEventListener('load', () => {
+            console.log('🧪 صفحة الاختبار جاهزة');
+            console.log('اضغط على "تشغيل جميع الاختبارات" للبدء');
+        });
+    </script>
+</body>
+</html>

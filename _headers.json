@@ -1,0 +1,78 @@
+{
+  "headers": [
+    {
+      "source": "*.css",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        },
+        {
+          "key": "Expires",
+          "value": "Thu, 31 Dec 2030 23:59:59 GMT"
+        }
+      ]
+    },
+    {
+      "source": "*.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        },
+        {
+          "key": "Expires",
+          "value": "Thu, 31 Dec 2030 23:59:59 GMT"
+        }
+      ]
+    },
+    {
+      "source": "*.png",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000"
+        },
+        {
+          "key": "Expires",
+          "value": "Thu, 31 Dec 2030 23:59:59 GMT"
+        }
+      ]
+    },
+    {
+      "source": "*.jpg",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000"
+        },
+        {
+          "key": "Expires",
+          "value": "Thu, 31 Dec 2030 23:59:59 GMT"
+        }
+      ]
+    },
+    {
+      "source": "*.webp",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000"
+        },
+        {
+          "key": "Expires",
+          "value": "Thu, 31 Dec 2030 23:59:59 GMT"
+        }
+      ]
+    },
+    {
+      "source": "*.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
+    }
+  ]
+}

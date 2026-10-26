@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الصوت → Supabase مباشرة</title>
+    <link href="libs/cairo.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .flow-diagram {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .flow-step {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .mic-button {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .mic-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .mic-button.recording {
+            background: linear-gradient(135deg, #f44336 0%, #e91e63 100%);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .status-box {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            min-height: 100px;
+        }
+
+        .status-title {
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .status-content {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .json-box {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            background: #f5f5f5;
+            margin: 0 5px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .step.active {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .step.completed {
+            background: #4caf50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎤 الصوت → Supabase مباشرة</h1>
+
+        <div class="flow-diagram">
+            <div class="flow-step">🎤 النص المسموع</div>
+            <div style="font-size: 24px; margin: 10px 0;">↓</div>
+            <div class="flow-step">📝 تحويل لنص مكتوب</div>
+            <div style="font-size: 24px; margin: 10px 0;">↓</div>
+            <div class="flow-step">📊 تحويل لـ JSON</div>
+            <div style="font-size: 24px; margin: 10px 0;">↓</div>
+            <div class="flow-step">🗄️ إرسال لـ Supabase</div>
+        </div>
+
+        <div class="step-indicator">
+            <div class="step" id="step1">🎤 استماع</div>
+            <div class="step" id="step2">📝 تحويل</div>
+            <div class="step" id="step3">📊 JSON</div>
+            <div class="step" id="step4">🗄️ إرسال</div>
+        </div>
+
+        <button class="mic-button" id="micButton">
+            🎤 ابدأ التسجيل الصوتي
+        </button>
+
+        <div class="status-box">
+            <div class="status-title">📝 النص المسموع:</div>
+            <div class="status-content" id="transcript">انقر على الميكروفون وقل: "اسم المنتج، الكمية، السعر"</div>
+        </div>
+
+        <div class="status-box">
+            <div class="status-title">📊 البيانات JSON:</div>
+            <div class="json-box" id="jsonData">{ }</div>
+        </div>
+
+        <div id="statusMessage"></div>
+    </div>
+
+    <script src="libs/supabase.min.js"></script>
+    <script>
+        // ===== إعدادات Supabase =====
+        const SUPABASE_URL = 'https://iksjhjxwphmvthryfeae.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlrc2poanh3cGhtdnRocnlmZWFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ2NjE5NjEsImV4cCI6MjA1MDIzNzk2MX0.3b7wQ8v7hXkL5yF6Z7mN8pQ9rR0sT1uV2wX3yZ4a5b';
+        const { createClient } = window.supabase;
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // ===== العناصر =====
+        const micButton = document.getElementById('micButton');
+        const transcriptDiv = document.getElementById('transcript');
+        const jsonDataDiv = document.getElementById('jsonData');
+        const statusMessageDiv = document.getElementById('statusMessage');
+
+        // ===== Speech Recognition =====
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+        let isRecording = false;
+
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.lang = 'ar-EG';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+        }
+
+        // ===== زر الميكروفون =====
+        micButton.addEventListener('click', () => {
+            if (!recognition) {
+                showStatus('المتصفح لا يدعم التعرف الصوتي', 'error');
+                return;
+            }
+
+            if (isRecording) {
+                recognition.stop();
+                return;
+            }
+
+            // بدء التسجيل
+            recognition.start();
+            isRecording = true;
+            micButton.classList.add('recording');
+            micButton.textContent = '🔴 جاري التسجيل...';
+            transcriptDiv.textContent = 'استمع...';
+            updateStep(1);
+        });
+
+        // ===== عند استقبال النص =====
+        recognition.onresult = async (event) => {
+            const transcript = event.results[0][0].transcript;
+            
+            // الخطوة 1: عرض النص المسموع
+            console.log('🎤 النص المسموع:', transcript);
+            transcriptDiv.textContent = transcript;
+            updateStep(1, true);
+            
+            // الخطوة 2: تحويل لنص مكتوب (تم بالفعل)
+            updateStep(2);
+            await sleep(500);
+            updateStep(2, true);
+            
+            // الخطوة 3: تحويل لـ JSON
+            updateStep(3);
+            const jsonData = convertToJSON(transcript);
+            jsonDataDiv.textContent = JSON.stringify(jsonData, null, 2);
+            console.log('📊 البيانات JSON:', jsonData);
+            await sleep(500);
+            updateStep(3, true);
+            
+            // الخطوة 4: إرسال لـ Supabase
+            updateStep(4);
+            await sendToSupabase(jsonData);
+        };
+
+        recognition.onend = () => {
+            isRecording = false;
+            micButton.classList.remove('recording');
+            micButton.textContent = '🎤 ابدأ التسجيل الصوتي';
+        };
+
+        recognition.onerror = (event) => {
+            showStatus('خطأ في التعرف الصوتي: ' + event.error, 'error');
+            isRecording = false;
+            micButton.classList.remove('recording');
+            micButton.textContent = '🎤 ابدأ التسجيل الصوتي';
+        };
+
+        // ===== تحويل النص إلى JSON =====
+        function convertToJSON(text) {
+            console.log('📝 تحويل النص إلى JSON...');
+            
+            // تنظيف النص
+            text = text.replace(/،/g, ',').replace(/\s+/g, ' ').trim();
+            
+            // تقسيم النص بالفاصلة
+            const parts = text.split(',').map(p => p.trim());
+            
+            // استخراج البيانات
+            const jsonData = {
+                name: '',
+                quantity: 0,
+                price: 0.00,
+                discount: 0,
+                production_date: null,
+                expiry_date: null,
+                warehouse_id: 'default',
+                created_at: new Date().toISOString()
+            };
+            
+            if (parts.length >= 1) {
+                // الاسم (الجزء الأول)
+                jsonData.name = extractName(parts[0]);
+            }
+            
+            if (parts.length >= 2) {
+                // الكمية (الجزء الثاني)
+                jsonData.quantity = extractNumber(parts[1]);
+            }
+            
+            if (parts.length >= 3) {
+                // السعر (الجزء الثالث - يدعم الكسور)
+                jsonData.price = extractPrice(parts[2]);
+            }
+            
+            if (parts.length >= 4) {
+                // الخصم (الجزء الرابع)
+                jsonData.discount = extractNumber(parts[3]);
+            }
+            
+            console.log('✅ تم التحويل إلى JSON:', jsonData);
+            return jsonData;
+        }
+
+        // ===== استخراج الاسم =====
+        function extractName(text) {
+            // إزالة الأرقام
+            return text.replace(/\d+/g, '').trim();
+        }
+
+        // ===== استخراج الرقم =====
+        function extractNumber(text) {
+            // تحويل الأرقام العربية للإنجليزية
+            const arabicToEnglish = {
+                '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+                '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
+            };
+            
+            text = text.replace(/[٠-٩]/g, d => arabicToEnglish[d]);
+            
+            // استخراج الرقم
+            const match = text.match(/\d+/);
+            return match ? parseInt(match[0]) : 0;
+        }
+
+        // ===== استخراج السعر (مع دعم الكسور) =====
+        function extractPrice(text) {
+            // تحويل الأرقام العربية
+            const arabicToEnglish = {
+                '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+                '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
+            };
+            
+            text = text.replace(/[٠-٩]/g, d => arabicToEnglish[d]);
+            
+            // دعم الكسور: "25 و 50" أو "25.50"
+            text = text.replace(/\s*و\s*/g, '.');
+            text = text.replace(/,/g, '.');
+            
+            // استخراج الرقم مع الكسور
+            const match = text.match(/\d+\.?\d*/);
+            return match ? parseFloat(match[0]) : 0.00;
+        }
+
+        // ===== إرسال إلى Supabase =====
+        async function sendToSupabase(jsonData) {
+            console.log('🗄️ إرسال البيانات إلى Supabase...');
+            console.log('📤 البيانات المرسلة:', jsonData);
+            
+            try {
+                const { data, error } = await supabase
+                    .from('products')
+                    .insert([jsonData])
+                    .select();
+
+                if (error) {
+                    console.error('❌ خطأ في الإرسال:', error);
+                    showStatus('❌ فشل الإرسال: ' + error.message, 'error');
+                    updateStep(4, false);
+                    return;
+                }
+
+                console.log('✅ تم الإرسال بنجاح:', data);
+                showStatus('✅ تم إضافة المنتج بنجاح في Supabase!', 'success');
+                updateStep(4, true);
+                
+                // إعادة تعيين بعد 3 ثواني
+                setTimeout(() => {
+                    resetSteps();
+                    transcriptDiv.textContent = 'انقر على الميكروفون لإضافة منتج جديد';
+                    jsonDataDiv.textContent = '{ }';
+                    statusMessageDiv.innerHTML = '';
+                }, 3000);
+                
+            } catch (error) {
+                console.error('❌ خطأ في الاتصال:', error);
+                showStatus('❌ خطأ في الاتصال بـ Supabase', 'error');
+                updateStep(4, false);
+            }
+        }
+
+        // ===== تحديث الخطوة =====
+        function updateStep(stepNumber, completed = false) {
+            const step = document.getElementById(`step${stepNumber}`);
+            if (completed) {
+                step.classList.add('completed');
+                step.classList.remove('active');
+            } else {
+                step.classList.add('active');
+            }
+        }
+
+        // ===== إعادة تعيين الخطوات =====
+        function resetSteps() {
+            for (let i = 1; i <= 4; i++) {
+                const step = document.getElementById(`step${i}`);
+                step.classList.remove('active', 'completed');
+            }
+        }
+
+        // ===== عرض الرسالة =====
+        function showStatus(message, type) {
+            statusMessageDiv.innerHTML = `<div class="${type}">${message}</div>`;
+        }
+
+        // ===== انتظار =====
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // ===== اختبار الاتصال عند التحميل =====
+        window.addEventListener('DOMContentLoaded', async () => {
+            console.log('🔗 اختبار الاتصال بـ Supabase...');
+            try {
+                const { data, error } = await supabase.from('products').select('count');
+                if (error) throw error;
+                console.log('✅ الاتصال بـ Supabase ناجح!');
+                showStatus('✅ الاتصال بـ Supabase ناجح - جاهز للاستخدام', 'info');
+                setTimeout(() => {
+                    statusMessageDiv.innerHTML = '';
+                }, 3000);
+            } catch (error) {
+                console.error('❌ فشل الاتصال بـ Supabase:', error);
+                showStatus('❌ فشل الاتصال بـ Supabase - تحقق من الإعدادات', 'error');
+            }
+        });
+    </script>
+</body>
+</html>

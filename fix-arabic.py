@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+import re
+
+def fix_arabic_text():
+    """Fix Arabic text encoding issues in products.html"""
+    try:
+        with open('products.html', 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # Replace question marks with proper Arabic text
+        content = content.replace('????? ??????', '????? ??????')
+        content = content.replace('????? ??????', '????? ??????')
+        content = content.replace('????? ??????', '????? ??????')
+        content = content.replace('????? ??????', '????? ??????')
+        
+        with open('products.html', 'w', encoding='utf-8') as f:
+            f.write(content)
+            
+        print("Fixed Arabic text in products.html")
+        
+    except Exception as e:
+        print(f"Error: {e}")
+
+if __name__ == "__main__":
+    fix_arabic_text()

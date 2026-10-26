@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار الميكروفون - نسخة بسيطة</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; text-align: center; }
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .test-btn { background: #28a745; color: white; }
+        .test-btn:hover { background: #218838; }
+        .record-btn { background: #dc3545; color: white; }
+        .record-btn:hover { background: #c82333; }
+        .record-btn.recording { animation: pulse 1s infinite; }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        #status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f8f9fa;
+            min-height: 100px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            direction: ltr;
+            text-align: left;
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .info { color: #17a2b8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎤 اختبار الميكروفون</h1>
+        
+        <button class="test-btn" onclick="testMicrophone()">
+            🔍 اختبار الميكروفون (getUserMedia)
+        </button>
+        
+        <button class="record-btn" id="recordBtn" onclick="testSpeechRecognition()">
+            🎙️ اختبار التعرف الصوتي
+        </button>
+        
+        <button class="test-btn" onclick="checkPermissions()">
+            🔐 التحقق من الأذونات
+        </button>
+        
+        <div id="status">اضغط على أي زر لبدء الاختبار...</div>
+    </div>
+
+    <script>
+        const status = document.getElementById('status');
+        const recordBtn = document.getElementById('recordBtn');
+        let recognition = null;
+
+        function log(message, type = 'info') {
+            const color = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            status.innerHTML += `<div class="${color}">${message}</div>`;
+            status.scrollTop = status.scrollHeight;
+            console.log(message);
+        }
+
+        // اختبار getUserMedia
+        async function testMicrophone() {
+            status.innerHTML = '';
+            log('🔍 بدء اختبار getUserMedia...', 'info');
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true
+                    },
+                    video: false 
+                });
+                
+                log('✅ تم الحصول على إذن الميكروفون!', 'success');
+                
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const analyser = audioContext.createAnalyser();
+                const source = audioContext.createMediaStreamSource(stream);
+                source.connect(analyser);
+                
+                analyser.fftSize = 256;
+                const dataArray = new Uint8Array(analyser.frequencyBinCount);
+                
+                log('🔊 جاري مراقبة مستوى الصوت...', 'info');
+                
+                let silenceCount = 0;
+                const checkVolume = () => {
+                    analyser.getByteFrequencyData(dataArray);
+                    const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
+                    
+                    if (average > 30) {
+                        log(`🗣️ تم اكتشاف صوت! (مستوى: ${Math.round(average)})`, 'success');
+                        silenceCount = 0;
+                    } else {
+                        silenceCount++;
+                        if (silenceCount % 10 === 0) {
+                            log(`🔇 لا يوجد صوت (مستوى: ${Math.round(average)})`, 'info');
+                        }
+                    }
+                    
+                    if (silenceCount < 100) {
+                        requestAnimationFrame(checkVolume);
+                    } else {
+                        log('🛑 تم إيقاف المراقبة', 'info');
+                        stream.getTracks().forEach(track => track.stop());
+                    }
+                };
+                
+                checkVolume();
+                
+            } catch (error) {
+                log(`❌ خطأ: ${error.name} - ${error.message}`, 'error');
+                
+                if (error.name === 'NotAllowedError') {
+                    log('💡 الحل: اضغط على أيقونة القفل في المتصفح واسمح بالميكروفون', 'info');
+                } else if (error.name === 'NotFoundError') {
+                    log('💡 الحل: تأكد من توصيل الميكروفون', 'info');
+                }
+            }
+        }
+
+        // اختبار التعرف الصوتي
+        async function testSpeechRecognition() {
+            status.innerHTML = '';
+            log('🎙️ بدء اختبار التعرف الصوتي...', 'info');
+            
+            // التحقق من الدعم
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                log('❌ المتصفح لا يدعم التعرف الصوتي!', 'error');
+                log('💡 استخدم Chrome أو Edge', 'info');
+                return;
+            }
+            
+            // طلب الإذن أولاً
+            try {
+                log('🔐 طلب إذن الميكروفون...', 'info');
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                stream.getTracks().forEach(track => track.stop());
+                log('✅ تم الحصول على الإذن', 'success');
+            } catch (error) {
+                log(`❌ فشل في الحصول على الإذن: ${error.message}`, 'error');
+                return;
+            }
+            
+            // إعداد التعرف الصوتي
+            recognition = new SpeechRecognition();
+            recognition.lang = 'ar-EG';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+            
+            recognition.onstart = () => {
+                log('🎤 بدأ الاستماع... تحدث الآن!', 'success');
+                recordBtn.classList.add('recording');
+                recordBtn.textContent = '⏹️ إيقاف الاستماع';
+            };
+            
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                const confidence = event.results[0][0].confidence;
+                log(`📝 النص المكتشف: "${transcript}"`, 'success');
+                log(`📊 مستوى الثقة: ${(confidence * 100).toFixed(1)}%`, 'info');
+            };
+            
+            recognition.onerror = (event) => {
+                log(`❌ خطأ: ${event.error}`, 'error');
+                recordBtn.classList.remove('recording');
+                recordBtn.textContent = '🎙️ اختبار التعرف الصوتي';
+            };
+            
+            recognition.onend = () => {
+                log('🔇 انتهى الاستماع', 'info');
+                recordBtn.classList.remove('recording');
+                recordBtn.textContent = '🎙️ اختبار التعرف الصوتي';
+            };
+            
+            try {
+                recognition.start();
+            } catch (error) {
+                log(`❌ خطأ في بدء الاستماع: ${error.message}`, 'error');
+            }
+        }
+
+        // التحقق من الأذونات
+        async function checkPermissions() {
+            status.innerHTML = '';
+            log('🔐 التحقق من حالة الأذونات...', 'info');
+            
+            if (navigator.permissions) {
+                try {
+                    const result = await navigator.permissions.query({ name: 'microphone' });
+                    log(`📊 حالة إذن الميكروفون: ${result.state}`, 
+                        result.state === 'granted' ? 'success' : 'info');
+                    
+                    result.onchange = () => {
+                        log(`🔄 تغيرت حالة الإذن إلى: ${result.state}`,
+                            result.state === 'granted' ? 'success' : 'info');
+                    };
+                } catch (error) {
+                    log(`⚠️ لا يمكن قراءة حالة الإذن: ${error.message}`, 'info');
+                }
+            } else {
+                log('⚠️ المتصفح لا يدعم Permissions API', 'info');
+            }
+            
+            // معلومات المتصفح
+            log(`🌐 المتصفح: ${navigator.userAgent}`, 'info');
+            log(`💻 نظام التشغيل: ${navigator.platform}`, 'info');
+            log(`🔊 دعم getUserMedia: ${navigator.mediaDevices ? 'نعم' : 'لا'}`, 'info');
+            log(`🎤 دعم SpeechRecognition: ${window.SpeechRecognition || window.webkitSpeechRecognition ? 'نعم' : 'لا'}`, 'info');
+        }
+
+        // اختبار تلقائي عند التحميل
+        window.onload = () => {
+            log('✅ تم تحميل الصفحة', 'success');
+            log('اضغط على أي زر لبدء الاختبار...', 'info');
+        };
+    </script>
+</body>
+</html>

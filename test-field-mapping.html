@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار تطابق الحقول - Supabase</title>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            color: #333;
+            padding: 30px;
+            border-radius: 15px;
+        }
+        h1 {
+            text-align: center;
+            color: #667eea;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: right;
+        }
+        th {
+            background: #667eea;
+            color: white;
+        }
+        .code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 اختبار تطابق الحقول مع Supabase</h1>
+
+        <div class="test-section">
+            <h2>📋 الحقول المرسلة من add-product.html</h2>
+            <div class="code" id="sentFields"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🗄️ الأعمدة المتوقعة في Supabase</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>اسم العمود</th>
+                        <th>النوع</th>
+                        <th>مطلوب</th>
+                        <th>الحالة</th>
+                    </tr>
+                </thead>
+                <tbody id="expectedFields"></tbody>
+            </table>
+        </div>
+
+        <div class="test-section">
+            <h2>✅ نتيجة التطابق</h2>
+            <div id="matchResult"></div>
+        </div>
+
+        <div style="text-align: center;">
+            <button onclick="runTest()">🧪 تشغيل الاختبار</button>
+            <button onclick="testSupabaseConnection()">🔗 اختبار الاتصال بـ Supabase</button>
+        </div>
+
+        <div class="test-section" id="connectionResult" style="display: none;">
+            <h2>🔗 نتيجة الاتصال</h2>
+            <div id="connectionStatus"></div>
+        </div>
+    </div>
+
+    <script src="libs/supabase.min.js"></script>
+    <script>
+        // الحقول المرسلة من add-product.html
+        const sentFields = {
+            name: "TEXT",
+            quantity: "INTEGER",
+            price: "DECIMAL(10,2)",
+            discount: "DECIMAL(5,2)",
+            production_date: "DATE",
+            expiry_date: "DATE",
+            warehouse_id: "TEXT",
+            created_at: "TIMESTAMP"
+        };
+
+        // الأعمدة المتوقعة في Supabase
+        const expectedFields = {
+            id: { type: "BIGSERIAL", required: false, auto: true },
+            name: { type: "TEXT", required: true, auto: false },
+            quantity: { type: "INTEGER", required: true, auto: false },
+            price: { type: "DECIMAL(10,2)", required: true, auto: false },
+            discount: { type: "DECIMAL(5,2)", required: false, auto: false },
+            production_date: { type: "DATE", required: false, auto: false },
+            expiry_date: { type: "DATE", required: false, auto: false },
+            warehouse_id: { type: "TEXT", required: true, auto: false },
+            created_at: { type: "TIMESTAMP", required: false, auto: true },
+            updated_at: { type: "TIMESTAMP", required: false, auto: true }
+        };
+
+        function runTest() {
+            // عرض الحقول المرسلة
+            const sentFieldsDiv = document.getElementById('sentFields');
+            sentFieldsDiv.innerHTML = `<pre>${JSON.stringify(sentFields, null, 2)}</pre>`;
+
+            // عرض الأعمدة المتوقعة
+            const expectedFieldsBody = document.getElementById('expectedFields');
+            expectedFieldsBody.innerHTML = '';
+            
+            for (const [field, info] of Object.entries(expectedFields)) {
+                const row = document.createElement('tr');
+                const isSent = sentFields.hasOwnProperty(field);
+                const status = info.auto ? '✅ تلقائي' : (isSent ? '✅ موجود' : '❌ مفقود');
+                const statusClass = info.auto || isSent ? 'success' : 'error';
+                
+                row.innerHTML = `
+                    <td>${field}</td>
+                    <td>${info.type}</td>
+                    <td>${info.required ? 'نعم' : 'لا'}</td>
+                    <td class="${statusClass}">${status}</td>
+                `;
+                expectedFieldsBody.appendChild(row);
+            }
+
+            // نتيجة التطابق
+            const matchResult = document.getElementById('matchResult');
+            const missingFields = [];
+            const extraFields = [];
+
+            // التحقق من الحقول المفقودة
+            for (const [field, info] of Object.entries(expectedFields)) {
+                if (info.required && !info.auto && !sentFields.hasOwnProperty(field)) {
+                    missingFields.push(field);
+                }
+            }
+
+            // التحقق من الحقول الزائدة
+            for (const field of Object.keys(sentFields)) {
+                if (!expectedFields.hasOwnProperty(field)) {
+                    extraFields.push(field);
+                }
+            }
+
+            if (missingFields.length === 0 && extraFields.length === 0) {
+                matchResult.innerHTML = `
+                    <div class="success" style="font-size: 20px; text-align: center;">
+                        ✅ جميع الحقول متطابقة 100%!
+                    </div>
+                `;
+            } else {
+                let html = '';
+                if (missingFields.length > 0) {
+                    html += `<div class="error">❌ حقول مفقودة: ${missingFields.join(', ')}</div>`;
+                }
+                if (extraFields.length > 0) {
+                    html += `<div class="error">⚠️ حقول زائدة: ${extraFields.join(', ')}</div>`;
+                }
+                matchResult.innerHTML = html;
+            }
+        }
+
+        async function testSupabaseConnection() {
+            const resultDiv = document.getElementById('connectionResult');
+            const statusDiv = document.getElementById('connectionStatus');
+            resultDiv.style.display = 'block';
+            statusDiv.innerHTML = '<p>⏳ جاري الاتصال بـ Supabase...</p>';
+
+            try {
+                const SUPABASE_URL = 'https://iksjhjxwphmvthryfeae.supabase.co';
+                const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlrc2poanh3cGhtdnRocnlmZWFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ2NjE5NjEsImV4cCI6MjA1MDIzNzk2MX0.3b7wQ8v7hXkL5yF6Z7mN8pQ9rR0sT1uV2wX3yZ4a5b';
+                
+                const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+                // اختبار الاتصال
+                const { data, error } = await supabase
+                    .from('products')
+                    .select('*')
+                    .limit(1);
+
+                if (error) {
+                    statusDiv.innerHTML = `
+                        <div class="error">
+                            <p>❌ فشل الاتصال بـ Supabase</p>
+                            <p>الخطأ: ${error.message}</p>
+                            <div class="code">${JSON.stringify(error, null, 2)}</div>
+                        </div>
+                    `;
+                } else {
+                    statusDiv.innerHTML = `
+                        <div class="success">
+                            <p>✅ تم الاتصال بـ Supabase بنجاح!</p>
+                            <p>عدد المنتجات: ${data.length}</p>
+                            ${data.length > 0 ? `<div class="code">${JSON.stringify(data[0], null, 2)}</div>` : ''}
+                        </div>
+                    `;
+                }
+
+                // اختبار إضافة منتج تجريبي
+                const testProduct = {
+                    name: "منتج تجريبي",
+                    quantity: 10,
+                    price: 99.99,
+                    discount: 5,
+                    production_date: "2024-01-01",
+                    expiry_date: "2026-01-01",
+                    warehouse_id: "test_warehouse",
+                    created_at: new Date().toISOString()
+                };
+
+                statusDiv.innerHTML += '<p>⏳ جاري اختبار إضافة منتج تجريبي...</p>';
+
+                const { data: insertData, error: insertError } = await supabase
+                    .from('products')
+                    .insert([testProduct])
+                    .select();
+
+                if (insertError) {
+                    statusDiv.innerHTML += `
+                        <div class="error">
+                            <p>❌ فشل إضافة المنتج التجريبي</p>
+                            <p>الخطأ: ${insertError.message}</p>
+                            <div class="code">${JSON.stringify(insertError, null, 2)}</div>
+                        </div>
+                    `;
+                } else {
+                    statusDiv.innerHTML += `
+                        <div class="success">
+                            <p>✅ تم إضافة المنتج التجريبي بنجاح!</p>
+                            <div class="code">${JSON.stringify(insertData[0], null, 2)}</div>
+                        </div>
+                    `;
+
+                    // حذف المنتج التجريبي
+                    await supabase
+                        .from('products')
+                        .delete()
+                        .eq('id', insertData[0].id);
+                    
+                    statusDiv.innerHTML += '<p class="success">✅ تم حذف المنتج التجريبي</p>';
+                }
+
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    <div class="error">
+                        <p>❌ خطأ في الاتصال</p>
+                        <p>${error.message}</p>
+                        <div class="code">${JSON.stringify(error, null, 2)}</div>
+                    </div>
+                `;
+            }
+        }
+
+        // تشغيل الاختبار تلقائياً عند التحميل
+        window.addEventListener('DOMContentLoaded', runTest);
+    </script>
+</body>
+</html>

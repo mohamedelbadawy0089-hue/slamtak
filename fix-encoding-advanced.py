@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+import re
+
+def fix_arabic_encoding_advanced():
+    """Fix Arabic encoding issues in products.html with advanced patterns"""
+    
+    with open('products.html', 'r', encoding='utf-8') as file:
+        content = file.read()
+    
+    # Fix specific patterns one by one
+    fixes = [
+        # Fix click-to-load text
+        (r'<span class="click-to-load">\?+\s+\?+\s+\?+</span>', '<span class="click-to-load">???? ??? ?????</span>'),
+        (r'<span class="click-to-load">\?+\s+\?+</span>', '<span class="click-to-load">???? ??? ?????</span>'),
+        
+        # Fix stat labels
+        (r'<div class="stat-label">\?+\s+\?+</div>', '<div class="stat-label">??? ??????</div>'),
+        (r'<div class="stat-label">\?+\s+\?+\s+\?+</div>', '<div class="stat-label">????? ??????</div>'),
+        (r'<div class="stat-label">\?+\s+\?+\s+\?+\s+\?+</div>', '<div class="stat-label">??? ????? ????????</div>'),
+        
+        # Fix title attributes
+        (r'title="\?+\s+\?+\s+\?+\s+\?+\s+\?+\s+\?+\s+\?+\s+\?+\s+\?+\s+\?+\s+\?+"', 'title="???? ??? ????? ???????"'),
+        (r'title="\?+\s+\?+\s+\?+\s+\?+\s+\?+\s+\?+\s+\?+\s+\?+\s+\?+\s+\?+"', 'title="???? ??? ???????"'),
+        (r'title="\?+\s+\?+\s+\?+\s+\?+\s+\?+\s+\?+\s+\?+\s+\?+"', 'title="???? ??? ???????"'),
+        
+        # Fix remaining question marks
+        (r'\?+', '?')
+    ]
+    
+    for pattern, replacement in fixes:
+        content = re.sub(pattern, replacement, content)
+    
+    # Manual fixes for specific cases
+    content = content.replace('title="? ? ? ?"', 'title="???? ??? ???????"')
+    content = content.replace('title="? ? ? ? ?"', 'title="???? ??? ???????"')
+    content = content.replace('title="? ? ?"', 'title="???? ??? ???????"')
+    
+    with open('products.html', 'w', encoding='utf-8') as file:
+        file.write(content)
+    
+    print("Fixed Arabic encoding issues in products.html with advanced patterns")
+
+if __name__ == "__main__":
+    fix_arabic_encoding_advanced()

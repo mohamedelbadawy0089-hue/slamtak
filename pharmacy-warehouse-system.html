@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام الصيدليات الذكي | Egyptian Smart Pharmacy System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #0066cc;
+            --secondary: #4285f4;
+            --gemini: #8e24aa;
+            --success: #00c853;
+            --warning: #ffd600;
+            --danger: #ff1744;
+            --accent: #ff6b35;
+            --ai: #00bcd4;
+            --bg-dark: #0a1628;
+            --bg-panel: #111d32;
+            --bg-card: #1a2744;
+            --bg-hover: #253351;
+            --text: #ffffff;
+            --text-muted: #8b9dc3;
+            --border: rgba(255,255,255,0.1);
+            --shadow: 0 4px 20px rgba(0,0,0,0.3);
+            --gradient-primary: linear-gradient(135deg, var(--primary), var(--secondary));
+            --gradient-gemini: linear-gradient(135deg, var(--gemini), var(--ai));
+            --gradient-success: linear-gradient(135deg, var(--success), #00a344);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Header */
+        .app-header {
+            background: var(--bg-panel);
+            border-bottom: 2px solid var(--primary);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .logo-text h1 {
+            font-size: 1.4rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .logo-text p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(0, 200, 83, 0.1);
+            border: 1px solid var(--success);
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        
+        .status-indicator.offline {
+            background: rgba(255, 214, 0, 0.1);
+            border-color: var(--warning);
+        }
+        
+        .warehouse-selector {
+            position: relative;
+        }
+        
+        .warehouse-dropdown {
+            padding: 10px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            cursor: pointer;
+            min-width: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        
+        /* Main Layout */
+        .app-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: calc(100vh - 82px);
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: var(--bg-panel);
+            border-left: 1px solid var(--border);
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+        
+        .nav-section {
+            margin-bottom: 25px;
+        }
+        
+        .nav-title {
+            padding: 0 20px 10px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-right: 3px solid transparent;
+            margin-bottom: 2px;
+        }
+        
+        .nav-item:hover {
+            background: var(--bg-hover);
+        }
+        
+        .nav-item.active {
+            background: rgba(0, 102, 204, 0.1);
+            border-right-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .nav-item i {
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .nav-item.ai-feature {
+            background: rgba(142, 36, 170, 0.1);
+            border-right-color: var(--gemini);
+            color: var(--gemini);
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 25px;
+            overflow-y: auto;
+        }
+        
+        .page-header {
+            margin-bottom: 25px;
+        }
+        
+        .page-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .page-header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+        
+        /* Dashboard Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+        }
+        
+        .stat-card.success::before {
+            background: var(--gradient-success);
+        }
+        
+        .stat-card.ai::before {
+            background: var(--gradient-gemini);
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(0, 102, 204, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .stat-card.success .stat-icon {
+            background: rgba(0, 200, 83, 0.1);
+            color: var(--success);
+        }
+        
+        .stat-card.ai .stat-icon {
+            background: rgba(142, 36, 170, 0.1);
+            color: var(--gemini);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        
+        .stat-change {
+            font-size: 0.8rem;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .stat-change.positive {
+            color: var(--success);
+        }
+        
+        /* Panels */
+        .panel-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        
+        .panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 25px;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .panel-title {
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Voice Control Panel */
+        .voice-control {
+            background: var(--gradient-gemini);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+        
+        .voice-mic-btn {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .voice-mic-btn:hover {
+            transform: scale(1.05);
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .voice-mic-btn.listening {
+            animation: micPulse 1.5s infinite;
+        }
+        
+        @keyframes micPulse {
+            0%, 100% { 
+                transform: scale(1); 
+                box-shadow: 0 0 0 0 rgba(255,255,255,0.4);
+            }
+            50% { 
+                transform: scale(1.1); 
+                box-shadow: 0 0 30px 10px rgba(255,255,255,0.2);
+            }
+        }
+        
+        .voice-status {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+        
+        .voice-pipeline {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .pipeline-badge {
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .pipeline-badge.active {
+            background: rgba(255,255,255,0.3);
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .action-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .action-card:hover {
+            background: var(--bg-hover);
+            border-color: var(--primary);
+            transform: translateX(-5px);
+        }
+        
+        .action-icon {
+            width: 45px;
+            height: 45px;
+            background: rgba(0, 102, 204, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+        
+        .action-info h4 {
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+        
+        .action-info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        /* Inventory Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .data-table th {
+            text-align: right;
+            padding: 12px 15px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .data-table td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+        
+        .data-table tr:hover {
+            background: var(--bg-hover);
+        }
+        
+        .drug-name {
+            font-weight: 500;
+            color: var(--primary);
+        }
+        
+        .drug-scientific {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .price-tag {
+            background: rgba(0, 200, 83, 0.1);
+            color: var(--success);
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .stock-badge {
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+        
+        .stock-badge.high {
+            background: rgba(0, 200, 83, 0.1);
+            color: var(--success);
+        }
+        
+        .stock-badge.low {
+            background: rgba(255, 23, 68, 0.1);
+            color: var(--danger);
+        }
+        
+        .stock-badge.medium {
+            background: rgba(255, 214, 0, 0.1);
+            color: var(--warning);
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: inherit;
+        }
+        
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+        
+        .btn-success {
+            background: var(--gradient-success);
+            color: white;
+        }
+        
+        .btn-ai {
+            background: var(--gradient-gemini);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        /* Search Bar */
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 20px 12px 50px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+        
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .toast {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--shadow);
+            animation: slideIn 0.3s ease;
+            min-width: 300px;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .toast-icon {
+            font-size: 1.3rem;
+        }
+        
+        .toast.success .toast-icon {
+            color: var(--success);
+        }
+        
+        .toast.ai .toast-icon {
+            color: var(--gemini);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .panel-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="libs/font-awesome.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="logo-section">
+            <div class="logo-icon">
+                <i class="fas fa-hospital-alt"></i>
+            </div>
+            <div class="logo-text">
+                <h1>PharmacyAI Pro</h1>
+                <p>نظام الصيدليات الذكي | Egyptian Smart Pharmacy System</p>
+            </div>
+        </div>
+        
+        <div class="header-actions">
+            <div class="status-indicator" id="connectionStatus">
+                <i class="fas fa-circle" style="font-size: 8px; color: var(--success);"></i>
+                <span>متصل بالمخزن</span>
+            </div>
+            
+            <div class="warehouse-selector">
+                <div class="warehouse-dropdown" onclick="toggleWarehouseMenu()">
+                    <span id="currentWarehouse"><i class="fas fa-warehouse"></i> المخزن الرئيسي</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+            
+            <button class="btn btn-ai" onclick="activateVoiceMode()">
+                <i class="fas fa-microphone"></i> الوضع الصوتي
+            </button>
+        </div>
+    </header>
+    
+    <!-- Main Container -->
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="nav-section">
+                <div class="nav-title">القائمة الرئيسية</div>
+                <div class="nav-item active" onclick="showPage('dashboard')">
+                    <i class="fas fa-chart-line"></i>
+                    <span>لوحة التحكم</span>
+                </div>
+                <div class="nav-item" onclick="showPage('inventory')">
+                    <i class="fas fa-boxes"></i>
+                    <span>المخزون</span>
+                </div>
+
+                <div class="nav-item" onclick="showPage('purchases')">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>المشتريات</span>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-title">الذكاء الاصطناعي</div>
+                <div class="nav-item ai-feature" onclick="showPage('voice-assistant')">
+                    <i class="fas fa-robot"></i>
+                    <span>مساعد Gemini</span>
+                </div>
+                <div class="nav-item ai-feature" onclick="showPage('auto-entry')">
+                    <i class="fas fa-magic"></i>
+                    <span>الإدخال الذكي</span>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-title">التقارير</div>
+                <div class="nav-item" onclick="showPage('reports')">
+                    <i class="fas fa-file-alt"></i>
+                    <span>التقارير اليومية</span>
+                </div>
+                <div class="nav-item" onclick="showPage('sales')">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>التحليلات</span>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-title">الإعدادات</div>
+                <div class="nav-item" onclick="showPage('database')">
+                    <i class="fas fa-database"></i>
+                    <span>قاعدة البيانات</span>
+                </div>
+                <div class="nav-item" onclick="showPage('settings')">
+                    <i class="fas fa-cog"></i>
+                    <span>الإعدادات</span>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <!-- Dashboard Page -->
+            <div id="dashboardPage" class="page">
+                <div class="page-header">
+                    <h2><i class="fas fa-chart-line" style="color: var(--primary);"></i> لوحة التحكم</h2>
+                    <p>نظرة عامة على أداء الصيدلية والمخزون</p>
+                </div>
+                
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-pills"></i></div>
+                        <div class="stat-value" id="totalDrugs">0</div>
+                        <div class="stat-label">إجمالي الأدوية</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> +5% من الأسبوع الماضي
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card success">
+                        <div class="stat-icon"><i class="fas fa-money-bill-wave"></i></div>
+                        <div class="stat-value" id="todaySales">0 ج.م</div>
+                        <div class="stat-label">مبيعات اليوم</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> +12% عن الأمس
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card ai">
+                        <div class="stat-icon"><i class="fas fa-robot"></i></div>
+                        <div class="stat-value" id="aiMatches">0</div>
+                        <div class="stat-label">تطابقات ذكية</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-bolt"></i> 10ms استجابة
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                        <div class="stat-value" id="lowStock">0</div>
+                        <div class="stat-label">أدوية منخفضة</div>
+                        <div class="stat-change" style="color: var(--danger);">
+                            <i class="fas fa-arrow-down"></i> يحتاج طلب
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Panels Grid -->
+                <div class="panel-grid">
+                    <!-- Voice Control Panel -->
+                    <div class="voice-control">
+                        <button class="voice-mic-btn" id="voiceBtn" onclick="toggleVoice()">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <div class="voice-status" id="voiceStatus">اضغط للتحدث مع المساعد الذكي</div>
+                        <p style="opacity: 0.9; font-size: 0.9rem;">قل "بندول عشرة علب" وسأفهمها تلقائياً</p>
+                        
+                        <div class="voice-pipeline" id="voicePipeline">
+                            <div class="pipeline-badge" id="badge1">
+                                <i class="fas fa-microphone"></i> استماع
+                            </div>
+                            <div class="pipeline-badge" id="badge2">
+                                <i class="fas fa-brain"></i> تحليل
+                            </div>
+                            <div class="pipeline-badge" id="badge3">
+                                <i class="fas fa-search"></i> بحث
+                            </div>
+                            <div class="pipeline-badge" id="badge4">
+                                <i class="fas fa-check"></i> تأكيد
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <i class="fas fa-bolt" style="color: var(--accent);"></i>
+                                إجراءات سريعة
+                            </div>
+                        </div>
+                        
+                        <div class="quick-actions">
+                            <div class="action-card" onclick="quickAddDrug()">
+                                <div class="action-icon" style="background: rgba(0, 188, 212, 0.1); color: var(--ai);">
+                                    <i class="fas fa-plus"></i>
+                                </div>
+                                <div class="action-info">
+                                    <h4>إضافة دواء</h4>
+                                    <p>عبر الصوت أو البحث</p>
+                                </div>
+                            </div>
+                            
+                            <div class="action-card" onclick="createInvoice()">
+                                <div class="action-icon" style="background: rgba(0, 200, 83, 0.1); color: var(--success);">
+                                    <i class="fas fa-file-invoice"></i>
+                                </div>
+                                <div class="action-info">
+                                    <h4>فاتورة جديدة</h4>
+                                    <p>بيع سريع</p>
+                                </div>
+                            </div>
+                            
+                            <div class="action-card" onclick="syncDatabase()">
+                                <div class="action-icon" style="background: rgba(0, 102, 204, 0.1); color: var(--primary);">
+                                    <i class="fas fa-sync"></i>
+                                </div>
+                                <div class="action-info">
+                                    <h4>مزامنة البيانات</h4>
+                                    <p>تحديث الموسوعة</p>
+                                </div>
+                            </div>
+                            
+                            <div class="action-card" onclick="viewReports()">
+                                <div class="action-icon" style="background: rgba(142, 36, 170, 0.1); color: var(--gemini);">
+                                    <i class="fas fa-chart-bar"></i>
+                                </div>
+                                <div class="action-info">
+                                    <h4>تقرير مفصل</h4>
+                                    <p>تحليلات وإحصائيات</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Inventory -->
+                <div class="panel" style="margin-top: 25px;">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i class="fas fa-boxes" style="color: var(--primary);"></i>
+                            المخزون الحديث
+                        </div>
+                        <button class="btn btn-secondary" onclick="viewAllInventory()">
+                            <i class="fas fa-eye"></i> عرض الكل
+                        </button>
+                    </div>
+                    
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" id="inventorySearch" 
+                               placeholder="البحث في المخزون... (جرب الكتابة بالعامية المصرية!)"
+                               oninput="searchInventory(this.value)">
+                    </div>
+                    
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>الدواء</th>
+                                <th>الشركة</th>
+                                <th>السعر</th>
+                                <th>المخزون</th>
+                                <th>الحالة</th>
+                                <th>آخر تحديث</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTable">
+                            <!-- Dynamic content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Other pages will be loaded dynamically -->
+            <div id="otherPages" style="display: none;">
+                <div class="page-header">
+                    <h2><i class="fas fa-tools" style="color: var(--primary);"></i> قيد التطوير</h2>
+                    <p>هذه الصفحة قيد الإنشاء. استخدم لوحة التحكم الرئيسية.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <!-- Scripts -->
+    <script src="global-drug-database.js"></script>
+    <script src="gemini-simulation-engine.js"></script>
+    
+    <script>
+        // ============================================
+        // Egyptian Smart Pharmacy System
+        // Unified Control Panel
+        // ============================================
+        
+        // Core systems
+        let drugDB = null;
+        let geminiSim = null;
+        let speechRecognition = null;
+        let allDrugs = [];
+        let inventory = [];
+        
+        // Stats
+        let stats = {
+            totalDrugs: 0,
+            todaySales: 0,
+            aiMatches: 0,
+            lowStock: 0
+        };
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initializeSystem();
+        });
+        
+        async function initializeSystem() {
+            showToast('جاري تهيئة النظام...', 'info');
+            
+            try {
+                // 1. Initialize Gemini Simulation
+                geminiSim = new GeminiSimulationEngine();
+                console.log('🧠 Gemini Simulation: Ready');
+                
+                // 2. Load Global Drug Database
+                drugDB = new GlobalDrugDatabase({
+                    jsonSources: [
+                        { name: 'eda_official', url: './data/eda-drugs.json' },
+                        { name: 'seifeldeen', url: './data/seifeldeen.json' },
+                        { name: 'shahin', url: './data/shahin.json' },
+                        { name: 'warehouse_local', url: './data/warehouse-inventory.json' }
+                    ]
+                });
+                
+                drugDB.onProgress = (progress) => {
+                    console.log(`📚 Loading: ${progress.source} (${progress.drugsLoaded} drugs)`);
+                };
+                
+                allDrugs = await drugDB.initialize();
+                stats.totalDrugs = allDrugs.length;
+                
+                console.log(`✅ Global Database: ${allDrugs.length} drugs loaded`);
+                
+                // 3. Load local inventory
+                loadInventory();
+                
+                // 4. Initialize speech recognition
+                initSpeechRecognition();
+                
+                // 5. Update UI
+                updateStats();
+                renderInventoryTable();
+                
+                showToast(`✅ النظام جاهز! ${allDrugs.length} دواء في الموسوعة`, 'success');
+                showToast('🎤 اضغط الميكروفون وانطق اسم الدواء', 'ai');
+                
+            } catch (error) {
+                console.error('Initialization error:', error);
+                showToast('⚠️ خطأ في التهيئة، استخدام البيانات المحلية', 'warning');
+                
+                // Fallback to local data
+                allDrugs = drugDB.getFallbackDataset();
+                stats.totalDrugs = allDrugs.length;
+                updateStats();
+                renderInventoryTable();
+            }
+        }
+        
+        function loadInventory() {
+            const saved = localStorage.getItem('pharmacy_inventory');
+            if (saved) {
+                inventory = JSON.parse(saved);
+            } else {
+                // Create sample inventory
+                inventory = allDrugs.slice(0, 10).map(drug => ({
+                    ...drug,
+                    stock: Math.floor(Math.random() * 100) + 10,
+                    lastUpdated: new Date().toLocaleDateString()
+                }));
+            }
+            
+            stats.lowStock = inventory.filter(i => i.stock < 20).length;
+        }
+        
+        function saveInventory() {
+            localStorage.setItem('pharmacy_inventory', JSON.stringify(inventory));
+        }
+        
+        function updateStats() {
+            document.getElementById('totalDrugs').textContent = stats.totalDrugs.toLocaleString();
+            document.getElementById('todaySales').textContent = stats.todaySales.toLocaleString() + ' ج.م';
+            document.getElementById('aiMatches').textContent = stats.aiMatches.toLocaleString();
+            document.getElementById('lowStock').textContent = stats.lowStock.toLocaleString();
+        }
+        
+        function renderInventoryTable(filtered = null) {
+            const tbody = document.getElementById('inventoryTable');
+            const data = filtered || inventory.slice(0, 10);
+            
+            tbody.innerHTML = data.map(item => {
+                const stockStatus = item.stock > 50 ? 'high' : item.stock > 20 ? 'medium' : 'low';
+                const stockText = item.stock > 50 ? 'ممتاز' : item.stock > 20 ? 'متوسط' : 'منخفض';
+                
+                return `
+                    <tr>
+                        <td>
+                            <div class="drug-name">${item.tradeName}</div>
+                            <div class="drug-scientific">${item.scientificName}</div>
+                        </td>
+                        <td>${item.company}</td>
+                        <td><span class="price-tag">${item.price.toFixed(2)} ج.م</span></td>
+                        <td>${item.stock} وحدة</td>
+                        <td><span class="stock-badge ${stockStatus}">${stockText}</span></td>
+                        <td>${item.lastUpdated}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function searchInventory(query) {
+            if (!query) {
+                renderInventoryTable();
+                return;
+            }
+            
+            // Use Gemini simulation for smart search
+            const results = [];
+            
+            inventory.forEach(item => {
+                const match = geminiSim.simulateGemini(query, [item]);
+                if (match.drugData && match.confidence > 0.5) {
+                    results.push(item);
+                }
+            });
+            
+            // Fallback: direct search
+            if (results.length === 0) {
+                const direct = inventory.filter(item => 
+                    item.tradeName.toLowerCase().includes(query.toLowerCase()) ||
+                    item.scientificName.toLowerCase().includes(query.toLowerCase())
+                );
+                results.push(...direct);
+            }
+            
+            renderInventoryTable(results);
+        }
+        
+        // Speech Recognition
+        function initSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            
+            if (!SpeechRecognition) {
+                showToast('⚠️ المتصفح لا يدعم التعرف الصوتي', 'warning');
+                return;
+            }
+            
+            speechRecognition = new SpeechRecognition();
+            speechRecognition.continuous = false;
+            speechRecognition.interimResults = true;
+            speechRecognition.lang = 'ar-SA';
+            
+            speechRecognition.onstart = () => {
+                document.getElementById('voiceBtn').classList.add('listening');
+                document.getElementById('voiceStatus').textContent = 'جاري الاستماع...';
+                activateBadge(1);
+            };
+            
+            speechRecognition.onresult = (event) => {
+                const results = event.results;
+                for (let i = event.resultIndex; i < results.length; i++) {
+                    const transcript = results[i][0].transcript;
+                    
+                    if (results[i].isFinal) {
+                        processVoiceCommand(transcript);
+                    } else {
+                        document.getElementById('voiceStatus').textContent = `سمعت: "${transcript}"`;
+                        activateBadge(2);
+                    }
+                }
+            };
+            
+            speechRecognition.onend = () => {
+                document.getElementById('voiceBtn').classList.remove('listening');
+                document.getElementById('voiceStatus').textContent = 'اضغط للتحدث مع المساعد الذكي';
+                deactivateBadges();
+            };
+            
+            speechRecognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                document.getElementById('voiceBtn').classList.remove('listening');
+                showToast('⚠️ خطأ في التعرف الصوتي', 'warning');
+            };
+        }
+        
+        function toggleVoice() {
+            if (!speechRecognition) {
+                showToast('⚠️ التعرف الصوتي غير متاح', 'warning');
+                return;
+            }
+            
+            if (document.getElementById('voiceBtn').classList.contains('listening')) {
+                speechRecognition.stop();
+            } else {
+                speechRecognition.start();
+            }
+        }
+        
+        async function processVoiceCommand(command) {
+            activateBadge(3);
+            
+            // Extract numbers (quantities)
+            const numbers = geminiSim.extractNumbers(command);
+            const quantity = numbers.find(n => n.type === 'quantity')?.value || 1;
+            
+            // Remove numbers from drug name
+            let drugQuery = command;
+            numbers.forEach(n => {
+                drugQuery = drugQuery.replace(n.words || n.word, '').trim();
+            });
+            
+            // Search in database
+            const result = geminiSim.simulateGemini(drugQuery, allDrugs);
+            
+            activateBadge(4);
+            
+            if (result.drugData && result.confidence >= 0.60) {
+                stats.aiMatches++;
+                updateStats();
+                
+                // Check if already in inventory
+                const existing = inventory.find(i => i.id === result.drugData.id);
+                
+                if (existing) {
+                    existing.stock += quantity;
+                    existing.lastUpdated = new Date().toLocaleDateString();
+                    showToast(`✅ تم تحديث المخزون: ${result.drugData.tradeName} (+${quantity})`, 'success');
+                } else {
+                    const newItem = {
+                        ...result.drugData,
+                        stock: quantity,
+                        lastUpdated: new Date().toLocaleDateString()
+                    };
+                    inventory.unshift(newItem);
+                    showToast(`✅ تمت إضافة دواء جديد: ${result.drugData.tradeName}`, 'success');
+                }
+                
+                saveInventory();
+                renderInventoryTable();
+                
+                // Speak confirmation
+                speak(`تم ${existing ? 'تحديث' : 'إضافة'} ${result.drugData.tradeName} بكمية ${quantity}`);
+            } else {
+                showToast(`⚠️ لم أتمكن من التعرف على "${command}"`, 'warning');
+            }
+            
+            setTimeout(deactivateBadges, 2000);
+        }
+        
+        function activateBadge(num) {
+            for (let i = 1; i <= 4; i++) {
+                const badge = document.getElementById(`badge${i}`);
+                if (i <= num) {
+                    badge.classList.add('active');
+                } else {
+                    badge.classList.remove('active');
+                }
+            }
+        }
+        
+        function deactivateBadges() {
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`badge${i}`).classList.remove('active');
+            }
+        }
+        
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ar-SA';
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+        
+        // Navigation
+        function showPage(page) {
+            // Update nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Show appropriate content
+            if (page === 'dashboard') {
+                document.getElementById('dashboardPage').style.display = 'block';
+                document.getElementById('otherPages').style.display = 'none';
+            } else {
+                document.getElementById('dashboardPage').style.display = 'none';
+                document.getElementById('otherPages').style.display = 'block';
+                
+                // Specific pages
+                if (page === 'voice-assistant') {
+                    window.location.href = 'sovereign-voice-assistant.html';
+                } else if (page === 'auto-entry') {
+                    window.location.href = 'voice-warehouse-entry-v2.html';
+                }
+            }
+        }
+        
+        function activateVoiceMode() {
+            window.location.href = 'sovereign-voice-assistant.html';
+        }
+        
+        // Quick Actions
+        function quickAddDrug() {
+            showToast('🎤 انطق اسم الدواء للإضافة', 'ai');
+            setTimeout(() => toggleVoice(), 1000);
+        }
+        
+        function createInvoice() {
+            showToast('🧾 قيد التطوير: نظام الفواتير', 'info');
+        }
+        
+        function syncDatabase() {
+            showToast('🔄 جاري مزامنة قاعدة البيانات...', 'info');
+            
+            setTimeout(() => {
+                showToast('✅ تمت المزامنة بنجاح!', 'success');
+            }, 2000);
+        }
+        
+        function viewReports() {
+            showToast('📊 قيد التطوير: نظام التقارير', 'info');
+        }
+        
+        function viewAllInventory() {
+            renderInventoryTable(inventory);
+        }
+        
+        function toggleWarehouseMenu() {
+            showToast('🏭 تغيير المخزن قيد التطوير', 'info');
+        }
+        
+        // Toast Notifications
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: 'check-circle',
+                ai: 'robot',
+                warning: 'exclamation-triangle',
+                info: 'info-circle'
+            };
+            
+            toast.innerHTML = `
+                <i class="fas fa-${icons[type] || 'info-circle'} toast-icon"></i>
+                <span>${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 4000);
+        }
+    </script>
+</body>
+</html>

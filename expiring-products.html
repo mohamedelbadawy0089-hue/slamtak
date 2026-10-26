@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المنتجات قريبة الانتهاء</title>
+    <script src="navigation.js"></script>
+    <script src="libs/supabase.min.js"></script>
+    <script src="supabase-config.js"></script>
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; background: #f0f0f0; padding: 20px; }
+        .back-arrow {
+            position: fixed; top: 20px; left: 20px; font-size: 50px; font-weight: bold;
+            cursor: pointer; color: white; background: linear-gradient(135deg, #ff6b6b, #dc3545);
+            width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; box-shadow: 0 5px 15px rgba(220,53,69,0.5);
+            transition: all 0.3s; border: 3px solid white; z-index: 1000;
+            outline: none;
+            user-select: none;
+        }
+        .back-arrow:hover { 
+            transform: scale(1.1) translateY(-3px); 
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.7);
+        }
+        .back-arrow:active {
+            transform: scale(0.95);
+        }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 14px; }
+        .alert-box {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6a00 100%);
+            color: white; padding: 20px; border-radius: 10px; margin-bottom: 20px;
+            text-align: center; font-size: 18px; font-weight: bold;
+        }
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background: linear-gradient(135deg, #ff9a56 0%, #ff6a00 100%); color: white; padding: 12px; text-align: right; font-weight: bold; }
+        td { padding: 12px; border-bottom: 1px solid #ddd; text-align: right; }
+        tr:hover { background: #fff5f0; }
+        .badge { display: inline-block; padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; }
+        .badge-unlimited { background: #d4edda; color: #155724; }
+        .badge-limited { background: #fff3cd; color: #856404; }
+        .badge-low { background: #f8d7da; color: #721c24; }
+        .badge-days { background: #ff9a56; color: white; padding: 8px 12px; font-size: 14px; }
+        .empty-state { text-align: center; padding: 60px 20px; color: #999; }
+        .empty-icon { font-size: 80px; margin-bottom: 20px; }
+        .empty-text { font-size: 18px; margin-bottom: 10px; }
+        .empty-subtext { font-size: 14px; color: #bbb; }
+        .btn-print { background: #667eea; color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 14px; transition: all 0.3s; margin-bottom: 20px; }
+        .btn-print:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
+        @media print {
+            body * { visibility: hidden; }
+            #printArea, #printArea * { visibility: visible; }
+            #printArea { position: absolute; left: 0; top: 0; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="back-arrow" onclick="goBack()" title="رجوع">←</div>
+
+    <div class="container">
+        <h2>⚠️ المنتجات القريبة من انتهاء الصلاحية</h2>
+        <div class="subtitle">المنتجات التي ستنتهي صلاحيتها خلال 3 شهور</div>
+
+        <button class="btn-print" onclick="printExpiringProducts()" id="printBtn" style="display:none;">🖨️ طباعة</button>
+
+        <div class="alert-box" id="alertBox">
+            جاري التحميل...
+        </div>
+
+        <div class="table-container">
+            <table id="expiringTable" style="display:none;">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>اسم المنتج</th>
+                        <th>السعر</th>
+                        <th>الخصم</th>
+                        <th>السعر بعد الخصم</th>
+                        <th>الكمية</th>
+                        <th>الإنتاج</th>
+                        <th>الانتهاء</th>
+                        <th>الأيام المتبقية</th>
+                    </tr>
+                </thead>
+                <tbody id="expiringBody"></tbody>
+            </table>
+
+            <div class="empty-state" id="emptyState" style="display:none;">
+                <div class="empty-icon">✅</div>
+                <div class="empty-text">لا توجد منتجات قريبة من انتهاء الصلاحية</div>
+                <div class="empty-subtext">جميع المنتجات صلاحيتها جيدة</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="printArea" style="display: none;"></div>
+
+    <script>
+        var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+        if (!currentUser) { if(typeof window.showOfflineToast === 'function') window.showOfflineToast(); }
+
+        var db = null;
+        var expiringProducts = [];
+        var currentWarehouseId = localStorage.getItem('current_warehouse_id') || localStorage.getItem('slamtak-user-id');
+
+        function initDB() {
+            // محاولة التحميل من Supabase أولاً
+            loadFromSupabase();
+        }
+
+        async function loadFromSupabase() {
+            try {
+                // عرض حالة التحميل
+                document.getElementById('tableWrapper').innerHTML = '<div class="empty-state">⏳ جاري تحميل المنتجات...</div>';
+
+                if (!window.SupabaseSingleton || !window.SupabaseSingleton.getClient()) {
+                    console.warn('⚠️ Supabase غير متاح');
+                    // عند عدم وجود Supabase، إظهار رسالة خطأ
+                    document.getElementById('tableWrapper').innerHTML = `
+                        <div class="empty-state">
+                            <div style="font-size: 48px; margin-bottom: 10px;">📡</div>
+                            <div>تعذر الاتصال بالسيرفر</div>
+                            <div style="font-size: 12px; color: #999; margin-top: 10px;">يرجى التحقق من اتصال الإنترنت</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const supabaseClient = window.SupabaseSingleton.getClient();
+
+                // جلب المنتجات من Supabase مع warehouse_id filtering
+                const { data, error } = await supabaseClient
+                    .from('products')
+                    .select('*')
+                    .eq('warehouse_id', currentWarehouseId)
+                    .limit(200)
+                    .order('name');
+
+                if (error) throw error;
+
+                // تحويل البيانات
+                var allProducts = (data || []).map(function(p) {
+                    return {
+                        id: p.id,
+                        productName: p.name,
+                        name: p.name,
+                        price: p.price || 0,
+                        discount: p.discount || 0,
+                        quantity: p.quantity || 0,
+                        isUnlimited: !p.quantity || p.quantity_type === 'fixed',
+                        productionDate: p.production_date || p.productionDate,
+                        expiryDate: p.expiry_date || p.expiryDate,
+                        lowStockAlert: p.low_stock_alert || p.lowStockAlert,
+                        barcode: p.barcode,
+                        category: p.category,
+                        warehouse_id: p.warehouse_id
+                    };
+                });
+
+                console.log('✅ تم تحميل', allProducts.length, 'منتج من Supabase');
+                filterExpiringProducts(allProducts);
+
+            } catch (err) {
+                console.error('❌ خطأ في التحميل من Supabase:', err);
+                // عند عدم وجود إنترنت، إظهار رسالة خطأ
+                document.getElementById('tableWrapper').innerHTML = `
+                    <div class="empty-state">
+                        <div style="font-size: 48px; margin-bottom: 10px;">📡</div>
+                        <div>تعذر الاتصال بالسيرفر</div>
+                        <div style="font-size: 12px; color: #999; margin-top: 10px;">يرجى التحقق من اتصال الإنترنت</div>
+                    </div>
+                `;
+            }
+        }
+
+        function filterExpiringProducts(products) {
+            var today = new Date();
+            var threeMonthsLater = new Date();
+            threeMonthsLater.setMonth(today.getMonth() + 3);
+
+            expiringProducts = products.filter(function(p) {
+                if (!p.expiryDate) return false;
+                var expiryDate = new Date(p.expiryDate);
+                return expiryDate <= threeMonthsLater && expiryDate >= today;
+            });
+
+            // ترتيب حسب تاريخ الانتهاء (الأقرب أولاً)
+            expiringProducts.sort(function(a, b) {
+                return new Date(a.expiryDate) - new Date(b.expiryDate);
+            });
+
+            renderTable();
+        }
+
+        function calculateDaysRemaining(expiryDate) {
+            var today = new Date();
+            var expiry = new Date(expiryDate);
+            var diffTime = expiry - today;
+            var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays;
+        }
+
+        function renderTable() {
+            var alertBox = document.getElementById('alertBox');
+            var table = document.getElementById('expiringTable');
+            var tbody = document.getElementById('expiringBody');
+            var emptyState = document.getElementById('emptyState');
+
+            if (expiringProducts.length === 0) {
+                alertBox.style.display = 'none';
+                table.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            alertBox.textContent = '⚠️ تم العثور على ' + expiringProducts.length + ' منتج قريب من انتهاء الصلاحية';
+            alertBox.style.display = 'block';
+            table.style.display = 'table';
+            emptyState.style.display = 'none';
+            document.getElementById('printBtn').style.display = 'block';
+
+            tbody.innerHTML = '';
+
+            expiringProducts.forEach(function(p, i) {
+                var afterDiscount = p.price - (p.price * p.discount / 100);
+                var daysRemaining = calculateDaysRemaining(p.expiryDate);
+                
+                var badge;
+                if (p.isUnlimited) {
+                    badge = '<span class="badge badge-unlimited">متوفر دائماً</span>';
+                } else if (p.lowStockAlert && p.quantity <= p.lowStockAlert) {
+                    badge = '<span class="badge badge-low">' + p.quantity + '</span>';
+                } else {
+                    badge = '<span class="badge badge-limited">' + p.quantity + '</span>';
+                }
+
+                var tr = document.createElement('tr');
+                tr.innerHTML =
+                    '<td>' + (i + 1) + '</td>' +
+                    '<td><strong>' + p.productName + '</strong></td>' +
+                    '<td>' + p.price.toFixed(2) + ' جنيه</td>' +
+                    '<td>' + p.discount + '%</td>' +
+                    '<td><strong>' + afterDiscount.toFixed(2) + ' جنيه</strong></td>' +
+                    '<td>' + badge + '</td>' +
+                    '<td>' + (p.productionDate || '-') + '</td>' +
+                    '<td>' + p.expiryDate + '</td>' +
+                    '<td><span class="badge badge-days">' + daysRemaining + ' يوم</span></td>';
+                tbody.appendChild(tr);
+            });
+        }
+
+        function printExpiringProducts() {
+            var printContent = '<div style="padding: 20px; font-family: Arial, sans-serif;">';
+            printContent += '<div style="text-align: center; margin-bottom: 30px;">';
+            printContent += '<h1 style="color: #333;">⚠️ المنتجات القريبة من انتهاء الصلاحية</h1>';
+            printContent += '<p>التاريخ: ' + new Date().toLocaleDateString('ar-EG') + '</p>';
+            printContent += '<p>عدد المنتجات: ' + expiringProducts.length + '</p>';
+            printContent += '</div>';
+            printContent += '<table style="width: 100%; border-collapse: collapse;">';
+            printContent += '<thead><tr style="background: #ff9a56; color: white;">';
+            printContent += '<th style="padding: 10px; border: 1px solid #ddd;">#</th>';
+            printContent += '<th style="padding: 10px; border: 1px solid #ddd;">المنتج</th>';
+            printContent += '<th style="padding: 10px; border: 1px solid #ddd;">السعر</th>';
+            printContent += '<th style="padding: 10px; border: 1px solid #ddd;">الخصم</th>';
+            printContent += '<th style="padding: 10px; border: 1px solid #ddd;">بعد الخصم</th>';
+            printContent += '<th style="padding: 10px; border: 1px solid #ddd;">الكمية</th>';
+            printContent += '<th style="padding: 10px; border: 1px solid #ddd;">تاريخ الانتهاء</th>';
+            printContent += '<th style="padding: 10px; border: 1px solid #ddd;">الأيام المتبقية</th>';
+            printContent += '</tr></thead><tbody>';
+            expiringProducts.forEach(function(p, i) {
+                var afterDiscount = p.price - (p.price * p.discount / 100);
+                var quantity = p.isUnlimited ? 'متوفر دائماً' : p.quantity;
+                var daysRemaining = calculateDaysRemaining(p.expiryDate);
+                printContent += '<tr>';
+                printContent += '<td style="padding: 8px; border: 1px solid #ddd; text-align: center;">' + (i + 1) + '</td>';
+                printContent += '<td style="padding: 8px; border: 1px solid #ddd;">' + p.productName + '</td>';
+                printContent += '<td style="padding: 8px; border: 1px solid #ddd; text-align: center;">' + p.price.toFixed(2) + ' ج</td>';
+                printContent += '<td style="padding: 8px; border: 1px solid #ddd; text-align: center;">' + p.discount + '%</td>';
+                printContent += '<td style="padding: 8px; border: 1px solid #ddd; text-align: center;">' + afterDiscount.toFixed(2) + ' ج</td>';
+                printContent += '<td style="padding: 8px; border: 1px solid #ddd; text-align: center;">' + quantity + '</td>';
+                printContent += '<td style="padding: 8px; border: 1px solid #ddd; text-align: center;">' + p.expiryDate + '</td>';
+                printContent += '<td style="padding: 8px; border: 1px solid #ddd; text-align: center;"><strong>' + daysRemaining + ' يوم</strong></td>';
+                printContent += '</tr>';
+            });
+            printContent += '</tbody></table></div>';
+            document.getElementById('printArea').innerHTML = printContent;
+            window.print();
+        }
+
+        function goBack() {
+            window.location.replace('products.html');
+        }
+        
+        initDB();
+    </script>
+    <script src="voice-search.js"></script>
+    <script src="ai-core.js"></script>
+    <script src="ai-validation.js"></script>
+    <script src="ai-speech.js"></script>
+    <script src="ai-database.js"></script>
+    <script src="ai-ui.js"></script>
+    <script src="ai-assistant.js"></script>
+</body>
+</html>

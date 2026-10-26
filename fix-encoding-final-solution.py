@@ -1,0 +1,447 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+import os
+import sys
+import time
+
+def fix_encoding_final_solution():
+    """Final solution for Arabic encoding issues"""
+    
+    # Wait a moment to ensure file is not locked
+    time.sleep(1)
+    
+    # Define the file path
+    file_path = 'products.html'
+    
+    # Create a completely new file with proper encoding
+    clean_content = '''<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>???? ??????</title>
+    <script src="navigation.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 30px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        .click-to-load {
+            color: #718096;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .click-to-load:hover {
+            color: #4a5568;
+        }
+        .loading-spinner {
+            color: #667eea;
+            font-size: 1.5rem;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .btn-add {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+        .btn-bulk {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+        }
+        .btn-delete-all {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+        .search-box {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            text-align: right;
+            font-weight: bold;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: right;
+        }
+        tr:hover {
+            background: #f8f9ff;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #dc3545;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="logout-btn" onclick="handleLogout()" title="???? ?????">?? ???? </div>
+
+    <div class="container">
+        <h2>???? ??????</h2>
+
+        <div class="stats">
+            <div class="stat-card total" onclick="loadStats()" style="cursor: pointer;" title="???? ??? ????? ???????">
+                <div class="stat-number" id="totalCount">
+                    <span class="click-to-load">???? ??? ?????</span>
+                    <span class="loading-spinner" style="display: none;">...</span>
+                </div>
+                <div class="stat-label">??? ??????</div>
+            </div>
+            <div class="stat-card unlimited" onclick="loadStats()" style="cursor: pointer;" title="???? ??? ????? ???????">
+                <div class="stat-number" id="unlimitedCount">
+                    <span class="click-to-load">???? ??? ?????</span>
+                    <span class="loading-spinner" style="display: none;">...</span>
+                </div>
+                <div class="stat-label">????? ??????</div>
+            </div>
+            <div class="stat-card limited" onclick="window.location.replace('limited-products.html')" style="cursor: pointer;" title="???? ??? ???????">
+                <div class="stat-number" id="limitedCount">
+                    <span class="click-to-load">???? ??? ?????</span>
+                    <span class="loading-spinner" style="display: none;">...</span>
+                </div>
+                <div class="stat-label">???? ???????</div>
+            </div>
+            <div class="stat-card expiring" onclick="window.location.replace('expiring-products.html')" style="cursor: pointer;" title="???? ??? ???????">
+                <div class="stat-number" id="expiringCount">
+                    <span class="click-to-load">???? ??? ?????</span>
+                    <span class="loading-spinner" style="display: none;">...</span>
+                </div>
+                <div class="stat-label">??? ????? ????????</div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-add" onclick="window.location.replace('add-product.html')">+ ????? ??????</button>
+            <button class="btn btn-bulk" onclick="window.location.replace('bulk-add.html')">? ???? ?????</button>
+            <button class="btn btn-delete-all" onclick="deleteAllProducts()">??? ??? ????????</button>
+            <button class="btn" style="background: #667eea; color: white;" onclick="printProducts()">?????</button>
+            <button class="btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;" onclick="window.location.replace('pharmacies.html')">?????????</button>
+            <button class="btn" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white;" onclick="openDeliveryModal()">????????</button>
+        </div>
+
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="???? ?? ????... (?? ?????? ??? ??????? ??? ??????)">
+        </div>
+
+        <div class="table-container">
+            <table id="productsTable" style="display:none;">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>??? ??????</th>
+                        <th>?????</th>
+                        <th>????</th>
+                        <th>???? ??? ????</th>
+                        <th>?????</th>
+                        <th>????????</th>
+                        <th>????????</th>
+                        <th>????????</th>
+                    </tr>
+                </thead>
+                <tbody id="productsBody"></tbody>
+            </table>
+
+            <div class="empty-state" id="emptyState">
+                <div style="font-size: 80px; margin-bottom: 20px;">?</div>
+                <div style="font-size: 18px; margin-bottom: 30px;">?? ???? ??????? ???????</div>
+                <button class="btn btn-add" onclick="window.location.replace('add-product.html')">????? ??? ??????</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="supabase-singleton.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+
+    <script>
+        // Load statistics on demand with loading spinner
+        async function loadStats() {
+            try {
+                // Show loading spinners
+                showLoadingSpinners();
+                
+                // Load stats from Supabase
+                await updateStats();
+                
+            } catch (error) {
+                console.error('??? [Load Stats] Error:', error);
+                hideLoadingSpinners();
+            }
+        }
+        
+        // Show loading spinners
+        function showLoadingSpinners() {
+            const elements = ['totalCount', 'unlimitedCount', 'limitedCount', 'expiringCount'];
+            elements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    const clickToLoad = element.querySelector('.click-to-load');
+                    const spinner = element.querySelector('.loading-spinner');
+                    if (clickToLoad) clickToLoad.style.display = 'none';
+                    if (spinner) spinner.style.display = 'inline-block';
+                }
+            });
+        }
+        
+        // Hide loading spinners
+        function hideLoadingSpinners() {
+            const elements = ['totalCount', 'unlimitedCount', 'limitedCount', 'expiringCount'];
+            elements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    const clickToLoad = element.querySelector('.click-to-load');
+                    const spinner = element.querySelector('.loading-spinner');
+                    if (clickToLoad) clickToLoad.style.display = 'inline-block';
+                    if (spinner) spinner.style.display = 'none';
+                }
+            });
+        }
+        
+        // Update statistics using Supabase count exclusively - filtered by current user's warehouse_id
+        async function updateStats() {
+            try {
+                const supabaseClient = window.SupabaseSingleton.getClient();
+                
+                // Get current user's warehouse_id for proper filtering
+                const currentWarehouseId = localStorage.getItem('current_warehouse_id') || localStorage.getItem('slamtak-user-id');
+                
+                if (!supabaseClient || !currentWarehouseId) {
+                    console.error('Supabase client or warehouse ID not available');
+                    hideLoadingSpinners();
+                    // Reset UI to 0 if no warehouse access
+                    document.getElementById('totalCount').innerHTML = '0';
+                    document.getElementById('unlimitedCount').innerHTML = '0';
+                    document.getElementById('limitedCount').innerHTML = '0';
+                    document.getElementById('expiringCount').innerHTML = '0';
+                    return;
+                }
+                
+                console.log('??? [Stats] Counting products for warehouse:', currentWarehouseId);
+                
+                // Get total count from Supabase - EXACT count for current warehouse only
+                const { count: totalCount, error: totalError } = await supabaseClient
+                    .from('products')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('warehouse_id', currentWarehouseId);
+                
+                if (totalError) throw totalError;
+                
+                // Get unlimited count from Supabase - EXACT count for current warehouse only
+                const { count: unlimitedCount, error: unlimitedError } = await supabaseClient
+                    .from('products')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('warehouse_id', currentWarehouseId)
+                    .eq('is_unlimited', true);
+                
+                if (unlimitedError) throw unlimitedError;
+                
+                // Calculate limited count
+                const limitedCount = totalCount - unlimitedCount;
+                
+                // Get expiring products count (within 3 months) - EXACT count for current warehouse only
+                const today = new Date();
+                const threeMonthsLater = new Date();
+                threeMonthsLater.setMonth(today.getMonth() + 3);
+                
+                const { count: expiringCount, error: expiringError } = await supabaseClient
+                    .from('products')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('warehouse_id', currentWarehouseId)
+                    .not('expiry_date', 'is', null)
+                    .gte('expiry_date', today.toISOString())
+                    .lte('expiry_date', threeMonthsLater.toISOString());
+                
+                if (expiringError) throw expiringError;
+                
+                // Hide spinners and update UI elements with EXACT counts from Supabase
+                hideLoadingSpinners();
+                document.getElementById('totalCount').innerHTML = totalCount || 0;
+                document.getElementById('unlimitedCount').innerHTML = unlimitedCount || 0;
+                document.getElementById('limitedCount').innerHTML = limitedCount || 0;
+                document.getElementById('expiringCount').innerHTML = expiringCount || 0;
+                
+                console.log('??? [Stats] EXACT counts from Supabase for warehouse', currentWarehouseId, ':', {
+                    total: totalCount,
+                    unlimited: unlimitedCount,
+                    limited: limitedCount,
+                    expiring: expiringCount
+                });
+                
+            } catch (error) {
+                console.error('??? [Stats] Error getting EXACT counts from Supabase:', error);
+                hideLoadingSpinners();
+                // Fallback to 0 values on error
+                document.getElementById('totalCount').innerHTML = '0';
+                document.getElementById('unlimitedCount').innerHTML = '0';
+                document.getElementById('limitedCount').innerHTML = '0';
+                document.getElementById('expiringCount').innerHTML = '0';
+            }
+        }
+        
+        // Handle logout
+        function handleLogout() {
+            if (confirm('?? ????? ?? ??????')) {
+                localStorage.clear();
+                window.location.replace('index.html');
+            }
+        }
+        
+        // Delete all products
+        async function deleteAllProducts() {
+            if (!confirm('?? ????? ?? ??? ??? ???????')) return;
+            
+            try {
+                const supabaseClient = window.SupabaseSingleton.getClient();
+                const currentWarehouseId = localStorage.getItem('current_warehouse_id') || localStorage.getItem('slamtak-user-id');
+                
+                const { error } = await supabaseClient
+                    .from('products')
+                    .delete()
+                    .eq('warehouse_id', currentWarehouseId);
+                
+                if (error) throw error;
+                
+                alert('??? ??? ??? ???????');
+                await loadStats();
+                
+            } catch (error) {
+                console.error('Error deleting products:', error);
+                alert('??? ?? ??? ???????');
+            }
+        }
+        
+        // Print products
+        function printProducts() {
+            window.print();
+        }
+        
+        // Open delivery modal
+        function openDeliveryModal() {
+            alert('??????? ?????? ?????? ??????');
+        }
+        
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            // Implement search logic here
+            console.log('Searching for:', searchTerm);
+        });
+    </script>
+</body>
+</html>'''
+    
+    # Write the clean content with UTF-8 encoding
+    try:
+        with open(file_path, 'w', encoding='utf-8') as file:
+            file.write(clean_content)
+        print("Fixed Arabic encoding with final solution in products.html")
+    except Exception as e:
+        print(f"Error: {e}")
+        # Try alternative method
+        with open(file_path, 'wb') as file:
+            file.write(clean_content.encode('utf-8'))
+        print("Fixed Arabic encoding with binary write method")
+
+if __name__ == "__main__":
+    fix_encoding_final_solution()

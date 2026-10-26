@@ -1,0 +1,14 @@
+/* سلامتك - Non-Critical CSS - Lazy Loaded */
+.show-btn{padding:5px 10px;font-size:14px;background:#007bff;color:#fff;border:none;border-radius:4px;cursor:pointer;margin-top:5px;transition:background .3s ease}
+.show-btn:hover{background:#0056b3}
+.error{color:#dc3545;font-size:14px;margin-top:5px;display:none}
+.success{color:#28a745;font-size:14px;margin-top:5px;display:none}
+.alert{position:fixed;top:20px;right:20px;padding:15px 20px;border-radius:8px;z-index:1000;color:#fff;font-weight:bold;box-shadow:0 4px 12px rgba(0,0,0,0.15);animation:slideIn .3s ease}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes slideOut{from{transform:translateX(0);opacity:1}to{transform:translateX(100%);opacity:0}}
+*{box-sizing:border-box}
+img{max-width:100%;height:auto;loading:lazy}
+@media (max-width:600px){.container{margin:20px auto;padding:20px}}
+input[type="text"]:focus,input[type="password"]:focus,input[type="email"]:focus,select:focus{border-color:#218838;outline:none}
+.btn-success:hover{background:#218838}
+.btn-secondary:hover{background:#5a6268}

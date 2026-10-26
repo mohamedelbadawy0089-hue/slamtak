@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تشخيص الميكروفون - الخطوة 1</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f0f0f0; }
+        .step { background: white; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .success { color: green; }
+        .error { color: red; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+        #log { background: #333; color: #0f0; padding: 15px; border-radius: 8px; font-family: monospace; white-space: pre-wrap; margin-top: 20px; max-height: 400px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔧 تشخيص الميكروفون</h1>
+    
+    <div class="step">
+        <h3>الخطوة 1: اختبار getUserMedia</h3>
+        <button onclick="testStep1()">ابدأ الاختبار</button>
+        <div id="step1-result"></div>
+    </div>
+    
+    <div class="step">
+        <h3>الخطوة 2: اختبار التعرف الصوتي</h3>
+        <button onclick="testStep2()">ابدأ الاختبار</button>
+        <div id="step2-result"></div>
+    </div>
+    
+    <div id="log"></div>
+
+    <script>
+        function log(msg, type='info') {
+            const logDiv = document.getElementById('log');
+            const color = type === 'success' ? '#0f0' : type === 'error' ? '#f00' : '#ff0';
+            logDiv.innerHTML += `<div style="color:${color}">${new Date().toLocaleTimeString()}: ${msg}</div>`;
+            console.log(msg);
+        }
+        
+        // Test 1: getUserMedia
+        async function testStep1() {
+            log('🔍 بدء اختبار getUserMedia...');
+            
+            try {
+                // First check if API exists
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error('getUserMedia not supported');
+                }
+                
+                log('✅ navigator.mediaDevices موجود');
+                
+                // Try to get microphone
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: true,
+                    video: false 
+                });
+                
+                log('✅ تم الحصول على stream من الميكروفون', 'success');
+                
+                // Get audio tracks
+                const audioTracks = stream.getAudioTracks();
+                log(`🎤 عدد مسارات الصوت: ${audioTracks.length}`);
+                
+                if (audioTracks.length > 0) {
+                    const track = audioTracks[0];
+                    log(`🎤 اسم الميكروفون: ${track.label}`);
+                    log(`🎤 الحالة: ${track.enabled ? 'مفعل' : 'معطل'}`);
+                    log(`🎤 جاهز: ${track.readyState}`);
+                    
+                    // Check if track is actually receiving data
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const source = audioContext.createMediaStreamSource(stream);
+                    const analyser = audioContext.createAnalyser();
+                    source.connect(analyser);
+                    
+                    analyser.fftSize = 256;
+                    const bufferLength = analyser.frequencyBinCount;
+                    const dataArray = new Uint8Array(bufferLength);
+                    
+                    // Check volume for 3 seconds
+                    log('🔊 جاري مراقبة مستوى الصوت لمدة 3 ثواني...');
+                    
+                    let checks = 0;
+                    const interval = setInterval(() => {
+                        analyser.getByteFrequencyData(dataArray);
+                        const average = dataArray.reduce((a, b) => a + b) / bufferLength;
+                        
+                        if (average > 10) {
+                            log(`🗣️ تم اكتشاف صوت! مستوى: ${Math.round(average)}`, 'success');
+                        } else {
+                            log(`🔇 لا يوجد صوت (مستوى: ${Math.round(average)})`);
+                        }
+                        
+                        checks++;
+                        if (checks >= 6) {
+                            clearInterval(interval);
+                            stream.getTracks().forEach(t => t.stop());
+                            log('✅ اكتمل اختبار getUserMedia', 'success');
+                        }
+                    }, 500);
+                    
+                    document.getElementById('step1-result').innerHTML = 
+                        '<span class="success">✅ الميكروفون يعمل!</span>';
+                }
+                
+            } catch (err) {
+                log(`❌ خطأ: ${err.name}: ${err.message}`, 'error');
+                
+                if (err.name === 'NotAllowedError') {
+                    log('💡 الحل: اضغط على أيقونة 🔒 في شريط العنوان واختر "السماح" للميكروفون', 'error');
+                }
+                
+                document.getElementById('step1-result').innerHTML = 
+                    `<span class="error">❌ ${err.name}: ${err.message}</span>`;
+            }
+        }
+        
+        // Test 2: Speech Recognition
+        async function testStep2() {
+            log('\n🎙️ بدء اختبار التعرف الصوتي...');
+            
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            
+            if (!SpeechRecognition) {
+                log('❌ SpeechRecognition غير مدعوم في هذا المتصفح', 'error');
+                log('💡 استخدم Chrome أو Edge', 'error');
+                document.getElementById('step2-result').innerHTML = 
+                    '<span class="error">❌ المتصفح لا يدعم التعرف الصوتي</span>';
+                return;
+            }
+            
+            log('✅ SpeechRecognition مدعوم');
+            
+            // First get permission
+            try {
+                log('🔐 طلب إذن الميكروفون...');
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                stream.getTracks().forEach(t => t.stop());
+                log('✅ تم الحصول على الإذن');
+            } catch (err) {
+                log(`❌ فشل في الحصول على الإذن: ${err.message}`, 'error');
+                return;
+            }
+            
+            // Now test speech recognition
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'ar-EG';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            
+            recognition.onstart = () => {
+                log('🎤 بدأ الاستماع! تحدث الآن...', 'success');
+                document.getElementById('step2-result').innerHTML = 
+                    '<span class="success">🎤 جاري الاستماع... تحدث!</span>';
+            };
+            
+            recognition.onresult = (event) => {
+                const result = event.results[0][0];
+                log(`📝 تم التعرف على: "${result.transcript}"`, 'success');
+                log(`📊 الثقة: ${(result.confidence * 100).toFixed(1)}%`);
+                document.getElementById('step2-result').innerHTML = 
+                    `<span class="success">✅ تم التقاط: "${result.transcript}"</span>`;
+            };
+            
+            recognition.onerror = (event) => {
+                log(`❌ خطأ: ${event.error}`, 'error');
+                
+                if (event.error === 'no-speech') {
+                    log('💡 لم يتم اكتشاف أي صوت. حاول التحدث بصوت أعلى.', 'error');
+                } else if (event.error === 'audio-capture') {
+                    log('💯 لا يمكن الوصول للميكروفون', 'error');
+                } else if (event.error === 'not-allowed') {
+                    log('💡 تم رفض الإذن. افحص إعدادات المتصفح.', 'error');
+                }
+                
+                document.getElementById('step2-result').innerHTML = 
+                    `<span class="error">❌ خطأ: ${event.error}</span>`;
+            };
+            
+            recognition.onend = () => {
+                log('🔚 انتهى الاستماع');
+            };
+            
+            try {
+                recognition.start();
+                log('⏳ جاري بدء الاستماع...');
+            } catch (err) {
+                log(`❌ فشل في بدء الاستماع: ${err.message}`, 'error');
+            }
+        }
+        
+        // Initial info
+        log('🌐 المتصفح: ' + navigator.userAgent);
+        log('💻 المنصة: ' + navigator.platform);
+        log('🔊 getUserMedia: ' + (navigator.mediaDevices ? 'مدعوم' : 'غير مدعوم'));
+        log('🎤 SpeechRecognition: ' + (window.SpeechRecognition || window.webkitSpeechRecognition ? 'مدعوم' : 'غير مدعوم'));
+    </script>
+</body>
+</html>

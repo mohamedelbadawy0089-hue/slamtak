@@ -1,0 +1,14 @@
+{
+  "drugs": [
+    { "id": "S1", "tradeName": "Amaryl 3mg", "scientificName": "Glimepiride", "company": "Sanofi", "price": 72.00, "category": "Diabetes" },
+    { "id": "S2", "tradeName": "Glucovance 5/500", "scientificName": "Metformin/Glibenclamide", "company": "Merck", "price": 65.00, "category": "Diabetes" },
+    { "id": "S3", "tradeName": "Diamicron 30 MR", "scientificName": "Gliclazide", "company": "Servier", "price": 48.00, "category": "Diabetes" },
+    { "id": "S4", "tradeName": "Jalra 50", "scientificName": "Vildagliptin", "company": "Novartis", "price": 145.00, "category": "Diabetes" },
+    { "id": "S5", "tradeName": "Galvus 50", "scientificName": "Vildagliptin", "company": "Novartis", "price": 155.00, "category": "Diabetes" },
+    { "id": "S6", "tradeName": "Trajenta 5mg", "scientificName": "Linagliptin", "company": "Boehringer Ingelheim", "price": 285.00, "category": "Diabetes" },
+    { "id": "S7", "tradeName": "Januvia 100", "scientificName": "Sitagliptin", "company": "MSD", "price": 310.00, "category": "Diabetes" },
+    { "id": "S8", "tradeName": "Lipitor 20", "scientificName": "Atorvastatin", "company": "Pfizer", "price": 185.00, "category": "Cholesterol" },
+    { "id": "S9", "tradeName": "Crestor 10", "scientificName": "Rosuvastatin", "company": "AstraZeneca", "price": 210.00, "category": "Cholesterol" },
+    { "id": "S10", "tradeName": "Ator 20", "scientificName": "Atorvastatin", "company": "EIPICO", "price": 65.00, "category": "Cholesterol" }
+  ]
+}

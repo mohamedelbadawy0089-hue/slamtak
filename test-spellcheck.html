@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار مدقق الأدوية المحسن</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #218838;
+        }
+        .result {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            min-height: 50px;
+        }
+        .test-cases {
+            margin: 20px 0;
+        }
+        .test-case {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .test-case:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 اختبار مدقق الأدوية المحسن</h1>
+        <p>هذه الصفحة لاختبار نظام التدقيق الإملائي المحسن لأسماء الأدوية باستخدام RxNav API</p>
+        
+        <input type="text" id="medicationInput" placeholder="أدخل اسم دواء (صحيح أو خاطئ)">
+        <button onclick="testSpellCheck()">🔍 تحقق من الإملاء</button>
+        <button onclick="clearResults()">🗑️ مسح النتائج</button>
+        
+        <div class="result" id="result">
+            النتائج ستظهر هنا...
+        </div>
+
+        <h3>حالات اختبار سريعة:</h3>
+        <div class="test-cases">
+            <div class="test-case" onclick="setTestValue('panadol')">panadol (صحيح)</div>
+            <div class="test-case" onclick="setTestValue('paracitamol')">paracitamol (خاطئ - يجب يصبح paracetamol)</div>
+            <div class="test-case" onclick="setTestValue('ibuprophen')">ibuprophen (خاطئ - يجب يصبح ibuprofen)</div>
+            <div class="test-case" onclick="setTestValue('asprin')">asprin (خاطئ - يجب يصبح aspirin)</div>
+            <div class="test-case" onclick="setTestValue('amoxycillin')">amoxycillin (خاطئ - يجب يصبح amoxicillin)</div>
+            <div class="test-case" onclick="setTestValue('diclofanac')">diclofanac (خاطئ - يجب يصبح diclofenac)</div>
+            <div class="test-case" onclick="setTestValue('cetrizine')">cetrizine (خاطئ - يجب يصبح cetirizine)</div>
+        </div>
+
+        <h3>إحصائيات التخزين المؤقت:</h3>
+        <div id="cacheStats">
+            جاري التحميل...
+        </div>
+    </div>
+
+    <!-- Load the spell checker -->
+    <script src="medication-spellcheck.js"></script>
+    
+    <script>
+        let testResults = [];
+
+        function setTestValue(value) {
+            document.getElementById('medicationInput').value = value;
+            testSpellCheck();
+        }
+
+        async function testSpellCheck() {
+            const input = document.getElementById('medicationInput').value.trim();
+            const resultDiv = document.getElementById('result');
+            
+            if (!input) {
+                resultDiv.innerHTML = '⚠️ يرجى إدخال اسم دواء للتحقق';
+                return;
+            }
+
+            resultDiv.innerHTML = '🔄 جاري التحقق...';
+
+            try {
+                const startTime = Date.now();
+                const correctedName = await window.medicationSpellChecker.checkSpelling(input);
+                const endTime = Date.now();
+                const duration = endTime - startTime;
+
+                const result = {
+                    original: input,
+                    corrected: correctedName,
+                    changed: input !== correctedName,
+                    duration: duration
+                };
+
+                testResults.push(result);
+                displayResult(result);
+                updateCacheStats();
+
+            } catch (error) {
+                resultDiv.innerHTML = `❌ خطأ: ${error.message}`;
+            }
+        }
+
+        function displayResult(result) {
+            const resultDiv = document.getElementById('result');
+            const status = result.changed ? '✅ تم التصحيح' : '✅ اسم صحيح';
+            const correction = result.changed ? `<br><strong>${result.original}</strong> → <strong>${result.corrected}</strong>` : `<br><strong>${result.corrected}</strong>`;
+            
+            resultDiv.innerHTML = `
+                ${status}${correction}
+                <br>⏱️ استغرق ${result.duration} مللي ثانية
+                <br>📊 إجمالي الاختبارات: ${testResults.length}
+            `;
+        }
+
+        function clearResults() {
+            testResults = [];
+            document.getElementById('result').innerHTML = 'النتائج ستظهر هنا...';
+            document.getElementById('medicationInput').value = '';
+        }
+
+        function updateCacheStats() {
+            if (window.medicationSpellChecker) {
+                const stats = window.medicationSpellChecker.getCacheStats();
+                document.getElementById('cacheStats').innerHTML = `
+                    حجم التخزين المؤقت: ${stats.size} عناصر<br>
+                    مدة التخزين: ${stats.timeout / 1000} ثانية
+                `;
+            }
+        }
+
+        // Initialize cache stats on load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCacheStats();
+            
+            // Add enter key support
+            document.getElementById('medicationInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    testSpellCheck();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

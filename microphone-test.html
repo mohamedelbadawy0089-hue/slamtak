@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار الميكروفون</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .mic-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 10px 0;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        .mic-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+        .mic-btn.listening {
+            background: #dc3545;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+        }
+        .result {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            min-height: 100px;
+        }
+        .status {
+            font-size: 14px;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+        .error {
+            background: rgba(220, 53, 69, 0.2);
+            color: #ff6b6b;
+        }
+        .success {
+            background: rgba(40, 167, 69, 0.2);
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎤 اختبار الميكروفون</h1>
+        <p>هذه الصفحة لاختبار وظيفة الميكروفون في متصفحك</p>
+        
+        <button id="micBtn" class="mic-btn" onclick="toggleMicrophone()">
+            <i class="fas fa-microphone"></i> اضغط لبدء التسجيل
+        </button>
+        
+        <div class="status" id="status">
+            جاهز للاختبار الميكروفون
+        </div>
+        
+        <div class="result" id="result">
+            النتائج ستظهر هنا...
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <h3>🔧 خطوات استكشاف أخطاء الميكروفون:</h3>
+            <ol>
+                <li><strong>الخطوة 1:</strong> اضغط على زر الميكروفون وشاهد إذا يطلب المتصفح إذن</li>
+                <li><strong>الخطوة 2:</strong> تحقق من رسالة المتصفح - لو "not-allowed" اذهب لإعدادات المتصفح</li>
+                <li><strong>الخطوة 3:</strong> افتح console (F12) وشاهد الأخطاء</li>
+                <li><strong>الخطوة 4:</strong> جرب في متصفح مختلف (Chrome/Edge/Firefox)</li>
+                <li><strong>الخطوة 5:</strong> تأكد من إعدادات الميكروفون في Windows</li>
+            </ol>
+            
+            <h3>🛠️ حلول مشاكل الميكروفون الشائعة:</h3>
+            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin: 10px 0;">
+                <h4>1. إعدادات المتصفح:</h4>
+                <p>• اذهب إلى <strong>الإعدادات</strong> → <strong>الخصوصية والأمان</strong> → <strong>إعدادات الموقع</strong></p>
+                <p>• ابحث عن "ميكروفون" أو "microphone" واضغط "السماح"</p>
+                
+                <h4>2. إعدادات Windows:</h4>
+                <p>• اضغط <strong>Win + I</strong> → ابحث عن "ميكروفون" → <strong>افتح إعدادات الميكروفون</strong></p>
+                <p>• تأكد من "السماح للتطبيقات بالوصول إلى الميكروفون"</p>
+                
+                <h4>3. التحقق من الأجهزة:</h4>
+                <p>• افتح <strong>مدير الأجهزة</strong> → <strong>إدخال ومخرجات</strong> → <strong>الميكروفون</strong></p>
+                <p>• تأكد من أن الميكروفون <strong>مفعل</strong> و <strong>هو الجهاز الافتراضي</strong></p>
+                
+                <h4>4. متصفح بديل:</h4>
+                <p>• لو لا يعمل، جرب <strong>Chrome</strong> أو <strong>Microsoft Edge</strong></p>
+                <p>• تأكد من أن المتصفح محدّث لأحدث إصدار</p>
+            </div>
+            
+            <h3>🧪 اختبارات متقدمة:</h3>
+            <button onclick="testAdvancedMicrophone()" style="background: #17a2b8; margin: 10px 0; padding: 10px; border-radius: 5px; color: white; border: none; cursor: pointer;">
+                🧪 تشغيل اختبار متقدم
+            </button>
+            
+            <div id="advancedResult" style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin: 10px 0; display: none;">
+                <h4>نتائج الاختبار المتقدم:</h4>
+                <div id="advancedDetails"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let recognition = null;
+        let isListening = false;
+
+        function toggleMicrophone() {
+            if (isListening) {
+                stopListening();
+            } else {
+                startListening();
+            }
+        }
+
+        function startListening() {
+            const statusDiv = document.getElementById('status');
+            const resultDiv = document.getElementById('result');
+            const micBtn = document.getElementById('micBtn');
+            
+            // التحقق من دعم المتصفح
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                statusDiv.innerHTML = '<span class="error">❌ متصفحك لا يدعم التعرف الصوتي</span>';
+                return;
+            }
+
+            try {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                
+                // إعدادات محسنة
+                recognition.lang = 'ar-EG';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.maxAlternatives = 3;
+                
+                recognition.onstart = () => {
+                    isListening = true;
+                    micBtn.classList.add('listening');
+                    micBtn.innerHTML = '<i class="fas fa-stop"></i> إيقاف التسجيل';
+                    statusDiv.innerHTML = '<span class="success">🎤 جاري الاستماع... تحدث بوضوح</span>';
+                    resultDiv.innerHTML = 'جاري الاستماع...';
+                };
+
+                recognition.onresult = (event) => {
+                    const results = event.results[0];
+                    let bestTranscript = results[0].transcript;
+                    let bestConfidence = results[0].confidence || 0;
+                    
+                    // البحث عن أفضل نتيجة
+                    for (let i = 1; i < results.length; i++) {
+                        const alternative = results[i];
+                        const confidence = alternative.confidence || 0;
+                        if (confidence > bestConfidence) {
+                            bestTranscript = alternative.transcript;
+                            bestConfidence = confidence;
+                        }
+                    }
+                    
+                    const confidencePercent = (bestConfidence * 100).toFixed(1);
+                    statusDiv.innerHTML = `<span class="success">✅ تم التعرف: "${bestTranscript}" (ثقة: ${confidencePercent}%)</span>`;
+                    resultDiv.innerHTML = `<strong>النص المميز:</strong><br>${bestTranscript}<br><br><strong>الثقة:</strong> ${confidencePercent}%`;
+                };
+
+                recognition.onerror = (event) => {
+                    console.error('Microphone error:', event.error);
+                    let errorMessage = '';
+                    
+                    switch(event.error) {
+                        case 'not-allowed':
+                            errorMessage = '🚫 <strong>تم رفض إذن الميكروفون!</strong><br>يرجى السماح بالوصول للميكروفون في إعدادات المتصفح';
+                            break;
+                        case 'no-speech':
+                            errorMessage = '🔇 <strong>لم يتم اكتشاف أي صوت</strong><br>يرجى التحدث بوضوح في الميكروفون';
+                            break;
+                        case 'audio-capture':
+                            errorMessage = '🎤 <strong>لا يمكن الوصول للميكروفون!</strong><br>يرجى التحقق من إعدادات الميكروفون';
+                            break;
+                        case 'network':
+                            errorMessage = '🌐 <strong>مشكلة في الشبكة</strong><br>يرجى التحقق من اتصال الإنترنت';
+                            break;
+                        default:
+                            errorMessage = `❌ <strong>خطأ غير معروف:</strong> ${event.error}`;
+                    }
+                    
+                    statusDiv.innerHTML = `<span class="error">${errorMessage}</span>`;
+                    stopListening();
+                };
+
+                recognition.onend = () => {
+                    isListening = false;
+                    micBtn.classList.remove('listening');
+                    micBtn.innerHTML = '<i class="fas fa-microphone"></i> اضغط لبدء التسجيل';
+                    statusDiv.innerHTML = 'انتهى الاستماع';
+                };
+
+                recognition.start();
+                
+            } catch (error) {
+                console.error('Error initializing recognition:', error);
+                document.getElementById('status').innerHTML = `<span class="error">❌ خطأ في تهيئة الميكروفون: ${error.message}</span>`;
+            }
+        }
+
+        function stopListening() {
+            if (recognition && isListening) {
+                recognition.stop();
+            }
+        }
+
+        // اختبار متقدم للميكروفون
+        async function testAdvancedMicrophone() {
+            const statusDiv = document.getElementById('status');
+            const resultDiv = document.getElementById('advancedResult');
+            const detailsDiv = document.getElementById('advancedDetails');
+            
+            statusDiv.innerHTML = '<span class="success">🧪 جاري الاختبار المتقدم...</span>';
+            resultDiv.style.display = 'block';
+            
+            try {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const testRecognition = new SpeechRecognition();
+                
+                // اختبار 1: التحقق من الدعم
+                if (!SpeechRecognition) {
+                    throw new Error('المتصفح لا يدعم التعرف الصوتي');
+                }
+                
+                // اختبار 2: التحقق من الأجهزة
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const microphones = devices.filter(device => device.kind === 'audioinput');
+                
+                // اختبار 3: طلب الإذن
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true
+                    } 
+                });
+                
+                // اختبار 4: تحليل الصوت
+                testRecognition.lang = 'ar-EG';
+                testRecognition.continuous = true;
+                testRecognition.interimResults = true;
+                
+                testRecognition.onresult = (event) => {
+                    const result = event.results[event.results.length - 1];
+                    if (result.isFinal) {
+                        const confidence = (result[0].confidence * 100).toFixed(1);
+                        detailsDiv.innerHTML += `
+                            <p><strong>✅ التعرف الصوتي يعمل:</strong> "${result[0].transcript}"</p>
+                            <p><strong>📊 مستوى الثقة:</strong> ${confidence}%</p>
+                        `;
+                    }
+                };
+                
+                testRecognition.onerror = (event) => {
+                    detailsDiv.innerHTML += `<p><strong>❌ خطأ:</strong> ${event.error}</p>`;
+                };
+                
+                testRecognition.start();
+                
+                // إيقاف بعد 5 ثواني
+                setTimeout(() => {
+                    testRecognition.stop();
+                    stream.getTracks().forEach(track => track.stop());
+                    
+                    detailsDiv.innerHTML += `
+                        <p><strong>🎤 عدد الميكروفونات:</strong> ${microphones.length}</p>
+                        <p><strong>🔊 جودة الميكروفون:</strong> ${microphones.length > 0 ? 'متاحة' : 'لا يوجد'}</p>
+                        <p><strong>🌐 المتصفح:</strong> ${navigator.userAgent.split(' ')[0]}</p>
+                        <p><strong>✅ الاختبار اكتمل بنجاح!</strong></p>
+                    `;
+                    
+                    statusDiv.innerHTML = '<span class="success">✅ اكتمل الاختبار المتقدم</span>';
+                }, 5000);
+                
+            } catch (error) {
+                statusDiv.innerHTML = `<span class="error">❌ فشل الاختبار: ${error.message}</span>`;
+                resultDiv.style.display = 'block';
+                detailsDiv.innerHTML = `<p><strong>الخطأ:</strong> ${error.message}</p>`;
+            }
+        }
+
+        // تهيئة الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Microphone test page loaded');
+        });
+    </script>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="libs/font-awesome.min.css">
+</body>
+</html>

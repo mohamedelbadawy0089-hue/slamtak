@@ -1,0 +1,347 @@
+id,trade_name,generic_name,active_ingredient,company,gtin,barcode,strength,form,package_size,price_range,requires_prescription,storage_conditions,category
+med_00001,Amoxil,Amoxicillin 500mg,Amoxicillin,EIPICO,6221001010015,6221001010015,Standard,Tablet,30 units,15-50 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00002,Amoxil,Amoxicillin 500mg,Amoxicillin,EIPICO,6221001020015,6221001020015,Standard,Tablet,30 units,15-50 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00003,Amoxil,Amoxicillin 500mg,Amoxicillin,EIPICO,6221001030015,6221001030015,Standard,Tablet,30 units,15-50 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00004,Amocla,Amoxicillin 500mg,Amoxicillin,EIPICO,6221001010015,6221001010015,Standard,Tablet,30 units,15-50 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00005,Amocla,Amoxicillin 500mg,Amoxicillin,EIPICO,6221001020015,6221001020015,Standard,Tablet,30 units,15-50 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00006,Amocla,Amoxicillin 500mg,Amoxicillin,EIPICO,6221001030015,6221001030015,Standard,Tablet,30 units,15-50 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00007,Amoxilin,Amoxicillin 500mg,Amoxicillin,EIPICO,6221001010015,6221001010015,Standard,Tablet,30 units,15-50 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00008,Amoxilin,Amoxicillin 500mg,Amoxicillin,EIPICO,6221001020015,6221001020015,Standard,Tablet,30 units,15-50 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00009,Amoxilin,Amoxicillin 500mg,Amoxicillin,EIPICO,6221001030015,6221001030015,Standard,Tablet,30 units,15-50 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00010,Moxifast,Amoxicillin 500mg,Amoxicillin,EIPICO,6221001010015,6221001010015,Standard,Tablet,30 units,15-50 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00011,Moxifast,Amoxicillin 500mg,Amoxicillin,EIPICO,6221001020015,6221001020015,Standard,Tablet,30 units,15-50 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00012,Moxifast,Amoxicillin 500mg,Amoxicillin,EIPICO,6221001030015,6221001030015,Standard,Tablet,30 units,15-50 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00013,Clamoxyl,Amoxicillin 500mg,Amoxicillin,EIPICO,6221001010015,6221001010015,Standard,Tablet,30 units,15-50 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00014,Clamoxyl,Amoxicillin 500mg,Amoxicillin,EIPICO,6221001020015,6221001020015,Standard,Tablet,30 units,15-50 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00015,Clamoxyl,Amoxicillin 500mg,Amoxicillin,EIPICO,6221001030015,6221001030015,Standard,Tablet,30 units,15-50 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00016,Zithromax,Azithromycin 250mg,Azithromycin,Pharco,6221002010015,6221002010015,Standard,Tablet,30 units,25-80 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00017,Zithromax,Azithromycin 250mg,Azithromycin,Pharco,6221002020015,6221002020015,Standard,Tablet,30 units,25-80 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00018,Azithro,Azithromycin 250mg,Azithromycin,Pharco,6221002010015,6221002010015,Standard,Tablet,30 units,25-80 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00019,Azithro,Azithromycin 250mg,Azithromycin,Pharco,6221002020015,6221002020015,Standard,Tablet,30 units,25-80 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00020,Azithral,Azithromycin 250mg,Azithromycin,Pharco,6221002010015,6221002010015,Standard,Tablet,30 units,25-80 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00021,Azithral,Azithromycin 250mg,Azithromycin,Pharco,6221002020015,6221002020015,Standard,Tablet,30 units,25-80 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00022,Zimax,Azithromycin 250mg,Azithromycin,Pharco,6221002010015,6221002010015,Standard,Tablet,30 units,25-80 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00023,Zimax,Azithromycin 250mg,Azithromycin,Pharco,6221002020015,6221002020015,Standard,Tablet,30 units,25-80 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00024,Azin,Azithromycin 250mg,Azithromycin,Pharco,6221002010015,6221002010015,Standard,Tablet,30 units,25-80 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00025,Azin,Azithromycin 250mg,Azithromycin,Pharco,6221002020015,6221002020015,Standard,Tablet,30 units,25-80 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00026,Cipro,Ciprofloxacin 500mg,Ciprofloxacin,EIPICO,6221003010015,6221003010015,Standard,Tablet,30 units,20-60 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00027,Cipro,Ciprofloxacin 500mg,Ciprofloxacin,EIPICO,6221003020015,6221003020015,Standard,Tablet,30 units,20-60 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00028,Ciprobay,Ciprofloxacin 500mg,Ciprofloxacin,EIPICO,6221003010015,6221003010015,Standard,Tablet,30 units,20-60 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00029,Ciprobay,Ciprofloxacin 500mg,Ciprofloxacin,EIPICO,6221003020015,6221003020015,Standard,Tablet,30 units,20-60 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00030,Ciproflox,Ciprofloxacin 500mg,Ciprofloxacin,EIPICO,6221003010015,6221003010015,Standard,Tablet,30 units,20-60 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00031,Ciproflox,Ciprofloxacin 500mg,Ciprofloxacin,EIPICO,6221003020015,6221003020015,Standard,Tablet,30 units,20-60 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00032,Ciproxin,Ciprofloxacin 500mg,Ciprofloxacin,EIPICO,6221003010015,6221003010015,Standard,Tablet,30 units,20-60 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00033,Ciproxin,Ciprofloxacin 500mg,Ciprofloxacin,EIPICO,6221003020015,6221003020015,Standard,Tablet,30 units,20-60 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00034,Ciprofar,Ciprofloxacin 500mg,Ciprofloxacin,EIPICO,6221003010015,6221003010015,Standard,Tablet,30 units,20-60 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00035,Ciprofar,Ciprofloxacin 500mg,Ciprofloxacin,EIPICO,6221003020015,6221003020015,Standard,Tablet,30 units,20-60 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00036,Panadol,Paracetamol 500mg,Paracetamol,GlaxoSmithKline,6221004010015,6221004010015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00037,Panadol,Paracetamol 500mg,Paracetamol,GlaxoSmithKline,6221004020015,6221004020015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00038,Panadol,Paracetamol 500mg,Paracetamol,GlaxoSmithKline,6221004030015,6221004030015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00039,Adol,Paracetamol 500mg,Paracetamol,GlaxoSmithKline,6221004010015,6221004010015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00040,Adol,Paracetamol 500mg,Paracetamol,GlaxoSmithKline,6221004020015,6221004020015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00041,Adol,Paracetamol 500mg,Paracetamol,GlaxoSmithKline,6221004030015,6221004030015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00042,Paracetamol,Paracetamol 500mg,Paracetamol,GlaxoSmithKline,6221004010015,6221004010015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00043,Paracetamol,Paracetamol 500mg,Paracetamol,GlaxoSmithKline,6221004020015,6221004020015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00044,Paracetamol,Paracetamol 500mg,Paracetamol,GlaxoSmithKline,6221004030015,6221004030015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00045,Acamol,Paracetamol 500mg,Paracetamol,GlaxoSmithKline,6221004010015,6221004010015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00046,Acamol,Paracetamol 500mg,Paracetamol,GlaxoSmithKline,6221004020015,6221004020015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00047,Acamol,Paracetamol 500mg,Paracetamol,GlaxoSmithKline,6221004030015,6221004030015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00048,Doliprane,Paracetamol 500mg,Paracetamol,GlaxoSmithKline,6221004010015,6221004010015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00049,Doliprane,Paracetamol 500mg,Paracetamol,GlaxoSmithKline,6221004020015,6221004020015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00050,Doliprane,Paracetamol 500mg,Paracetamol,GlaxoSmithKline,6221004030015,6221004030015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00051,Advil,Ibuprofen 400mg,Ibuprofen,Pfizer,6221005010015,6221005010015,Standard,Tablet,30 units,10-35 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00052,Advil,Ibuprofen 400mg,Ibuprofen,Pfizer,6221005020015,6221005020015,Standard,Tablet,30 units,10-35 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00053,Brufen,Ibuprofen 400mg,Ibuprofen,Pfizer,6221005010015,6221005010015,Standard,Tablet,30 units,10-35 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00054,Brufen,Ibuprofen 400mg,Ibuprofen,Pfizer,6221005020015,6221005020015,Standard,Tablet,30 units,10-35 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00055,Ibuprofen,Ibuprofen 400mg,Ibuprofen,Pfizer,6221005010015,6221005010015,Standard,Tablet,30 units,10-35 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00056,Ibuprofen,Ibuprofen 400mg,Ibuprofen,Pfizer,6221005020015,6221005020015,Standard,Tablet,30 units,10-35 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00057,Motrin,Ibuprofen 400mg,Ibuprofen,Pfizer,6221005010015,6221005010015,Standard,Tablet,30 units,10-35 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00058,Motrin,Ibuprofen 400mg,Ibuprofen,Pfizer,6221005020015,6221005020015,Standard,Tablet,30 units,10-35 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00059,Nurofen,Ibuprofen 400mg,Ibuprofen,Pfizer,6221005010015,6221005010015,Standard,Tablet,30 units,10-35 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00060,Nurofen,Ibuprofen 400mg,Ibuprofen,Pfizer,6221005020015,6221005020015,Standard,Tablet,30 units,10-35 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00061,Voltaren,Diclofenac 50mg,Diclofenac potassium,Novartis,6221006010015,6221006010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00062,Voltaren,Diclofenac 50mg,Diclofenac potassium,Novartis,6221006020015,6221006020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00063,Diclofenac,Diclofenac 50mg,Diclofenac potassium,Novartis,6221006010015,6221006010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00064,Diclofenac,Diclofenac 50mg,Diclofenac potassium,Novartis,6221006020015,6221006020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00065,Cataflam,Diclofenac 50mg,Diclofenac potassium,Novartis,6221006010015,6221006010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00066,Cataflam,Diclofenac 50mg,Diclofenac potassium,Novartis,6221006020015,6221006020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00067,Voltaren,Diclofenac 50mg,Diclofenac potassium,Novartis,6221006010015,6221006010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00068,Voltaren,Diclofenac 50mg,Diclofenac potassium,Novartis,6221006020015,6221006020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00069,Diclo,Diclofenac 50mg,Diclofenac potassium,Novartis,6221006010015,6221006010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00070,Diclo,Diclofenac 50mg,Diclofenac potassium,Novartis,6221006020015,6221006020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00071,Glucophage,Metformin 500mg,Metformin hydrochloride,Merck,6221007010015,6221007010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00072,Glucophage,Metformin 500mg,Metformin hydrochloride,Merck,6221007020015,6221007020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00073,Metformin,Metformin 500mg,Metformin hydrochloride,Merck,6221007010015,6221007010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00074,Metformin,Metformin 500mg,Metformin hydrochloride,Merck,6221007020015,6221007020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00075,Diaformin,Metformin 500mg,Metformin hydrochloride,Merck,6221007010015,6221007010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00076,Diaformin,Metformin 500mg,Metformin hydrochloride,Merck,6221007020015,6221007020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00077,Glucovance,Metformin 500mg,Metformin hydrochloride,Merck,6221007010015,6221007010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00078,Glucovance,Metformin 500mg,Metformin hydrochloride,Merck,6221007020015,6221007020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00079,Metfogamma,Metformin 500mg,Metformin hydrochloride,Merck,6221007010015,6221007010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00080,Metfogamma,Metformin 500mg,Metformin hydrochloride,Merck,6221007020015,6221007020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00081,Daonil,Glibenclamide 5mg,Glibenclamide,Servier,6221008010015,6221008010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Diabetes
+med_00082,Daonil,Glibenclamide 5mg,Glibenclamide,Servier,6221008020015,6221008020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Diabetes
+med_00083,Glibenclamide,Glibenclamide 5mg,Glibenclamide,Servier,6221008010015,6221008010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Diabetes
+med_00084,Glibenclamide,Glibenclamide 5mg,Glibenclamide,Servier,6221008020015,6221008020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Diabetes
+med_00085,Euglucon,Glibenclamide 5mg,Glibenclamide,Servier,6221008010015,6221008010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Diabetes
+med_00086,Euglucon,Glibenclamide 5mg,Glibenclamide,Servier,6221008020015,6221008020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Diabetes
+med_00087,Gliben,Glibenclamide 5mg,Glibenclamide,Servier,6221008010015,6221008010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Diabetes
+med_00088,Gliben,Glibenclamide 5mg,Glibenclamide,Servier,6221008020015,6221008020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Diabetes
+med_00089,Diamicron,Glibenclamide 5mg,Glibenclamide,Servier,6221008010015,6221008010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Diabetes
+med_00090,Diamicron,Glibenclamide 5mg,Glibenclamide,Servier,6221008020015,6221008020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Diabetes
+med_00091,Lantus,Insulin Glargine,Insulin glargine,Sanofi,6221009010015,6221009010015,Standard,Tablet,30 units,20-100 EGP,False,Refrigerated (2-8°C),Other
+med_00092,Lantus,Insulin Glargine,Insulin glargine,Sanofi,6221009020015,6221009020015,Standard,Tablet,30 units,20-100 EGP,False,Refrigerated (2-8°C),Other
+med_00093,Insulin Glargine,Insulin Glargine,Insulin glargine,Sanofi,6221009010015,6221009010015,Standard,Tablet,30 units,20-100 EGP,False,Refrigerated (2-8°C),Other
+med_00094,Insulin Glargine,Insulin Glargine,Insulin glargine,Sanofi,6221009020015,6221009020015,Standard,Tablet,30 units,20-100 EGP,False,Refrigerated (2-8°C),Other
+med_00095,Toujeo,Insulin Glargine,Insulin glargine,Sanofi,6221009010015,6221009010015,Standard,Tablet,30 units,20-100 EGP,False,Refrigerated (2-8°C),Other
+med_00096,Toujeo,Insulin Glargine,Insulin glargine,Sanofi,6221009020015,6221009020015,Standard,Tablet,30 units,20-100 EGP,False,Refrigerated (2-8°C),Other
+med_00097,Basaglar,Insulin Glargine,Insulin glargine,Sanofi,6221009010015,6221009010015,Standard,Tablet,30 units,20-100 EGP,False,Refrigerated (2-8°C),Other
+med_00098,Basaglar,Insulin Glargine,Insulin glargine,Sanofi,6221009020015,6221009020015,Standard,Tablet,30 units,20-100 EGP,False,Refrigerated (2-8°C),Other
+med_00099,Abasaglar,Insulin Glargine,Insulin glargine,Sanofi,6221009010015,6221009010015,Standard,Tablet,30 units,20-100 EGP,False,Refrigerated (2-8°C),Other
+med_00100,Abasaglar,Insulin Glargine,Insulin glargine,Sanofi,6221009020015,6221009020015,Standard,Tablet,30 units,20-100 EGP,False,Refrigerated (2-8°C),Other
+med_00101,Norvasc,Amlodipine 5mg,Amlodipine besylate,Pfizer,6221010010015,6221010010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00102,Norvasc,Amlodipine 5mg,Amlodipine besylate,Pfizer,6221010020015,6221010020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00103,Amlodipine,Amlodipine 5mg,Amlodipine besylate,Pfizer,6221010010015,6221010010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00104,Amlodipine,Amlodipine 5mg,Amlodipine besylate,Pfizer,6221010020015,6221010020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00105,Amlocard,Amlodipine 5mg,Amlodipine besylate,Pfizer,6221010010015,6221010010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00106,Amlocard,Amlodipine 5mg,Amlodipine besylate,Pfizer,6221010020015,6221010020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00107,Amlodin,Amlodipine 5mg,Amlodipine besylate,Pfizer,6221010010015,6221010010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00108,Amlodin,Amlodipine 5mg,Amlodipine besylate,Pfizer,6221010020015,6221010020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00109,Norvasc,Amlodipine 5mg,Amlodipine besylate,Pfizer,6221010010015,6221010010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00110,Norvasc,Amlodipine 5mg,Amlodipine besylate,Pfizer,6221010020015,6221010020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00111,Zestril,Lisinopril 10mg,Lisinopril,AstraZeneca,6221011010015,6221011010015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00112,Zestril,Lisinopril 10mg,Lisinopril,AstraZeneca,6221011020015,6221011020015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00113,Lisinopril,Lisinopril 10mg,Lisinopril,AstraZeneca,6221011010015,6221011010015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00114,Lisinopril,Lisinopril 10mg,Lisinopril,AstraZeneca,6221011020015,6221011020015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00115,Lisinopril,Lisinopril 10mg,Lisinopril,AstraZeneca,6221011010015,6221011010015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00116,Lisinopril,Lisinopril 10mg,Lisinopril,AstraZeneca,6221011020015,6221011020015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00117,Prinivil,Lisinopril 10mg,Lisinopril,AstraZeneca,6221011010015,6221011010015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00118,Prinivil,Lisinopril 10mg,Lisinopril,AstraZeneca,6221011020015,6221011020015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00119,Acerbon,Lisinopril 10mg,Lisinopril,AstraZeneca,6221011010015,6221011010015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00120,Acerbon,Lisinopril 10mg,Lisinopril,AstraZeneca,6221011020015,6221011020015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00121,Tenormin,Atenolol 50mg,Atenolol,AstraZeneca,6221012010015,6221012010015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00122,Tenormin,Atenolol 50mg,Atenolol,AstraZeneca,6221012020015,6221012020015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00123,Atenolol,Atenolol 50mg,Atenolol,AstraZeneca,6221012010015,6221012010015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00124,Atenolol,Atenolol 50mg,Atenolol,AstraZeneca,6221012020015,6221012020015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00125,Aten,Atenolol 50mg,Atenolol,AstraZeneca,6221012010015,6221012010015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00126,Aten,Atenolol 50mg,Atenolol,AstraZeneca,6221012020015,6221012020015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00127,Tenormin,Atenolol 50mg,Atenolol,AstraZeneca,6221012010015,6221012010015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00128,Tenormin,Atenolol 50mg,Atenolol,AstraZeneca,6221012020015,6221012020015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00129,Atenolol,Atenolol 50mg,Atenolol,AstraZeneca,6221012010015,6221012010015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00130,Atenolol,Atenolol 50mg,Atenolol,AstraZeneca,6221012020015,6221012020015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00131,Lipitor,Atorvastatin 20mg,Atorvastatin calcium,Pfizer,6221013010015,6221013010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00132,Lipitor,Atorvastatin 20mg,Atorvastatin calcium,Pfizer,6221013020015,6221013020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00133,Atorvastatin,Atorvastatin 20mg,Atorvastatin calcium,Pfizer,6221013010015,6221013010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00134,Atorvastatin,Atorvastatin 20mg,Atorvastatin calcium,Pfizer,6221013020015,6221013020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00135,Atorva,Atorvastatin 20mg,Atorvastatin calcium,Pfizer,6221013010015,6221013010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00136,Atorva,Atorvastatin 20mg,Atorvastatin calcium,Pfizer,6221013020015,6221013020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00137,Lipitor,Atorvastatin 20mg,Atorvastatin calcium,Pfizer,6221013010015,6221013010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00138,Lipitor,Atorvastatin 20mg,Atorvastatin calcium,Pfizer,6221013020015,6221013020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00139,Atorvastin,Atorvastatin 20mg,Atorvastatin calcium,Pfizer,6221013010015,6221013010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00140,Atorvastin,Atorvastatin 20mg,Atorvastatin calcium,Pfizer,6221013020015,6221013020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00141,Zocor,Simvastatin 20mg,Simvastatin,Merck,6221014010015,6221014010015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Cholesterol
+med_00142,Zocor,Simvastatin 20mg,Simvastatin,Merck,6221014020015,6221014020015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Cholesterol
+med_00143,Simvastatin,Simvastatin 20mg,Simvastatin,Merck,6221014010015,6221014010015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Cholesterol
+med_00144,Simvastatin,Simvastatin 20mg,Simvastatin,Merck,6221014020015,6221014020015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Cholesterol
+med_00145,Simvastin,Simvastatin 20mg,Simvastatin,Merck,6221014010015,6221014010015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Cholesterol
+med_00146,Simvastin,Simvastatin 20mg,Simvastatin,Merck,6221014020015,6221014020015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Cholesterol
+med_00147,Zocor,Simvastatin 20mg,Simvastatin,Merck,6221014010015,6221014010015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Cholesterol
+med_00148,Zocor,Simvastatin 20mg,Simvastatin,Merck,6221014020015,6221014020015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Cholesterol
+med_00149,Simvo,Simvastatin 20mg,Simvastatin,Merck,6221014010015,6221014010015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Cholesterol
+med_00150,Simvo,Simvastatin 20mg,Simvastatin,Merck,6221014020015,6221014020015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Cholesterol
+med_00151,Losec,Omeprazole 20mg,Omeprazole,AstraZeneca,6221015010015,6221015010015,Standard,Tablet,30 units,25-70 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00152,Losec,Omeprazole 20mg,Omeprazole,AstraZeneca,6221015020015,6221015020015,Standard,Tablet,30 units,25-70 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00153,Omeprazole,Omeprazole 20mg,Omeprazole,AstraZeneca,6221015010015,6221015010015,Standard,Tablet,30 units,25-70 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00154,Omeprazole,Omeprazole 20mg,Omeprazole,AstraZeneca,6221015020015,6221015020015,Standard,Tablet,30 units,25-70 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00155,Omepradex,Omeprazole 20mg,Omeprazole,AstraZeneca,6221015010015,6221015010015,Standard,Tablet,30 units,25-70 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00156,Omepradex,Omeprazole 20mg,Omeprazole,AstraZeneca,6221015020015,6221015020015,Standard,Tablet,30 units,25-70 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00157,Prilosec,Omeprazole 20mg,Omeprazole,AstraZeneca,6221015010015,6221015010015,Standard,Tablet,30 units,25-70 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00158,Prilosec,Omeprazole 20mg,Omeprazole,AstraZeneca,6221015020015,6221015020015,Standard,Tablet,30 units,25-70 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00159,Omeprazole,Omeprazole 20mg,Omeprazole,AstraZeneca,6221015010015,6221015010015,Standard,Tablet,30 units,25-70 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00160,Omeprazole,Omeprazole 20mg,Omeprazole,AstraZeneca,6221015020015,6221015020015,Standard,Tablet,30 units,25-70 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00161,Protonix,Pantoprazole 40mg,Pantoprazole,Takeda,6221016010015,6221016010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00162,Protonix,Pantoprazole 40mg,Pantoprazole,Takeda,6221016020015,6221016020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00163,Pantoprazole,Pantoprazole 40mg,Pantoprazole,Takeda,6221016010015,6221016010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00164,Pantoprazole,Pantoprazole 40mg,Pantoprazole,Takeda,6221016020015,6221016020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00165,Pantoloc,Pantoprazole 40mg,Pantoprazole,Takeda,6221016010015,6221016010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00166,Pantoloc,Pantoprazole 40mg,Pantoprazole,Takeda,6221016020015,6221016020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00167,Protonix,Pantoprazole 40mg,Pantoprazole,Takeda,6221016010015,6221016010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00168,Protonix,Pantoprazole 40mg,Pantoprazole,Takeda,6221016020015,6221016020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00169,Pantoprazole,Pantoprazole 40mg,Pantoprazole,Takeda,6221016010015,6221016010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00170,Pantoprazole,Pantoprazole 40mg,Pantoprazole,Takeda,6221016020015,6221016020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00171,Zantac,Ranitidine 150mg,Ranitidine hydrochloride,GlaxoSmithKline,6221017010015,6221017010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00172,Zantac,Ranitidine 150mg,Ranitidine hydrochloride,GlaxoSmithKline,6221017020015,6221017020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00173,Ranitidine,Ranitidine 150mg,Ranitidine hydrochloride,GlaxoSmithKline,6221017010015,6221017010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00174,Ranitidine,Ranitidine 150mg,Ranitidine hydrochloride,GlaxoSmithKline,6221017020015,6221017020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00175,Zantac,Ranitidine 150mg,Ranitidine hydrochloride,GlaxoSmithKline,6221017010015,6221017010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00176,Zantac,Ranitidine 150mg,Ranitidine hydrochloride,GlaxoSmithKline,6221017020015,6221017020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00177,Ranitidine,Ranitidine 150mg,Ranitidine hydrochloride,GlaxoSmithKline,6221017010015,6221017010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00178,Ranitidine,Ranitidine 150mg,Ranitidine hydrochloride,GlaxoSmithKline,6221017020015,6221017020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00179,Histac,Ranitidine 150mg,Ranitidine hydrochloride,GlaxoSmithKline,6221017010015,6221017010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00180,Histac,Ranitidine 150mg,Ranitidine hydrochloride,GlaxoSmithKline,6221017020015,6221017020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00181,Zyrtec,Cetirizine 10mg,Cetirizine dihydrochloride,UCB,6221018010015,6221018010015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Other
+med_00182,Zyrtec,Cetirizine 10mg,Cetirizine dihydrochloride,UCB,6221018020015,6221018020015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Other
+med_00183,Cetirizine,Cetirizine 10mg,Cetirizine dihydrochloride,UCB,6221018010015,6221018010015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Other
+med_00184,Cetirizine,Cetirizine 10mg,Cetirizine dihydrochloride,UCB,6221018020015,6221018020015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Other
+med_00185,Cetrine,Cetirizine 10mg,Cetirizine dihydrochloride,UCB,6221018010015,6221018010015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Other
+med_00186,Cetrine,Cetirizine 10mg,Cetirizine dihydrochloride,UCB,6221018020015,6221018020015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Other
+med_00187,Zyrtec,Cetirizine 10mg,Cetirizine dihydrochloride,UCB,6221018010015,6221018010015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Other
+med_00188,Zyrtec,Cetirizine 10mg,Cetirizine dihydrochloride,UCB,6221018020015,6221018020015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Other
+med_00189,Cetirizin,Cetirizine 10mg,Cetirizine dihydrochloride,UCB,6221018010015,6221018010015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Other
+med_00190,Cetirizin,Cetirizine 10mg,Cetirizine dihydrochloride,UCB,6221018020015,6221018020015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Other
+med_00191,Claritin,Loratadine 10mg,Loratadine,Bayer,6221019010015,6221019010015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Allergy
+med_00192,Claritin,Loratadine 10mg,Loratadine,Bayer,6221019020015,6221019020015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Allergy
+med_00193,Loratadine,Loratadine 10mg,Loratadine,Bayer,6221019010015,6221019010015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Allergy
+med_00194,Loratadine,Loratadine 10mg,Loratadine,Bayer,6221019020015,6221019020015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Allergy
+med_00195,Claritin,Loratadine 10mg,Loratadine,Bayer,6221019010015,6221019010015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Allergy
+med_00196,Claritin,Loratadine 10mg,Loratadine,Bayer,6221019020015,6221019020015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Allergy
+med_00197,Loratadine,Loratadine 10mg,Loratadine,Bayer,6221019010015,6221019010015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Allergy
+med_00198,Loratadine,Loratadine 10mg,Loratadine,Bayer,6221019020015,6221019020015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Allergy
+med_00199,Alavert,Loratadine 10mg,Loratadine,Bayer,6221019010015,6221019010015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Allergy
+med_00200,Alavert,Loratadine 10mg,Loratadine,Bayer,6221019020015,6221019020015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Allergy
+med_00201,Redoxon,Vitamin C 500mg,Ascorbic acid,Bayer,6221020010015,6221020010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Vitamins
+med_00202,Redoxon,Vitamin C 500mg,Ascorbic acid,Bayer,6221020020015,6221020020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Vitamins
+med_00203,Vitamin C,Vitamin C 500mg,Ascorbic acid,Bayer,6221020010015,6221020010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Vitamins
+med_00204,Vitamin C,Vitamin C 500mg,Ascorbic acid,Bayer,6221020020015,6221020020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Vitamins
+med_00205,Cebion,Vitamin C 500mg,Ascorbic acid,Bayer,6221020010015,6221020010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Vitamins
+med_00206,Cebion,Vitamin C 500mg,Ascorbic acid,Bayer,6221020020015,6221020020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Vitamins
+med_00207,Redoxon,Vitamin C 500mg,Ascorbic acid,Bayer,6221020010015,6221020010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Vitamins
+med_00208,Redoxon,Vitamin C 500mg,Ascorbic acid,Bayer,6221020020015,6221020020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Vitamins
+med_00209,Ascorbic acid,Vitamin C 500mg,Ascorbic acid,Bayer,6221020010015,6221020010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Vitamins
+med_00210,Ascorbic acid,Vitamin C 500mg,Ascorbic acid,Bayer,6221020020015,6221020020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Vitamins
+med_00211,Vitamin D3,Vitamin D3 1000IU,Cholecalciferol,Various,6221021010015,6221021010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Vitamins
+med_00212,Vitamin D3,Vitamin D3 1000IU,Cholecalciferol,Various,6221021020015,6221021020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Vitamins
+med_00213,Calcitriol,Vitamin D3 1000IU,Cholecalciferol,Various,6221021010015,6221021010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Vitamins
+med_00214,Calcitriol,Vitamin D3 1000IU,Cholecalciferol,Various,6221021020015,6221021020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Vitamins
+med_00215,D3,Vitamin D3 1000IU,Cholecalciferol,Various,6221021010015,6221021010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Vitamins
+med_00216,D3,Vitamin D3 1000IU,Cholecalciferol,Various,6221021020015,6221021020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Vitamins
+med_00217,Vitamin D,Vitamin D3 1000IU,Cholecalciferol,Various,6221021010015,6221021010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Vitamins
+med_00218,Vitamin D,Vitamin D3 1000IU,Cholecalciferol,Various,6221021020015,6221021020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Vitamins
+med_00219,Cholecalciferol,Vitamin D3 1000IU,Cholecalciferol,Various,6221021010015,6221021010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Vitamins
+med_00220,Cholecalciferol,Vitamin D3 1000IU,Cholecalciferol,Various,6221021020015,6221021020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Vitamins
+med_00221,Centrum,Multivitamins,Multiple vitamins and minerals,Pfizer,6221022010015,6221022010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00222,Centrum,Multivitamins,Multiple vitamins and minerals,Pfizer,6221022020015,6221022020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00223,Multivitamins,Multivitamins,Multiple vitamins and minerals,Pfizer,6221022010015,6221022010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00224,Multivitamins,Multivitamins,Multiple vitamins and minerals,Pfizer,6221022020015,6221022020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00225,Supradyn,Multivitamins,Multiple vitamins and minerals,Pfizer,6221022010015,6221022010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00226,Supradyn,Multivitamins,Multiple vitamins and minerals,Pfizer,6221022020015,6221022020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00227,Centrum,Multivitamins,Multiple vitamins and minerals,Pfizer,6221022010015,6221022010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00228,Centrum,Multivitamins,Multiple vitamins and minerals,Pfizer,6221022020015,6221022020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00229,Multi-tabs,Multivitamins,Multiple vitamins and minerals,Pfizer,6221022010015,6221022010015,Standard,tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00230,Multi-tabs,Multivitamins,Multiple vitamins and minerals,Pfizer,6221022020015,6221022020015,Standard,tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00231,Amocla,EIPICO Amoxicillin,Amoxicillin,EIPICO,6222001010015,6222001010015,Standard,Tablet,30 units,15-50 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00232,Amocla,EIPICO Amoxicillin,Amoxicillin,EIPICO,6222001020015,6222001020015,Standard,Tablet,30 units,15-50 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00233,Amoxilin,EIPICO Amoxicillin,Amoxicillin,EIPICO,6222001010015,6222001010015,Standard,Tablet,30 units,15-50 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00234,Amoxilin,EIPICO Amoxicillin,Amoxicillin,EIPICO,6222001020015,6222001020015,Standard,Tablet,30 units,15-50 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00235,Moxifast,EIPICO Amoxicillin,Amoxicillin,EIPICO,6222001010015,6222001010015,Standard,Tablet,30 units,15-50 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00236,Moxifast,EIPICO Amoxicillin,Amoxicillin,EIPICO,6222001020015,6222001020015,Standard,Tablet,30 units,15-50 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00237,Azithro,Pharco Azithromycin,Azithromycin,Pharco,6222002010015,6222002010015,Standard,Tablet,30 units,25-80 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00238,Azithro,Pharco Azithromycin,Azithromycin,Pharco,6222002020015,6222002020015,Standard,Tablet,30 units,25-80 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00239,Azithral,Pharco Azithromycin,Azithromycin,Pharco,6222002010015,6222002010015,Standard,Tablet,30 units,25-80 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00240,Azithral,Pharco Azithromycin,Azithromycin,Pharco,6222002020015,6222002020015,Standard,Tablet,30 units,25-80 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00241,Zimax,Pharco Azithromycin,Azithromycin,Pharco,6222002010015,6222002010015,Standard,Tablet,30 units,25-80 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00242,Zimax,Pharco Azithromycin,Azithromycin,Pharco,6222002020015,6222002020015,Standard,Tablet,30 units,25-80 EGP,True,"Store below 25°C, protect from light",Antibiotics
+med_00243,Adol,Memphis Paracetamol,Paracetamol,Memphis,6222003010015,6222003010015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00244,Adol,Memphis Paracetamol,Paracetamol,Memphis,6222003020015,6222003020015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00245,Paracetamol,Memphis Paracetamol,Paracetamol,Memphis,6222003010015,6222003010015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00246,Paracetamol,Memphis Paracetamol,Paracetamol,Memphis,6222003020015,6222003020015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00247,Acamol,Memphis Paracetamol,Paracetamol,Memphis,6222003010015,6222003010015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00248,Acamol,Memphis Paracetamol,Paracetamol,Memphis,6222003020015,6222003020015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00249,Panadol,GlaxoSmithKline Panadol,Paracetamol,GlaxoSmithKline,6222004010015,6222004010015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00250,Panadol,GlaxoSmithKline Panadol,Paracetamol,GlaxoSmithKline,6222004020015,6222004020015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00251,Panadol Extra,GlaxoSmithKline Panadol,Paracetamol,GlaxoSmithKline,6222004010015,6222004010015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00252,Panadol Extra,GlaxoSmithKline Panadol,Paracetamol,GlaxoSmithKline,6222004020015,6222004020015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00253,Panadol Advance,GlaxoSmithKline Panadol,Paracetamol,GlaxoSmithKline,6222004010015,6222004010015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00254,Panadol Advance,GlaxoSmithKline Panadol,Paracetamol,GlaxoSmithKline,6222004020015,6222004020015,Standard,Tablet,30 units,5-25 EGP,False,"Store below 25°C, protect from light",Painkillers
+med_00255,Voltaren,Novartis Voltaren,Diclofenac diethylammonium,Novartis,6222005010015,6222005010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00256,Voltaren,Novartis Voltaren,Diclofenac diethylammonium,Novartis,6222005020015,6222005020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00257,Voltaren Emulgel,Novartis Voltaren,Diclofenac diethylammonium,Novartis,6222005010015,6222005010015,Standard,cream,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00258,Voltaren Emulgel,Novartis Voltaren,Diclofenac diethylammonium,Novartis,6222005020015,6222005020015,Standard,cream,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00259,Voltaren Gel,Novartis Voltaren,Diclofenac diethylammonium,Novartis,6222005010015,6222005010015,Standard,cream,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00260,Voltaren Gel,Novartis Voltaren,Diclofenac diethylammonium,Novartis,6222005020015,6222005020015,Standard,cream,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00261,Lantus,Sanofi Lantus,Insulin glargine,Sanofi,6222006010015,6222006010015,Standard,Tablet,30 units,20-100 EGP,False,Refrigerated (2-8°C),Other
+med_00262,Lantus,Sanofi Lantus,Insulin glargine,Sanofi,6222006020015,6222006020015,Standard,Tablet,30 units,20-100 EGP,False,Refrigerated (2-8°C),Other
+med_00263,Lantus Solostar,Sanofi Lantus,Insulin glargine,Sanofi,6222006010015,6222006010015,Standard,Tablet,30 units,20-100 EGP,False,Refrigerated (2-8°C),Other
+med_00264,Lantus Solostar,Sanofi Lantus,Insulin glargine,Sanofi,6222006020015,6222006020015,Standard,Tablet,30 units,20-100 EGP,False,Refrigerated (2-8°C),Other
+med_00265,Lantus Pen,Sanofi Lantus,Insulin glargine,Sanofi,6222006010015,6222006010015,Standard,Tablet,30 units,20-100 EGP,False,Refrigerated (2-8°C),Other
+med_00266,Lantus Pen,Sanofi Lantus,Insulin glargine,Sanofi,6222006020015,6222006020015,Standard,Tablet,30 units,20-100 EGP,False,Refrigerated (2-8°C),Other
+med_00267,Daonil,Servier Daonil,Glibenclamide,Servier,6222007010015,6222007010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Diabetes
+med_00268,Daonil,Servier Daonil,Glibenclamide,Servier,6222007020015,6222007020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Diabetes
+med_00269,Daonil 5mg,Servier Daonil,Glibenclamide,Servier,6222007010015,6222007010015,5mg,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Diabetes
+med_00270,Daonil 5mg,Servier Daonil,Glibenclamide,Servier,6222007020015,6222007020015,5mg,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Diabetes
+med_00271,Glibenclamide,Servier Daonil,Glibenclamide,Servier,6222007010015,6222007010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Diabetes
+med_00272,Glibenclamide,Servier Daonil,Glibenclamide,Servier,6222007020015,6222007020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Diabetes
+med_00273,Norvasc,Pfizer Norvasc,Amlodipine besylate,Pfizer,6222008010015,6222008010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00274,Norvasc,Pfizer Norvasc,Amlodipine besylate,Pfizer,6222008020015,6222008020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00275,Norvasc 5mg,Pfizer Norvasc,Amlodipine besylate,Pfizer,6222008010015,6222008010015,5mg,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00276,Norvasc 5mg,Pfizer Norvasc,Amlodipine besylate,Pfizer,6222008020015,6222008020015,5mg,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00277,Norvasc 10mg,Pfizer Norvasc,Amlodipine besylate,Pfizer,6222008010015,6222008010015,10mg,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00278,Norvasc 10mg,Pfizer Norvasc,Amlodipine besylate,Pfizer,6222008020015,6222008020015,10mg,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00279,Glucophage,Merck Glucophage,Metformin hydrochloride,Merck,6222009010015,6222009010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00280,Glucophage,Merck Glucophage,Metformin hydrochloride,Merck,6222009020015,6222009020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00281,Glucophage XR,Merck Glucophage,Metformin hydrochloride,Merck,6222009010015,6222009010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00282,Glucophage XR,Merck Glucophage,Metformin hydrochloride,Merck,6222009020015,6222009020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00283,Glucophage 500mg,Merck Glucophage,Metformin hydrochloride,Merck,6222009010015,6222009010015,500mg,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00284,Glucophage 500mg,Merck Glucophage,Metformin hydrochloride,Merck,6222009020015,6222009020015,500mg,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00285,Zestril,AstraZeneca Zestril,Lisinopril,AstraZeneca,6222010010015,6222010010015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00286,Zestril,AstraZeneca Zestril,Lisinopril,AstraZeneca,6222010020015,6222010020015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00287,Zestril 10mg,AstraZeneca Zestril,Lisinopril,AstraZeneca,6222010010015,6222010010015,10mg,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00288,Zestril 10mg,AstraZeneca Zestril,Lisinopril,AstraZeneca,6222010020015,6222010020015,10mg,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00289,Lisinopril,AstraZeneca Zestril,Lisinopril,AstraZeneca,6222010010015,6222010010015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00290,Lisinopril,AstraZeneca Zestril,Lisinopril,AstraZeneca,6222010020015,6222010020015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Pressure
+med_00291,Aspirin,Bayer Aspirin,Acetylsalicylic acid,Bayer,6222011010015,6222011010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00292,Aspirin,Bayer Aspirin,Acetylsalicylic acid,Bayer,6222011020015,6222011020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00293,Aspirin 81mg,Bayer Aspirin,Acetylsalicylic acid,Bayer,6222011010015,6222011010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00294,Aspirin 81mg,Bayer Aspirin,Acetylsalicylic acid,Bayer,6222011020015,6222011020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00295,Aspirin Cardio,Bayer Aspirin,Acetylsalicylic acid,Bayer,6222011010015,6222011010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00296,Aspirin Cardio,Bayer Aspirin,Acetylsalicylic acid,Bayer,6222011020015,6222011020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00297,Zyrtec,UCB Zyrtec,Cetirizine dihydrochloride,UCB,6222012010015,6222012010015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Other
+med_00298,Zyrtec,UCB Zyrtec,Cetirizine dihydrochloride,UCB,6222012020015,6222012020015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Other
+med_00299,Zyrtec-D,UCB Zyrtec,Cetirizine dihydrochloride,UCB,6222012010015,6222012010015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Other
+med_00300,Zyrtec-D,UCB Zyrtec,Cetirizine dihydrochloride,UCB,6222012020015,6222012020015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Other
+med_00301,Cetirizine,UCB Zyrtec,Cetirizine dihydrochloride,UCB,6222012010015,6222012010015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Other
+med_00302,Cetirizine,UCB Zyrtec,Cetirizine dihydrochloride,UCB,6222012020015,6222012020015,Standard,Tablet,30 units,20-100 EGP,False,Room temperature,Other
+med_00303,Pantoloc,Takeda Pantoprazole,Pantoprazole,Takeda,6222013010015,6222013010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00304,Pantoloc,Takeda Pantoprazole,Pantoprazole,Takeda,6222013020015,6222013020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00305,Pantoprazole,Takeda Pantoprazole,Pantoprazole,Takeda,6222013010015,6222013010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00306,Pantoprazole,Takeda Pantoprazole,Pantoprazole,Takeda,6222013020015,6222013020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00307,Pantoloc 40mg,Takeda Pantoprazole,Pantoprazole,Takeda,6222013010015,6222013010015,40mg,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00308,Pantoloc 40mg,Takeda Pantoprazole,Pantoprazole,Takeda,6222013020015,6222013020015,40mg,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Stomach
+med_00309,Tamiflu,Roche Tamiflu,Oseltamivir phosphate,Roche,6222014010015,6222014010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00310,Tamiflu,Roche Tamiflu,Oseltamivir phosphate,Roche,6222014020015,6222014020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00311,Oseltamivir,Roche Tamiflu,Oseltamivir phosphate,Roche,6222014010015,6222014010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00312,Oseltamivir,Roche Tamiflu,Oseltamivir phosphate,Roche,6222014020015,6222014020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00313,Tamiflu 75mg,Roche Tamiflu,Oseltamivir phosphate,Roche,6222014010015,6222014010015,5mg,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00314,Tamiflu 75mg,Roche Tamiflu,Oseltamivir phosphate,Roche,6222014020015,6222014020015,5mg,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00315,Eliquis,Eliquis,Apixaban,Bristol-Myers Squibb,6222015010015,6222015010015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Thinners
+med_00316,Eliquis,Eliquis,Apixaban,Bristol-Myers Squibb,6222015020015,6222015020015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Thinners
+med_00317,Apixaban,Eliquis,Apixaban,Bristol-Myers Squibb,6222015010015,6222015010015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Thinners
+med_00318,Apixaban,Eliquis,Apixaban,Bristol-Myers Squibb,6222015020015,6222015020015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Thinners
+med_00319,Eliquis 5mg,Eliquis,Apixaban,Bristol-Myers Squibb,6222015010015,6222015010015,5mg,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Thinners
+med_00320,Eliquis 5mg,Eliquis,Apixaban,Bristol-Myers Squibb,6222015020015,6222015020015,5mg,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Thinners
+med_00321,Xarelto,Xarelto,Rivaroxaban,Bayer,6222016010015,6222016010015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Thinners
+med_00322,Xarelto,Xarelto,Rivaroxaban,Bayer,6222016020015,6222016020015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Thinners
+med_00323,Rivaroxaban,Xarelto,Rivaroxaban,Bayer,6222016010015,6222016010015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Thinners
+med_00324,Rivaroxaban,Xarelto,Rivaroxaban,Bayer,6222016020015,6222016020015,Standard,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Thinners
+med_00325,Xarelto 20mg,Xarelto,Rivaroxaban,Bayer,6222016010015,6222016010015,20mg,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Thinners
+med_00326,Xarelto 20mg,Xarelto,Rivaroxaban,Bayer,6222016020015,6222016020015,20mg,Tablet,30 units,20-100 EGP,True,"Store below 25°C, protect from light",Blood Thinners
+med_00327,Januvia,Januvia,Sitagliptin phosphate,Merck,6222017010015,6222017010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00328,Januvia,Januvia,Sitagliptin phosphate,Merck,6222017020015,6222017020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00329,Sitagliptin,Januvia,Sitagliptin phosphate,Merck,6222017010015,6222017010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00330,Sitagliptin,Januvia,Sitagliptin phosphate,Merck,6222017020015,6222017020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00331,Januvia 100mg,Januvia,Sitagliptin phosphate,Merck,6222017010015,6222017010015,100mg,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00332,Januvia 100mg,Januvia,Sitagliptin phosphate,Merck,6222017020015,6222017020015,100mg,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00333,Metformin,Metformin,Metformin hydrochloride,EIPICO,6222018010015,6222018010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00334,Metformin,Metformin,Metformin hydrochloride,EIPICO,6222018020015,6222018020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00335,Glucophage,Metformin,Metformin hydrochloride,EIPICO,6222018010015,6222018010015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00336,Glucophage,Metformin,Metformin hydrochloride,EIPICO,6222018020015,6222018020015,Standard,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00337,Metformin 500mg,Metformin,Metformin hydrochloride,EIPICO,6222018010015,6222018010015,500mg,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00338,Metformin 500mg,Metformin,Metformin hydrochloride,EIPICO,6222018020015,6222018020015,500mg,Tablet,30 units,20-100 EGP,False,"Store below 25°C, protect from light",Other
+med_00339,Insulin,Insulin,Insulin,Various,6222019010015,6222019010015,Standard,Tablet,30 units,200-500 EGP,True,Refrigerated (2-8°C),Diabetes
+med_00340,Insulin,Insulin,Insulin,Various,6222019020015,6222019020015,Standard,Tablet,30 units,200-500 EGP,True,Refrigerated (2-8°C),Diabetes
+med_00341,Humalog,Insulin,Insulin,Various,6222019010015,6222019010015,Standard,Tablet,30 units,200-500 EGP,True,Refrigerated (2-8°C),Diabetes
+med_00342,Humalog,Insulin,Insulin,Various,6222019020015,6222019020015,Standard,Tablet,30 units,200-500 EGP,True,Refrigerated (2-8°C),Diabetes
+med_00343,NovoRapid,Insulin,Insulin,Various,6222019010015,6222019010015,Standard,Tablet,30 units,200-500 EGP,True,Refrigerated (2-8°C),Diabetes
+med_00344,NovoRapid,Insulin,Insulin,Various,6222019020015,6222019020015,Standard,Tablet,30 units,200-500 EGP,True,Refrigerated (2-8°C),Diabetes
+med_00345,Lantus,Insulin,Insulin,Various,6222019010015,6222019010015,Standard,Tablet,30 units,200-500 EGP,True,Refrigerated (2-8°C),Diabetes
+med_00346,Lantus,Insulin,Insulin,Various,6222019020015,6222019020015,Standard,Tablet,30 units,200-500 EGP,True,Refrigerated (2-8°C),Diabetes

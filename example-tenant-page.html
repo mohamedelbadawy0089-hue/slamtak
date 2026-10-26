@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مثال Multi-Tenant - سلامتك</title>
+    
+    <!-- Supabase SDK -->
+    <script src="libs/supabase.min.js"></script>
+    
+    <!-- Supabase Singleton -->
+    <script src="supabase-singleton.js"></script>
+    
+    <!-- Multi-Tenant Integration -->
+    <script src="multi-tenant-integration.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .tenant-info {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-family: monospace;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .products-list {
+            margin-top: 30px;
+        }
+        
+        .product-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .product-info h4 {
+            margin: 0 0 5px 0;
+        }
+        
+        .product-info p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .delete-btn {
+            background: #ff4757;
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #38ef7d;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            z-index: 9999;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from { transform: translate(-50%, -100%); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏬 مثال نظام Multi-Tenant</h1>
+        
+        <!-- معلومات المستأجر -->
+        <div class="tenant-info">
+            <strong>🆔 معرف المستخدم (Tenant):</strong> <span id="userId">جاري التحميل...</span><br>
+            <strong>🏭 معرف المخزن:</strong> <span id="warehouseId">جاري التحميل...</span>
+        </div>
+        
+        <!-- نموذج إضافة منتج -->
+        <div class="form-section">
+            <h3>➕ إضافة منتج جديد</h3>
+            <div class="form-group">
+                <label>اسم المنتج</label>
+                <input type="text" id="productName" placeholder="مثال: باراسيتامول">
+            </div>
+            <div class="form-group">
+                <label>السعر</label>
+                <input type="number" id="productPrice" placeholder="100">
+            </div>
+            <div class="form-group">
+                <label>الكمية</label>
+                <input type="number" id="productQty" placeholder="50">
+            </div>
+            <button onclick="addProduct()">💾 حفظ المنتج</button>
+        </div>
+        
+        <!-- قائمة المنتجات -->
+        <div class="products-list">
+            <h3>📦 منتجاتي (معزولة عن المستخدمين الآخرين)</h3>
+            <div id="productsContainer">
+                <div class="empty-state">جاري تحميل المنتجات...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== إعداد نظام Multi-Tenant ==========
+        
+        let tenantManager = null;
+        let products = [];
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 1. عرض معلومات المستأجر
+            const userId = SupabaseSingleton.getCurrentUserId();
+            const warehouseId = SupabaseSingleton.getCurrentWarehouseId();
+            
+            document.getElementById('userId').textContent = userId || 'غير مسجل دخول';
+            document.getElementById('warehouseId').textContent = warehouseId || 'غير محدد';
+            
+            if (!userId) {
+                showNotification('❌ يرجى تسجيل الدخول أولاً', 'error');
+                setTimeout(() => if(typeof window.showOfflineToast === 'function') window.showOfflineToast();, 2000);
+                return;
+            }
+            
+            // 2. إنشاء مدير متعدد المستأجرين
+            const client = SupabaseSingleton.getClient();
+            tenantManager = new MultiTenantManager(client);
+            
+            // 3. جلب المنتجات (مع فلتر user_id تلقائي)
+            await loadProducts();
+            
+            // 4. تفعيل Real-time (مع عزل)
+            tenantManager.subscribeToTable('products', (payload) => {
+                console.log('Real-time update:', payload);
+                handleRealtimeUpdate(payload);
+            });
+            
+            console.log('✅ Multi-Tenant system initialized');
+        });
+        
+        // ========== جلب المنتجات (مع عزل) ==========
+        
+        async function loadProducts() {
+            try {
+                const result = await tenantManager.select('products', {
+                    orderBy: 'name',
+                    ascending: true
+                });
+                
+                if (result.success) {
+                    products = result.data;
+                    renderProducts();
+                } else {
+                    showNotification('❌ خطأ في تحميل المنتجات', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading products:', error);
+                showNotification('❌ خطأ في الاتصال', 'error');
+            }
+        }
+        
+        // ========== إضافة منتج (مع user_id تلقائي) ==========
+        
+        async function addProduct() {
+            const name = document.getElementById('productName').value.trim();
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const quantity = parseInt(document.getElementById('productQty').value);
+            
+            if (!name || !price || !quantity) {
+                showNotification('⚠️ يرجى ملء جميع الحقول', 'warning');
+                return;
+            }
+            
+            try {
+                // ✅ إضافة مع user_id و warehouse_id تلقائي
+                const result = await tenantManager.insert('products', {
+                    name: name,
+                    price: price,
+                    quantity: quantity
+                    // user_id و warehouse_id يُضافان تلقائياً!
+                });
+                
+                if (result.success) {
+                    showNotification('✅ تم إضافة المنتج بنجاح!');
+                    
+                    // مسح الحقول
+                    document.getElementById('productName').value = '';
+                    document.getElementById('productPrice').value = '';
+                    document.getElementById('productQty').value = '';
+                    
+                    // Real-time سيضيف المنتج تلقائياً!
+                } else {
+                    showNotification('❌ خطأ: ' + result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Error adding product:', error);
+                showNotification('❌ خطأ في الحفظ', 'error');
+            }
+        }
+        
+        // ========== حذف منتج (فقط للمستخدم الحالي) ==========
+        
+        async function deleteProduct(id) {
+            if (!confirm('هل أنت متأكد من حذف هذا المنتج؟')) return;
+            
+            try {
+                const result = await tenantManager.delete('products', id);
+                
+                if (result.success) {
+                    showNotification('🗑️ تم الحذف بنجاح');
+                    // Real-time سيحذف المنتج تلقائياً!
+                } else {
+                    showNotification('❌ خطأ في الحذف', 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                showNotification('❌ خطأ في الحذف', 'error');
+            }
+        }
+        
+        // ========== معالجة Real-time ==========
+        
+        function handleRealtimeUpdate(payload) {
+            const { eventType, new: newRecord, old: oldRecord } = payload;
+            
+            switch (eventType) {
+                case 'INSERT':
+                    // إضافة المنتج للقائمة
+                    products.unshift(newRecord);
+                    renderProducts();
+                    showNotification(`✅ منتج جديد: ${newRecord.name}`);
+                    break;
+                    
+                case 'UPDATE':
+                    // تحديث المنتج في القائمة
+                    const index = products.findIndex(p => p.id === newRecord.id);
+                    if (index !== -1) {
+                        products[index] = newRecord;
+                        renderProducts();
+                        showNotification(`📝 تم تحديث: ${newRecord.name}`);
+                    }
+                    break;
+                    
+                case 'DELETE':
+                    // حذف المنتج من القائمة
+                    products = products.filter(p => p.id !== oldRecord.id);
+                    renderProducts();
+                    showNotification(`🗑️ تم حذف: ${oldRecord.name}`);
+                    break;
+            }
+        }
+        
+        // ========== عرض المنتجات ==========
+        
+        function renderProducts() {
+            const container = document.getElementById('productsContainer');
+            
+            if (products.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div style="font-size: 48px; margin-bottom: 10px;">📭</div>
+                        <div>لا توجد منتجات</div>
+                        <p style="font-size: 14px; color: #999;">
+                            أضف منتجك الأول - بياناتك معزولة عن المستخدمين الآخرين
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = products.map(product => `
+                <div class="product-item" data-id="${product.id}">
+                    <div class="product-info">
+                        <h4>${product.name}</h4>
+                        <p>
+                            💰 السعر: ${product.price} جمهورية | 
+                            📦 الكمية: ${product.quantity} | 
+                            🏷️ ${product.user_id ? 'خاص بي' : 'عام'}
+                        </p>
+                    </div>
+                    <button class="delete-btn" onclick="deleteProduct('${product.id}')">
+                        🗑️ حذف
+                    </button>
+                </div>
+            `).join('');
+        }
+        
+        // ========== إشعارات ==========
+        
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            
+            if (type === 'error') {
+                notification.style.background = '#ff4757';
+            } else if (type === 'warning') {
+                notification.style.background = '#ffa502';
+            }
+            
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+    </script>
+</body>
+</html>

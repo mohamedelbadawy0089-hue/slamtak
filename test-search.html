@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار البحث - سلامتك</title>
+    <link rel="stylesheet" href="libs/font-awesome.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            background: #f5f7fa;
+        }
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .search-result-item {
+            padding: 12px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #f1f3f4;
+            transition: background 0.2s ease;
+        }
+        .search-result-item:hover {
+            background: #f8f9fa;
+        }
+        .search-result-item strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+        .search-result-item small {
+            color: #7f8c8d;
+            font-size: 12px;
+        }
+        .btn {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        .btn:hover {
+            background: #5a67d8;
+        }
+        .debug-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h2>اختبار وظيفة البحث</h2>
+        
+        <div class="search-box">
+            <input type="text" id="itemSearch" class="form-control" placeholder="ابحث عن الأصناف المثبتة...">
+            <i class="fas fa-search" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #7f8c8d;"></i>
+            <div id="searchResults" class="search-results"></div>
+        </div>
+
+        <div>
+            <button class="btn" onclick="testNoProducts()">اختبار بدون منتجات</button>
+            <button class="btn" onclick="testWithProducts()">اختبار مع منتجات</button>
+            <button class="btn" onclick="clearResults()">مسح النتائج</button>
+        </div>
+
+        <div class="debug-info" id="debugInfo">
+            <strong>معلومات التشخيص:</strong><br>
+            <div id="debugContent">ابدأ بالبحث للاختبار...</div>
+        </div>
+    </div>
+
+    <script>
+        let allProducts = [];
+        const searchInput = document.getElementById('itemSearch');
+        const searchResults = document.getElementById('searchResults');
+        const debugContent = document.getElementById('debugContent');
+
+        function updateDebug(message) {
+            debugContent.innerHTML += '<br>' + new Date().toLocaleTimeString() + ': ' + message;
+        }
+
+        function testNoProducts() {
+            allProducts = [];
+            updateDebug('تم تعيين قائمة المنتجات إلى فارغة');
+            searchInput.value = 'test';
+            searchInput.dispatchEvent(new Event('input'));
+        }
+
+        function testWithProducts() {
+            allProducts = [
+                { id: '1', name_en: 'Panadol', batch_number: 'B001', quantity: 50, price: 25.50 },
+                { id: '2', name_en: 'Vitamin C', batch_number: 'B002', quantity: 100, price: 45.00 },
+                { id: '3', name_en: 'Aspirin', batch_number: 'B003', quantity: 75, price: 15.75 }
+            ];
+            updateDebug('تم إضافة 3 منتجات تجريبية');
+            searchInput.value = '';
+            clearResults();
+        }
+
+        function clearResults() {
+            searchResults.innerHTML = '';
+            searchResults.style.display = 'none';
+            updateDebug('تم مسح النتائج');
+        }
+
+        function selectNewProduct(productName) {
+            updateDebug('تم استدعاء selectNewProduct مع: ' + productName);
+            alert('سيتم فتح modal لإضافة منتج جديد: ' + productName);
+        }
+
+        function selectExistingProduct(productId) {
+            updateDebug('تم استدعاء selectExistingProduct مع: ' + productId);
+            const product = allProducts.find(p => p.id === productId);
+            if (product) {
+                alert('سيتم فتح modal للمنتج الموجود: ' + product.name_en);
+            }
+        }
+
+        // Setup search functionality
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            updateDebug('البحث عن: "' + query + '"');
+            updateDebug('المنتجات المتاحة: ' + allProducts.length);
+            
+            if (query.length < 2) {
+                searchResults.style.display = 'none';
+                updateDebug('الاستعلام قصير جداً - إخفاء النتائج');
+                return;
+            }
+            
+            const filteredProducts = allProducts.filter(product => 
+                product.name_en && product.name_en.toLowerCase().includes(query)
+            );
+            
+            updateDebug('المنتجات المصفاة: ' + filteredProducts.length);
+            
+            if (allProducts.length === 0) {
+                updateDebug('لا توجد منتجات - عرض رسالة إضافة منتج جديد');
+                searchResults.innerHTML = `
+                    <div class="search-result-item" onclick="selectNewProduct('${query}')" style="cursor: pointer; background: #fef3c7; border: 2px solid #f59e0b;">
+                        <strong style="color: #d97706;">⚠️ لا توجد أصناف مثبتة</strong>
+                        <small style="color: #d97706;">أضف "${query}" كأول منتج في الأصناف المثبتة</small>
+                        <small style="color: #d97706; font-size: 11px;">سيتم تثبيت الاسم وإدخال جميع البيانات</small>
+                    </div>
+                `;
+                searchResults.style.display = 'block';
+                updateDebug('تم عرض رسالة عدم وجود منتجات');
+            } else if (filteredProducts.length > 0) {
+                updateDebug('تم العثور على منتجات مطابقة');
+                searchResults.innerHTML = filteredProducts.map(product => `
+                    <div class="search-result-item" onclick="selectExistingProduct('${product.id}')">
+                        <strong>${product.name_en}</strong>
+                        <small>التشغيلة: ${product.batch_number || '-'} | الكمية: ${product.quantity || 0} | السعر: ${product.price || 0} ج.م</small>
+                    </div>
+                `).join('');
+                searchResults.style.display = 'block';
+                updateDebug('تم عرض المنتجات المطابقة');
+            } else {
+                updateDebug('توجد منتجات ولكن لا توجد نتائج مطابقة');
+                searchResults.innerHTML = `
+                    <div class="search-result-item" onclick="selectNewProduct('${query}')" style="cursor: pointer; background: #f0f9ff;">
+                        <strong style="color: #0369a1;">+ إضافة "${query}" كمنتج جديد</strong>
+                        <small style="color: #0369a1;">سيتم تثبيت هذا المنتج في الأصناف المثبتة</small>
+                    </div>
+                `;
+                searchResults.style.display = 'block';
+                updateDebug('تم عرض رسالة إضافة منتج جديد');
+            }
+        });
+
+        // Close search results when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.style.display = 'none';
+                updateDebug('تم إخفاء النتائج بالنقر بالخارج');
+            }
+        });
+
+        updateDebug('تم تهيئة صفحة الاختبار بنجاح');
+    </script>
+</body>
+</html>

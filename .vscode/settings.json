@@ -1,0 +1,10 @@
+{
+    "antigravityCopilot.defaultEnabledModels": [
+
+
+        "gemini-claude-opus-4-5-thinking",
+        "gemini-3-pro-preview",
+        "gemini-3-flash-preview"
+    ],
+    "antigravityCopilot.server.enabled": false
+}

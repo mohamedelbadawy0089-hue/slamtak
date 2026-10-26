@@ -1,0 +1,218 @@
+Import React, { useState, useRef } from "react";
+
+export default function App() {
+  const [recording, setRecording] = useState(false);
+  const [text, setText] = useState("");
+  const [drugs, setDrugs] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
+  const [results, setResults] = useState([]);
+
+  const mediaRecorderRef = useRef(null);
+  const chunks = useRef([]);
+
+  const API = "http://localhost:8000"; // 🔴 غيّرها عند النشر
+
+  // 🎤 تسجيل صوت
+  const startRecording = async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const recorder = new MediaRecorder(stream);
+
+    mediaRecorderRef.current = recorder;
+    chunks.current = [];
+
+    recorder.ondataavailable = (e) => chunks.current.push(e.data);
+
+    recorder.onstop = async () => {
+      const blob = new Blob(chunks.current, { type: "audio/wav" });
+      await sendAudio(blob);
+    };
+
+    recorder.start();
+    setRecording(true);
+  };
+
+  const stopRecording = () => {
+    mediaRecorderRef.current.stop();
+    setRecording(false);
+  };
+
+  // 🎤 إرسال الصوت
+  const sendAudio = async (blob) => {
+    setLoading(true);
+
+    const form = new FormData();
+    form.append("file", blob);
+
+    const res = await fetch(`${API}/audio`, {
+      method: "POST",
+      body: form,
+    });
+
+    const data = await res.json();
+
+    setText(data.text);
+    setDrugs(data.drugs);
+    setLoading(false);
+  };
+
+  // 📷 رفع صورة
+  const uploadImage = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setLoading(true);
+
+    const form = new FormData();
+    form.append("file", file);
+
+    const res = await fetch(`${API}/image`, {
+      method: "POST",
+      body: form,
+    });
+
+    const data = await res.json();
+
+    setText(data.text);
+    setDrugs(data.drugs);
+    setLoading(false);
+  };
+
+  // 🔎 بحث أدوية
+  const searchDrugs = async () => {
+    if (!search) return;
+
+    setLoading(true);
+
+    const res = await fetch(`${API}/search?q=${search}`);
+    const data = await res.json();
+
+    setResults(data.results);
+    setLoading(false);
+  };
+
+  return (
+    <div style={styles.container}>
+      <h1 style={styles.title}>💊 Medical AI Assistant</h1>
+
+      {/* 🎤 Voice */}
+      <div style={styles.card}>
+        <h2>🎤 Voice Input</h2>
+
+        {!recording ? (
+          <button style={styles.btn} onClick={startRecording}>
+            Start Recording
+          </button>
+        ) : (
+          <button style={styles.btnStop} onClick={stopRecording}>
+            Stop
+          </button>
+        )}
+      </div>
+
+      {/* 📷 Image */}
+      <div style={styles.card}>
+        <h2>📷 Upload Prescription</h2>
+        <input type="file" onChange={uploadImage} />
+      </div>
+
+      {/* 🔎 Search */}
+      <div style={styles.card}>
+        <h2>🔎 Drug Search</h2>
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search drug..."
+        />
+        <button style={styles.btn} onClick={searchDrugs}>
+          Search
+        </button>
+      </div>
+
+      {/* ⏳ Loading */}
+      {loading && <p>Processing...</p>}
+
+      {/* 📝 Text */}
+      {text && (
+        <div style={styles.card}>
+          <h3>📝 Extracted Text</h3>
+          <p>{text}</p>
+        </div>
+      )}
+
+      {/* 💊 Drugs */}
+      {drugs.length > 0 && (
+        <div style={styles.card}>
+          <h3>💊 Detected Drugs</h3>
+          {drugs.map((d, i) => (
+            <div key={i} style={styles.drug}>
+              {d}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* 🔎 Search results */}
+      {results.length > 0 && (
+        <div style={styles.card}>
+          <h3>🔎 Results</h3>
+          {results.map((r, i) => (
+            <div key={i} style={styles.result}>
+              {r.join(" | ")}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// 🎨 Simple UI Styles
+const styles = {
+  container: {
+    fontFamily: "Arial",
+    padding: 20,
+    background: "#f4f4f4",
+    minHeight: "100vh",
+  },
+  title: {
+    textAlign: "center",
+  },
+  card: {
+    background: "#fff",
+    padding: 15,
+    margin: "10px 0",
+    borderRadius: 10,
+    boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+  },
+  btn: {
+    padding: 10,
+    marginTop: 10,
+    background: "blue",
+    color: "#fff",
+    border: "none",
+    borderRadius: 5,
+    cursor: "pointer",
+  },
+  btnStop: {
+    padding: 10,
+    marginTop: 10,
+    background: "red",
+    color: "#fff",
+    border: "none",
+    borderRadius: 5,
+    cursor: "pointer",
+  },
+  drug: {
+    padding: 8,
+    background: "#d1ffd1",
+    margin: 5,
+    borderRadius: 5,
+  },
+  result: {
+    padding: 8,
+    background: "#eee",
+    margin: 5,
+    borderRadius: 5,
+  },
+};

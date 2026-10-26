@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تقرير تحليل الأدوية المصرية</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: #f5f5f5; 
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 10px; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.1); 
+        }
+        h1 { 
+            text-align: center; 
+            color: #2c3e50; 
+            margin-bottom: 30px; 
+            font-size: 32px; 
+        }
+        h2 { 
+            color: #34495e; 
+            border-bottom: 3px solid #3498db; 
+            padding-bottom: 10px; 
+            margin-top: 40px; 
+        }
+        .summary { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 20px; 
+            margin: 30px 0; 
+        }
+        .stat-card { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            padding: 25px; 
+            border-radius: 15px; 
+            text-align: center; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
+        }
+        .stat-card.egyptian { 
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); 
+        }
+        .stat-card.foreign { 
+            background: linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%); 
+        }
+        .stat-card.unknown { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+        }
+        .stat-number { 
+            font-size: 48px; 
+            font-weight: bold; 
+            margin-bottom: 10px; 
+        }
+        .stat-label { 
+            font-size: 18px; 
+            opacity: 0.9; 
+        }
+        .percentage { 
+            font-size: 24px; 
+            font-weight: bold; 
+            margin-top: 10px; 
+        }
+        .company-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 20px; 
+            margin: 20px 0; 
+        }
+        .company-card { 
+            background: #f8f9fa; 
+            padding: 20px; 
+            border-radius: 10px; 
+            border-left: 5px solid #3498db; 
+        }
+        .company-card.egyptian { 
+            border-left-color: #27ae60; 
+        }
+        .company-card.foreign { 
+            border-left-color: #e74c3c; 
+        }
+        .company-name { 
+            font-weight: bold; 
+            font-size: 18px; 
+            margin-bottom: 10px; 
+        }
+        .drug-count { 
+            color: #7f8c8d; 
+            font-size: 14px; 
+            margin-bottom: 15px; 
+        }
+        .drug-list { 
+            font-size: 12px; 
+            color: #555; 
+        }
+        .drug-item { 
+            margin: 5px 0; 
+            padding: 5px; 
+            background: white; 
+            border-radius: 5px; 
+        }
+        .chart-container { 
+            margin: 30px 0; 
+            text-align: center; 
+        }
+        .bar-chart { 
+            display: flex; 
+            justify-content: space-around; 
+            align-items: flex-end; 
+            height: 300px; 
+            margin: 20px 0; 
+        }
+        .bar { 
+            width: 100px; 
+            background: linear-gradient(to top, #3498db, #2980b9); 
+            border-radius: 10px 10px 0 0; 
+            position: relative; 
+            transition: all 0.3s; 
+        }
+        .bar:hover { 
+            transform: translateY(-10px); 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2); 
+        }
+        .bar.egyptian { 
+            background: linear-gradient(to top, #27ae60, #2ecc71); 
+        }
+        .bar.foreign { 
+            background: linear-gradient(to top, #e74c3c, #c0392b); 
+        }
+        .bar.unknown { 
+            background: linear-gradient(to top, #95a5a6, #7f8c8d); 
+        }
+        .bar-label { 
+            position: absolute; 
+            bottom: -30px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            font-weight: bold; 
+            font-size: 14px; 
+        }
+        .bar-value { 
+            position: absolute; 
+            top: -30px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            font-weight: bold; 
+            font-size: 18px; 
+            color: #2c3e50; 
+        }
+        .conclusion { 
+            background: #ecf0f1; 
+            padding: 25px; 
+            border-radius: 10px; 
+            margin: 30px 0; 
+            border-right: 5px solid #3498db; 
+        }
+        .conclusion h3 { 
+            color: #2c3e50; 
+            margin-top: 0; 
+        }
+        .highlight { 
+            background: #fff3cd; 
+            padding: 15px; 
+            border-radius: 5px; 
+            border-left: 4px solid #ffc107; 
+            margin: 20px 0; 
+        }
+        .table-container { 
+            overflow-x: auto; 
+            margin: 20px 0; 
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin: 20px 0; 
+        }
+        th, td { 
+            padding: 12px; 
+            text-align: right; 
+            border-bottom: 1px solid #ddd; 
+        }
+        th { 
+            background: #3498db; 
+            color: white; 
+            font-weight: bold; 
+        }
+        tr:hover { 
+            background: #f5f5f5; 
+        }
+        .price-range { 
+            font-size: 12px; 
+            color: #7f8c8d; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 تقرير تحليل شامل لقاعدة بيانات الأدوية المصرية</h1>
+        
+        <div class="summary">
+            <div class="stat-card">
+                <div class="stat-number">197</div>
+                <div class="stat-label">إجمالي الأدوية</div>
+            </div>
+            <div class="stat-card egyptian">
+                <div class="stat-number">57</div>
+                <div class="stat-label">أدوية مصرية</div>
+                <div class="percentage">28.9%</div>
+            </div>
+            <div class="stat-card foreign">
+                <div class="stat-number">88</div>
+                <div class="stat-label">أدوية أجنبية</div>
+                <div class="percentage">44.7%</div>
+            </div>
+            <div class="stat-card unknown">
+                <div class="stat-number">52</div>
+                <div class="stat-label">غير مصنفة</div>
+                <div class="percentage">26.4%</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h2>📊 الرسم البياني للتوزيع</h2>
+            <div class="bar-chart">
+                <div class="bar egyptian" style="height: 87px;">
+                    <div class="bar-value">57</div>
+                    <div class="bar-label">مصرية</div>
+                </div>
+                <div class="bar foreign" style="height: 134px;">
+                    <div class="bar-value">88</div>
+                    <div class="bar-label">أجنبية</div>
+                </div>
+                <div class="bar unknown" style="height: 79px;">
+                    <div class="bar-value">52</div>
+                    <div class="bar-label">غير مصنفة</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="highlight">
+            <h3>📌 ملاحظات هامة:</h3>
+            <ul>
+                <li><strong>الأدوية الأجنبية هي الأكثر (44.7%)</strong> - وهذا يعكس هيمنة الشركات العالمية على السوق المصري</li>
+                <li><strong>الأدوية المصرية تمثل 28.9%</strong> - وهو رقم جيد considering الصناعة الدوائية المصرية</li>
+                <li><strong>26.4% غير مصنفة</strong> - تحتاج إلى مزيد من البحث لتحديد مصدرها</li>
+                <li><strong>GSK هي الشركة الأكثر تمثيلاً</strong> بـ 18 دواء، تليها Bayer بـ 14 دواء</li>
+                <li><strong>Amoun هي الشركة المصرية الرائدة</strong> بـ 13 دواء</li>
+            </ul>
+        </div>
+
+        <h2>🏭 الشركات المصرية الرائدة</h2>
+        <div class="company-grid">
+            <div class="company-card egyptian">
+                <div class="company-name">Amoun</div>
+                <div class="drug-count">13 دواء</div>
+                <div class="drug-list">
+                    <div class="drug-item">• Antinal - 42 جنيه</div>
+                    <div class="drug-item">• Ketofan - 28 جنيه</div>
+                    <div class="drug-item">• Alphintern - 54 جنيه</div>
+                    <div class="drug-item">• Hibiotic 1g - 98 جنيه</div>
+                    <div class="drug-item">• Spasmo-free - 18 جنيه</div>
+                </div>
+            </div>
+            <div class="company-card egyptian">
+                <div class="company-name">EIPICO</div>
+                <div class="drug-count">8 دواء</div>
+                <div class="drug-list">
+                    <div class="drug-item">• Cetal - 22 جنيه</div>
+                    <div class="drug-item">• E-Mox 500 - 30 جنيه</div>
+                    <div class="drug-item">• Ator 20 - 85 جنيه</div>
+                    <div class="drug-item">• Cetal Forte - 35 جنيه</div>
+                </div>
+            </div>
+            <div class="company-card egyptian">
+                <div class="company-name">Pharco</div>
+                <div class="drug-count">8 دواء</div>
+                <div class="drug-list">
+                    <div class="drug-item">• Spasmo-digestin - 45 جنيه</div>
+                    <div class="drug-item">• Night and Day - 32 جنيه</div>
+                    <div class="drug-item">• Algason - 22 جنيه</div>
+                    <div class="drug-item">• Uralyt-U - 165 جنيه</div>
+                </div>
+            </div>
+        </div>
+
+        <h2>🌍 الشركات الأجنبية الرائدة</h2>
+        <div class="company-grid">
+            <div class="company-card foreign">
+                <div class="company-name">GSK (GlaxoSmithKline)</div>
+                <div class="drug-count">18 دواء</div>
+                <div class="drug-list">
+                    <div class="drug-item">• Panadol Advance - 36 جنيه</div>
+                    <div class="drug-item">• Augmentin 1g - 110 جنيه</div>
+                    <div class="drug-item">• Zyrtec - 55 جنيه</div>
+                    <div class="drug-item">• Betnovate - 25 جنيه</div>
+                    <div class="drug-item">• Zyloric 100 - 28 جنيه</div>
+                </div>
+            </div>
+            <div class="company-card foreign">
+                <div class="company-name">Bayer</div>
+                <div class="drug-count">14 دواء</div>
+                <div class="drug-list">
+                    <div class="drug-item">• Claritine - 85 جنيه</div>
+                    <div class="drug-item">• Canesten - 42 جنيه</div>
+                    <div class="drug-item">• Aspirin Protect - 45 جنيه</div>
+                    <div class="drug-item">• Adalat - 65 جنيه</div>
+                </div>
+            </div>
+            <div class="company-card foreign">
+                <div class="company-name">Sanofi</div>
+                <div class="drug-count">10 دواء</div>
+                <div class="drug-list">
+                    <div class="drug-item">• Amaryl 2mg - 54 جنيه</div>
+                    <div class="drug-item">• Maxilase - 32 جنيه</div>
+                    <div class="drug-item">• Flagyl 500 - 35 جنيه</div>
+                    <div class="drug-item">• Lasix 40 - 18 جنيه</div>
+                </div>
+            </div>
+        </div>
+
+        <h2>📈 تحليل الأسعار حسب المصدر</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>المصدر</th>
+                        <th>عدد الأدوية</th>
+                        <th>متوسط السعر</th>
+                        <th>نطاق السعر</th>
+                        <th>أعلى سعر</th>
+                        <th>أقل سعر</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>أدوية مصرية</strong></td>
+                        <td>57</td>
+                        <td>48.2 جنيه</td>
+                        <td>15 - 165 جنيه</td>
+                        <td>Uralyt-U (Pharco) - 165 جنيه</td>
+                        <td>Para-plus (Medical Union) - 15 جنيه</td>
+                    </tr>
+                    <tr>
+                        <td><strong>أدوية أجنبية</strong></td>
+                        <td>88</td>
+                        <td>89.7 جنيه</td>
+                        <td>12 - 650 جنيه</td>
+                        <td>Gonal-F (Merck) - 650 جنيه</td>
+                        <td>Urosolvine (CID) - 12 جنيه</td>
+                    </tr>
+                    <tr>
+                        <td><strong>الإجمالي</strong></td>
+                        <td>197</td>
+                        <td>73.5 جنيه</td>
+                        <td>12 - 650 جنيه</td>
+                        <td>Gonal-F (Merck) - 650 جنيه</td>
+                        <td>Urosolvine (CID) - 12 جنيه</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2>🏷️ تحليل الفئات العلاجية</h2>
+        <div class="company-grid">
+            <div class="company-card">
+                <div class="company-name">المضادات الحيوية</div>
+                <div class="drug-count">25 دواء</div>
+                <div class="drug-list">
+                    <div class="drug-item">• Augmentin 1g (GSK) - 110 جنيه</div>
+                    <div class="drug-item">• Zithromax 500 (Pfizer) - 95 جنيه</div>
+                    <div class="drug-item">• Hibiotic 1g (Amoun) - 98 جنيه</div>
+                </div>
+            </div>
+            <div class="company-card">
+                <div class="company-name">مسكنات الألم</div>
+                <div class="drug-count">30 دواء</div>
+                <div class="drug-list">
+                    <div class="drug-item">• Panadol Advance (GSK) - 36 جنيه</div>
+                    <div class="drug-item">• Cetal (EIPICO) - 22 جنيه</div>
+                    <div class="drug-item">• Voltaren 100 (Novartis) - 75 جنيه</div>
+                </div>
+            </div>
+            <div class="company-card">
+                <div class="company-name">أدوية الجهاز الهضمي</div>
+                <div class="drug-count">20 دواء</div>
+                <div class="drug-list">
+                    <div class="drug-item">• Nexium 40 (AstraZeneca) - 180 جنيه</div>
+                    <div class="drug-item">• Controloc 40 (Takeda) - 125 جنيه</div>
+                    <div class="drug-item">• Spasmo-digestin (Pharco) - 45 جنيه</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="conclusion">
+            <h3>🎯 الاستنتاجات والتوصيات</h3>
+            <p><strong>بناءً على التحليل الشامل لقاعدة بيانات الأدوية المصرية:</strong></p>
+            <ol>
+                <li><strong>هيمنة الأدوية الأجنبية:</strong> تمثل الأدوية الأجنبية 44.7% من السوق، مما يعكس قوة الشركات العالمية في السوق المصري.</li>
+                <li><strong>الصناعة المصرية القوية:</strong> رغم أن الأدوية المصرية تمثل 28.9% فقط، إلا أن هذا الرقم يعكس وجود صناعة دوائية مصرية قوية ومنافسة.</li>
+                <li><strong>الفرق في الأسعار:</strong> الأدوية الأجنبية أغلى بمتوسط 89.7 جنيه مقابل 48.2 جنيه للأدوية المصرية.</li>
+                <li><strong>الشركات الرائدة:</strong> GSK و Bayer و Sanofi تسيطر على السوق الأجنبي، بينما Amoun و EIPICO و Pharco هم قادة الصناعة المصرية.</li>
+                <li><strong>الحاجة لتصنيف أفضل:</strong> 26.4% من الأدوية غير مصنفة وتحتاج إلى مزيد من البحث لتحديد مصدرها.</li>
+            </ol>
+            
+            <h3>💡 توصيات:</h3>
+            <ul>
+                <li>تحسين قاعدة البيانات بإضافة المزيد من الأدوية المصرية</li>
+                <li>تصنيف الأدوية غير المصنفة لتحسين دقة التحليل</li>
+                <li>دراسة أسواق إضافية لفهم الصورة الكاملة للسوق الدوائي المصري</li>
+                <li>تحليل تأثير السياسات الدوائية على توزيع السوق</li>
+            </ul>
+        </div>
+
+        <div class="highlight">
+            <h3>📊 ملخص التنافسية:</h3>
+            <p><strong>السوق الدوائي المصري متنوع جداً ويشهد منافسة قوية بين الشركات المصرية والعالمية.</strong> 
+            رغم هيمنة الشركات الأجنبية، إلا أن الشركات المصرية مثل Amoun و EIPICO و Pharco أثبتت قدرتها على المنافسة 
+            بتقديم أدوية عالية الجودة بأسعار معقولة.</p>
+        </div>
+    </div>
+
+    <script>
+        // إضافة تفاعلات ديناميكية
+        document.addEventListener('DOMContentLoaded', function() {
+            // تحريك الأرقام عند التحميل
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach(num => {
+                const finalValue = parseInt(num.textContent);
+                let currentValue = 0;
+                const increment = finalValue / 50;
+                const timer = setInterval(() => {
+                    currentValue += increment;
+                    if (currentValue >= finalValue) {
+                        currentValue = finalValue;
+                        clearInterval(timer);
+                    }
+                    num.textContent = Math.floor(currentValue);
+                }, 30);
+            });
+
+            // إضافة تأثير hover على البطاقات
+            const cards = document.querySelectorAll('.company-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
+                });
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = 'none';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+/* سلامتك - CSS محسّن مع Caching Headers */
+body{margin:0;padding:0;background:#f8f9fa;color:#000;font-family:Arial,sans-serif}
+header{background:#28a745;color:#fff;padding:20px;text-align:center}
+.container{max-width:500px;margin:50px auto;padding:30px;background:#fff;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.1)}
+.btn{display:inline-block;padding:15px 30px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;font-size:16px;margin:10px;width:100%;transition:all 0.3s ease}
+.btn-success{background:#28a745;color:#fff}
+.btn-success:hover{background:#218838}
+.btn-secondary{background:#6c757d;color:#fff}
+.btn-secondary:hover{background:#5a6268}
+.field{margin-bottom:20px;text-align:right}
+label{display:block;margin-bottom:10px;font-weight:bold}
+input[type="text"],input[type="password"],input[type="email"],select{width:100%;padding:12px;border:2px solid #28a745;border-radius:6px;box-sizing:border-box;font-size:16px;transition:border-color 0.3s ease}
+input[type="text"]:focus,input[type="password"]:focus,input[type="email"]:focus,select:focus{border-color:#218838;outline:none}
+.show-btn{padding:5px 10px;font-size:14px;background:#007bff;color:white;border:none;border-radius:4px;cursor:pointer;margin-top:5px;transition:background 0.3s ease}
+.show-btn:hover{background:#0056b3}
+.error{color:#dc3545;font-size:14px;margin-top:5px;display:none}
+.success{color:#28a745;font-size:14px;margin-top:5px;display:none}
+.alert{position:fixed;top:20px;right:20px;padding:15px 20px;border-radius:8px;z-index:1000;color:white;font-weight:bold;box-shadow:0 4px 12px rgba(0,0,0,0.15);animation:slideIn 0.3s ease}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes slideOut{from{transform:translateX(0);opacity:1}to{transform:translateX(100%);opacity:0}}
+
+/* تحسينات الأداء */
+*{box-sizing:border-box}
+img{max-width:100%;height:auto;loading:lazy}
+@media (max-width:600px){.container{margin:20px auto;padding:20px}}

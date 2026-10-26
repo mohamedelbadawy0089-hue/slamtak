@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تصنيفات المنتجات - سلامتك</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+        }
+
+        /* زر الرجوع */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.5);
+            border-radius: 50%;
+            width: 52px;
+            height: 52px;
+            font-size: 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+        .back-btn:hover {
+            background: rgba(255,255,255,0.35);
+            transform: scale(1.1);
+        }
+
+        /* العنوان */
+        .page-title {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .page-subtitle {
+            color: rgba(255,255,255,0.8);
+            font-size: 15px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .total-pill {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 30px;
+            padding: 6px 22px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 36px;
+            backdrop-filter: blur(5px);
+        }
+
+        /* شبكة الأزرار */
+        .cards-grid {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 860px;
+        }
+
+        .cat-card {
+            flex: 1;
+            min-width: 220px;
+            max-width: 260px;
+            border-radius: 20px;
+            padding: 36px 24px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+            color: white;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+            animation: card-in 0.5s ease-out both;
+        }
+
+        .cat-card:nth-child(1) { animation-delay: 0.05s; }
+        .cat-card:nth-child(2) { animation-delay: 0.15s; }
+        .cat-card:nth-child(3) { animation-delay: 0.25s; }
+
+        @keyframes card-in {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .cat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .cat-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 18px 45px rgba(0,0,0,0.3);
+        }
+
+        .cat-card:active { transform: scale(0.97); }
+
+        /* ألوان البطاقات */
+        .card-unlimited { background: linear-gradient(145deg, #11998e, #38ef7d); }
+        .card-limited   { background: linear-gradient(145deg, #eb3c8c, #f5576c); }
+        .card-expiring  { background: linear-gradient(145deg, #ff6a00, #ee0979); }
+
+        .cat-icon { font-size: 56px; margin-bottom: 16px; display: block; }
+
+        .cat-count {
+            font-size: 52px;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .cat-label {
+            font-size: 17px;
+            font-weight: bold;
+            opacity: 0.95;
+            margin-bottom: 6px;
+        }
+
+        .cat-hint {
+            font-size: 12px;
+            opacity: 0.75;
+            border-top: 1px solid rgba(255,255,255,0.25);
+            padding-top: 12px;
+            margin-top: 14px;
+        }
+
+        /* حالة الكارد المعطلة (صفر منتجات) */
+        .cat-card.zero {
+            opacity: 0.6;
+            filter: grayscale(30%);
+        }
+
+        @media (max-width: 600px) {
+            .cards-grid { flex-direction: column; align-items: center; }
+            .cat-card { min-width: 280px; max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="back-btn" onclick="window.location.replace('products.html')" title="رجوع">←</button>
+
+    <div class="page-title">📦 تصنيفات المنتجات</div>
+    <div class="page-subtitle">اختر التصنيف لعرض قائمة المنتجات</div>
+    <div class="total-pill">الإجمالي: <span id="totalLabel">0</span> منتج</div>
+
+    <div class="cards-grid">
+
+        <!-- متوفر دائماً -->
+        <div class="cat-card card-unlimited" id="card-unlimited" onclick="goTo('unlimited')">
+            <span class="cat-icon">♾️</span>
+            <div class="cat-count" id="cnt-unlimited">0</div>
+            <div class="cat-label">متوفر دائماً</div>
+            <div class="cat-hint">منتجات بكمية غير محدودة</div>
+        </div>
+
+        <!-- كمية محدودة -->
+        <div class="cat-card card-limited" id="card-limited" onclick="goTo('limited')">
+            <span class="cat-icon">📉</span>
+            <div class="cat-count" id="cnt-limited">0</div>
+            <div class="cat-label">كمية محدودة</div>
+            <div class="cat-hint">اضغط لعرض التفاصيل والتنبيهات</div>
+        </div>
+
+        <!-- قرب انتهاء الصلاحية -->
+        <div class="cat-card card-expiring" id="card-expiring" onclick="goTo('expiring')">
+            <span class="cat-icon">⏳</span>
+            <div class="cat-count" id="cnt-expiring">0</div>
+            <div class="cat-label">قرب انتهاء الصلاحية</div>
+            <div class="cat-hint">اضغط لعرض المنتجات المنتهية قريباً</div>
+        </div>
+
+    </div>
+
+    <script>
+        // ===== قراءة المنتجات من localStorage =====
+        var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+        if (!currentUser) {
+            // محاولة قراءة بديلة
+            var email = localStorage.getItem('slamtak-user-email');
+            if (email) currentUser = { email: email };
+        }
+
+        function loadCounts() {
+            var all = JSON.parse(localStorage.getItem('products') || '[]');
+
+            // فلترة حسب المستخدم
+            var products = currentUser
+                ? all.filter(function(p) { return p.userId === currentUser.email; })
+                : all;
+
+            var total      = products.length;
+            var unlimited  = products.filter(function(p) { return p.isUnlimited; }).length;
+            var limited    = total - unlimited;
+
+            // قرب انتهاء الصلاحية (خلال 3 أشهر)
+            var today = new Date();
+            var threeMonths = new Date();
+            threeMonths.setMonth(today.getMonth() + 3);
+            var expiring = products.filter(function(p) {
+                if (!p.expiryDate) return false;
+                var d = new Date(p.expiryDate);
+                return d >= today && d <= threeMonths;
+            }).length;
+
+            // تحديث العناصر
+            document.getElementById('totalLabel').textContent   = total;
+            document.getElementById('cnt-unlimited').textContent = unlimited;
+            document.getElementById('cnt-limited').textContent   = limited;
+            document.getElementById('cnt-expiring').textContent  = expiring;
+
+            // تعتيم البطاقات الفارغة
+            toggle('card-unlimited', unlimited === 0);
+            toggle('card-limited',   limited   === 0);
+            toggle('card-expiring',  expiring  === 0);
+        }
+
+        function toggle(id, isEmpty) {
+            var el = document.getElementById(id);
+            if (isEmpty) el.classList.add('zero');
+            else el.classList.remove('zero');
+        }
+
+        // ===== التنقل =====
+        function goTo(type) {
+            if (type === 'unlimited') {
+                // تصفية "دائماً" داخل products.html عبر URL param
+                window.location.replace('products.html?filter=unlimited');
+            } else if (type === 'limited') {
+                window.location.replace('limited-products.html');
+            } else if (type === 'expiring') {
+                window.location.replace('expiring-products.html');
+            }
+        }
+
+        loadCounts();
+    </script>
+</body>
+</html>

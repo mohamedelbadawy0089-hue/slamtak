@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fully Autonomous Voice System - 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #00d9ff;
+            --secondary: #e94560;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --bg-dark: #0a0a1a;
+            --bg-panel: #151528;
+            --bg-card: #1e1e3f;
+            --text: #ffffff;
+            --text-muted: #8888aa;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid var(--primary);
+            margin-bottom: 30px;
+        }
+        
+        header h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .autonomy-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 217, 255, 0.1);
+            border: 1px solid var(--primary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+        
+        .status-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .status-card {
+            background: var(--bg-panel);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .status-card.active {
+            border-color: var(--success);
+            background: rgba(39, 174, 96, 0.1);
+        }
+        
+        .status-card.syncing {
+            border-color: var(--primary);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .status-icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+        
+        .status-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .status-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr 400px;
+            gap: 20px;
+        }
+        
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .panel {
+            background: var(--bg-panel);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .panel-title {
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .mic-container {
+            text-align: center;
+            padding: 30px 0;
+        }
+        
+        .mic-btn {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, var(--secondary), #c73e54);
+            color: white;
+            font-size: 3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(233, 69, 96, 0.4);
+        }
+        
+        .mic-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .mic-btn.listening {
+            animation: micPulse 1.5s infinite;
+            background: linear-gradient(135deg, var(--primary), #0099cc);
+        }
+        
+        @keyframes micPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .voice-status {
+            margin-top: 15px;
+            color: var(--text-muted);
+        }
+        
+        .sync-log {
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        
+        .log-entry {
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .log-entry.sync { color: var(--primary); }
+        .log-entry.price { color: var(--warning); }
+        .log-entry.catalog { color: var(--success); }
+        .log-entry.error { color: var(--secondary); }
+        
+        .drug-card {
+            background: var(--bg-card);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-right: 3px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .drug-card:hover {
+            transform: translateX(-5px);
+            border-color: var(--warning);
+        }
+        
+        .drug-card.price-updated {
+            animation: priceFlash 2s ease;
+        }
+        
+        @keyframes priceFlash {
+            0%, 100% { border-color: var(--primary); }
+            50% { border-color: var(--warning); background: rgba(243, 156, 18, 0.2); }
+        }
+        
+        .drug-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .drug-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        
+        .drug-price {
+            display: inline-block;
+            background: rgba(0, 217, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 15px;
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        .drug-price.updated {
+            background: rgba(243, 156, 18, 0.3);
+            color: var(--warning);
+        }
+        
+        .queue-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .queue-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border-right: 2px solid var(--success);
+        }
+        
+        .queue-item.pending {
+            border-right-color: var(--warning);
+        }
+        
+        .queue-info {
+            flex: 1;
+        }
+        
+        .queue-name {
+            font-weight: bold;
+        }
+        
+        .queue-status {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--success), #219a52);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: var(--text);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+        
+        .network-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+        }
+        
+        .network-indicator.online {
+            background: rgba(39, 174, 96, 0.2);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+        
+        .network-indicator.offline {
+            background: rgba(243, 156, 18, 0.2);
+            border: 1px solid var(--warning);
+            color: var(--warning);
+        }
+    </style>
+    <link rel="stylesheet" href="libs/font-awesome.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-robot"></i> Fully Autonomous Voice System 2026</h1>
+            <div class="autonomy-badge">
+                <i class="fas fa-sync-alt fa-spin"></i>
+                <span>استقلالية تامة - تحديث ذاتي - عمل 100% بدون إنترنت</span>
+            </div>
+        </header>
+
+        <div class="status-bar">
+            <div class="status-card" id="syncStatus">
+                <div class="status-icon"><i class="fas fa-sync"></i></div>
+                <div class="status-label">Auto-Pilot Sync</div>
+                <div class="status-value" id="syncValue">مفعل</div>
+            </div>
+            <div class="status-card" id="catalogStatus">
+                <div class="status-icon"><i class="fas fa-database"></i></div>
+                <div class="status-label">Background Cataloging</div>
+                <div class="status-value" id="catalogValue">0 أدوية</div>
+            </div>
+            <div class="status-card" id="priceStatus">
+                <div class="status-icon"><i class="fas fa-tag"></i></div>
+                <div class="status-label">Dynamic Price Refresh</div>
+                <div class="status-value" id="priceValue">محدث</div>
+            </div>
+            <div class="status-card active" id="offlineStatus">
+                <div class="status-icon"><i class="fas fa-shield-alt"></i></div>
+                <div class="status-label">Offline-First</div>
+                <div class="status-value">نشط</div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <!-- Voice Input Panel -->
+            <div class="panel">
+                <div class="panel-title">
+                    <i class="fas fa-microphone"></i>
+                    الإدخال الصوتي
+                </div>
+                
+                <div class="mic-container">
+                    <button class="mic-btn" id="micBtn" onclick="toggleVoice()">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <div class="voice-status" id="voiceStatus">
+                        اضغط للتحدث
+                    </div>
+                </div>
+
+                <div class="sync-log" id="syncLog">
+                    <div class="log-entry sync">🤖 النظام يعمل بشكل مستقل</div>
+                </div>
+            </div>
+
+            <!-- Drug Encyclopedia -->
+            <div class="panel">
+                <div class="panel-title">
+                    <i class="fas fa-book-medical"></i>
+                    الموسوعة الدوائية (محدثة تلقائياً)
+                </div>
+                
+                <div id="drugList">
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>جاري تحميل الموسوعة...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Queue & Committed -->
+            <div class="panel">
+                <div class="panel-title">
+                    <i class="fas fa-clipboard-check"></i>
+                    قائمة المنتجات المعتمدة
+                </div>
+                
+                <div class="queue-list" id="queueList">
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>لا توجد منتجات</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="network-indicator offline" id="networkIndicator">
+        <i class="fas fa-wifi-slash"></i>
+        <span>وضع عدم الاتصال - النظام يعمل بكفاءة 100%</span>
+    </div>
+
+    <!-- Load Autonomous Engine -->
+    <script src="autonomous-sync-engine.js"></script>
+    <script src="sovereign-audio-processor.js"></script>
+    
+    <script>
+        // ============================================
+        // Fully Autonomous Voice System
+        // ============================================
+        
+        // Initialize Autonomous Engine
+        window.AE_CONFIG = {
+            syncInterval: 5 * 60 * 1000, // 5 minutes
+            serverEndpoint: '/api/drug-encyclopedia',
+            priceEndpoint: '/api/prices/current'
+        };
+        
+        let autonomousEngine = null;
+        let drugMatcher = null;
+        let recognition = null;
+        let isListening = false;
+        
+        // Committed products
+        let committedProducts = [];
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            initAutonomousSystem();
+        });
+        
+        async function initAutonomousSystem() {
+            log('🤖 Initializing Fully Autonomous System...', 'sync');
+            
+            // Initialize autonomous engine
+            autonomousEngine = new AutonomousSyncEngine(window.AE_CONFIG);
+            
+            // Setup event listeners
+            autonomousEngine.on('onEncyclopediaUpdate', (encyclopedia) => {
+                log('📚 Encyclopedia updated from server', 'sync');
+                renderDrugList(encyclopedia);
+            });
+            
+            autonomousEngine.on('onPriceUpdate', (updates) => {
+                updates.forEach(drug => {
+                    log(`💰 Price updated: ${drug.name} → ${drug.newPrice} ج.م`, 'price');
+                    highlightPriceUpdate(drug.id);
+                });
+                updatePriceDisplay();
+            });
+            
+            autonomousEngine.on('onNewDrugsIndexed', (drugs) => {
+                log(`📚 Indexed ${drugs.length} new drugs for voice matching`, 'catalog');
+                updateCatalogCount();
+            });
+            
+            autonomousEngine.on('onSyncComplete', (info) => {
+                log(`✅ Sync complete: ${info.newDrugs} new drugs`, 'sync');
+                updateSyncStatus('active');
+            });
+            
+            autonomousEngine.on('onSyncError', (error) => {
+                log(`❌ Sync error: ${error.message}`, 'error');
+                updateSyncStatus('error');
+            });
+            
+            // Initialize drug matcher
+            drugMatcher = new StrictDrugMatcher();
+            
+            // Load initial data
+            const encyclopedia = autonomousEngine.getEncyclopedia();
+            renderDrugList(encyclopedia);
+            updateCatalogCount();
+            
+            // Setup network monitoring
+            setupNetworkIndicator();
+            
+            log('✅ Fully Autonomous System ready', 'sync');
+            log('🔄 Auto-Pilot Sync: ACTIVE', 'sync');
+            log('📚 Background Cataloging: ACTIVE', 'catalog');
+            log('💰 Dynamic Price Refresh: ACTIVE', 'price');
+        }
+        
+        // Voice Input
+        function toggleVoice() {
+            if (isListening) {
+                stopVoice();
+                return;
+            }
+            
+            startVoice();
+        }
+        
+        function startVoice() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert('المتصفح لا يدعم التعرف الصوتي');
+                return;
+            }
+            
+            recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            
+            recognition.onstart = () => {
+                isListening = true;
+                document.getElementById('micBtn').classList.add('listening');
+                document.getElementById('voiceStatus').textContent = 'جاري الاستماع...';
+            };
+            
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                log(`🎤 Voice: "${transcript}"`, 'sync');
+                
+                // Match using autonomous encyclopedia
+                const match = drugMatcher.forceMatch(transcript);
+                
+                if (match.found) {
+                    const drug = match.result.drug;
+                    
+                    // Get latest price from autonomous engine
+                    const latestPrice = autonomousEngine.getDrugPrice(drug.id) || drug.price;
+                    
+                    const product = {
+                        id: Date.now(),
+                        name: drug.tradeNames[0],
+                        scientificName: drug.scientificName,
+                        price: latestPrice,
+                        company: drug.company,
+                        category: drug.category,
+                        confidence: match.result.confidence,
+                        rawInput: transcript,
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    commitProduct(product);
+                } else {
+                    log(`❌ Not found: "${transcript}"`, 'error');
+                }
+            };
+            
+            recognition.onerror = (event) => {
+                log(`❌ Error: ${event.error}`, 'error');
+                stopVoice();
+            };
+            
+            recognition.onend = () => {
+                stopVoice();
+            };
+            
+            recognition.start();
+        }
+        
+        function stopVoice() {
+            isListening = false;
+            document.getElementById('micBtn').classList.remove('listening');
+            document.getElementById('voiceStatus').textContent = 'اضغط للتحدث';
+            if (recognition) recognition.stop();
+        }
+        
+        // Commit product
+        function commitProduct(product) {
+            committedProducts.push(product);
+            
+            // Save to local storage
+            localStorage.setItem('ae_committed_products', JSON.stringify(committedProducts));
+            
+            // Add to UI
+            addToQueue(product);
+            
+            log(`✅ Committed: ${product.name} (${product.price} ج.م)`, 'catalog');
+            
+            // Success animation
+            document.getElementById('micBtn').style.animation = 'none';
+            setTimeout(() => {
+                document.getElementById('micBtn').style.animation = '';
+            }, 100);
+        }
+        
+        // Render drug list
+        function renderDrugList(encyclopedia) {
+            const container = document.getElementById('drugList');
+            container.innerHTML = '';
+            
+            for (const [key, drug] of Object.entries(encyclopedia)) {
+                const card = document.createElement('div');
+                card.className = 'drug-card';
+                card.id = `drug-${drug.id}`;
+                card.innerHTML = `
+                    <div class="drug-name">${drug.tradeNames[0]}</div>
+                    <div class="drug-meta">${drug.scientificName} | ${drug.company}</div>
+                    <span class="drug-price" id="price-${drug.id}">${drug.price.toFixed(2)} ج.م</span>
+                `;
+                container.appendChild(card);
+            }
+        }
+        
+        // Highlight price update
+        function highlightPriceUpdate(drugId) {
+            const card = document.getElementById(`drug-${drugId}`);
+            if (card) {
+                card.classList.add('price-updated');
+                setTimeout(() => card.classList.remove('price-updated'), 2000);
+            }
+            
+            const priceEl = document.getElementById(`price-${drugId}`);
+            if (priceEl) {
+                priceEl.classList.add('updated');
+                priceEl.textContent = autonomousEngine.getDrugPrice(drugId).toFixed(2) + ' ج.م';
+            }
+        }
+        
+        // Add to queue
+        function addToQueue(product) {
+            const list = document.getElementById('queueList');
+            
+            // Remove empty state
+            const empty = list.querySelector('.empty-state');
+            if (empty) empty.remove();
+            
+            const item = document.createElement('div');
+            item.className = 'queue-item';
+            item.innerHTML = `
+                <div class="queue-info">
+                    <div class="queue-name">${product.name}</div>
+                    <div class="queue-status">${product.scientificName} | ${product.price.toFixed(2)} ج.م</div>
+                </div>
+                <i class="fas fa-check-circle" style="color: var(--success);"></i>
+            `;
+            
+            list.insertBefore(item, list.firstChild);
+        }
+        
+        // Update catalog count
+        function updateCatalogCount() {
+            const encyclopedia = autonomousEngine.getEncyclopedia();
+            const count = Object.keys(encyclopedia).length;
+            document.getElementById('catalogValue').textContent = `${count} دواء`;
+        }
+        
+        // Update sync status
+        function updateSyncStatus(status) {
+            const card = document.getElementById('syncStatus');
+            const value = document.getElementById('syncValue');
+            
+            if (status === 'syncing') {
+                card.classList.add('syncing');
+                value.textContent = 'يتزامن...';
+            } else if (status === 'error') {
+                card.classList.remove('syncing', 'active');
+                value.textContent = 'خطأ';
+            } else {
+                card.classList.remove('syncing');
+                card.classList.add('active');
+                value.textContent = 'مفعل';
+            }
+        }
+        
+        // Update price display
+        function updatePriceDisplay() {
+            document.getElementById('priceValue').textContent = 'محدث ' + new Date().toLocaleTimeString();
+        }
+        
+        // Network indicator
+        function setupNetworkIndicator() {
+            const indicator = document.getElementById('networkIndicator');
+            
+            window.addEventListener('online', () => {
+                indicator.className = 'network-indicator online';
+                indicator.innerHTML = '<i class="fas fa-wifi"></i><span>متصل - التحديثات تتم في الخلفية</span>';
+                log('🌐 Network: ONLINE', 'sync');
+            });
+            
+            window.addEventListener('offline', () => {
+                indicator.className = 'network-indicator offline';
+                indicator.innerHTML = '<i class="fas fa-wifi-slash"></i><span>وضع عدم الاتصال - النظام يعمل بكفاءة 100%</span>';
+                log('📴 Network: OFFLINE - Autonomous mode', 'sync');
+            });
+            
+            // Set initial state
+            if (navigator.onLine) {
+                indicator.className = 'network-indicator online';
+                indicator.innerHTML = '<i class="fas fa-wifi"></i><span>متصل - التحديثات تتم في الخلفية</span>';
+            }
+        }
+        
+        // Logging
+        function log(message, type) {
+            console.log(`[Autonomous] ${message}`);
+            
+            const logContainer = document.getElementById('syncLog');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            
+            // Keep last 50 entries
+            while (logContainer.children.length > 50) {
+                logContainer.removeChild(logContainer.firstChild);
+            }
+        }
+    </script>
+</body>
+</html>

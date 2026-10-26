@@ -1,0 +1,3363 @@
+{
+  "drugs": [
+    {
+      "tradeName": "Antinal",
+      "scientificName": "Nifuroxazide",
+      "company": "Amoun",
+      "price": 42.0
+    },
+    {
+      "tradeName": "Cetal",
+      "scientificName": "Paracetamol",
+      "company": "EIPICO",
+      "price": 22.0
+    },
+    {
+      "tradeName": "Panadol Advance",
+      "scientificName": "Paracetamol",
+      "company": "GSK",
+      "price": 36.0
+    },
+    {
+      "tradeName": "Augmentin 1g",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "GSK",
+      "price": 110.0
+    },
+    {
+      "tradeName": "Spasmo-digestin",
+      "scientificName": "Metoclopramide/Enzymes",
+      "company": "Pharco",
+      "price": 45.0
+    },
+    {
+      "tradeName": "Ketofan",
+      "scientificName": "Ketoprofen",
+      "company": "Amoun",
+      "price": 28.0
+    },
+    {
+      "tradeName": "Voltaren 100",
+      "scientificName": "Diclofenac Sodium",
+      "company": "Novartis",
+      "price": 75.0
+    },
+    {
+      "tradeName": "Brufen 400",
+      "scientificName": "Ibuprofen",
+      "company": "Abbott",
+      "price": 48.0
+    },
+    {
+      "tradeName": "Daflon 500",
+      "scientificName": "Diosmin",
+      "company": "Servier",
+      "price": 120.0
+    },
+    {
+      "tradeName": "Concor 5",
+      "scientificName": "Bisoprolol",
+      "company": "Merck",
+      "price": 65.0
+    },
+    {
+      "tradeName": "Amaryl 2mg",
+      "scientificName": "Glimepiride",
+      "company": "Sanofi",
+      "price": 54.0
+    },
+    {
+      "tradeName": "Glucophage 1000",
+      "scientificName": "Metformin",
+      "company": "Merck",
+      "price": 42.0
+    },
+    {
+      "tradeName": "Nexium 40",
+      "scientificName": "Esomeprazole",
+      "company": "AstraZeneca",
+      "price": 180.0
+    },
+    {
+      "tradeName": "Controloc 40",
+      "scientificName": "Pantoprazole",
+      "company": "Takeda",
+      "price": 125.0
+    },
+    {
+      "tradeName": "Alphintern",
+      "scientificName": "Trypsin/Chymotrypsin",
+      "company": "Amoun",
+      "price": 54.0
+    },
+    {
+      "tradeName": "Maxilase",
+      "scientificName": "Alpha-Amylase",
+      "company": "Sanofi",
+      "price": 32.0
+    },
+    {
+      "tradeName": "Ambezim-G",
+      "scientificName": "Trypsin/Chymotrypsin",
+      "company": "Global Napi",
+      "price": 48.0
+    },
+    {
+      "tradeName": "Buscopan",
+      "scientificName": "Hyoscine",
+      "company": "Boehringer Ingelheim",
+      "price": 25.0
+    },
+    {
+      "tradeName": "Visceralgine",
+      "scientificName": "Tiemonium",
+      "company": "Sedico",
+      "price": 22.0
+    },
+    {
+      "tradeName": "Motilium",
+      "scientificName": "Domperidone",
+      "company": "Janssen",
+      "price": 42.0
+    },
+    {
+      "tradeName": "Milga Advance",
+      "scientificName": "Vitamin B",
+      "company": "Eva Pharma",
+      "price": 68.0
+    },
+    {
+      "tradeName": "Catafast 50",
+      "scientificName": "Diclofenac Potassium",
+      "company": "Novartis",
+      "price": 54.0
+    },
+    {
+      "tradeName": "Controloc 20",
+      "scientificName": "Pantoprazole",
+      "company": "Takeda",
+      "price": 85.0
+    },
+    {
+      "tradeName": "Duspatalin 200 Retard",
+      "scientificName": "Mebeverine",
+      "company": "Abbott",
+      "price": 84.0
+    },
+    {
+      "tradeName": "Milga",
+      "scientificName": "Vitamin B",
+      "company": "Eva Pharma",
+      "price": 42.0
+    },
+    {
+      "tradeName": "Flagyl 500",
+      "scientificName": "Metronidazole",
+      "company": "Sanofi",
+      "price": 35.0
+    },
+    {
+      "tradeName": "Zithromax 500",
+      "scientificName": "Azithromycin",
+      "company": "Pfizer",
+      "price": 95.0
+    },
+    {
+      "tradeName": "E-Mox 500",
+      "scientificName": "Amoxicillin",
+      "company": "EIPICO",
+      "price": 30.0
+    },
+    {
+      "tradeName": "Fludrex",
+      "scientificName": "Paracetamol/Caffeine",
+      "company": "Tabuk",
+      "price": 25.0
+    },
+    {
+      "tradeName": "Panadol Joint",
+      "scientificName": "Paracetamol",
+      "company": "GSK",
+      "price": 45.0
+    },
+    {
+      "tradeName": "Adol 500",
+      "scientificName": "Paracetamol",
+      "company": "Julphar",
+      "price": 22.0
+    },
+    {
+      "tradeName": "Abimol",
+      "scientificName": "Paracetamol",
+      "company": "GlaxoSmithKline",
+      "price": 18.0
+    },
+    {
+      "tradeName": "Para-plus",
+      "scientificName": "Paracetamol",
+      "company": "Medical Union",
+      "price": 15.0
+    },
+    {
+      "tradeName": "Curam 1g",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "Sandoz",
+      "price": 115.0
+    },
+    {
+      "tradeName": "Hibiotic 1g",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "Amoun",
+      "price": 98.0
+    },
+    {
+      "tradeName": "Megamox 1g",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "Hikma",
+      "price": 105.0
+    },
+    {
+      "tradeName": "Klavox 1g",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "Spimaco",
+      "price": 102.0
+    },
+    {
+      "tradeName": "Flurest",
+      "scientificName": "Antihistamine",
+      "company": "Eva",
+      "price": 28.0
+    },
+    {
+      "tradeName": "Congestal",
+      "scientificName": "Paracetamol/Chlorpheniramine",
+      "company": "Sigma",
+      "price": 35.0
+    },
+    {
+      "tradeName": "1,2,3 Syrup",
+      "scientificName": "Paracetamol/Antihistamine",
+      "company": "Hikma",
+      "price": 24.0
+    },
+    {
+      "tradeName": "Night and Day",
+      "scientificName": "Cold & Flu",
+      "company": "Pharco",
+      "price": 32.0
+    },
+    {
+      "tradeName": "Grip 72",
+      "scientificName": "Cold & Flu",
+      "company": "Amoun",
+      "price": 30.0
+    },
+    {
+      "tradeName": "Telfast 180",
+      "scientificName": "Fexofenadine",
+      "company": "Sanofi",
+      "price": 120.0
+    },
+    {
+      "tradeName": "Claritine",
+      "scientificName": "Loratadine",
+      "company": "Bayer",
+      "price": 85.0
+    },
+    {
+      "tradeName": "Zyrtec",
+      "scientificName": "Cetirizine",
+      "company": "GSK",
+      "price": 55.0
+    },
+    {
+      "tradeName": "Levostiv",
+      "scientificName": "Levocetirizine",
+      "company": "Global Napi",
+      "price": 42.0
+    },
+    {
+      "tradeName": "Fucidin Ointment",
+      "scientificName": "Fusidic Acid",
+      "company": "LEO Pharma",
+      "price": 45.0
+    },
+    {
+      "tradeName": "Betnovate",
+      "scientificName": "Betamethasone",
+      "company": "GSK",
+      "price": 25.0
+    },
+    {
+      "tradeName": "Elica Cream",
+      "scientificName": "Mometasone",
+      "company": "Jamjoom",
+      "price": 60.0
+    },
+    {
+      "tradeName": "Daktacort",
+      "scientificName": "Miconazole/Hydrocortisone",
+      "company": "Janssen",
+      "price": 38.0
+    },
+    {
+      "tradeName": "Canesten",
+      "scientificName": "Clotrimazole",
+      "company": "Bayer",
+      "price": 42.0
+    },
+    {
+      "tradeName": "Lamisil",
+      "scientificName": "Terbinafine",
+      "company": "Novartis",
+      "price": 75.0
+    },
+    {
+      "tradeName": "Acyclovir Cream",
+      "scientificName": "Acyclovir",
+      "company": "Global Napi",
+      "price": 18.0
+    },
+    {
+      "tradeName": "Zovirax",
+      "scientificName": "Acyclovir",
+      "company": "GSK",
+      "price": 65.0
+    },
+    {
+      "tradeName": "Voltarol Gel",
+      "scientificName": "Diclofenac",
+      "company": "GSK",
+      "price": 55.0
+    },
+    {
+      "tradeName": "Fastum Gel",
+      "scientificName": "Ketoprofen",
+      "company": "Menarini",
+      "price": 48.0
+    },
+    {
+      "tradeName": "Reparil Gel",
+      "scientificName": "Aescin",
+      "company": "Madaus",
+      "price": 32.0
+    },
+    {
+      "tradeName": "Moov Massage",
+      "scientificName": "Herbal Extracts",
+      "company": "Eva",
+      "price": 28.0
+    },
+    {
+      "tradeName": "Algason",
+      "scientificName": "Analgesic",
+      "company": "Pharco",
+      "price": 22.0
+    },
+    {
+      "tradeName": "Deep Heat Spray",
+      "scientificName": "Methyl Salicylate",
+      "company": "Mentholatum",
+      "price": 125.0
+    },
+    {
+      "tradeName": "Lipitor 20",
+      "scientificName": "Atorvastatin",
+      "company": "Pfizer",
+      "price": 220.0
+    },
+    {
+      "tradeName": "Crestor 10",
+      "scientificName": "Rosuvastatin",
+      "company": "AstraZeneca",
+      "price": 195.0
+    },
+    {
+      "tradeName": "Ator 20",
+      "scientificName": "Atorvastatin",
+      "company": "EIPICO",
+      "price": 85.0
+    },
+    {
+      "tradeName": "Colchicine",
+      "scientificName": "Colchicine",
+      "company": "Amoun",
+      "price": 42.0
+    },
+    {
+      "tradeName": "Allotone",
+      "scientificName": "Allopurinol",
+      "company": "Eva",
+      "price": 35.0
+    },
+    {
+      "tradeName": "Plavix 75",
+      "scientificName": "Clopidogrel",
+      "company": "Sanofi",
+      "price": 230.0
+    },
+    {
+      "tradeName": "Aspirin Protect",
+      "scientificName": "Aspirin",
+      "company": "Bayer",
+      "price": 45.0
+    },
+    {
+      "tradeName": "Jusprin 81",
+      "scientificName": "Aspirin",
+      "company": "Julphar",
+      "price": 18.0
+    },
+    {
+      "tradeName": "Clexane 40",
+      "scientificName": "Enoxaparin",
+      "company": "Sanofi",
+      "price": 145.0
+    },
+    {
+      "tradeName": "Xarelto 20",
+      "scientificName": "Rivaroxaban",
+      "company": "Bayer",
+      "price": 650.0
+    },
+    {
+      "tradeName": "Eliquis 5",
+      "scientificName": "Apixaban",
+      "company": "BMS",
+      "price": 580.0
+    },
+    {
+      "tradeName": "Lanoxin",
+      "scientificName": "Digoxin",
+      "company": "GSK",
+      "price": 25.0
+    },
+    {
+      "tradeName": "Exforge 5/80",
+      "scientificName": "Amlodipine/Valsartan",
+      "company": "Novartis",
+      "price": 210.0
+    },
+    {
+      "tradeName": "Natrilix SR",
+      "scientificName": "Indapamide",
+      "company": "Servier",
+      "price": 65.0
+    },
+    {
+      "tradeName": "Tritace 5",
+      "scientificName": "Ramipril",
+      "company": "Sanofi",
+      "price": 95.0
+    },
+    {
+      "tradeName": "Zestril 10",
+      "scientificName": "Lisinopril",
+      "company": "AstraZeneca",
+      "price": 75.0
+    },
+    {
+      "tradeName": "Tenormin 50",
+      "scientificName": "Atenolol",
+      "company": "AstraZeneca",
+      "price": 45.0
+    },
+    {
+      "tradeName": "Inderal 10",
+      "scientificName": "Propranolol",
+      "company": "AstraZeneca",
+      "price": 22.0
+    },
+    {
+      "tradeName": "Isoptin 80",
+      "scientificName": "Verapamil",
+      "company": "Abbott",
+      "price": 38.0
+    },
+    {
+      "tradeName": "Adalat Retard",
+      "scientificName": "Nifedipine",
+      "company": "Bayer",
+      "price": 42.0
+    },
+    {
+      "tradeName": "Ventolin Inhaler",
+      "scientificName": "Salbutamol",
+      "company": "GSK",
+      "price": 85.0
+    },
+    {
+      "tradeName": "Symbicort 160",
+      "scientificName": "Budesonide",
+      "company": "AstraZeneca",
+      "price": 320.0
+    },
+    {
+      "tradeName": "Seretide Accuhaler",
+      "scientificName": "Fluticasone",
+      "company": "GSK",
+      "price": 280.0
+    },
+    {
+      "tradeName": "Foster Inhaler",
+      "scientificName": "Beclometasone",
+      "company": "Chiesi",
+      "price": 240.0
+    },
+    {
+      "tradeName": "Pulmicort 0.5",
+      "scientificName": "Budesonide",
+      "company": "AstraZeneca",
+      "price": 145.0
+    },
+    {
+      "tradeName": "Foradil",
+      "scientificName": "Formoterol",
+      "company": "Novartis",
+      "price": 110.0
+    },
+    {
+      "tradeName": "Spiriva",
+      "scientificName": "Tiotropium",
+      "company": "Boehringer",
+      "price": 450.0
+    },
+    {
+      "tradeName": "Bepanthen Ointment",
+      "scientificName": "Dexpanthenol",
+      "company": "Bayer",
+      "price": 85.0
+    },
+    {
+      "tradeName": "Panthenol Cream",
+      "scientificName": "Dexpanthenol",
+      "company": "Nile",
+      "price": 15.0
+    },
+    {
+      "tradeName": "Sudocrem",
+      "scientificName": "Zinc Oxide",
+      "company": "Teva",
+      "price": 195.0
+    },
+    {
+      "tradeName": "Zinc Olive",
+      "scientificName": "Zinc/Olive Oil",
+      "company": "Nile",
+      "price": 25.0
+    },
+    {
+      "tradeName": "Mebo Ointment",
+      "scientificName": "Herbal Extracts",
+      "company": "Gulf Pharma",
+      "price": 95.0
+    },
+    {
+      "tradeName": "Dermovate",
+      "scientificName": "Clobetasol",
+      "company": "GSK",
+      "price": 45.0
+    },
+    {
+      "tradeName": "Betaderm",
+      "scientificName": "Betamethasone",
+      "company": "EIPICO",
+      "price": 12.0
+    },
+    {
+      "tradeName": "Garamycin Cream",
+      "scientificName": "Gentamicin",
+      "company": "Schering-Plough",
+      "price": 18.0
+    },
+    {
+      "tradeName": "Terramycin",
+      "scientificName": "Oxytetracycline",
+      "company": "Pfizer",
+      "price": 15.0
+    },
+    {
+      "tradeName": "Polyderm",
+      "scientificName": "Combination",
+      "company": "Amoun",
+      "price": 22.0
+    },
+    {
+      "tradeName": "Quadriderm",
+      "scientificName": "Combination",
+      "company": "Schering-Plough",
+      "price": 32.0
+    },
+    {
+      "tradeName": "Eumovate",
+      "scientificName": "Clobetasone",
+      "company": "GSK",
+      "price": 35.0
+    },
+    {
+      "tradeName": "Fucidin H",
+      "scientificName": "Fusidic Acid/HC",
+      "company": "LEO Pharma",
+      "price": 68.0
+    },
+    {
+      "tradeName": "Viagra 100",
+      "scientificName": "Sildenafil",
+      "company": "Pfizer",
+      "price": 95.0
+    },
+    {
+      "tradeName": "Cialis 20",
+      "scientificName": "Tadalafil",
+      "company": "Lilly",
+      "price": 185.0
+    },
+    {
+      "tradeName": "Levitra 20",
+      "scientificName": "Vardenafil",
+      "company": "Bayer",
+      "price": 145.0
+    },
+    {
+      "tradeName": "Erec 100",
+      "scientificName": "Sildenafil",
+      "company": "Adwia",
+      "price": 30.0
+    },
+    {
+      "tradeName": "Joypox",
+      "scientificName": "Dapoxetine",
+      "company": "Eva",
+      "price": 55.0
+    },
+    {
+      "tradeName": "Proscar",
+      "scientificName": "Finasteride",
+      "company": "MSD",
+      "price": 120.0
+    },
+    {
+      "tradeName": "Cardura 4",
+      "scientificName": "Doxazosin",
+      "company": "Pfizer",
+      "price": 85.0
+    },
+    {
+      "tradeName": "Omnic OCAS",
+      "scientificName": "Tamsulosin",
+      "company": "Astellas",
+      "price": 165.0
+    },
+    {
+      "tradeName": "Tamsulin",
+      "scientificName": "Tamsulosin",
+      "company": "Amoun",
+      "price": 75.0
+    },
+    {
+      "tradeName": "Rowachol",
+      "scientificName": "Ciliary Oils",
+      "company": "Amoun",
+      "price": 42.0
+    },
+    {
+      "tradeName": "Ursofalk",
+      "scientificName": "Ursodeoxycholic Acid",
+      "company": "Minapharm",
+      "price": 185.0
+    },
+    {
+      "tradeName": "Legalon",
+      "scientificName": "Silymarin",
+      "company": "Madaus",
+      "price": 65.0
+    },
+    {
+      "tradeName": "Hepaticum",
+      "scientificName": "Vitamins",
+      "company": "Medical Union",
+      "price": 35.0
+    },
+    {
+      "tradeName": "Choliprase",
+      "scientificName": "Digestive",
+      "company": "Pharco",
+      "price": 22.0
+    },
+    {
+      "tradeName": "Lactulose",
+      "scientificName": "Lactulose",
+      "company": "Sedico",
+      "price": 28.0
+    },
+    {
+      "tradeName": "Duphalac",
+      "scientificName": "Lactulose",
+      "company": "Abbott",
+      "price": 55.0
+    },
+    {
+      "tradeName": "Dulcolax",
+      "scientificName": "Bisacodyl",
+      "company": "Boehringer",
+      "price": 22.0
+    },
+    {
+      "tradeName": "Pico Drops",
+      "scientificName": "Sodium Picosulfate",
+      "company": "Pharco",
+      "price": 15.0
+    },
+    {
+      "tradeName": "Senna-lax",
+      "scientificName": "Herbal",
+      "company": "EIPICO",
+      "price": 12.0
+    },
+    {
+      "tradeName": "Dignorm Syrup",
+      "scientificName": "Digestive",
+      "company": "Eva",
+      "price": 18.0
+    },
+    {
+      "tradeName": "Beb-vit",
+      "scientificName": "Multivitamins",
+      "company": "Nile",
+      "price": 12.0
+    },
+    {
+      "tradeName": "Sansovit",
+      "scientificName": "Multivitamins",
+      "company": "August Wolff",
+      "price": 45.0
+    },
+    {
+      "tradeName": "Vitamount",
+      "scientificName": "Multivitamins",
+      "company": "Amoun",
+      "price": 35.0
+    },
+    {
+      "tradeName": "Minapharm Vitamins",
+      "scientificName": "Multivitamins",
+      "company": "Minapharm",
+      "price": 28.0
+    },
+    {
+      "tradeName": "Calcium-D3",
+      "scientificName": "Calcium",
+      "company": "EIPICO",
+      "price": 42.0
+    },
+    {
+      "tradeName": "Calcimat",
+      "scientificName": "Calcium",
+      "company": "Global Napi",
+      "price": 38.0
+    },
+    {
+      "tradeName": "Osteocare",
+      "scientificName": "Calcium",
+      "company": "Vitabiotics",
+      "price": 95.0
+    },
+    {
+      "tradeName": "Cal-Mag",
+      "scientificName": "Calcium/Magnesium",
+      "company": "Eva",
+      "price": 45.0
+    },
+    {
+      "tradeName": "Marvit",
+      "scientificName": "Multivitamins",
+      "company": "Marcyrl",
+      "price": 55.0
+    },
+    {
+      "tradeName": "Royal Vit G",
+      "scientificName": "Ginseng/Vitamins",
+      "company": "Sedico",
+      "price": 42.0
+    },
+    {
+      "tradeName": "Ginsana",
+      "scientificName": "Ginseng",
+      "company": "Pharmaton",
+      "price": 110.0
+    },
+    {
+      "tradeName": "C-Retard",
+      "scientificName": "Vitamin C",
+      "company": "Hikma",
+      "price": 22.0
+    },
+    {
+      "tradeName": "Cevarol",
+      "scientificName": "Vitamin C",
+      "company": "Memphis",
+      "price": 18.0
+    },
+    {
+      "tradeName": "Vitacid C",
+      "scientificName": "Vitamin C",
+      "company": "CID",
+      "price": 25.0
+    },
+    {
+      "tradeName": "Redoxon",
+      "scientificName": "Vitamin C",
+      "company": "Bayer",
+      "price": 85.0
+    },
+    {
+      "tradeName": "Omega-3 Plus",
+      "scientificName": "Fish Oil",
+      "company": "Sedico",
+      "price": 55.0
+    },
+    {
+      "tradeName": "E-Vit",
+      "scientificName": "Vitamin E",
+      "company": "Pharco",
+      "price": 32.0
+    },
+    {
+      "tradeName": "Ferroglobin",
+      "scientificName": "Iron",
+      "company": "Vitabiotics",
+      "price": 85.0
+    },
+    {
+      "tradeName": "Haematon",
+      "scientificName": "Iron",
+      "company": "Amoun",
+      "price": 42.0
+    },
+    {
+      "tradeName": "Ferose-F",
+      "scientificName": "Iron/Folic Acid",
+      "company": "Spimaco",
+      "price": 38.0
+    },
+    {
+      "tradeName": "Fefol",
+      "scientificName": "Iron/Folic Acid",
+      "company": "GSK",
+      "price": 35.0
+    },
+    {
+      "tradeName": "Haemostop",
+      "scientificName": "Anti-hemorrhagic",
+      "company": "Amoun",
+      "price": 28.0
+    },
+    {
+      "tradeName": "Dicynone",
+      "scientificName": "Etamsylate",
+      "company": "OM Pharma",
+      "price": 45.0
+    },
+    {
+      "tradeName": "Cyclo-Progynova",
+      "scientificName": "Hormonal",
+      "company": "Bayer",
+      "price": 95.0
+    },
+    {
+      "tradeName": "Microsept",
+      "scientificName": "Contraceptive",
+      "company": "Nile",
+      "price": 15.0
+    },
+    {
+      "tradeName": "Gynera",
+      "scientificName": "Contraceptive",
+      "company": "Bayer",
+      "price": 85.0
+    },
+    {
+      "tradeName": "Yasmin",
+      "scientificName": "Contraceptive",
+      "company": "Bayer",
+      "price": 125.0
+    },
+    {
+      "tradeName": "Clomid",
+      "scientificName": "Clomifene",
+      "company": "Sanofi",
+      "price": 42.0
+    },
+    {
+      "tradeName": "Gonal-F",
+      "scientificName": "Follitropin",
+      "company": "Merck",
+      "price": 650.0
+    },
+    {
+      "tradeName": "Duphaston",
+      "scientificName": "Dydrogesterone",
+      "company": "Abbott",
+      "price": 145.0
+    },
+    {
+      "tradeName": "Prontogest",
+      "scientificName": "Progesterone",
+      "company": "Marcyrl",
+      "price": 85.0
+    },
+    {
+      "tradeName": "Utrogestan",
+      "scientificName": "Progesterone",
+      "company": "Besins",
+      "price": 195.0
+    },
+    {
+      "tradeName": "Nolvadex",
+      "scientificName": "Tamoxifen",
+      "company": "AstraZeneca",
+      "price": 75.0
+    },
+    {
+      "tradeName": "Arimidex",
+      "scientificName": "Anastrozole",
+      "company": "AstraZeneca",
+      "price": 450.0
+    },
+    {
+      "tradeName": "Femara",
+      "scientificName": "Letrozole",
+      "company": "Novartis",
+      "price": 380.0
+    },
+    {
+      "tradeName": "Ovestin Cream",
+      "scientificName": "Estriol",
+      "company": "Aspen",
+      "price": 120.0
+    },
+    {
+      "tradeName": "Vagyl Powder",
+      "scientificName": "Antiseptic",
+      "company": "Pharco",
+      "price": 12.0
+    },
+    {
+      "tradeName": "Tantum Verde Mouthwash",
+      "scientificName": "Benzydamine",
+      "company": "EIPICO",
+      "price": 25.0
+    },
+    {
+      "tradeName": "Beto-dine",
+      "scientificName": "Povidone-Iodine",
+      "company": "Mundipharma",
+      "price": 45.0
+    },
+    {
+      "tradeName": "Oral-B Floss",
+      "scientificName": "Dental",
+      "company": "P&G",
+      "price": 35.0
+    },
+    {
+      "tradeName": "Sensodyne Rapid Relief",
+      "scientificName": "Dental",
+      "company": "GSK",
+      "price": 95.0
+    },
+    {
+      "tradeName": "Parodontax",
+      "scientificName": "Dental",
+      "company": "GSK",
+      "price": 85.0
+    },
+    {
+      "tradeName": "Listerine Zero",
+      "scientificName": "Dental",
+      "company": "J&J",
+      "price": 65.0
+    },
+    {
+      "tradeName": "Emoform",
+      "scientificName": "Dental",
+      "company": "Wild",
+      "price": 42.0
+    },
+    {
+      "tradeName": "Gengigel",
+      "scientificName": "Hyaluronic Acid",
+      "company": "Ricerfarma",
+      "price": 125.0
+    },
+    {
+      "tradeName": "Saliveze Spray",
+      "scientificName": "Artificial Saliva",
+      "company": "Amoun",
+      "price": 85.0
+    },
+    {
+      "tradeName": "Nystatin Suspension",
+      "scientificName": "Nystatin",
+      "company": "Medical Union",
+      "price": 15.0
+    },
+    {
+      "tradeName": "Daktarin Oral Gel",
+      "scientificName": "Miconazole",
+      "company": "Janssen",
+      "price": 35.0
+    },
+    {
+      "tradeName": "Mycostatin",
+      "scientificName": "Nystatin",
+      "company": "BMS",
+      "price": 22.0
+    },
+    {
+      "tradeName": "Candicure",
+      "scientificName": "Clotrimazole",
+      "company": "Global Napi",
+      "price": 18.0
+    },
+    {
+      "tradeName": "Amoxil 500",
+      "scientificName": "Amoxicillin",
+      "company": "GSK",
+      "price": 38.0
+    },
+    {
+      "tradeName": "Velosef 1g",
+      "scientificName": "Cephradine",
+      "company": "BMS",
+      "price": 85.0
+    },
+    {
+      "tradeName": "Duricef 1g",
+      "scientificName": "Cefadroxil",
+      "company": "BMS",
+      "price": 75.0
+    },
+    {
+      "tradeName": "Cephradine 500",
+      "scientificName": "Cephradine",
+      "company": "Pharco",
+      "price": 28.0
+    },
+    {
+      "tradeName": "Keflex 500",
+      "scientificName": "Cephalexin",
+      "company": "Lilly",
+      "price": 45.0
+    },
+    {
+      "tradeName": "Zinnat 500",
+      "scientificName": "Cefuroxime",
+      "company": "GSK",
+      "price": 165.0
+    },
+    {
+      "tradeName": "Xorimax 500",
+      "scientificName": "Cefuroxime",
+      "company": "Sandoz",
+      "price": 145.0
+    },
+    {
+      "tradeName": "Cefu-6 500",
+      "scientificName": "Cefuroxime",
+      "company": "Global Napi",
+      "price": 120.0
+    },
+    {
+      "tradeName": "Rocephin 1g",
+      "scientificName": "Ceftriaxone",
+      "company": "Roche",
+      "price": 110.0
+    },
+    {
+      "tradeName": "Ceftriaxone 1g",
+      "scientificName": "Ceftriaxone",
+      "company": "EIPICO",
+      "price": 45.0
+    },
+    {
+      "tradeName": "Fortum 1g",
+      "scientificName": "Ceftazidime",
+      "company": "GSK",
+      "price": 85.0
+    },
+    {
+      "tradeName": "Meronem 1g",
+      "scientificName": "Meropenem",
+      "company": "AstraZeneca",
+      "price": 295.0
+    },
+    {
+      "tradeName": "Invanz 1g",
+      "scientificName": "Ertapenem",
+      "company": "MSD",
+      "price": 450.0
+    },
+    {
+      "tradeName": "Tavanic 500",
+      "scientificName": "Levofloxacin",
+      "company": "Sanofi",
+      "price": 145.0
+    },
+    {
+      "tradeName": "Cravit 500",
+      "scientificName": "Levofloxacin",
+      "company": "Minapharm",
+      "price": 95.0
+    },
+    {
+      "tradeName": "Avelox 400",
+      "scientificName": "Moxifloxacin",
+      "company": "Bayer",
+      "price": 185.0
+    },
+    {
+      "tradeName": "Cipro 500",
+      "scientificName": "Ciprofloxacin",
+      "company": "Bayer",
+      "price": 65.0
+    },
+    {
+      "tradeName": "Ciprobay 500",
+      "scientificName": "Ciprofloxacin",
+      "company": "Bayer",
+      "price": 85.0
+    },
+    {
+      "tradeName": "Tarivid 200",
+      "scientificName": "Ofloxacin",
+      "company": "Sanofi",
+      "price": 42.0
+    },
+    {
+      "tradeName": "Dalacin C 300",
+      "scientificName": "Clindamycin",
+      "company": "Pfizer",
+      "price": 120.0
+    },
+    {
+      "tradeName": "Vibramycin",
+      "scientificName": "Doxycycline",
+      "company": "Pfizer",
+      "price": 35.0
+    },
+    {
+      "tradeName": "Doxy-cost",
+      "scientificName": "Doxycycline",
+      "company": "Tabuk",
+      "price": 22.0
+    },
+    {
+      "tradeName": "Flagicure",
+      "scientificName": "Metronidazole",
+      "company": "Global Napi",
+      "price": 18.0
+    },
+    {
+      "tradeName": "Metronidazole 500",
+      "scientificName": "Metronidazole",
+      "company": "Nile",
+      "price": 12.0
+    },
+    {
+      "tradeName": "Entocid",
+      "scientificName": "Antidiarrheal",
+      "company": "CID",
+      "price": 15.0
+    },
+    {
+      "tradeName": "Streptoquin",
+      "scientificName": "Antidiarrheal",
+      "company": "Medical Union",
+      "price": 18.0
+    },
+    {
+      "tradeName": "Diax",
+      "scientificName": "Antidiarrheal",
+      "company": "Eva",
+      "price": 25.0
+    },
+    {
+      "tradeName": "Panadol",
+      "scientificName": "Paracetamol",
+      "company": "Julphar",
+      "category": "Analgesics & Antipyretics",
+      "price": 84.18
+    },
+    {
+      "tradeName": "Adol",
+      "scientificName": "Paracetamol",
+      "company": "Julphar",
+      "category": "Analgesics & Antipyretics",
+      "price": 184.86
+    },
+    {
+      "tradeName": "Paramol",
+      "scientificName": "Paracetamol",
+      "company": "Amoun",
+      "category": "Analgesics & Antipyretics",
+      "price": 99.32
+    },
+    {
+      "tradeName": "Doliprane",
+      "scientificName": "Paracetamol",
+      "company": "Sanofi",
+      "category": "Analgesics & Antipyretics",
+      "price": 200.06
+    },
+    {
+      "tradeName": "Tylol",
+      "scientificName": "Paracetamol",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 172.32
+    },
+    {
+      "tradeName": "Fevadol",
+      "scientificName": "Paracetamol",
+      "company": "Julphar",
+      "category": "Analgesics & Antipyretics",
+      "price": 71.95
+    },
+    {
+      "tradeName": "Panadol Extra",
+      "scientificName": "Paracetamol/Caffeine",
+      "company": "GSK",
+      "category": "Analgesics & Antipyretics",
+      "price": 131.1
+    },
+    {
+      "tradeName": "Panadol Cold & Flu",
+      "scientificName": "Paracetamol/Pseudoephedrine",
+      "company": "GSK",
+      "category": "Analgesics & Antipyretics",
+      "price": 70.97
+    },
+    {
+      "tradeName": "Panadol Night",
+      "scientificName": "Paracetamol/Diphenhydramine",
+      "company": "GSK",
+      "category": "Analgesics & Antipyretics",
+      "price": 28.15
+    },
+    {
+      "tradeName": "Panadol Actifast",
+      "scientificName": "Paracetamol",
+      "company": "GSK",
+      "category": "Analgesics & Antipyretics",
+      "price": 170.66
+    },
+    {
+      "tradeName": "Panadol Children",
+      "scientificName": "Paracetamol",
+      "company": "GSK",
+      "category": "Analgesics & Antipyretics",
+      "price": 179.35
+    },
+    {
+      "tradeName": "Panadol Baby",
+      "scientificName": "Paracetamol",
+      "company": "GSK",
+      "category": "Analgesics & Antipyretics",
+      "price": 68.94
+    },
+    {
+      "tradeName": "Cetal Extra",
+      "scientificName": "Paracetamol/Caffeine",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 17.81
+    },
+    {
+      "tradeName": "Cetal Cold & Flu",
+      "scientificName": "Paracetamol/Pseudoephedrine",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 31.73
+    },
+    {
+      "tradeName": "Cetal Syrup",
+      "scientificName": "Paracetamol",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 55.3
+    },
+    {
+      "tradeName": "Adol Extra",
+      "scientificName": "Paracetamol/Caffeine",
+      "company": "Julphar",
+      "category": "Analgesics & Antipyretics",
+      "price": 161.28
+    },
+    {
+      "tradeName": "Adol Cold",
+      "scientificName": "Paracetamol/Pseudoephedrine",
+      "company": "Julphar",
+      "category": "Analgesics & Antipyretics",
+      "price": 152.12
+    },
+    {
+      "tradeName": "Adol Syrup",
+      "scientificName": "Paracetamol",
+      "company": "Julphar",
+      "category": "Analgesics & Antipyretics",
+      "price": 56.4
+    },
+    {
+      "tradeName": "Adol Supp",
+      "scientificName": "Paracetamol",
+      "company": "Julphar",
+      "category": "Analgesics & Antipyretics",
+      "price": 80.15
+    },
+    {
+      "tradeName": "Brufen",
+      "scientificName": "Ibuprofen",
+      "company": "Abbott",
+      "category": "Analgesics & Antipyretics",
+      "price": 73.72
+    },
+    {
+      "tradeName": "Brufen 600",
+      "scientificName": "Ibuprofen",
+      "company": "Abbott",
+      "category": "Analgesics & Antipyretics",
+      "price": 137.2
+    },
+    {
+      "tradeName": "Brufen Retard",
+      "scientificName": "Ibuprofen",
+      "company": "Abbott",
+      "category": "Analgesics & Antipyretics",
+      "price": 42.21
+    },
+    {
+      "tradeName": "Brufen Syrup",
+      "scientificName": "Ibuprofen",
+      "company": "Abbott",
+      "category": "Analgesics & Antipyretics",
+      "price": 55.41
+    },
+    {
+      "tradeName": "Ibuprofen",
+      "scientificName": "Ibuprofen",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 84.77
+    },
+    {
+      "tradeName": "Ibuflex",
+      "scientificName": "Ibuprofen",
+      "company": "Eva Pharma",
+      "category": "Analgesics & Antipyretics",
+      "price": 169.45
+    },
+    {
+      "tradeName": "Ibugesic",
+      "scientificName": "Ibuprofen",
+      "company": "Medical Union",
+      "category": "Analgesics & Antipyretics",
+      "price": 39.63
+    },
+    {
+      "tradeName": "Ibucine",
+      "scientificName": "Ibuprofen/Codeine",
+      "company": "Medical Union",
+      "category": "Analgesics & Antipyretics",
+      "price": 112.05
+    },
+    {
+      "tradeName": "Profen",
+      "scientificName": "Ibuprofen",
+      "company": "Delta Pharma",
+      "category": "Analgesics & Antipyretics",
+      "price": 167.53
+    },
+    {
+      "tradeName": "Voltaren",
+      "scientificName": "Diclofenac Sodium",
+      "company": "Novartis",
+      "category": "Analgesics & Antipyretics",
+      "price": 126.38
+    },
+    {
+      "tradeName": "Voltaren 25",
+      "scientificName": "Diclofenac Sodium",
+      "company": "Novartis",
+      "category": "Analgesics & Antipyretics",
+      "price": 155.04
+    },
+    {
+      "tradeName": "Voltaren 50",
+      "scientificName": "Diclofenac Sodium",
+      "company": "Novartis",
+      "category": "Analgesics & Antipyretics",
+      "price": 142.84
+    },
+    {
+      "tradeName": "Voltaren 75",
+      "scientificName": "Diclofenac Sodium",
+      "company": "Novartis",
+      "category": "Analgesics & Antipyretics",
+      "price": 61.3
+    },
+    {
+      "tradeName": "Voltaren Retard",
+      "scientificName": "Diclofenac Sodium",
+      "company": "Novartis",
+      "category": "Analgesics & Antipyretics",
+      "price": 196.42
+    },
+    {
+      "tradeName": "Voltaren SR",
+      "scientificName": "Diclofenac Sodium",
+      "company": "Novartis",
+      "category": "Analgesics & Antipyretics",
+      "price": 148.83
+    },
+    {
+      "tradeName": "Voltaren Emulgel",
+      "scientificName": "Diclofenac",
+      "company": "Novartis",
+      "category": "Analgesics & Antipyretics",
+      "price": 113.1
+    },
+    {
+      "tradeName": "Voltaren Rapid",
+      "scientificName": "Diclofenac Potassium",
+      "company": "Novartis",
+      "category": "Analgesics & Antipyretics",
+      "price": 18.49
+    },
+    {
+      "tradeName": "Catafast",
+      "scientificName": "Diclofenac Potassium",
+      "company": "Novartis",
+      "category": "Analgesics & Antipyretics",
+      "price": 40.29
+    },
+    {
+      "tradeName": "Diclofen",
+      "scientificName": "Diclofenac",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 159.21
+    },
+    {
+      "tradeName": "Diclofen 25",
+      "scientificName": "Diclofenac",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 110.93
+    },
+    {
+      "tradeName": "Diclofen 50",
+      "scientificName": "Diclofenac",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 129.76
+    },
+    {
+      "tradeName": "Diclofen 75",
+      "scientificName": "Diclofenac",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 23.36
+    },
+    {
+      "tradeName": "Diclofen Retard",
+      "scientificName": "Diclofenac",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 72.96
+    },
+    {
+      "tradeName": "Diclomax",
+      "scientificName": "Diclofenac",
+      "company": "Medical Union",
+      "category": "Analgesics & Antipyretics",
+      "price": 192.13
+    },
+    {
+      "tradeName": "Diclomax SR",
+      "scientificName": "Diclofenac",
+      "company": "Medical Union",
+      "category": "Analgesics & Antipyretics",
+      "price": 172.07
+    },
+    {
+      "tradeName": "Diclomax Retard",
+      "scientificName": "Diclofenac",
+      "company": "Medical Union",
+      "category": "Analgesics & Antipyretics",
+      "price": 145.77
+    },
+    {
+      "tradeName": "Diclomax 50",
+      "scientificName": "Diclofenac",
+      "company": "Medical Union",
+      "category": "Analgesics & Antipyretics",
+      "price": 86.66
+    },
+    {
+      "tradeName": "Diclomax 75",
+      "scientificName": "Diclofenac",
+      "company": "Medical Union",
+      "category": "Analgesics & Antipyretics",
+      "price": 75.91
+    },
+    {
+      "tradeName": "Olfen",
+      "scientificName": "Diclofenac",
+      "company": "Mepha",
+      "category": "Analgesics & Antipyretics",
+      "price": 98.44
+    },
+    {
+      "tradeName": "Olfen 50",
+      "scientificName": "Diclofenac",
+      "company": "Mepha",
+      "category": "Analgesics & Antipyretics",
+      "price": 93.23
+    },
+    {
+      "tradeName": "Olfen 75",
+      "scientificName": "Diclofenac",
+      "company": "Mepha",
+      "category": "Analgesics & Antipyretics",
+      "price": 23.93
+    },
+    {
+      "tradeName": "Olfen Retard",
+      "scientificName": "Diclofenac",
+      "company": "Mepha",
+      "category": "Analgesics & Antipyretics",
+      "price": 206.87
+    },
+    {
+      "tradeName": "Olfen Gel",
+      "scientificName": "Diclofenac",
+      "company": "Mepha",
+      "category": "Analgesics & Antipyretics",
+      "price": 87.06
+    },
+    {
+      "tradeName": "Ketofan 25",
+      "scientificName": "Ketoprofen",
+      "company": "Amoun",
+      "category": "Analgesics & Antipyretics",
+      "price": 44.09
+    },
+    {
+      "tradeName": "Ketofan 50",
+      "scientificName": "Ketoprofen",
+      "company": "Amoun",
+      "category": "Analgesics & Antipyretics",
+      "price": 157.01
+    },
+    {
+      "tradeName": "Ketofan 100",
+      "scientificName": "Ketoprofen",
+      "company": "Amoun",
+      "category": "Analgesics & Antipyretics",
+      "price": 67.76
+    },
+    {
+      "tradeName": "Ketofan SR",
+      "scientificName": "Ketoprofen",
+      "company": "Amoun",
+      "category": "Analgesics & Antipyretics",
+      "price": 180.25
+    },
+    {
+      "tradeName": "Ketofan Gel",
+      "scientificName": "Ketoprofen",
+      "company": "Amoun",
+      "category": "Analgesics & Antipyretics",
+      "price": 169.14
+    },
+    {
+      "tradeName": "Ketoprofen",
+      "scientificName": "Ketoprofen",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 141.85
+    },
+    {
+      "tradeName": "Profenid",
+      "scientificName": "Ketoprofen",
+      "company": "Sanofi",
+      "category": "Analgesics & Antipyretics",
+      "price": 81.56
+    },
+    {
+      "tradeName": "Profenid 100",
+      "scientificName": "Ketoprofen",
+      "company": "Sanofi",
+      "category": "Analgesics & Antipyretics",
+      "price": 156.89
+    },
+    {
+      "tradeName": "Profenid SR",
+      "scientificName": "Ketoprofen",
+      "company": "Sanofi",
+      "category": "Analgesics & Antipyretics",
+      "price": 175.54
+    },
+    {
+      "tradeName": "Profenid Gel",
+      "scientificName": "Ketoprofen",
+      "company": "Sanofi",
+      "category": "Analgesics & Antipyretics",
+      "price": 196.67
+    },
+    {
+      "tradeName": "Aspirin",
+      "scientificName": "Acetylsalicylic Acid",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 16.75
+    },
+    {
+      "tradeName": "Aspirin 81",
+      "scientificName": "Acetylsalicylic Acid",
+      "company": "GSK",
+      "category": "Analgesics & Antipyretics",
+      "price": 175.31
+    },
+    {
+      "tradeName": "Aspirin 100",
+      "scientificName": "Acetylsalicylic Acid",
+      "company": "GSK",
+      "category": "Analgesics & Antipyretics",
+      "price": 196.36
+    },
+    {
+      "tradeName": "Aspirin 300",
+      "scientificName": "Acetylsalicylic Acid",
+      "company": "GSK",
+      "category": "Analgesics & Antipyretics",
+      "price": 27.6
+    },
+    {
+      "tradeName": "Aspirin 500",
+      "scientificName": "Acetylsalicylic Acid",
+      "company": "GSK",
+      "category": "Analgesics & Antipyretics",
+      "price": 23.08
+    },
+    {
+      "tradeName": "Aspirin Cardio",
+      "scientificName": "Acetylsalicylic Acid",
+      "company": "Bayer",
+      "category": "Analgesics & Antipyretics",
+      "price": 41.14
+    },
+    {
+      "tradeName": "Aspegic",
+      "scientificName": "Acetylsalicylic Acid",
+      "company": "Sanofi",
+      "category": "Analgesics & Antipyretics",
+      "price": 198.38
+    },
+    {
+      "tradeName": "Aspegic 100",
+      "scientificName": "Acetylsalicylic Acid",
+      "company": "Sanofi",
+      "category": "Analgesics & Antipyretics",
+      "price": 134.53
+    },
+    {
+      "tradeName": "Aspegic 500",
+      "scientificName": "Acetylsalicylic Acid",
+      "company": "Sanofi",
+      "category": "Analgesics & Antipyretics",
+      "price": 113.28
+    },
+    {
+      "tradeName": "Aspegic 1000",
+      "scientificName": "Acetylsalicylic Acid",
+      "company": "Sanofi",
+      "category": "Analgesics & Antipyretics",
+      "price": 167.54
+    },
+    {
+      "tradeName": "Naprosyn",
+      "scientificName": "Naproxen",
+      "company": "Roche",
+      "category": "Analgesics & Antipyretics",
+      "price": 165.19
+    },
+    {
+      "tradeName": "Naprosyn 250",
+      "scientificName": "Naproxen",
+      "company": "Roche",
+      "category": "Analgesics & Antipyretics",
+      "price": 58.4
+    },
+    {
+      "tradeName": "Naprosyn 500",
+      "scientificName": "Naproxen",
+      "company": "Roche",
+      "category": "Analgesics & Antipyretics",
+      "price": 142.02
+    },
+    {
+      "tradeName": "Naproxen",
+      "scientificName": "Naproxen",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 96.35
+    },
+    {
+      "tradeName": "Naproxen 250",
+      "scientificName": "Naproxen",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 58.48
+    },
+    {
+      "tradeName": "Naproxen 500",
+      "scientificName": "Naproxen",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 134.44
+    },
+    {
+      "tradeName": "Proxen",
+      "scientificName": "Naproxen",
+      "company": "Medical Union",
+      "category": "Analgesics & Antipyretics",
+      "price": 190.37
+    },
+    {
+      "tradeName": "Proxen 250",
+      "scientificName": "Naproxen",
+      "company": "Medical Union",
+      "category": "Analgesics & Antipyretics",
+      "price": 137.95
+    },
+    {
+      "tradeName": "Proxen 500",
+      "scientificName": "Naproxen",
+      "company": "Medical Union",
+      "category": "Analgesics & Antipyretics",
+      "price": 52.66
+    },
+    {
+      "tradeName": "Celebrex",
+      "scientificName": "Celecoxib",
+      "company": "Pfizer",
+      "category": "Analgesics & Antipyretics",
+      "price": 19.18
+    },
+    {
+      "tradeName": "Celebrex 100",
+      "scientificName": "Celecoxib",
+      "company": "Pfizer",
+      "category": "Analgesics & Antipyretics",
+      "price": 118.95
+    },
+    {
+      "tradeName": "Celebrex 200",
+      "scientificName": "Celecoxib",
+      "company": "Pfizer",
+      "category": "Analgesics & Antipyretics",
+      "price": 61.36
+    },
+    {
+      "tradeName": "Celecoxib",
+      "scientificName": "Celecoxib",
+      "company": "Hikma",
+      "category": "Analgesics & Antipyretics",
+      "price": 156.59
+    },
+    {
+      "tradeName": "Arcoxia",
+      "scientificName": "Etoricoxib",
+      "company": "Merck",
+      "category": "Analgesics & Antipyretics",
+      "price": 157.36
+    },
+    {
+      "tradeName": "Arcoxia 60",
+      "scientificName": "Etoricoxib",
+      "company": "Merck",
+      "category": "Analgesics & Antipyretics",
+      "price": 36.31
+    },
+    {
+      "tradeName": "Arcoxia 90",
+      "scientificName": "Etoricoxib",
+      "company": "Merck",
+      "category": "Analgesics & Antipyretics",
+      "price": 190.42
+    },
+    {
+      "tradeName": "Arcoxia 120",
+      "scientificName": "Etoricoxib",
+      "company": "Merck",
+      "category": "Analgesics & Antipyretics",
+      "price": 62.42
+    },
+    {
+      "tradeName": "Etoricoxib",
+      "scientificName": "Etoricoxib",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 146.48
+    },
+    {
+      "tradeName": "Mobic",
+      "scientificName": "Meloxicam",
+      "company": "Boehringer Ingelheim",
+      "category": "Analgesics & Antipyretics",
+      "price": 174.07
+    },
+    {
+      "tradeName": "Mobic 7.5",
+      "scientificName": "Meloxicam",
+      "company": "Boehringer Ingelheim",
+      "category": "Analgesics & Antipyretics",
+      "price": 105.83
+    },
+    {
+      "tradeName": "Mobic 15",
+      "scientificName": "Meloxicam",
+      "company": "Boehringer Ingelheim",
+      "category": "Analgesics & Antipyretics",
+      "price": 126.36
+    },
+    {
+      "tradeName": "Meloxicam",
+      "scientificName": "Meloxicam",
+      "company": "Amoun",
+      "category": "Analgesics & Antipyretics",
+      "price": 52.47
+    },
+    {
+      "tradeName": "Meloxicam 7.5",
+      "scientificName": "Meloxicam",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 172.46
+    },
+    {
+      "tradeName": "Meloxicam 15",
+      "scientificName": "Meloxicam",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 100.16
+    },
+    {
+      "tradeName": "Movatec",
+      "scientificName": "Meloxicam",
+      "company": "Medical Union",
+      "category": "Analgesics & Antipyretics",
+      "price": 87.86
+    },
+    {
+      "tradeName": "Movatec 7.5",
+      "scientificName": "Meloxicam",
+      "company": "Medical Union",
+      "category": "Analgesics & Antipyretics",
+      "price": 42.32
+    },
+    {
+      "tradeName": "Movatec 15",
+      "scientificName": "Meloxicam",
+      "company": "Medical Union",
+      "category": "Analgesics & Antipyretics",
+      "price": 15.62
+    },
+    {
+      "tradeName": "Tramadol",
+      "scientificName": "Tramadol",
+      "company": "Amoun",
+      "category": "Analgesics & Antipyretics",
+      "price": 113.7
+    },
+    {
+      "tradeName": "Tramadol 50",
+      "scientificName": "Tramadol",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 90.83
+    },
+    {
+      "tradeName": "Tramadol 100",
+      "scientificName": "Tramadol",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 195.98
+    },
+    {
+      "tradeName": "Tramadol SR",
+      "scientificName": "Tramadol",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 152.64
+    },
+    {
+      "tradeName": "Tramadol Retard",
+      "scientificName": "Tramadol",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 156.83
+    },
+    {
+      "tradeName": "Tramal",
+      "scientificName": "Tramadol",
+      "company": "Grunenthal",
+      "category": "Analgesics & Antipyretics",
+      "price": 186.46
+    },
+    {
+      "tradeName": "Tramal 50",
+      "scientificName": "Tramadol",
+      "company": "Grunenthal",
+      "category": "Analgesics & Antipyretics",
+      "price": 90.9
+    },
+    {
+      "tradeName": "Tramal 100",
+      "scientificName": "Tramadol",
+      "company": "Grunenthal",
+      "category": "Analgesics & Antipyretics",
+      "price": 139.34
+    },
+    {
+      "tradeName": "Tramal SR",
+      "scientificName": "Tramadol",
+      "company": "Grunenthal",
+      "category": "Analgesics & Antipyretics",
+      "price": 56.22
+    },
+    {
+      "tradeName": "Tramacet",
+      "scientificName": "Tramadol/Paracetamol",
+      "company": "Grunenthal",
+      "category": "Analgesics & Antipyretics",
+      "price": 34.97
+    },
+    {
+      "tradeName": "Tramacet 37.5",
+      "scientificName": "Tramadol/Paracetamol",
+      "company": "Grunenthal",
+      "category": "Analgesics & Antipyretics",
+      "price": 81.47
+    },
+    {
+      "tradeName": "Dolxene",
+      "scientificName": "Dextropropoxyphene",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 149.37
+    },
+    {
+      "tradeName": "Dolxene 65",
+      "scientificName": "Dextropropoxyphene",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 149.74
+    },
+    {
+      "tradeName": "Darvon",
+      "scientificName": "Dextropropoxyphene",
+      "company": "Eli Lilly",
+      "category": "Analgesics & Antipyretics",
+      "price": 94.15
+    },
+    {
+      "tradeName": "Codeine",
+      "scientificName": "Codeine Phosphate",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 190.88
+    },
+    {
+      "tradeName": "Codeine 30",
+      "scientificName": "Codeine Phosphate",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 196.17
+    },
+    {
+      "tradeName": "Codeine Syrup",
+      "scientificName": "Codeine Phosphate",
+      "company": "EIPICO",
+      "category": "Analgesics & Antipyretics",
+      "price": 67.69
+    },
+    {
+      "tradeName": "Codaphrine",
+      "scientificName": "Codeine Phosphate",
+      "company": "Medical Union",
+      "category": "Analgesics & Antipyretics",
+      "price": 23.47
+    },
+    {
+      "tradeName": "Panadeine",
+      "scientificName": "Paracetamol/Codeine",
+      "company": "GSK",
+      "category": "Analgesics & Antipyretics",
+      "price": 147.74
+    },
+    {
+      "tradeName": "Efferalgan Codeine",
+      "scientificName": "Paracetamol/Codeine",
+      "company": "Bristol",
+      "category": "Analgesics & Antipyretics",
+      "price": 141.71
+    },
+    {
+      "tradeName": "Dafalgan Codeine",
+      "scientificName": "Paracetamol/Codeine",
+      "company": "Bristol",
+      "category": "Analgesics & Antipyretics",
+      "price": 64.23
+    },
+    {
+      "tradeName": "Combiflam",
+      "scientificName": "Ibuprofen/Paracetamol",
+      "company": "Sanofi",
+      "category": "Analgesics & Antipyretics",
+      "price": 130.82
+    },
+    {
+      "tradeName": "Combiflam Plus",
+      "scientificName": "Ibuprofen/Paracetamol/Caffeine",
+      "company": "Sanofi",
+      "category": "Analgesics & Antipyretics",
+      "price": 131.13
+    },
+    {
+      "tradeName": "Maxilase Plus",
+      "scientificName": "Alpha-Amylase/Paracetamol",
+      "company": "Sanofi",
+      "category": "Analgesics & Antipyretics",
+      "price": 24.57
+    },
+    {
+      "tradeName": "Spasmo-digestin Plus",
+      "scientificName": "Metoclopramide/Enzymes/Paracetamol",
+      "company": "Pharco",
+      "category": "Analgesics & Antipyretics",
+      "price": 157.41
+    },
+    {
+      "tradeName": "Augmentin",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "GSK",
+      "category": "Antibiotics",
+      "price": 40.85
+    },
+    {
+      "tradeName": "Augmentin 625",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "GSK",
+      "category": "Antibiotics",
+      "price": 41.96
+    },
+    {
+      "tradeName": "Augmentin 375",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "GSK",
+      "category": "Antibiotics",
+      "price": 95.69
+    },
+    {
+      "tradeName": "Augmentin Syrup",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "GSK",
+      "category": "Antibiotics",
+      "price": 57.95
+    },
+    {
+      "tradeName": "Augmentin ES",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "GSK",
+      "category": "Antibiotics",
+      "price": 139.97
+    },
+    {
+      "tradeName": "Curam",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "Sandoz",
+      "category": "Antibiotics",
+      "price": 48.17
+    },
+    {
+      "tradeName": "Curam 625",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "Sandoz",
+      "category": "Antibiotics",
+      "price": 165.33
+    },
+    {
+      "tradeName": "Curam 375",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "Sandoz",
+      "category": "Antibiotics",
+      "price": 40.57
+    },
+    {
+      "tradeName": "Curam Syrup",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "Sandoz",
+      "category": "Antibiotics",
+      "price": 22.6
+    },
+    {
+      "tradeName": "Hibiotic",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "Amoun",
+      "category": "Antibiotics",
+      "price": 157.83
+    },
+    {
+      "tradeName": "Hibiotic 625",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "Amoun",
+      "category": "Antibiotics",
+      "price": 188.67
+    },
+    {
+      "tradeName": "Hibiotic 375",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "Amoun",
+      "category": "Antibiotics",
+      "price": 139.45
+    },
+    {
+      "tradeName": "Hibiotic Syrup",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "Amoun",
+      "category": "Antibiotics",
+      "price": 52.6
+    },
+    {
+      "tradeName": "Megamox",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "Hikma",
+      "category": "Antibiotics",
+      "price": 151.35
+    },
+    {
+      "tradeName": "Megamox 625",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "Hikma",
+      "category": "Antibiotics",
+      "price": 88.3
+    },
+    {
+      "tradeName": "Megamox 375",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "Hikma",
+      "category": "Antibiotics",
+      "price": 148.01
+    },
+    {
+      "tradeName": "Megamox Syrup",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "Hikma",
+      "category": "Antibiotics",
+      "price": 77.58
+    },
+    {
+      "tradeName": "Klavox",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "Spimaco",
+      "category": "Antibiotics",
+      "price": 173.65
+    },
+    {
+      "tradeName": "Klavox 625",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "Spimaco",
+      "category": "Antibiotics",
+      "price": 83.72
+    },
+    {
+      "tradeName": "Klavox 375",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "Spimaco",
+      "category": "Antibiotics",
+      "price": 129.46
+    },
+    {
+      "tradeName": "Klavox Syrup",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "Spimaco",
+      "category": "Antibiotics",
+      "price": 51.31
+    },
+    {
+      "tradeName": "Amoclav",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 157.7
+    },
+    {
+      "tradeName": "Amoclav 1g",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 16.56
+    },
+    {
+      "tradeName": "Amoclav 625",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 174.14
+    },
+    {
+      "tradeName": "Amoclav 375",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 140.22
+    },
+    {
+      "tradeName": "Amoclav Syrup",
+      "scientificName": "Amoxicillin/Clavulanate",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 25.72
+    },
+    {
+      "tradeName": "Amoxicillin",
+      "scientificName": "Amoxicillin",
+      "company": "Amoun",
+      "category": "Antibiotics",
+      "price": 88.78
+    },
+    {
+      "tradeName": "Amoxicillin 250",
+      "scientificName": "Amoxicillin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 101.14
+    },
+    {
+      "tradeName": "Amoxicillin 500",
+      "scientificName": "Amoxicillin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 133.57
+    },
+    {
+      "tradeName": "Amoxicillin 1000",
+      "scientificName": "Amoxicillin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 76.76
+    },
+    {
+      "tradeName": "Amoxicillin Syrup",
+      "scientificName": "Amoxicillin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 35.03
+    },
+    {
+      "tradeName": "E-Mox",
+      "scientificName": "Amoxicillin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 64.17
+    },
+    {
+      "tradeName": "E-Mox 250",
+      "scientificName": "Amoxicillin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 109.61
+    },
+    {
+      "tradeName": "E-Mox 1000",
+      "scientificName": "Amoxicillin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 193.26
+    },
+    {
+      "tradeName": "E-Mox Syrup",
+      "scientificName": "Amoxicillin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 28.57
+    },
+    {
+      "tradeName": "Hiconcil",
+      "scientificName": "Amoxicillin",
+      "company": "Hikma",
+      "category": "Antibiotics",
+      "price": 153.87
+    },
+    {
+      "tradeName": "Hiconcil 250",
+      "scientificName": "Amoxicillin",
+      "company": "Hikma",
+      "category": "Antibiotics",
+      "price": 178.06
+    },
+    {
+      "tradeName": "Hiconcil 500",
+      "scientificName": "Amoxicillin",
+      "company": "Hikma",
+      "category": "Antibiotics",
+      "price": 181.81
+    },
+    {
+      "tradeName": "Hiconcil 1000",
+      "scientificName": "Amoxicillin",
+      "company": "Hikma",
+      "category": "Antibiotics",
+      "price": 41.99
+    },
+    {
+      "tradeName": "Hiconcil Syrup",
+      "scientificName": "Amoxicillin",
+      "company": "Hikma",
+      "category": "Antibiotics",
+      "price": 36.31
+    },
+    {
+      "tradeName": "Moxipil",
+      "scientificName": "Amoxicillin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 156.66
+    },
+    {
+      "tradeName": "Moxipil 250",
+      "scientificName": "Amoxicillin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 31.78
+    },
+    {
+      "tradeName": "Moxipil 500",
+      "scientificName": "Amoxicillin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 62.15
+    },
+    {
+      "tradeName": "Moxipil 1000",
+      "scientificName": "Amoxicillin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 131.84
+    },
+    {
+      "tradeName": "Moxipil Syrup",
+      "scientificName": "Amoxicillin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 53.7
+    },
+    {
+      "tradeName": "Amoxil",
+      "scientificName": "Amoxicillin",
+      "company": "GSK",
+      "category": "Antibiotics",
+      "price": 90.78
+    },
+    {
+      "tradeName": "Amoxil 250",
+      "scientificName": "Amoxicillin",
+      "company": "GSK",
+      "category": "Antibiotics",
+      "price": 123.1
+    },
+    {
+      "tradeName": "Amoxil 1000",
+      "scientificName": "Amoxicillin",
+      "company": "GSK",
+      "category": "Antibiotics",
+      "price": 86.04
+    },
+    {
+      "tradeName": "Amoxil Syrup",
+      "scientificName": "Amoxicillin",
+      "company": "GSK",
+      "category": "Antibiotics",
+      "price": 25.51
+    },
+    {
+      "tradeName": "Flagyl",
+      "scientificName": "Metronidazole",
+      "company": "Sanofi",
+      "category": "Antibiotics",
+      "price": 48.46
+    },
+    {
+      "tradeName": "Flagyl 200",
+      "scientificName": "Metronidazole",
+      "company": "Sanofi",
+      "category": "Antibiotics",
+      "price": 143.74
+    },
+    {
+      "tradeName": "Flagyl 400",
+      "scientificName": "Metronidazole",
+      "company": "Sanofi",
+      "category": "Antibiotics",
+      "price": 28.17
+    },
+    {
+      "tradeName": "Flagyl Syrup",
+      "scientificName": "Metronidazole",
+      "company": "Sanofi",
+      "category": "Antibiotics",
+      "price": 58.51
+    },
+    {
+      "tradeName": "Flagyl IV",
+      "scientificName": "Metronidazole",
+      "company": "Sanofi",
+      "category": "Antibiotics",
+      "price": 379.12
+    },
+    {
+      "tradeName": "Metronidazole",
+      "scientificName": "Metronidazole",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 186.28
+    },
+    {
+      "tradeName": "Metronidazole 200",
+      "scientificName": "Metronidazole",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 146.34
+    },
+    {
+      "tradeName": "Metronidazole 400",
+      "scientificName": "Metronidazole",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 50.29
+    },
+    {
+      "tradeName": "Metronidazole Syrup",
+      "scientificName": "Metronidazole",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 30.87
+    },
+    {
+      "tradeName": "Metronidazole IV",
+      "scientificName": "Metronidazole",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 288.96
+    },
+    {
+      "tradeName": "Nidazole",
+      "scientificName": "Metronidazole",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 43.56
+    },
+    {
+      "tradeName": "Nidazole 200",
+      "scientificName": "Metronidazole",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 139.47
+    },
+    {
+      "tradeName": "Nidazole 400",
+      "scientificName": "Metronidazole",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 168.63
+    },
+    {
+      "tradeName": "Nidazole 500",
+      "scientificName": "Metronidazole",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 77.4
+    },
+    {
+      "tradeName": "Nidazole Syrup",
+      "scientificName": "Metronidazole",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 68.53
+    },
+    {
+      "tradeName": "Zithromax",
+      "scientificName": "Azithromycin",
+      "company": "Pfizer",
+      "category": "Antibiotics",
+      "price": 73.17
+    },
+    {
+      "tradeName": "Zithromax 250",
+      "scientificName": "Azithromycin",
+      "company": "Pfizer",
+      "category": "Antibiotics",
+      "price": 169.18
+    },
+    {
+      "tradeName": "Zithromax 600",
+      "scientificName": "Azithromycin",
+      "company": "Pfizer",
+      "category": "Antibiotics",
+      "price": 191.16
+    },
+    {
+      "tradeName": "Zithromax Syrup",
+      "scientificName": "Azithromycin",
+      "company": "Pfizer",
+      "category": "Antibiotics",
+      "price": 39.46
+    },
+    {
+      "tradeName": "Zithromax Suspension",
+      "scientificName": "Azithromycin",
+      "company": "Pfizer",
+      "category": "Antibiotics",
+      "price": 53.31
+    },
+    {
+      "tradeName": "Zithromax Z-Pak",
+      "scientificName": "Azithromycin",
+      "company": "Pfizer",
+      "category": "Antibiotics",
+      "price": 90.1
+    },
+    {
+      "tradeName": "Azithromycin",
+      "scientificName": "Azithromycin",
+      "company": "Hikma",
+      "category": "Antibiotics",
+      "price": 199.01
+    },
+    {
+      "tradeName": "Azithromycin 250",
+      "scientificName": "Azithromycin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 121.46
+    },
+    {
+      "tradeName": "Azithromycin 500",
+      "scientificName": "Azithromycin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 91.54
+    },
+    {
+      "tradeName": "Azithromycin 600",
+      "scientificName": "Azithromycin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 21.36
+    },
+    {
+      "tradeName": "Azithromycin Syrup",
+      "scientificName": "Azithromycin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 30.89
+    },
+    {
+      "tradeName": "Zithrokan",
+      "scientificName": "Azithromycin",
+      "company": "Amoun",
+      "category": "Antibiotics",
+      "price": 91.79
+    },
+    {
+      "tradeName": "Zithrokan 250",
+      "scientificName": "Azithromycin",
+      "company": "Amoun",
+      "category": "Antibiotics",
+      "price": 158.96
+    },
+    {
+      "tradeName": "Zithrokan 500",
+      "scientificName": "Azithromycin",
+      "company": "Amoun",
+      "category": "Antibiotics",
+      "price": 98.11
+    },
+    {
+      "tradeName": "Zithrokan 600",
+      "scientificName": "Azithromycin",
+      "company": "Amoun",
+      "category": "Antibiotics",
+      "price": 37.82
+    },
+    {
+      "tradeName": "Zithrokan Syrup",
+      "scientificName": "Azithromycin",
+      "company": "Amoun",
+      "category": "Antibiotics",
+      "price": 79.22
+    },
+    {
+      "tradeName": "Zithron",
+      "scientificName": "Azithromycin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 122.0
+    },
+    {
+      "tradeName": "Zithron 250",
+      "scientificName": "Azithromycin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 101.93
+    },
+    {
+      "tradeName": "Zithron 500",
+      "scientificName": "Azithromycin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 102.37
+    },
+    {
+      "tradeName": "Zithron Syrup",
+      "scientificName": "Azithromycin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 45.12
+    },
+    {
+      "tradeName": "Xithrone",
+      "scientificName": "Azithromycin",
+      "company": "Eva Pharma",
+      "category": "Antibiotics",
+      "price": 64.08
+    },
+    {
+      "tradeName": "Xithrone 250",
+      "scientificName": "Azithromycin",
+      "company": "Eva Pharma",
+      "category": "Antibiotics",
+      "price": 65.42
+    },
+    {
+      "tradeName": "Xithrone 500",
+      "scientificName": "Azithromycin",
+      "company": "Eva Pharma",
+      "category": "Antibiotics",
+      "price": 190.18
+    },
+    {
+      "tradeName": "Xithrone Syrup",
+      "scientificName": "Azithromycin",
+      "company": "Eva Pharma",
+      "category": "Antibiotics",
+      "price": 68.46
+    },
+    {
+      "tradeName": "Klacid",
+      "scientificName": "Clarithromycin",
+      "company": "Abbott",
+      "category": "Antibiotics",
+      "price": 100.71
+    },
+    {
+      "tradeName": "Klacid 250",
+      "scientificName": "Clarithromycin",
+      "company": "Abbott",
+      "category": "Antibiotics",
+      "price": 71.4
+    },
+    {
+      "tradeName": "Klacid 500",
+      "scientificName": "Clarithromycin",
+      "company": "Abbott",
+      "category": "Antibiotics",
+      "price": 187.12
+    },
+    {
+      "tradeName": "Klacid XL",
+      "scientificName": "Clarithromycin",
+      "company": "Abbott",
+      "category": "Antibiotics",
+      "price": 56.48
+    },
+    {
+      "tradeName": "Klacid Syrup",
+      "scientificName": "Clarithromycin",
+      "company": "Abbott",
+      "category": "Antibiotics",
+      "price": 42.08
+    },
+    {
+      "tradeName": "Klacid IV",
+      "scientificName": "Clarithromycin",
+      "company": "Abbott",
+      "category": "Antibiotics",
+      "price": 367.37
+    },
+    {
+      "tradeName": "Clarithromycin",
+      "scientificName": "Clarithromycin",
+      "company": "Hikma",
+      "category": "Antibiotics",
+      "price": 153.67
+    },
+    {
+      "tradeName": "Clarithromycin 250",
+      "scientificName": "Clarithromycin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 66.19
+    },
+    {
+      "tradeName": "Clarithromycin 500",
+      "scientificName": "Clarithromycin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 111.29
+    },
+    {
+      "tradeName": "Clarithromycin XL",
+      "scientificName": "Clarithromycin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 63.0
+    },
+    {
+      "tradeName": "Clarithromycin Syrup",
+      "scientificName": "Clarithromycin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 72.27
+    },
+    {
+      "tradeName": "Claridar",
+      "scientificName": "Clarithromycin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 110.37
+    },
+    {
+      "tradeName": "Claridar 250",
+      "scientificName": "Clarithromycin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 26.29
+    },
+    {
+      "tradeName": "Claridar 500",
+      "scientificName": "Clarithromycin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 141.06
+    },
+    {
+      "tradeName": "Erythrocin",
+      "scientificName": "Erythromycin",
+      "company": "Abbott",
+      "category": "Antibiotics",
+      "price": 148.81
+    },
+    {
+      "tradeName": "Erythrocin 250",
+      "scientificName": "Erythromycin",
+      "company": "Abbott",
+      "category": "Antibiotics",
+      "price": 94.86
+    },
+    {
+      "tradeName": "Erythrocin 500",
+      "scientificName": "Erythromycin",
+      "company": "Abbott",
+      "category": "Antibiotics",
+      "price": 148.04
+    },
+    {
+      "tradeName": "Erythrocin Syrup",
+      "scientificName": "Erythromycin",
+      "company": "Abbott",
+      "category": "Antibiotics",
+      "price": 43.27
+    },
+    {
+      "tradeName": "Erythromycin",
+      "scientificName": "Erythromycin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 82.56
+    },
+    {
+      "tradeName": "Erythromycin 250",
+      "scientificName": "Erythromycin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 197.88
+    },
+    {
+      "tradeName": "Erythromycin 500",
+      "scientificName": "Erythromycin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 87.27
+    },
+    {
+      "tradeName": "Erythromycin Syrup",
+      "scientificName": "Erythromycin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 62.63
+    },
+    {
+      "tradeName": "Erythrocin IV",
+      "scientificName": "Erythromycin",
+      "company": "Abbott",
+      "category": "Antibiotics",
+      "price": 436.35
+    },
+    {
+      "tradeName": "E-Mycin",
+      "scientificName": "Erythromycin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 40.76
+    },
+    {
+      "tradeName": "E-Mycin 250",
+      "scientificName": "Erythromycin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 161.89
+    },
+    {
+      "tradeName": "E-Mycin 500",
+      "scientificName": "Erythromycin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 167.36
+    },
+    {
+      "tradeName": "E-Mycin Syrup",
+      "scientificName": "Erythromycin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 52.03
+    },
+    {
+      "tradeName": "Ciprobay",
+      "scientificName": "Ciprofloxacin",
+      "company": "Bayer",
+      "category": "Antibiotics",
+      "price": 71.38
+    },
+    {
+      "tradeName": "Ciprobay 250",
+      "scientificName": "Ciprofloxacin",
+      "company": "Bayer",
+      "category": "Antibiotics",
+      "price": 171.36
+    },
+    {
+      "tradeName": "Ciprobay 750",
+      "scientificName": "Ciprofloxacin",
+      "company": "Bayer",
+      "category": "Antibiotics",
+      "price": 40.65
+    },
+    {
+      "tradeName": "Ciprobay IV",
+      "scientificName": "Ciprofloxacin",
+      "company": "Bayer",
+      "category": "Antibiotics",
+      "price": 247.35
+    },
+    {
+      "tradeName": "Ciprobay XR",
+      "scientificName": "Ciprofloxacin",
+      "company": "Bayer",
+      "category": "Antibiotics",
+      "price": 53.82
+    },
+    {
+      "tradeName": "Ciprofloxacin",
+      "scientificName": "Ciprofloxacin",
+      "company": "Hikma",
+      "category": "Antibiotics",
+      "price": 41.81
+    },
+    {
+      "tradeName": "Ciprofloxacin 250",
+      "scientificName": "Ciprofloxacin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 161.79
+    },
+    {
+      "tradeName": "Ciprofloxacin 500",
+      "scientificName": "Ciprofloxacin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 68.04
+    },
+    {
+      "tradeName": "Ciprofloxacin 750",
+      "scientificName": "Ciprofloxacin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 108.52
+    },
+    {
+      "tradeName": "Ciprofloxacin IV",
+      "scientificName": "Ciprofloxacin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 103.7
+    },
+    {
+      "tradeName": "Ciprofar",
+      "scientificName": "Ciprofloxacin",
+      "company": "Amoun",
+      "category": "Antibiotics",
+      "price": 109.99
+    },
+    {
+      "tradeName": "Ciprofar 250",
+      "scientificName": "Ciprofloxacin",
+      "company": "Amoun",
+      "category": "Antibiotics",
+      "price": 104.77
+    },
+    {
+      "tradeName": "Ciprofar 500",
+      "scientificName": "Ciprofloxacin",
+      "company": "Amoun",
+      "category": "Antibiotics",
+      "price": 58.66
+    },
+    {
+      "tradeName": "Ciprofar 750",
+      "scientificName": "Ciprofloxacin",
+      "company": "Amoun",
+      "category": "Antibiotics",
+      "price": 56.59
+    },
+    {
+      "tradeName": "Cipromax",
+      "scientificName": "Ciprofloxacin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 59.62
+    },
+    {
+      "tradeName": "Cipromax 250",
+      "scientificName": "Ciprofloxacin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 87.75
+    },
+    {
+      "tradeName": "Cipromax 500",
+      "scientificName": "Ciprofloxacin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 69.46
+    },
+    {
+      "tradeName": "Cipromax 750",
+      "scientificName": "Ciprofloxacin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 58.07
+    },
+    {
+      "tradeName": "Ciprocin",
+      "scientificName": "Ciprofloxacin",
+      "company": "Eva Pharma",
+      "category": "Antibiotics",
+      "price": 149.21
+    },
+    {
+      "tradeName": "Ciprocin 250",
+      "scientificName": "Ciprofloxacin",
+      "company": "Eva Pharma",
+      "category": "Antibiotics",
+      "price": 194.84
+    },
+    {
+      "tradeName": "Ciprocin 500",
+      "scientificName": "Ciprofloxacin",
+      "company": "Eva Pharma",
+      "category": "Antibiotics",
+      "price": 165.96
+    },
+    {
+      "tradeName": "Ciprocin 750",
+      "scientificName": "Ciprofloxacin",
+      "company": "Eva Pharma",
+      "category": "Antibiotics",
+      "price": 64.43
+    },
+    {
+      "tradeName": "Tarivid",
+      "scientificName": "Ofloxacin",
+      "company": "Sanofi",
+      "category": "Antibiotics",
+      "price": 97.22
+    },
+    {
+      "tradeName": "Tarivid 400",
+      "scientificName": "Ofloxacin",
+      "company": "Sanofi",
+      "category": "Antibiotics",
+      "price": 171.73
+    },
+    {
+      "tradeName": "Ofloxacin",
+      "scientificName": "Ofloxacin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 200.85
+    },
+    {
+      "tradeName": "Ofloxacin 200",
+      "scientificName": "Ofloxacin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 128.63
+    },
+    {
+      "tradeName": "Ofloxacin 400",
+      "scientificName": "Ofloxacin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 82.33
+    },
+    {
+      "tradeName": "Floxin",
+      "scientificName": "Ofloxacin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 18.74
+    },
+    {
+      "tradeName": "Floxin 200",
+      "scientificName": "Ofloxacin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 96.75
+    },
+    {
+      "tradeName": "Floxin 400",
+      "scientificName": "Ofloxacin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 57.5
+    },
+    {
+      "tradeName": "Zanocin",
+      "scientificName": "Ofloxacin",
+      "company": "Eva Pharma",
+      "category": "Antibiotics",
+      "price": 60.47
+    },
+    {
+      "tradeName": "Zanocin 200",
+      "scientificName": "Ofloxacin",
+      "company": "Eva Pharma",
+      "category": "Antibiotics",
+      "price": 142.9
+    },
+    {
+      "tradeName": "Zanocin 400",
+      "scientificName": "Ofloxacin",
+      "company": "Eva Pharma",
+      "category": "Antibiotics",
+      "price": 112.87
+    },
+    {
+      "tradeName": "Levaquin",
+      "scientificName": "Levofloxacin",
+      "company": "Janssen",
+      "category": "Antibiotics",
+      "price": 21.32
+    },
+    {
+      "tradeName": "Levaquin 250",
+      "scientificName": "Levofloxacin",
+      "company": "Janssen",
+      "category": "Antibiotics",
+      "price": 92.83
+    },
+    {
+      "tradeName": "Levaquin 500",
+      "scientificName": "Levofloxacin",
+      "company": "Janssen",
+      "category": "Antibiotics",
+      "price": 179.31
+    },
+    {
+      "tradeName": "Levaquin 750",
+      "scientificName": "Levofloxacin",
+      "company": "Janssen",
+      "category": "Antibiotics",
+      "price": 66.82
+    },
+    {
+      "tradeName": "Levaquin IV",
+      "scientificName": "Levofloxacin",
+      "company": "Janssen",
+      "category": "Antibiotics",
+      "price": 209.24
+    },
+    {
+      "tradeName": "Levofloxacin",
+      "scientificName": "Levofloxacin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 53.34
+    },
+    {
+      "tradeName": "Levofloxacin 250",
+      "scientificName": "Levofloxacin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 52.41
+    },
+    {
+      "tradeName": "Levofloxacin 500",
+      "scientificName": "Levofloxacin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 145.62
+    },
+    {
+      "tradeName": "Levofloxacin 750",
+      "scientificName": "Levofloxacin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 148.01
+    },
+    {
+      "tradeName": "Levofloxacin IV",
+      "scientificName": "Levofloxacin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 251.73
+    },
+    {
+      "tradeName": "Levox",
+      "scientificName": "Levofloxacin",
+      "company": "Amoun",
+      "category": "Antibiotics",
+      "price": 142.58
+    },
+    {
+      "tradeName": "Levox 250",
+      "scientificName": "Levofloxacin",
+      "company": "Amoun",
+      "category": "Antibiotics",
+      "price": 75.56
+    },
+    {
+      "tradeName": "Levox 500",
+      "scientificName": "Levofloxacin",
+      "company": "Amoun",
+      "category": "Antibiotics",
+      "price": 61.73
+    },
+    {
+      "tradeName": "Levox 750",
+      "scientificName": "Levofloxacin",
+      "company": "Amoun",
+      "category": "Antibiotics",
+      "price": 23.17
+    },
+    {
+      "tradeName": "Tavanic",
+      "scientificName": "Levofloxacin",
+      "company": "Sanofi",
+      "category": "Antibiotics",
+      "price": 147.49
+    },
+    {
+      "tradeName": "Tavanic 250",
+      "scientificName": "Levofloxacin",
+      "company": "Sanofi",
+      "category": "Antibiotics",
+      "price": 154.34
+    },
+    {
+      "tradeName": "Tavanic 750",
+      "scientificName": "Levofloxacin",
+      "company": "Sanofi",
+      "category": "Antibiotics",
+      "price": 107.61
+    },
+    {
+      "tradeName": "Tavanic IV",
+      "scientificName": "Levofloxacin",
+      "company": "Sanofi",
+      "category": "Antibiotics",
+      "price": 100.39
+    },
+    {
+      "tradeName": "Cravit",
+      "scientificName": "Levofloxacin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 63.24
+    },
+    {
+      "tradeName": "Cravit 250",
+      "scientificName": "Levofloxacin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 153.56
+    },
+    {
+      "tradeName": "Cravit 750",
+      "scientificName": "Levofloxacin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 72.47
+    },
+    {
+      "tradeName": "Norfloxacin",
+      "scientificName": "Norfloxacin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 33.77
+    },
+    {
+      "tradeName": "Norfloxacin 400",
+      "scientificName": "Norfloxacin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 65.88
+    },
+    {
+      "tradeName": "Norflox",
+      "scientificName": "Norfloxacin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 52.18
+    },
+    {
+      "tradeName": "Norflox 400",
+      "scientificName": "Norfloxacin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 17.35
+    },
+    {
+      "tradeName": "Noxin",
+      "scientificName": "Norfloxacin",
+      "company": "Eva Pharma",
+      "category": "Antibiotics",
+      "price": 115.34
+    },
+    {
+      "tradeName": "Noxin 400",
+      "scientificName": "Norfloxacin",
+      "company": "Eva Pharma",
+      "category": "Antibiotics",
+      "price": 181.2
+    },
+    {
+      "tradeName": "Gatifloxacin",
+      "scientificName": "Gatifloxacin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 193.44
+    },
+    {
+      "tradeName": "Gatifloxacin 200",
+      "scientificName": "Gatifloxacin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 183.82
+    },
+    {
+      "tradeName": "Gatifloxacin 400",
+      "scientificName": "Gatifloxacin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 164.28
+    },
+    {
+      "tradeName": "Gatiflo",
+      "scientificName": "Gatifloxacin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 71.59
+    },
+    {
+      "tradeName": "Gatiflo 200",
+      "scientificName": "Gatifloxacin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 114.89
+    },
+    {
+      "tradeName": "Gatiflo 400",
+      "scientificName": "Gatifloxacin",
+      "company": "Medical Union",
+      "category": "Antibiotics",
+      "price": 137.67
+    },
+    {
+      "tradeName": "Moxifloxacin",
+      "scientificName": "Moxifloxacin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 119.24
+    },
+    {
+      "tradeName": "Moxifloxacin 400",
+      "scientificName": "Moxifloxacin",
+      "company": "EIPICO",
+      "category": "Antibiotics",
+      "price": 101.36
+    },
+    {
+      "tradeName": "Avelox",
+      "scientificName": "Moxifloxacin",
+      "company": "Bayer",
+      "category": "Antibiotics",
+      "price": 160.02
+    },
+    {
+      "tradeName": "Avelox IV",
+      "scientificName": "Moxifloxacin",
+      "company": "Bayer",
+      "category": "Antibiotics",
+      "price": 272.62
+    },
+    {
+      "tradeName": "Moxiflox",
+      "scientificName": "Moxifloxacin",
+      "company": "Amoun",
+      "category": "Antibiotics",
+      "price": 112.56
+    },
+    {
+      "tradeName": "Moxiflox 400",
+      "scientificName": "Moxifloxacin",
+      "company": "Amoun",
+      "category": "Antibiotics",
+      "price": 26.86
+    }
+  ]
+}

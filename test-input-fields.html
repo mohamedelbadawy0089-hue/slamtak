@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار استجابة المساعد الذكي للحقول</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        .test-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-right: 4px solid #2196f3;
+        }
+        .field-list {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .field-list h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        .field-list ul {
+            margin: 10px 0;
+            padding-right: 20px;
+        }
+        .field-list li {
+            margin-bottom: 5px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 اختبار استجابة المساعد الذكي للحقول</h1>
+        
+        <div class="test-info">
+            <strong>📋 التعليمات:</strong>
+            <ol>
+                <li>انقر على أي حقل من الحقول أدناه</li>
+                <li>يجب أن يفتح المساعد الذكي تلقائياً</li>
+                <li>أدخل بيانات اختبار للتحقق من ظهور التنبيهات</li>
+                <li>المساعد سيظهر تنبيهات عند اكتشاف أخطاء</li>
+            </ol>
+        </div>
+
+        <form>
+            <div class="form-group">
+                <label for="productName">اسم المنتج:</label>
+                <input type="text" id="productName" placeholder="اكتب اسم المنتج هنا...">
+            </div>
+
+            <div class="form-group">
+                <label for="price">السعر:</label>
+                <input type="number" id="price" placeholder="أدخل السعر..." step="0.01">
+            </div>
+
+            <div class="form-group">
+                <label for="quantity">الكمية:</label>
+                <input type="number" id="quantity" placeholder="أدخل الكمية...">
+            </div>
+
+            <div class="form-group">
+                <label for="discount">الخصم (%):</label>
+                <input type="number" id="discount" placeholder="أدخل نسبة الخصم..." step="0.01">
+            </div>
+
+            <div class="form-group">
+                <label for="barcode">الباركود:</label>
+                <input type="text" id="barcode" placeholder="أدخل الباركود...">
+            </div>
+
+            <div class="form-group">
+                <label for="expiryMonth">شهر الانتهاء:</label>
+                <select id="expiryMonth">
+                    <option value="">اختر الشهر</option>
+                    <option value="1">يناير</option>
+                    <option value="2">فبراير</option>
+                    <option value="3">مارس</option>
+                    <option value="4">أبريل</option>
+                    <option value="5">مايو</option>
+                    <option value="6">يونيو</option>
+                    <option value="7">يوليو</option>
+                    <option value="8">أغسطس</option>
+                    <option value="9">سبتمبر</option>
+                    <option value="10">أكتوبر</option>
+                    <option value="11">نوفمبر</option>
+                    <option value="12">ديسمبر</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="expiryYear">سنة الانتهاء:</label>
+                <input type="number" id="expiryYear" placeholder="أدخل السنة..." min="2024" max="2030">
+            </div>
+
+            <div class="form-group">
+                <label for="productionDate">تاريخ الإنتاج:</label>
+                <input type="date" id="productionDate">
+            </div>
+        </form>
+
+        <div class="field-list">
+            <h3>🔍 الحقول التي تتم مراقبتها:</h3>
+            <ul>
+                <li>productName, prodName (اسم المنتج)</li>
+                <li>price, prodPrice (السعر)</li>
+                <li>quantity, prodQuantity (الكمية)</li>
+                <li>discount, prodDiscount (الخصم)</li>
+                <li>barcode, prodBarcode (الباركود)</li>
+                <li>expiryMonth, expMonth (شهر الانتهاء)</li>
+                <li>expiryYear, expYear (سنة الانتهاء)</li>
+                <li>productionDate, prodDate (تاريخ الإنتاج)</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- تحميل ملفات المساعد الذكي -->
+    <script src="ai-core.js"></script>
+    <script src="ai-validation.js"></script>
+    <script src="ai-speech.js"></script>
+    <script src="ai-database.js"></script>
+    <script src="ai-ui.js"></script>
+    <script src="ai-assistant.js"></script>
+
+    <script>
+        // رسالة توضيحية عند تحميل الصفحة
+        window.addEventListener('load', () => {
+            console.log('🧪 صفحة اختبار الحقول جاهزة');
+            console.log('💡 انقر على أي حقل لاختبار استجابة المساعد');
+        });
+    </script>
+</body>
+</html>
