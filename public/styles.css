@@ -314,3 +314,35 @@ tbody tr:hover { background: #f9fafb; }
     content: attr(data-label); font-weight: 600; color: #666; flex-shrink: 0;
   }
 }
+
+/* ================= RBAC: مصفوفة الصلاحيات وسجل المراجعة ================= */
+.rbac-table { width:100%; border-collapse:collapse; min-width:640px; }
+.rbac-table th, .rbac-table td { padding:0.5rem; text-align:right; border-bottom:1px solid #eee; }
+.rbac-table thead th { background:#f8fafc; font-size:0.85rem; color:#475569; }
+.rbac-row-editing { background:#eff6ff; }
+.rbac-badge { background:#e0e7ff; color:#3730a3; font-size:0.7rem; padding:0.1rem 0.4rem; border-radius:999px; }
+.rbac-flash { background:#ecfdf5; color:#065f46; margin-bottom:1rem; }
+.rbac-error { background:#fef2f2; color:#991b1b; margin-bottom:1rem; }
+.rbac-warn { background:#fffbeb; color:#92400e; padding:0.5rem; border-radius:8px; font-size:0.85rem; }
+.rbac-toolbar { display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center; margin:0.75rem 0; }
+.rbac-summary { font-size:0.85rem; color:#475569; }
+.rbac-matrix { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:0.5rem; max-height:46vh; overflow:auto; padding:0.25rem; }
+.rbac-module { border:1px solid #e5e7eb; border-radius:10px; padding:0.5rem; background:#fff; }
+.rbac-module-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem; }
+.rbac-module-title { display:flex; gap:0.4rem; align-items:center; font-size:0.9rem; cursor:pointer; }
+.rbac-count { font-size:0.7rem; color:#64748b; background:#f1f5f9; border-radius:999px; padding:0.05rem 0.4rem; }
+.rbac-count[data-state="on"] { background:#dcfce7; color:#166534; }
+.rbac-count[data-state="partial"] { background:#fef9c3; color:#854d0e; }
+.rbac-actions { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:0.2rem; }
+.rbac-action { display:flex; gap:0.3rem; align-items:center; font-size:0.82rem; padding:0.15rem 0.25rem; border-radius:6px; }
+.rbac-action.checked { background:#f0fdf4; }
+.rbac-review-box { border:1px dashed #94a3b8; border-radius:10px; padding:0.6rem; margin-top:0.75rem; background:#f8fafc; font-size:0.85rem; }
+.rbac-chip { display:inline-block; font-size:0.72rem; padding:0.1rem 0.45rem; border-radius:999px; margin:0.1rem; }
+.rbac-chip.add { background:#dcfce7; color:#166534; }
+.rbac-chip.remove { background:#fee2e2; color:#991b1b; }
+.rbac-error-line { color:#b91c1c; min-height:1.2em; margin:0.5rem 0 0; font-size:0.85rem; }
+.rbac-effective table { width:100%; }
+@media (max-width: 640px) {
+  .rbac-matrix { grid-template-columns:1fr; max-height:none; }
+  .rbac-toolbar { flex-direction:column; align-items:stretch; }
+}

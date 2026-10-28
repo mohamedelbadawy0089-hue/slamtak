@@ -642,6 +642,34 @@ function handleApi(request, env, url) {
   if (path.startsWith("/api/sales-invoices/")) return handleSalesInvoiceGet(request, env, url);
   // Purchase order routes
   if (path === "/api/purchase_orders") return handlePurchaseOrders(env, url);
+  // Stock Balance API routes (Oracle)
+  if (path === "/api/stock/balance") {
+    try {
+      const { handleStockBalance } = require('./api/stock-balance-api');
+      return handleStockBalance(request, env);
+    } catch (e) {
+      console.error('StockBalance API error:', e.message);
+      return json({ error: 'StockBalance unavailable', details: e.message }, 503);
+    }
+  }
+  if (path === "/api/stock/valuerisk") {
+    try {
+      const { handleStockValueRisk } = require('./api/stock-balance-api');
+      return handleStockValueRisk(request, env);
+    } catch (e) {
+      console.error('StockValueRisk API error:', e.message);
+      return json({ error: 'StockValueRisk unavailable', details: e.message }, 503);
+    }
+  }
+  if (path === "/api/stock/forecast") {
+    try {
+      const { handleStockForecast } = require('./api/stock-balance-api');
+      return handleStockForecast(request, env);
+    } catch (e) {
+      console.error('StockForecast API error:', e.message);
+      return json({ error: 'StockForecast unavailable', details: e.message }, 503);
+    }
+  }
   // Default: return not found for unhandled API routes
   return json({ error: "API endpoint not found" }, 404);
 }

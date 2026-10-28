@@ -21,3 +21,6 @@ secrets/
 
 # Optional: generated test scaffolding (tests/sales_migration_test.py is checked in as source)
 # supabase/tests/
+
+# Pages worker (يُولَّد أثناء النشر في CI)
+public/_worker.js

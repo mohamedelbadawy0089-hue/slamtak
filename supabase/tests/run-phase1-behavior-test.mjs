@@ -130,10 +130,14 @@ begin
   insert into public.profiles (id, full_name, role) values (v_user_a, 'مستخدم أ', 'manager');
   insert into public.profiles (id, full_name, role) values (v_user_b, 'مستخدم ب', 'viewer');
 
-  insert into public.user_warehouses (user_id, warehouse_id, tenant_id, is_default)
-  values (v_user_a, v_wh_a, v_tenant, true);
-  insert into public.user_warehouses (user_id, warehouse_id, tenant_id, is_default)
-  values (v_user_b, v_wh_b, v_tenant, true);
+  -- بعد فرض الصلاحيات على جداول الأعمال أصبح لكل عضو دور فعلي مطلوب؛
+  -- بيانات الاختبار تعكس واقع الإنتاج: مستلم بصلاحيات مدير مخزن، ومستخدم ثانٍ بدور مشاهد.
+  insert into public.user_warehouses (user_id, warehouse_id, tenant_id, is_default, role_id)
+  values (v_user_a, v_wh_a, v_tenant, true,
+          (select id from public.roles where lower(btrim(name)) = 'warehouse manager' limit 1));
+  insert into public.user_warehouses (user_id, warehouse_id, tenant_id, is_default, role_id)
+  values (v_user_b, v_wh_b, v_tenant, true,
+          (select id from public.roles where lower(btrim(name)) = 'viewer' limit 1));
 
   insert into public.suppliers (id, tenant_id, warehouse_id, name, code)
   values (v_supplier, v_tenant, v_wh_a, 'مورد الاختبار', 'SUPT');

@@ -9,7 +9,7 @@
     "start": "node start.js",
     "dev": "NODE_ENV=development nodemon start.js",
     "dev:watch": "nodemon --watch public --watch src --exec \"npm run dev\"",
-    "test:db": "node supabase/tests/run-phase1-migration-test.mjs && node supabase/tests/run-phase1-behavior-test.mjs && node supabase/tests/run-inventory-lock-test.mjs",
+    "test:db": "node supabase/tests/run-phase1-migration-test.mjs && node supabase/tests/run-phase1-behavior-test.mjs && node supabase/tests/run-inventory-lock-test.mjs && node supabase/tests/run-purge-financial-test.mjs && node supabase/tests/run-journal-period-trigger-test.mjs",
     "test:phase1": "jest tests/phase1-ui.test.js tests/phase1-concurrency.test.js"
   },
   "jest": {

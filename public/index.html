@@ -10,12 +10,15 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <div style="background:#dc2626;color:white;padding:0.75rem;text-align:center;font-weight:bold;position:sticky;top:0;z-index:9999;"><a href="/delivery" style="color:white;text-decoration:none;">🚚 إدارة التوصيل والتوزيع - اضغط هنا لفتح القسم الجديد ★</a></div>
   <div id="app"></div>
   <!-- Supabase: public config + client library (real auth & PostgreSQL via RLS) -->
   <script src="supabase-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <!-- Load app.js last with cache-busting to ensure all routers/libs are loaded first -->
-  <script src="app.js?v=202610252140"></script>
+  <script src="module-pages.js?v=202610290403"></script>
+  <script src="rbac-pages.js?v=202610290401"></script>
+  <script src="app.js?v=202610290402"></script>
   <!-- Conditional Eruda debugging tool - only loads when debug=true in URL -->
   <script>
     // تحميل Eruda فقط إذا كان الرابط يحتوي على debug=true
