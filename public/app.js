@@ -2912,29 +2912,6 @@ function clearStep2Mark() {
 }
 
 // جمع كلمات مرور المدير المخزنة: جدول المخازن أولاً ثم جدول الهاش (تحت RLS)
-async function fetchManagerHashes(client, uid) {
-  const hashes = [];
-  try {
-    const w = await client.from("warehouses").select("id,manager_id,password_hash").eq("manager_id", uid).limit(10);
-    if (!w.error && Array.isArray(w.data)) {
-      w.data.forEach((r) => { if (r && r.password_hash) hashes.push(r.password_hash); });
-    }
-  } catch (_) { /* جدول قد يرفض RLS */ }
-  try {
-    const r = await client.from("warehouse_password_hashes").select("hash").eq("user_id", uid);
-    if (!r.error && Array.isArray(r.data)) {
-      r.data.forEach((x) => { if (x && x.hash) hashes.push(x.hash); });
-    }
-  } catch (_) { /* جدول قد لا يكون منشأاً */ }
-  // بيانات مستخدم Supabase: نفس حقل worker.js (admin_password_hash)
-  try {
-    const s = await client.auth.getSession();
-    const meta = s && s.data && s.data.session && s.data.session.user && s.data.session.user.user_metadata;
-    if (meta && meta.admin_password_hash) hashes.push(meta.admin_password_hash);
-  } catch (_) { /* ignore */ }
-  return hashes;
-}
-
 // إن كانت هناك جلسة Supabase سليمة لم تُكمل بعد الخطوة الثانية،
 // اعرض نموذج كلمة مرور المدير مباشرة بدلاً من الخطوة الأولى.
 async function resumePendingStep2(appEl) {
@@ -3000,44 +2977,25 @@ function renderStep2Form(appEl, info) {
     const client = getSupabase();
     if (!client) { setErr("تعذر الاتصال بقاعدة Supabase"); return; }
     try {
+      // المرحلة الثانية على الخادم: two_step_verify -- لا بصمات ولا مقارنات في المتصفح
       const hash = await sha256b64url(pw);
-      // التحقق من البيانات المخزنة في جدول المخازن (warehouses.password_hash)
-      // أولاً، ثم warehouse_password_hashes للتوافق — كلاهما خاضع لـ RLS
-      const hashes = await fetchManagerHashes(client, info.id);
-      if (hashes.length === 0) {
-        // أول دخول: حفظ بصمة كلمة مرور المدير على الخادم فقط (is identity-check server-side)
-        let saved = false;
-        try {
-          const res = await client.rpc("wms_manager_password_set", { p_hash: hash });
-          if (res && !res.error && res.data) saved = true;
-        } catch (_) { /* ignore */ }
-        // fallback للمشاريع القديمة قبل تطبيق الترحيل رقم 202610290336
-        if (!saved) {
-          try {
-            const wu = await client.from("warehouses").update({ password_hash: hash }).eq("manager_id", info.id).select("id");
-            if (!wu.error && wu.data && wu.data.length) saved = true;
-          } catch (_) { /* ignore */ }
-          try {
-            const ins = await client.from("warehouse_password_hashes").insert({ user_id: info.id, hash: hash });
-            if (!ins.error) saved = true;
-          } catch (_) { /* ignore */ }
-        }
-        // 3) بيانات مستخدم Supabase — نفس حقل worker.js admin_password_hash
-        try {
-          const s = await client.auth.getSession();
-          const cur = (s && s.data && s.data.session && s.data.session.user && s.data.session.user.user_metadata) || {};
-          const up = await client.auth.updateUser({ data: Object.assign({}, cur, { admin_password_hash: hash }) });
-          if (!up.error) saved = true;
-        } catch (_) { /* ignore */ }
-        if (!saved) {
-          setErr("تعذر حفظ كلمة المرور المدير — أعد المحاولة أو تواصل مع المسؤول");
-          return;
-        }
-      } else if (hashes.indexOf(hash) === -1) {
-        setErr("كلمة مرور المدير غير صحيحة");
+      const result = await client.rpc("two_step_verify", { p_password: hash });
+      if (result && result.error) {
+        setErr("تعذر التحقق الثاني: " + String(result.error.message || "خطأ غير معروف"));
         return;
       }
-      // نجاح الخطوتين معاً → فتح لوحة التحكم
+      const data = result && result.data;
+      if (!data || data.granted !== true) {
+        const reason = data && data.reason;
+        setErr(reason === "rate_limited" ? "محاولات كثيرة — انتظر 10 دقائق قبل إعادة المحاولة."
+          : reason === "suspended" ? "الحساب موقوف — راجع مدير النظام (الرفض فوري)."
+          : reason === "no_membership" ? "حسابك غير مرتبط بمخزن — تواصل مع مدير النظام."
+          : reason === "no_second_factor_yet" ? "لا توجد بصمة تحقق ثانية محفوظة لحسابك — اطلب ضبطها من مدير المخزن."
+          : reason === "invalid_password" ? "كلمة المرور الثانية غير صالحة."
+          : "كلمة المرور الثانية غير صحيحة — تم الرفض فورًا.");
+        return;
+      }
+      // نجاح المرحلتين معًا → فتح لوحة التحكم
       writeStep2Mark(info.id);
       setSession({
         id: info.id,
