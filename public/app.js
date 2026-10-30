@@ -931,7 +931,9 @@ async function loadSectionData(routePath, title) {
 
     if (routePath === "/sales") {
       const cust = await client.from("customers").select("id,name,name_ar,phone").order("created_at", { ascending: false }).limit(30);
-      const ord = await client.from("orders").select("id,status,created_at").order("created_at", { ascending: false }).limit(30);
+      // الجدول orders غير موجود في المخطط الحيّ (PostgREST يقترح sales_orders):
+      // كان استعلام الفواتير يفشل وتبتلعه الشرط فتبدو القائمة فارغة دائماً.
+      const ord = await client.from("sales_orders").select("id,status,created_at").order("created_at", { ascending: false }).limit(30);
       if (cust.error && ord.error) throw new Error(cust.error.message);
       const customers = cust.data || [];
       const orders = ord.data || [];
@@ -1071,7 +1073,9 @@ async function loadSectionData(routePath, title) {
       const [supRes, whRes, prodRes] = await Promise.all([
         (await client.from("suppliers").select("*").order("name").limit(100).catch(() => ({ data: [] }))),
         (await client.from("warehouses").select("*").order("name").limit(50).catch(() => ({ data: [] }))),
-        (await client.from("products").select("id,name,name_ar,barcode,unit").order("name").limit(200).catch(() => ({ data: [] })))
+        // العمود unit غير موجود (الصحيح unit_of_measure): كان الاستعلام يفشل 42703
+        // وتبتلعه معالجة الخطأ، فتظهر قائمة الأصناف فارغة ولا يمكن اختيار صنف.
+        (await client.from("products").select("id,name,name_ar,barcode,unit_of_measure").order("name").limit(200).catch(() => ({ data: [] })))
       ]);
       const suppliers = supRes.data || [];
       const warehouses = whRes.data || [];
@@ -1862,6 +1866,20 @@ function reportSourceNoteHtml(ctx) {
   }
   return '<p class="muted" style="font-size:0.72rem;margin:0 0 0.6rem;">المصدر: تجميع محلي داخل المتصفح (دوال التقارير الخادمية غير متاحة) — يُعرض ما توفر من بيانات.</p>';
 }
+// تصنيف صنف في تقرير المنتجات الراكدة — نفس قيم kind التي يعيدها
+// report_stagnant_page (out | stagnant | slow | overstock). كانت الدالة
+// مفقودة فكان التقرير يرمي ReferenceError عند عرض أي صف.
+function reportKindInfo(kind, staleDays) {
+  const days = Number(staleDays) > 0 ? Number(staleDays) : 60;
+  const map = {
+    out: { label: "نافد", advice: "نافد - راقب الطلب" },
+    stagnant: { label: "راكد", advice: "لم يتحرك لأكثر من " + days + " يومًا - راجع السعر أو التوزيع" },
+    slow: { label: "بطيء", advice: "لا مبيعات خلال 90 يومًا - راجع العرض والسعر" },
+    overstock: { label: "فائض", advice: "تغطية تتجاوز 90 يومًا - راجع خطة الشراء" }
+  };
+  return map[kind] || { label: String(kind || "—"), advice: "—" };
+}
+
 function reportStagnantView(ctx, state) {
   const agg = ctx.stagnantAgg || {};
   const rows = ctx.rows || [];
@@ -1954,6 +1972,19 @@ function exportReportCsv() {
 
 // --- شاشة التقارير: فلترة (يوم/شهر/فترة) + بحث + ترقيم صفحات ---
 
+// إظهار حقل الفلترة المناسب لوضع التقرير (فترة/شهر/يوم). كانت الدالة
+// مفقودة فكان تغيير الوضع يرمي ReferenceError.
+function syncModeUi() {
+  const mode = reportState.mode || "range";
+  const set = (id, on) => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = on ? "" : "none";
+  };
+  set("report-range-wrap", mode === "range");
+  set("report-month-wrap", mode === "month");
+  set("report-day-wrap", mode === "day");
+}
+
 async function loadReportsSection(body, client) {
   const r = reportResolveRange(reportState);
   reportState.from = r.from;
@@ -1992,6 +2023,9 @@ async function loadReportsSection(body, client) {
           <button class="btn primary" type="button" id="report-apply">تطبيق</button>
           <button class="btn" type="button" id="report-export">⬇️ تصدير CSV</button>
         </div>
+        <!-- حاوية نتيجة التقارير: refreshReports() تكتب هنا، وكانت مفقودة
+             فتعود بالصمت وتُبقي الشاشة بلا أي أرقام. -->
+        <div id="report-out" aria-live="polite" style="margin-top:0.75rem;"></div>
       </div>
     `;
 
@@ -2000,6 +2034,9 @@ async function loadReportsSection(body, client) {
     reportState.mode = modeSel.value || "range";
     syncModeUi();
   });
+  // مواءمة الحقول مع الوضع المحفوظ عند إعادة بناء الشاشة
+  // (القالب يُظهر الفترة دائماً مهما كان reportState.mode).
+  syncModeUi();
 
   const applyBtn = document.getElementById("report-apply");
   const runApply = () => {
@@ -3513,39 +3550,6 @@ document.addEventListener("click", (e) => {
 })();
 
 // --- Report helper functions for tests (local calculations) ---
-function reportIsoDay(d) {
-  if (!d) d = new Date();
-  const date = d instanceof Date ? d : new Date(d);
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return y + '-' + m + '-' + day;
-}
-
-function reportResolveRange(state) {
-  state = state || {};
-  if (state.mode === 'day' && state.day) {
-    return { from: state.day, to: state.day };
-  }
-  if (state.mode === 'month' && state.month) {
-    const [y, m] = state.month.split('-').map(Number);
-    const last = new Date(y, m, 0).getDate();
-    const mm = String(m).padStart(2, '0');
-    return { from: y + '-' + mm + '-01', to: y + '-' + mm + '-' + String(last).padStart(2, '0') };
-  }
-  if (state.mode === 'range') {
-    if (state.from && state.to) {
-      return { from: state.from, to: state.to };
-    }
-  }
-  // default 30 days
-  const to = reportIsoDay(new Date());
-  const fromDate = new Date();
-  fromDate.setDate(fromDate.getDate() - 29);
-  const from = reportIsoDay(fromDate);
-  return { from: from, to: to };
-}
-
 function reportInvoiceTotals(invoices, from, to) {
   invoices = invoices || [];
   let count = 0, cancelled = 0, total = 0, net = 0, discount = 0, tax = 0, paid = 0;
@@ -3824,43 +3828,181 @@ function buildLocalContext(fx, state) {
 }
 
 function reportOverviewView(ctx, state) {
+  const ov = ctx && ctx.overview;
+  if (ov) {
+    const s = ov.sales || {}, ps = ov.prev_sales || {};
+    const items = ov.items || {}, pitems = ov.prev_items || {};
+    const stock = ov.stock || {}, pur = ov.purchases || {};
+    const ret = ov.returns || {}, pret = ov.prev_returns || {};
+    const col = ov.collections || {}, exp = ov.expenses || {};
+    const period = ov.period || {};
+    const periodText = String(period.from || ctx.from || "") + " ← " + String(period.to || ctx.to || "");
+    const html = reportWarningsHtml(ctx) + reportSourceNoteHtml(ctx) +
+      '<div class="muted" style="font-size:0.78rem;margin:0 0 0.6rem;">الفترة: ' + esc(periodText) +
+      (state && state.search ? " — بحث: " + esc(state.search) : "") + "</div>" +
+      reportGridHtml([
+        reportKpi("إجمالي المبيعات", reportFmt(s.total),
+          reportFmt(s.count, 0) + " فاتورة" + (reportNum(s.cancelled) ? " (" + reportFmt(s.cancelled, 0) + " ملغاة)" : ""),
+          reportChangeHtml(reportNum(s.total), reportNum(ps.total))),
+        reportKpi("صافي المبيعات", reportFmt(s.net), "بعد الخصم والضريبة",
+          reportChangeHtml(reportNum(s.net), reportNum(ps.net))),
+        reportKpi("متوسط الفاتورة", reportFmt(s.avg), "للفواتير غير الملغاة",
+          reportChangeHtml(reportNum(s.avg), reportNum(ps.avg))),
+        reportKpi("المستحقات", reportFmt(s.due), "محصّل " + reportFmt(s.paid), ""),
+        reportKpi("المشتريات", reportFmt(pur.total), reportFmt(pur.count, 0) + " مستند", ""),
+        reportKpi("المرتجعات", reportFmt(ret.total), reportFmt(ret.count, 0) + " مرتجع",
+          reportChangeHtml(reportNum(ret.total), reportNum(pret.total))),
+        reportKpi("التحصيلات", reportFmt(col.total), reportFmt(col.count, 0) + " عملية", ""),
+        reportKpi("المصروفات", reportFmt(exp.total), reportFmt(exp.count, 0) + " قيد", ""),
+        reportKpi("ربح البنود", reportFmt(items.profit),
+          "إيراد " + reportFmt(items.revenue) + " − تكلفة " + reportFmt(items.cost),
+          reportChangeHtml(reportNum(items.profit), reportNum(pitems.profit))),
+        reportKpi("قيمة المخزون (تكلفة)", reportFmt(stock.cost), reportFmt(stock.qty, 0) + " وحدة بيعية", "")
+      ]) +
+      '<div class="card" style="padding:0.75rem;margin-top:0.75rem;">' +
+      '<h3 style="margin-top:0;">📈 المبيعات اليومية</h3>' + reportDailyChartHtml(ov.daily) + "</div>";
+    const csv = { headers: ["المؤشر", "القيمة", "الفترة"], rows: [
+      ["إجمالي المبيعات", reportNum(s.total), periodText],
+      ["صافي المبيعات", reportNum(s.net), periodText],
+      ["متوسط الفاتورة", reportNum(s.avg), periodText],
+      ["عدد الفواتير", reportNum(s.count), periodText],
+      ["المستحقات", reportNum(s.due), periodText],
+      ["المشتريات", reportNum(pur.total), periodText],
+      ["المرتجعات", reportNum(ret.total), periodText],
+      ["التحصيلات", reportNum(col.total), periodText],
+      ["المصروفات", reportNum(exp.total), periodText],
+      ["ربح البنود", reportNum(items.profit), periodText],
+      ["قيمة المخزون بالتكلفة", reportNum(stock.cost), periodText],
+      ["قيمة المخزون بالبيع", reportNum(stock.sell), periodText]
+    ] };
+    return { html: html, csv: csv };
+  }
+  // احتياطي: لا توجد بيانات خادمية — نجمع من البيانات المحلية إن وُجدت
   const fx = (typeof window !== 'undefined' && window._reportFixtures) || (ctx && ctx._fx) || {};
-  const invoices = fx.invoices || ctx.invoices || [];
-  const stock = fx.stock || ctx.stock || [];
-  const t = reportInvoiceTotals(invoices, (ctx.from)||state.from, (ctx.to)||state.to);
-  const s = reportStockValue(stock);
-  const html = '<h2>نظرة عامة</h2>' +
+  const invoices = fx.invoices || (ctx && ctx.invoices) || [];
+  const stock = fx.stock || (ctx && ctx.stock) || [];
+  const r = reportResolveRange(state || {});
+  const t = reportInvoiceTotals(invoices, (ctx && ctx.from) || r.from, (ctx && ctx.to) || r.to);
+  const sv = reportStockValue(stock);
+  const html = reportSourceNoteHtml(ctx || {}) +
+    '<h2>نظرة عامة</h2>' +
     '<div>إجمالي المبيعات: ' + reportFmt(t.total) + '</div>' +
     '<div>صافي المبيعات: ' + reportFmt(t.net) + '</div>' +
-    '<div>قيمة المخزون (تكلفة): ' + reportFmt(s.cost) + '</div>';
-  const csv = {
-    headers: ['المؤشر', 'القيمة', 'الفترة'],
-    rows: [
-      ['إجمالي المبيعات', t.total, ((ctx.from||state.from)||'') + ' - ' + ((ctx.to||state.to)||'')],
-      ['صافي المبيعات', t.net, ((ctx.from||state.from)||'') + ' - ' + ((ctx.to||state.to)||'')],
-      ['قيمة المخزون بالتكلفة', s.cost, '']
-    ]
-  };
+    '<div>قيمة المخزون (تكلفة): ' + reportFmt(sv.cost) + '</div>';
+  const csv = { headers: ['المؤشر', 'القيمة', 'الفترة'], rows: [
+    ['إجمالي المبيعات', t.total, ((ctx && ctx.from) || r.from) + ' - ' + ((ctx && ctx.to) || r.to)],
+    ['صافي المبيعات', t.net, ''],
+    ['قيمة المخزون بالتكلفة', sv.cost, '']
+  ] };
   return { html: html, csv: csv };
 }
 
 function reportInventoryView(ctx, state) {
-  const fx = (typeof window !== 'undefined' && window._reportFixtures) || (ctx && ctx._fx) || {};
-  const stock = fx.stock || ctx.stock || [];
-  const products = fx.products || ctx.products || [];
-  const rows = reportStockByProduct(stock, products);
-  const totalCost = rows.reduce((a,b)=>a + Number(b.cost||0), 0);
-  let html = '<h2>المخزون</h2><div>قيمة المخزون (تكلفة): ' + reportFmt(totalCost) + '</div>';
-  for (let i=0; i<rows.length; i++) {
-    html += '<div>' + rows[i].name + '</div>';
+  const sum = ctx && ctx.stockSummary;
+  if (sum) {
+    const rows = ctx.rows || [];
+    const bodyRows = rows.map((x) => {
+      const qty = reportNum(x.qty), min = reportNum(x.min_stock);
+      const low = min > 0 && qty <= min;
+      const flags = [];
+      if (reportNum(x.expired) > 0) flags.push(badge("منتهي " + reportFmt(x.expired, 0), "danger"));
+      if (reportNum(x.expiring) > 0) flags.push(badge("قريب الانتهاء " + reportFmt(x.expiring, 0), "warn"));
+      if (reportNum(x.quarantined) > 0) flags.push(badge("معزول " + reportFmt(x.quarantined, 0), "warn"));
+      if (low) flags.push(badge("تحت الحد الأدنى", "danger"));
+      if (!flags.length) flags.push(badge("سليم", "ok"));
+      return '<tr style="border-bottom:1px solid #eee;">' +
+        '<td style="padding:0.4rem;">' + esc(x.name) +
+          (x.sku ? '<br><span class="muted" style="font-size:0.72rem;">' + esc(x.sku) + '</span>' : '') + '</td>' +
+        '<td style="padding:0.4rem;text-align:left;">' + reportFmt(qty, 0) + (x.unit ? ' ' + esc(x.unit) : '') + '</td>' +
+        '<td style="padding:0.4rem;text-align:left;">' + reportFmt(x.reserved, 0) + '</td>' +
+        '<td style="padding:0.4rem;text-align:left;">' + reportFmt(x.batches, 0) + '</td>' +
+        '<td style="padding:0.4rem;text-align:left;">' + reportFmt(x.cost) + '</td>' +
+        '<td style="padding:0.4rem;text-align:left;">' + reportFmt(x.sell) + '</td>' +
+        '<td style="padding:0.4rem;">' + esc(x.first_expiry || '—') + '</td>' +
+        '<td style="padding:0.4rem;">' + flags.join(' ') + '</td></tr>';
+    }).join('');
+    const html = reportWarningsHtml(ctx) + reportSourceNoteHtml(ctx) +
+      reportGridHtml([
+        reportKpi("قيمة المخزون (تكلفة)", reportFmt(sum.cost), reportFmt(sum.batches, 0) + " دفعة", ""),
+        reportKpi("القيمة البيعية", reportFmt(sum.sell), "عند البيع بالسعر الحالي", ""),
+        reportKpi("إجمالي الكميات", reportFmt(sum.qty, 0), reportFmt(sum.products, 0) + " صنف", ""),
+        reportKpi("تحت حد الطلب", reportFmt(sum.low_stock, 0), "أصناف بلغت حد إعادة الطلب", ""),
+        reportKpi("منتهي الصلاحية", reportFmt(sum.expired, 0), "دفعات منتهية", ""),
+        reportKpi("قريب الانتهاء", reportFmt(sum.expiring, 0), "دفعات قريبة", ""),
+        reportKpi("معزول", reportFmt(sum.quarantined, 0), "بعيد عن البيع", "")
+      ]) +
+      (state && state.search ? '<p class="muted" style="font-size:0.78rem;margin:0.75rem 0;">🔍 بحث: ' + esc(state.search) + '</p>' : '') +
+      reportTable(["الصنف", "الكمية", "المحجوز", "الدفعات", "تكلفة", "بيع", "أول صلاحية", "الحالة"],
+        bodyRows, "لا توجد أصناف تطابق البحث الحالي.") +
+      reportPagerHtml(ctx.total);
+    const csv = { headers: ["الصنف", "الرمز", "الوحدة", "الكمية", "المحجوز", "الدفعات", "التكلفة", "البيع", "أول صلاحية"], rows: rows.map((x) => [
+      x.name, x.sku, x.unit, reportNum(x.qty), reportNum(x.reserved), reportNum(x.batches),
+      reportNum(x.cost), reportNum(x.sell), x.first_expiry || ""
+    ]) };
+    return { html: html, csv: csv };
   }
-  const csv = {
-    headers: ['الصنف', 'الكمية', 'قيمة التكلفة'],
-    rows: rows.map(r => [r.name, r.qty, r.cost])
-  };
+  // احتياطي: مصادر محلية
+  const fx = (typeof window !== 'undefined' && window._reportFixtures) || (ctx && ctx._fx) || {};
+  const stock = fx.stock || (ctx && ctx.stock) || [];
+  const products = fx.products || (ctx && ctx.products) || [];
+  const rows = reportStockByProduct(stock, products);
+  const totalCost = rows.reduce((a, b) => a + Number(b.cost || 0), 0);
+  let html = reportSourceNoteHtml(ctx || {}) + '<h2>المخزون</h2><div>قيمة المخزون (تكلفة): ' + reportFmt(totalCost) + '</div>';
+  for (let i = 0; i < rows.length; i++) html += '<div>' + esc(rows[i].name) + '</div>';
+  const csv = { headers: ['الصنف', 'الكمية', 'قيمة التكلفة'], rows: rows.map((r) => [r.name, r.qty, r.cost]) };
   return { html: html, csv: csv };
 }
 
 function reportSalesView(ctx, state) {
-  return { html: '<div>المبيعات</div>', csv: { headers: [], rows: [] } };
+  if (ctx && Array.isArray(ctx.rows)) {
+    const rows = ctx.rows;
+    const ov = ctx.overview || {};
+    const s = ov.sales || {};
+    const statusKind = (st) => {
+      if (st === 'cancelled' || st === 'void') return 'danger';
+      if (st === 'paid' || st === 'completed') return 'ok';
+      if (st === 'partial') return 'warn';
+      return 'muted';
+    };
+    const bodyRows = rows.map((x) => {
+      const total = reportNum(x.total), paid = reportNum(x.paid);
+      return '<tr style="border-bottom:1px solid #eee;">' +
+        '<td style="padding:0.4rem;text-align:left;">' + esc(x.invoice_number || '—') + '</td>' +
+        '<td style="padding:0.4rem;">' + esc(x.date || '—') + '</td>' +
+        '<td style="padding:0.4rem;">' + esc(x.customer || '—') + '</td>' +
+        '<td style="padding:0.4rem;">' + badge(x.status || '—', statusKind(x.status)) + '</td>' +
+        '<td style="padding:0.4rem;text-align:left;">' + reportFmt(total) + '</td>' +
+        '<td style="padding:0.4rem;text-align:left;">' + reportFmt(paid) + '</td>' +
+        '<td style="padding:0.4rem;text-align:left;">' + reportFmt(total - paid) + '</td></tr>';
+    }).join('');
+    const top = ctx.top || [];
+    const topRows = top.map((p, i) => '<tr style="border-bottom:1px solid #eee;">' +
+      '<td style="padding:0.4rem;text-align:left;">' + (i + 1) + '</td>' +
+      '<td style="padding:0.4rem;">' + esc(p.name) + '</td>' +
+      '<td style="padding:0.4rem;text-align:left;">' + reportFmt(p.qty, 0) + '</td>' +
+      '<td style="padding:0.4rem;text-align:left;">' + reportFmt(p.revenue) + '</td>' +
+      '<td style="padding:0.4rem;text-align:left;">' + reportFmt(p.profit) + '</td></tr>').join('');
+    const html = reportWarningsHtml(ctx) + reportSourceNoteHtml(ctx) +
+      reportGridHtml([
+        reportKpi("فواتير الفترة", reportFmt(ctx.total, 0), (state && state.search ? "بحث: " + esc(state.search) : "ضمن الفترة المختارة"), ""),
+        reportKpi("إجمالي المبيعات", reportFmt(s.total), "قبل الخصم", reportChangeHtml(reportNum(s.total), reportNum((ov.prev_sales || {}).total))),
+        reportKpi("متوسط الفاتورة", reportFmt(s.avg), "للفواتير غير الملغاة", ""),
+        reportKpi("المحصّل", reportFmt(s.paid), "المتبقي " + reportFmt(s.due), "")
+      ]) +
+      '<div style="margin-top:0.75rem;">' +
+      reportTable(["رقم الفاتورة", "التاريخ", "العميل", "الحالة", "الإجمالي", "المدفوع", "المتبقي"],
+        bodyRows, "لا توجد فواتير في الفترة المختارة.") +
+      reportPagerHtml(ctx.total) + '</div>' +
+      (topRows ? '<div style="margin-top:1rem;"><h3>🏆 أعلى المنتجات مبيعاً</h3>' +
+        reportTable(["#", "الصنف", "الكمية", "الإيراد", "الربح"], topRows, "لا توجد مبيعات أصناف في الفترة.") + '</div>' : '');
+    const csv = { headers: ["رقم الفاتورة", "التاريخ", "العميل", "الحالة", "الإجمالي", "المدفوع", "المتبقي"], rows: rows.map((x) => [
+      x.invoice_number, x.date, x.customer, x.status, reportNum(x.total), reportNum(x.paid),
+      reportNum(x.total) - reportNum(x.paid)
+    ]) };
+    return { html: html, csv: csv };
+  }
+  return {
+    html: reportSourceNoteHtml(ctx || {}) + sectionEmptyHtml("تعذر جلب فواتير المبيعات — أعد المحاولة."),
+    csv: { headers: [], rows: [] }
+  };
 }
