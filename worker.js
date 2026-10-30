@@ -13,7 +13,7 @@ var __name = /* @__PURE__ */ (() => {
 var SUPABASE_URL = "https://iksjhjxwphmvthryfeae.supabase.co";
 var CORS = {
   "access-control-allow-origin": "*",
-  "access-control-allow-methods": "GET, POST, PATCH, OPTIONS",
+  "access-control-allow-methods": "GET, POST, OPTIONS",
   "access-control-allow-headers": "content-type, authorization, apikey"
 };
 var VALID_ROLES = ["super-admin", "manager", "employee"];
@@ -63,7 +63,10 @@ __name(errMsg, "errMsg");
 // بدلاً من مصفوفة فارغة تبدو كأن الجدول فارغ فعلاً (قراءة صفراً زائفة).
 function readRows(res, label) {
   if (!res.ok) {
-    return { rows: null, error: json({ error: errMsg(res.data, "Failed to fetch " + label) }, 502) };
+    // التفاصيل تُسجَّل في سجلات الخادم فقط — لا نعيد أسماء الجداول
+    // والأعمدة (تفاصيل PostgREST) إلى المتصفح.
+    console.error(`[api] read "${label}" failed (${res.status}):`, errMsg(res.data, "no detail"));
+    return { rows: null, error: json({ error: "Failed to read " + label }, 502) };
   }
   if (!Array.isArray(res.data)) {
     return { rows: null, error: json({ error: "Unexpected database response while reading " + label }, 502) };
@@ -294,6 +297,25 @@ async function warehousePasswordHashes(userId, env) {
 }
 __name(warehousePasswordHashes, "warehousePasswordHashes");
 
+// حفظ أول كلمة مرور مخزن في مسار الإعداد (setup) — كانت الدالة مفقودة تماماً
+// فكان handleVerifyWarehouse يرمي ReferenceError ويعيد 500. نفس أعمدة الإدراج
+// المستخدمة في الهجرات: warehouse_password_hashes(user_id, hash).
+async function storeWarehousePassword(uid, hash, env) {
+  try {
+    const r = await supa("/rest/v1/warehouse_password_hashes", env, {
+      method: "POST",
+      body: { user_id: uid, hash },
+      extraHeaders: { prefer: "return=minimal" }
+    });
+    if (!r.ok) console.error("Error storing warehouse password:", r.status, errMsg(r.data, "no detail"));
+    return !!r.ok;
+  } catch (e) {
+    console.error("Error storing warehouse password:", e && e.message);
+    return false;
+  }
+}
+__name(storeWarehousePassword, "storeWarehousePassword");
+
 // Login flow - two-stage authentication
 var TICKET_TTL_MS = 10 * 60 * 1e3;
 
@@ -303,13 +325,21 @@ async function handleRegister(request, env) {
   const { email, password, name } = body || {};
   if (!email || !password || !name) return json({ error: "Email, password, and name are required" }, 400);
   try {
-    const { data: authData, error: authError } = await supa("/auth/v1/signup", env, {
+    // supa() تعيد {ok,status,data} لا {data,error} — كان فشل التسجيل يمرّ صامتاً،
+    // واسم المستخدم يُهمل لأنه لا يُرسل إلى GoTrue في حقلا `data`.
+    const r = await supa("/auth/v1/signup", env, {
       method: "POST",
-      body: { email, password }
+      body: { email, password, data: { full_name: name } }
     });
-    if (authError) return json({ error: authError.message }, 400);
-    if (!authData || !authData.user) return json({ error: "Failed to create user" }, 400);
-    return json({ id: authData.user.id, email: authData.user.email, name: name, role: "viewer" }, 201);
+    if (!r.ok) {
+      console.error("[api] signup failed:", r.status, errMsg(r.data, "no detail"));
+      return json({ error: errMsg(r.data, "Failed to create user") }, 400);
+    }
+    // شكلان لاستجابة GoTrue: {user:{...}} عند إرجاع جلسة، أو المستخدم نفسه عند تأكيد البريد
+    const created = r.data || {};
+    const u = created.user || (created.id ? created : null);
+    if (!u) return json({ error: "Failed to create user" }, 400);
+    return json({ id: u.id, email: u.email, name: name, role: "viewer" }, 201);
   } catch (error) {
     console.error("Registration error:", error && error.message);
     return json({ error: "Internal server error" }, 500);
@@ -323,20 +353,58 @@ async function handleLogin(request, env) {
   const { email, password } = body || {};
   if (!email || !password) return json({ error: "Email and password are required" }, 400);
   try {
-    const { data: authData, error: authError } = await supa("/auth/v1/login", env, {
+    // GoTrue لا يملك مسار /auth/v1/login — يُرجع 404 صفحة، فكان الدخول من هذه
+    // الواجهة عاجزاً تماماً. المسار الصحيح هو /token?grant_type=password.
+    const r = await supa("/auth/v1/token?grant_type=password", env, {
       method: "POST",
       body: { email, password }
     });
-    if (authError) return json({ error: authError.message }, 400);
-    if (!authData || !authData.user) return json({ error: "Login failed" }, 400);
+    if (!r.ok) {
+      console.error("[api] login failed:", r.status, errMsg(r.data, "no detail"));
+      return json({ error: errMsg(r.data, "Login failed") }, 400);
+    }
+    const session = r.data || {};
+    const authUser = session.user || {};
+    if (!session.access_token || !authUser.id) return json({ error: "Login failed" }, 400);
     
-    // Create ticket for second stage
-    const session = authData.session || {};
-    const ticket = await sealTicket({ uid: authData.user.id, email: authData.user.email, at: Date.now(), exp: Date.now() + TICKET_TTL_MS, mode: "login" }, env);
+    // تذكرة المرحلة الثانية: تحمل الآن التوكنين الحقيقيين والدور والاسم والمخزن،
+    // وإلا عادت المرحلة الثانية access_token = طابع زمني وrole/warehouse_id مفقودة.
+    const [role, warehouseId, hashes] = await Promise.all([
+      getRole(authUser.id, env, session.access_token),
+      defaultWarehouseId(authUser.id, env),
+      warehousePasswordHashes(authUser.id, env)
+    ]);
+    const meta = authUser.user_metadata || {};
+    const ticket = await sealTicket({
+      uid: authUser.id,
+      email: authUser.email,
+      name: meta.full_name || meta.name || authUser.email || "",
+      role,
+      warehouse_id: warehouseId,
+      access_token: session.access_token,
+      refresh_token: session.refresh_token || "",
+      at: Date.now(),
+      exp: Date.now() + TICKET_TTL_MS,
+      mode: "login"
+    }, env);
     
     if (!ticket) return json({ error: "Failed to create ticket" }, 500);
     
-    return json({ stage: 1, ticket, requires_warehouse_password: false, base: { id: authData.user.id, email: authData.user.email } });
+    // إذا لم يكن هناك كلمة مخزن مطلوبة فالدخول منتهٍ في المرحلة الأولى، فلا معنى
+    // لإرجاع تذكرة بلا توكنين (العميل لا يستطيع إتمام الدخول أبداً).
+    const out = {
+      stage: 1,
+      ticket,
+      requires_warehouse_password: hashes.length > 0,
+      base: { id: authUser.id, email: authUser.email }
+    };
+    if (!hashes.length) {
+      out.role = role;
+      out.warehouse_id = warehouseId;
+      out.access_token = session.access_token;
+      out.refresh_token = session.refresh_token || "";
+    }
+    return json(out);
   } catch (error) {
     console.error("Login error:", error && error.message);
     return json({ error: "Internal server error" }, 500);
@@ -381,14 +449,17 @@ async function handleVerifyWarehouse(request, env) {
       return json({ error: "Failed to save warehouse password" }, 500);
     }
   }
+  // التذاكر القديمة كانت تحمل at = Date.now() أي أن access_token يعود طابعاً زمنياً،
+  // وrole/warehouse_id غير موجودين أصلاً. نرفض أي تذكرة بلا توكن حقيقي.
+  if (!t.access_token) return json({ error: "Session expired - please login again" }, 401);
   return json({
     id: t.uid,
     email: t.email,
     name: t.name,
-    role: t.role,
-    warehouse_id: t.warehouse_id,
-    access_token: t.at,
-    refresh_token: t.rt
+    role: t.role || "employee",
+    warehouse_id: t.warehouse_id || null,
+    access_token: t.access_token,
+    refresh_token: t.refresh_token || ""
   });
 }
 __name(handleVerifyWarehouse, "handleVerifyWarehouse");
@@ -413,16 +484,46 @@ async function handleSetWarehousePassword(request, env, user) {
     console.error("Error storing warehouse password:", e && e.message);
     return json({ error: "Internal server error" }, 500);
   }
-  return json({ id: user.id, email: user.email, role: user.role, warehouse_id: user.warehouse_id });
+  // user من requireUser لا يحمل role ولا warehouse_id — كانتا يظهران undefined
+  const role = await getRole(user.id, env, user.token);
+  const warehouse_id = await defaultWarehouseId(user.id, env);
+  return json({ id: user.id, email: user.email, role, warehouse_id });
 }
 __name(handleSetWarehousePassword, "handleSetWarehousePassword");
 
 // Additional handler functions (essential API endpoints)
+// في المخطط الحيّ لا يوجد مفتاح خارجي من inventory_movements إلى products أو
+// warehouses، لذلك كان استعلام الـ embed يفشل كلّياً (PGRST200). نقرأ الصفوف
+// كما هي ثم نجلب الأسماء باستعلامين منفصلين ونربطها يدوياً بالنتيجة نفسها.
+async function lookupByIds(env, table, ids, columns) {
+  const map = new Map();
+  if (!ids.length) return map;
+  const list = ids.map((i) => `"${i}"`).join(",");
+  const r = await supa(`/rest/v1/${table}?select=${columns.join(",")}&id=in.(${list})&limit=500`, env);
+  const got = readRows(r, table);
+  if (got.error || !Array.isArray(got.rows)) return map;
+  for (const row of got.rows) map.set(row.id, row);
+  return map;
+}
+__name(lookupByIds, "lookupByIds");
+
 async function handleMovementsList(env, url) {
-  const r = await supa("/rest/v1/inventory_movements?select=*,product:products(name,name_ar),warehouse:warehouses(name)&order=created_at.desc&limit=100", env);
+  const r = await supa("/rest/v1/inventory_movements?select=*&order=created_at.desc&limit=100", env);
   const got = readRows(r, "movements");
   if (got.error) return got.error;
-  return json({ movements: got.rows });
+  const rows = Array.isArray(got.rows) ? got.rows : [];
+  const uniq = (arr) => [...new Set(arr.filter(Boolean))];
+  const productIds = uniq(rows.map((m) => m.product_id));
+  const warehouseIds = uniq(rows.flatMap((m) => [m.warehouse_id, m.from_warehouse_id, m.to_warehouse_id]));
+  const products = await lookupByIds(env, "products", productIds, ["id", "name", "name_ar"]);
+  const warehouses = await lookupByIds(env, "warehouses", warehouseIds, ["id", "name"]);
+  for (const row of rows) {
+    const p = row.product_id ? products.get(row.product_id) : null;
+    row.product = p ? { name: p.name, name_ar: p.name_ar } : null;
+    const wid = row.warehouse_id || row.from_warehouse_id || row.to_warehouse_id;
+    row.warehouse = wid && warehouses.get(wid) ? { name: warehouses.get(wid).name } : null;
+  }
+  return json({ movements: rows });
 }
 __name(handleMovementsList, "handleMovementsList");
 
@@ -454,7 +555,10 @@ async function handleCustomersCreate(request, env, user) {
     body: { tenant_id: tenantId, name, name_ar, code, warehouse_id },
     extraHeaders: { prefer: "return=representation" }
   });
-  if (!r.ok) return json({ error: errMsg(r.data, "Failed to create customer") }, 502);
+  if (!r.ok) {
+    console.error("[api] create customer failed:", errMsg(r.data, "no detail"));
+    return json({ error: "Failed to create customer" }, 502);
+  }
   return json({ customer: Array.isArray(r.data) ? r.data[0] : r.data }, 201);
 }
 __name(handleCustomersCreate, "handleCustomersCreate");
@@ -462,7 +566,8 @@ __name(handleCustomersCreate, "handleCustomersCreate");
 async function handleOrdersList(env, url) {
   const status = (url.searchParams.get("status") || "").trim();
   const warehouseId = url.searchParams.get("warehouse_id") || "";
-  let path = "/rest/v1/orders?select=*,customer:customers(name,name_ar),warehouse:warehouses(name)&order=created_at.desc&limit=100";
+  // الجدول الفعلي في المخطط الحيّ هو sales_orders (orders غير موجود — PGRST205)
+  let path = "/rest/v1/sales_orders?select=*,customer:customers(name,name_ar),warehouse:warehouses(name)&order=created_at.desc&limit=100";
   if (status) path += `&status=eq.${status}`;
   if (warehouseId) path += `&warehouse_id=eq.${encodeURIComponent(warehouseId)}`;
   const r = await supa(path, env);
@@ -475,22 +580,35 @@ __name(handleOrdersList, "handleOrdersList");
 async function handleOrdersCreate(request, env, user) {
   let body;
   try { body = await request.json(); } catch (_) { return json({ error: "Invalid JSON body" }, 400); }
-  const { customer_id, items, notes } = body || {};
+  const { customer_id, items, notes, warehouse_id, order_number } = body || {};
   if (!customer_id || !items || !Array.isArray(items) || items.length === 0) return json({ error: "Customer and items are required" }, 400);
   const tenantId = await getTenantId(env);
   if (!tenantId) return json({ error: "Unable to resolve tenant for this request" }, 503);
   const orderId = crypto.randomUUID();
   const orderBody = { id: orderId, tenant_id: tenantId, customer_id, status: "pending", created_by: user.id, notes };
-  const orderR = await supa("/rest/v1/orders", env, { method: "POST", body: orderBody });
-  if (!orderR.ok) return json({ error: errMsg(orderR.data, "Failed to create order") }, 502);
-  
+  if (warehouse_id) orderBody.warehouse_id = warehouse_id;
+  if (order_number) orderBody.order_number = order_number;
+  const orderR = await supa("/rest/v1/sales_orders", env, { method: "POST", body: orderBody });
+  if (!orderR.ok) {
+    console.error("[api] create order failed:", errMsg(orderR.data, "no detail"));
+    return json({ error: "Failed to create order" }, 502);
+  }
+
   for (const item of items) {
     const { product_id, quantity } = item;
     if (!product_id || !quantity) continue;
     const itemId = crypto.randomUUID();
-    await supa("/rest/v1/order_items", env, {
+    const unitPrice = Number(item.unit_price) || 0;
+    await supa("/rest/v1/sales_order_items", env, {
       method: "POST",
-      body: { id: itemId, order_id: orderId, product_id, quantity }
+      body: {
+        id: itemId,
+        sales_order_id: orderId,
+        product_id,
+        quantity,
+        unit_price: unitPrice,
+        subtotal: unitPrice * Number(quantity)
+      }
     });
   }
   return json({ success: true, order_id: orderId }, 201);
@@ -512,9 +630,13 @@ async function handleSalesQuoteGet(request, env, url) {
   const id = m[1];
   const q = await supa(`/rest/v1/sales_quotes?id=eq.${encodeURIComponent(id)}&select=*,customer:customers(id,name,name_ar),warehouse:warehouses(name)&limit=1`, env);
   // فصل فشل القراءة عن "غير موجود" — كان خطأ الاستعلام يظهر كـ 404 زائف
-  if (!q.ok) return json({ error: errMsg(q.data, "Failed to fetch quote") }, 502);
+  if (!q.ok) {
+    console.error("[api] read quote failed:", errMsg(q.data, "no detail"));
+    return json({ error: "Failed to read quote" }, 502);
+  }
   if (!Array.isArray(q.data) || q.data.length === 0) return json({ error: "Quote not found" }, 404);
-  const items = await supa(`/rest/v1/sales_quote_items?sales_quote_id=eq.${encodeURIComponent(id)}&select=*,product:products(id,name,name_ar)&order=created_at.asc`, env);
+  // العمود الفعلي في المخطط الحيّ هو quote_id (sales_quote_id غير موجود — 42703)
+  const items = await supa(`/rest/v1/sales_quote_items?quote_id=eq.${encodeURIComponent(id)}&select=*,product:products(id,name,name_ar)&order=created_at.asc`, env);
   const gotItems = readRows(items, "quote items");
   if (gotItems.error) return gotItems.error;
   return json({ quote: q.data[0], items: gotItems.rows });
@@ -541,7 +663,10 @@ async function handleSalesInvoiceGet(request, env, url) {
   const id = m[1];
   const inv = await supa(`/rest/v1/sales_invoices?id=eq.${encodeURIComponent(id)}&select=*,customer:customers(id,name,name_ar,phone),warehouse:warehouses(name)&limit=1`, env);
   // فصل فشل القراءة عن "غير موجود"
-  if (!inv.ok) return json({ error: errMsg(inv.data, "Failed to fetch invoice") }, 502);
+  if (!inv.ok) {
+    console.error("[api] read invoice failed:", errMsg(inv.data, "no detail"));
+    return json({ error: "Failed to read invoice" }, 502);
+  }
   if (!Array.isArray(inv.data) || inv.data.length === 0) return json({ error: "Invoice not found" }, 404);
   const items = await supa(`/rest/v1/sales_invoice_items?sales_invoice_id=eq.${encodeURIComponent(id)}&select=*,product:products(id,name,name_ar)&order=created_at.asc`, env);
   const gotItems = readRows(items, "invoice items");
@@ -560,7 +685,11 @@ async function handleApproveInvoice(request, env, user) {
     method: "POST",
     body: { p_invoice_id: invoice_id, p_user_id: user.id }
   });
-  if (!result.ok) return json({ error: errMsg(result.data, "Failed to approve invoice") }, 400);
+  if (!result.ok) {
+    // تفاصيل PostgREST لا تُعاد للمتصفح — تُسجَّل في سجلات الخادم فقط
+    console.error("[api] approve invoice failed:", result.status, errMsg(result.data, "no detail"));
+    return json({ error: "Failed to approve invoice" }, 400);
+  }
   return json({ success: true, data: result.data }, 200);
 }
 __name(handleApproveInvoice, "handleApproveInvoice");
@@ -568,14 +697,27 @@ __name(handleApproveInvoice, "handleApproveInvoice");
 async function handleRecordPayment(request, env, user) {
   let body;
   try { body = await request.json(); } catch (_) { return json({ error: "Invalid JSON body" }, 400); }
-  const { invoice_id, amount, payment_method } = body || {};
+  const { invoice_id, amount, payment_method, payment_number, notes } = body || {};
   if (!invoice_id) return json({ error: "Invoice ID is required" }, 400);
   if (!amount || amount <= 0) return json({ error: "Amount must be greater than 0" }, 400);
+  // أسماء المعاملات يجب أن تطابق تعريف الدالة حرفياً وإلا رفض PostgREST النداء
+  // (كان يُرسل amount وp_method ويتخلّى عن p_user_id):
+  // p_sale_record_payment(p_invoice_id, p_amount, p_payment_method, p_payment_number, p_notes, p_user_id)
   const result = await supa("/rest/v1/rpc/p_sale_record_payment", env, {
     method: "POST",
-    body: { p_invoice_id: invoice_id, amount: amount, p_method: payment_method || "cash", p_user_id: user.id }
+    body: {
+      p_invoice_id: invoice_id,
+      p_amount: Number(amount),
+      p_payment_method: payment_method || "cash",
+      p_payment_number: payment_number || "",
+      p_notes: notes || "",
+      p_user_id: user.id
+    }
   });
-  if (!result.ok) return json({ error: errMsg(result.data, "Failed to record payment") }, 400);
+  if (!result.ok) {
+    console.error("[api] record payment failed:", result.status, errMsg(result.data, "no detail"));
+    return json({ error: "Failed to record payment" }, 400);
+  }
   return json({ success: true, data: result.data }, 200);
 }
 __name(handleRecordPayment, "handleRecordPayment");
@@ -583,13 +725,23 @@ __name(handleRecordPayment, "handleRecordPayment");
 async function handleCreateReturn(request, env, user) {
   let body;
   try { body = await request.json(); } catch (_) { return json({ error: "Invalid JSON body" }, 400); }
-  const { invoice_id, reason, return_type } = body || {};
+  const { invoice_id, reason, items } = body || {};
   if (!invoice_id) return json({ error: "Invoice ID is required" }, 400);
+  // التوقيع الفعلي: p_sale_create_return(p_invoice_id, p_items, p_reason, p_user_id)
+  // — كان النداء يرسل p_return_type (معامل غير موجود) ويغفل p_items وp_user_id.
   const result = await supa("/rest/v1/rpc/p_sale_create_return", env, {
     method: "POST",
-    body: { p_invoice_id: invoice_id, p_reason: reason || "", p_return_type: return_type || "return" }
+    body: {
+      p_invoice_id: invoice_id,
+      p_items: Array.isArray(items) ? items : [],
+      p_reason: reason || "",
+      p_user_id: user.id
+    }
   });
-  if (!result.ok) return json({ error: errMsg(result.data, "Failed to create return") }, 400);
+  if (!result.ok) {
+    console.error("[api] create return failed:", result.status, errMsg(result.data, "no detail"));
+    return json({ error: "Failed to create return" }, 400);
+  }
   return json({ success: true, data: result.data }, 200);
 }
 __name(handleCreateReturn, "handleCreateReturn");
@@ -611,15 +763,68 @@ __name(handlePurchaseOrders, "handlePurchaseOrders");
 async function handlePurchaseOrderGet(request, env, user, orderId) {
   const ur = await supa(`/rest/v1/purchase_orders?id=eq.${encodeURIComponent(orderId)}&select=*,items:purchase_order_items(*),supplier:suppliers(name,name_ar),warehouse:warehouses(name)&limit=1`, env);
   // فصل فشل القراءة عن "السجل غير موجود" — من قبل كان خطأ الاستعلام يظهر كـ 404 زائف
-  if (!ur.ok) return json({ error: errMsg(ur.data, "Failed to fetch purchase order") }, 502);
+  if (!ur.ok) {
+    console.error("[api] read purchase order failed:", errMsg(ur.data, "no detail"));
+    return json({ error: "Failed to read purchase order" }, 502);
+  }
   if (!Array.isArray(ur.data) || ur.data.length === 0) return json({ error: "Order not found" }, 404);
   return json(ur.data[0]);
 }
 __name(handlePurchaseOrderGet, "handlePurchaseOrderStatus");
 
 // API route handler - routes to appropriate handler based on path
-function handleApi(request, env, url) {
+// مسارات متاحة بدون جلسة (تدفّق الدخول نفسه). كل ما عداها يتطلب مصادقة —
+// كانت قوائم المنتجات والعملاء تُقرأ بلا أي ترويسة Authorization إطلاقاً.
+const PUBLIC_API_PATHS = new Set([
+  "/api/auth/me",
+  "/api/auth/login",
+  "/api/auth/register",
+  "/api/auth/warehouse"
+]);
+// مسارات تُقبل POST فقط؛ وكل ما عداها قراءة بـ GET (كان DELETE يرجع 200).
+const POST_API_PATHS = new Set([
+  "/api/auth/login",
+  "/api/auth/register",
+  "/api/auth/warehouse",
+  "/api/auth/set-warehouse-password",
+  // عمليات الفوترة: تغيير حالة (اعتماد/دفع/إرجاع) — لا يجوز قبولها كـ GET
+  "/api/sales-invoices/approve",
+  "/api/sales-invoices/record-payment",
+  "/api/sales-invoices/create-return"
+]);
+
+function requiresPost(path) {
+  return POST_API_PATHS.has(path) ||
+    path.startsWith("/api/customers/create") ||
+    path.startsWith("/api/orders/create");
+}
+__name(requiresPost, "requiresPost");
+
+async function handleApi(request, env, url) {
   const path = url.pathname;
+  const method = (request.method || "GET").toUpperCase();
+
+  // CORS preflight
+  if (method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: { ...CORS, "access-control-max-age": "86400" } });
+  }
+
+  // بوابة المصادقة: بيانات العمل تتطلب جلسة صالحة.
+  // `user` يُمرَّر للم_handlers التي تستخدم user.id — كانت تُرجع 500 لأنها متغيّر غير معرّف.
+  let user = null;
+  if (!PUBLIC_API_PATHS.has(path)) {
+    user = await requireUser(request, env);
+    if (!user) return json({ error: "Unauthorized" }, 401);
+  }
+
+  const allowed = requiresPost(path) ? "POST" : "GET";
+  if (method !== allowed) {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: { "content-type": "application/json; charset=utf-8", allow: allowed, ...CORS }
+    });
+  }
+
   // Auth routes
   if (path === "/api/auth/me") return handleMe(request, env);
   if (path === "/api/auth/login") return handleLogin(request, env);
@@ -639,36 +844,26 @@ function handleApi(request, env, url) {
   if (path.startsWith("/api/sales_quotes/")) return handleSalesQuoteGet(request, env, url);
   // Sales invoice routes
   if (path === "/api/sales-invoices") return handleSalesInvoices(env, url);
+  // هذه العمليات الثلاث كانت معرَّفة داخل الملف ولا يوصّل إليها أي مسار،
+  // فكانت تقع تحت مطابقة البادئة وتُعامل كمعرّف فاتورة خاطئ (400/404/405).
+  if (path === "/api/sales-invoices/approve") return handleApproveInvoice(request, env, user);
+  if (path === "/api/sales-invoices/record-payment") return handleRecordPayment(request, env, user);
+  if (path === "/api/sales-invoices/create-return") return handleCreateReturn(request, env, user);
   if (path.startsWith("/api/sales-invoices/")) return handleSalesInvoiceGet(request, env, url);
   // Purchase order routes
   if (path === "/api/purchase_orders") return handlePurchaseOrders(env, url);
+  // تفصيل أمر الشراء كان معرَّفاً أيضاً ولا يوصّل إليه مسار (404 دائماً)
+  if (path.startsWith("/api/purchase_orders/")) {
+    const m = path.match(/^\/api\/purchase_orders\/([0-9a-fA-F-]{36})$/);
+    if (!m) return json({ error: "Invalid ID" }, 400);
+    return handlePurchaseOrderGet(request, env, user, m[1]);
+  }
   // Stock Balance API routes (Oracle)
-  if (path === "/api/stock/balance") {
-    try {
-      const { handleStockBalance } = require('./api/stock-balance-api');
-      return handleStockBalance(request, env);
-    } catch (e) {
-      console.error('StockBalance API error:', e.message);
-      return json({ error: 'StockBalance unavailable', details: e.message }, 503);
-    }
-  }
-  if (path === "/api/stock/valuerisk") {
-    try {
-      const { handleStockValueRisk } = require('./api/stock-balance-api');
-      return handleStockValueRisk(request, env);
-    } catch (e) {
-      console.error('StockValueRisk API error:', e.message);
-      return json({ error: 'StockValueRisk unavailable', details: e.message }, 503);
-    }
-  }
-  if (path === "/api/stock/forecast") {
-    try {
-      const { handleStockForecast } = require('./api/stock-balance-api');
-      return handleStockForecast(request, env);
-    } catch (e) {
-      console.error('StockForecast API error:', e.message);
-      return json({ error: 'StockForecast unavailable', details: e.message }, 503);
-    }
+  // Stock balance APIs: الموديول api/stock-balance-api.js غير موجود في المستودع،
+  // لذا كان require() يفشل دائماً داخل حزمة ESM ويعيد 503 مع تسريب مسار الملف.
+  if (path === "/api/stock/balance" || path === "/api/stock/valuerisk" || path === "/api/stock/forecast") {
+    console.error(`[api] ${path} called but the stock-balance module is not part of this build`);
+    return json({ error: "Not implemented", details: "Stock balance endpoints are not available in this deployment" }, 501);
   }
   // Default: return not found for unhandled API routes
   return json({ error: "API endpoint not found" }, 404);
@@ -690,8 +885,28 @@ __name(handleMe, "handleMe");
 // Global error handler prevention - return index.html for any unmatched route
 // This prevents blank white screen by ensuring the frontend always loads
 
+// رؤوس أمان موحّدة لكل الاستجابات (الملفات الثابتة وواجهة الـ API معاً):
+// كانت غائبة تماماً — لا HSTS ولا حماية من التضمين (clickjacking).
+function withSecurityHeaders(resp) {
+  if (!resp) return resp;
+  const headers = new Headers(resp.headers);
+  headers.set("strict-transport-security", "max-age=31536000; includeSubDomains");
+  headers.set("x-content-type-options", "nosniff");
+  headers.set("referrer-policy", "strict-origin-when-cross-origin");
+  headers.set("x-frame-options", "SAMEORIGIN");
+  // frame-ancestors فقط: يمنع التضمين دون تقييد السكربتات المضمّنة في index.html
+  headers.set("content-security-policy", "frame-ancestors 'none'");
+  return new Response(resp.body, { status: resp.status, statusText: resp.statusText, headers });
+}
+__name(withSecurityHeaders, "withSecurityHeaders");
+
 var worker_default = {
   async fetch(request, env) {
+    return withSecurityHeaders(await handleRequest(request, env));
+  }
+};
+
+async function handleRequest(request, env) {
     const url = new URL(request.url);
     if (url.pathname.startsWith("/api/")) {
       try {
@@ -723,8 +938,7 @@ var worker_default = {
       }
       return new Response("Not found", { status: 404 });
     }
-  }
-};
+}
 __name(worker_default, "worker_default");
 
 // Export the worker
