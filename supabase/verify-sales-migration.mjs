@@ -31,7 +31,10 @@ const TABLES = ['sales_quotes', 'sales_quote_items', 'sales_invoices', 'sales_in
 const FUNCS = {
   p_sale_next_number: { p_prefix: 'SQ', p_warehouse_id: '00000000-0000-0000-0000-000000000000' },
   p_sale_approve_invoice: { p_invoice_id: '00000000-0000-0000-0000-000000000000', p_user_id: '00000000-0000-0000-0000-000000000000' },
-  p_sale_record_payment: { p_invoice_id: '00000000-0000-0000-0000-000000000000', p_amount: 1, p_method: 'cash', p_notes: '', p_user_id: '00000000-0000-0000-0000-000000000000' },
+  // أسماء المعاملات مطابقة لتعريف الدالة في الهجرة حرفياً:
+  // p_sale_record_payment(p_invoice_id, p_amount, p_payment_method, p_payment_number, p_notes, p_user_id)
+  // — كانت p_method (غير موجودة) وp_payment_number مفقودة.
+  p_sale_record_payment: { p_invoice_id: '00000000-0000-0000-0000-000000000000', p_amount: 1, p_payment_method: 'cash', p_payment_number: '', p_notes: '', p_user_id: '00000000-0000-0000-0000-000000000000' },
   p_sale_create_return: { p_invoice_id: '00000000-0000-0000-0000-000000000000', p_items: [], p_reason: 'verify', p_user_id: '00000000-0000-0000-0000-000000000000' },
 };
 
