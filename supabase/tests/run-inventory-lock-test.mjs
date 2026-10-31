@@ -485,11 +485,11 @@ commit;`);
       process.exit(1);
     }
     const same =
-      afterClean.tenants === before.tenants &&
-      afterClean.warehouses === before.warehouses &&
-      afterClean.products === before.products &&
-      afterClean.inventory === before.inventory &&
-      afterClean.fixture_tenants === 0;
+      Number(afterClean.tenants) === Number(before.tenants) &&
+      Number(afterClean.warehouses) === Number(before.warehouses) &&
+      Number(afterClean.products) === Number(before.products) &&
+      Number(afterClean.inventory) === Number(before.inventory) &&
+      Number(afterClean.fixture_tenants) === 0;
     if (!same) {
       console.error('❌ عدّادات ما زالت مختلفة بعد التنظيف:', { before, after: afterClean });
       process.exit(1);

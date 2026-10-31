@@ -20,22 +20,8 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const token = readFileSync(join(ROOT, 'secrets/SUPABASE_ACCESS_TOKEN'), 'utf8').trim();
+import { run } from './db-gateway.mjs';
 const MIGRATION = join(ROOT, 'supabase/migrations/202610260001_auto_partitioning.sql');
-const API = 'https://api.supabase.com/v1/projects/iksjhjxwphmvthryfeae/database/query';
-
-async function run(query) {
-  const res = await fetch(API, {
-    method: 'POST',
-    headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query }),
-    signal: AbortSignal.timeout(180000),
-  });
-  const text = await res.text();
-  let data;
-  try { data = JSON.parse(text); } catch { data = [{ raw: text }]; }
-  return { ok: res.ok, status: res.status, data };
-}
 
 const ASSERTIONS = `
 do $autop$
