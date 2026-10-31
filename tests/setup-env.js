@@ -18,3 +18,8 @@ if (fs.existsSync(file)) {
     }
   });
 }
+// الرابط العام لمشروع Supabase ليس سراً — يُستخدم كبديل إذا أعادت المنصة كتابتها
+// ملف .env.local وفقده (يجعل اختبارات التكامل مقاومة لتجديد الملف)
+if (!process.env.SUPABASE_URL) {
+  process.env.SUPABASE_URL = "https://iksjhjxwphmvthryfeae.supabase.co";
+}
