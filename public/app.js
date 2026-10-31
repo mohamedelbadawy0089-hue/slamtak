@@ -2223,14 +2223,13 @@ async function loadWmsContext(client) {
         if (user && user.id) {
           let wh = await client.from('warehouses').select('id,tenant_id,name').eq('is_main', true).limit(1);
           if (wh.error || !wh.data || wh.data.length === 0) {
-            const tid = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2));
-            const wid = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2));
-            const wres = await client.from('warehouses').insert([{ id: wid, tenant_id: tid, name: 'المخزن الرئيسي', is_main: true }]).select().single();
-            if (!wres.error && wres.data) {
-              await client.from('user_warehouses').insert([{ user_id: user.id, warehouse_id: wres.data.id }]).catch(()=>{});
-              data.warehouse_id = wres.data.id;
+            // إنشاء المخزن على الخادم: RLS يمنع الإدراج المباشر (لا توجد سياسة INSERT على
+            // warehouses) وwarehouses.code إلزامي ومفتاح فريد — الدالة تتكفّل بالاثنين وترتبط العضوية.
+            const wres = await client.rpc("wms_register_workspace", { p_name: "المخزن الرئيسي" });
+            if (!wres.error && wres.data && wres.data.warehouse_id) {
+              data.warehouse_id = wres.data.warehouse_id;
               data.tenant_id = wres.data.tenant_id;
-              data.warehouse_name = wres.data.name;
+              data.warehouse_name = "المخزن الرئيسي";
             }
           } else if (wh.data && wh.data[0]) {
             await client.from('user_warehouses').insert([{ user_id: user.id, warehouse_id: wh.data[0].id }]).catch(()=>{});
@@ -2258,13 +2257,12 @@ async function assertWarehouseScope(client) {
       if (user && user.id) {
         let wh = await client.from('warehouses').select('id,tenant_id,name').eq('is_main', true).limit(1);
         if (wh.error || !wh.data || wh.data.length === 0) {
-          const tid = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random());
-          const wid = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random());
-          const wres = await client.from('warehouses').insert([{ id: wid, tenant_id: tid, name: 'المخزن الرئيسي', is_main: true }]).select().single();
-          if (!wres.error && wres.data) {
-            try { await client.from('user_warehouses').insert([{ user_id: user.id, warehouse_id: wres.data.id }]); } catch(e){}
+          // إنشاء المخزن على الخادم (RLS يمنع الإدراج المباشر وcode إلزامي ومفتاح فريد) —
+          // الدالة تنشئ المخزن وتجعل هذا المستخدم عضواً فيه وتعيد warehouse_id وtenant_id.
+          const wres = await client.rpc("wms_register_workspace", { p_name: "المخزن الرئيسي" });
+          if (!wres.error && wres.data && wres.data.warehouse_id) {
             if (!ctx) ctx = {};
-            ctx.warehouse_id = wres.data.id; ctx.tenant_id = wres.data.tenant_id; ctx.warehouse_name = wres.data.name; ctx.authenticated = true; ctx.user_id = user.id;
+            ctx.warehouse_id = wres.data.warehouse_id; ctx.tenant_id = wres.data.tenant_id; ctx.warehouse_name = "المخزن الرئيسي"; ctx.authenticated = true; ctx.user_id = user.id;
           }
         } else if (wh.data && wh.data[0]) {
           try { await client.from('user_warehouses').insert([{ user_id: user.id, warehouse_id: wh.data[0].id }]); } catch(e){}
