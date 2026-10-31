@@ -22,7 +22,22 @@ const authRoutes = require('./src/api/auth.js');
 const app = express();
 
 // Security middleware
-app.use(helmet());
+// CSP الافتراضي في helmet يمنع ما تحتاجه الواجهة فعلياً:
+//  - script-src 'self' ← يحجب supabase-js وeruda القادمين من cdn.jsdelivr.net
+//  - default-src 'self' ← يحجب الاتصال بـ https://*.supabase.co
+//  - script-src-attr 'none' ← يحجب معالجات onclick= التي يولّدها app.js
+//  - غياب 'unsafe-inline' ← يحجب سكربت index.html الداخلي
+// في الإنتاج تُقدّم هذه الملفات نفسها بلا CSP (env.ASSETS عبر Cloudflare)،
+// فنضيف هنا الحد الأدنى الذي يجعل المعاينة مطابقة للسلوك الفعلي.
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "'unsafe-inline'"],
+      scriptSrcAttr: ["'unsafe-inline'"],
+      connectSrc: ["'self'", "https://*.supabase.co"],
+    },
+  },
+}));
 app.use(cors());
 app.use(express.json());
 
