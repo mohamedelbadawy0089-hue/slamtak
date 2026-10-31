@@ -10,7 +10,7 @@
     "start": "node start.js",
     "dev": "NODE_ENV=development nodemon start.js",
     "dev:watch": "nodemon --watch public --watch src --exec \"npm run dev\"",
-    "test:db": "node supabase/tests/run-phase1-migration-test.mjs && node supabase/tests/run-phase1-behavior-test.mjs && node supabase/tests/run-inventory-lock-test.mjs && node supabase/tests/run-purge-financial-test.mjs && node supabase/tests/run-journal-period-trigger-test.mjs",
+    "test:db": "node supabase/tests/run-phase1-migration-test.mjs && node supabase/tests/run-phase1-behavior-test.mjs && node supabase/tests/run-inventory-lock-test.mjs && node supabase/tests/run-purge-financial-test.mjs && node supabase/tests/run-journal-period-trigger-test.mjs && node supabase/tests/run-write-qa-test.mjs && node supabase/tests/run-insert-audit.mjs",
     "test:phase1": "jest tests/phase1-ui.test.js tests/phase1-concurrency.test.js"
   },
   "jest": {
@@ -43,6 +43,7 @@
     "@types/supertest": "^7.2.1",
     "jest": "^30.5.2",
     "nodemon": "^3.1.14",
+    "pg": "^8.23.1",
     "supertest": "^7.3.1",
     "ts-jest": "^29.4.15",
     "wrangler": "^4.152.0"
