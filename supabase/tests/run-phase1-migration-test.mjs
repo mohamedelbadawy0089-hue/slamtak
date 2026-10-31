@@ -9,20 +9,46 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const token = readFileSync(join(ROOT, 'secrets/SUPABASE_ACCESS_TOKEN'), 'utf8').trim();
 const MIGRATION = join(ROOT, 'supabase/migrations/202610250001_phase1_receiving_inventory.sql');
-const API = 'https://api.supabase.com/v1/projects/iksjhjxwphmvthryfeae/database/query';
+
+// يقرأ كمرلمة مرور قاعدة البيانات من .env.local (إن وجد) — بلا طباعة ولا حفظ للسر
+let DB_PASSWORD = process.env.SUPABASE_DB_PASSWORD || '';
+try {
+  const envFile = readFileSync(join(ROOT, '.env.local'), 'utf8');
+  for (const line of envFile.split('\n')) {
+    const i = line.indexOf('=');
+    if (i > 0 && line.slice(0, i).trim() === 'SUPABASE_DB_PASSWORD' && !DB_PASSWORD) {
+      let v = line.slice(i + 1).trim();
+      if ((v.startsWith("'") && v.endsWith("'")) || (v.startsWith('"') && v.endsWith('"'))) v = v.slice(1, -1);
+      DB_PASSWORD = v;
+    }
+  }
+} catch {}
+
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const { Client } = require('pg');
 
 async function run(query) {
-  const res = await fetch(API, {
-    method: 'POST',
-    headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query }),
+  const client = new Client({
+    host: 'db.iksjhjxwphmvthryfeae.supabase.co',
+    port: 5432,
+    user: 'postgres',
+    password: DB_PASSWORD,
+    database: 'postgres',
+    ssl: { rejectUnauthorized: false },
   });
-  const text = await res.text();
-  let data;
-  try { data = JSON.parse(text); } catch { data = [{ raw: text }]; }
-  return { ok: res.ok, status: res.status, data };
+  await client.connect();
+  try {
+    const res = await client.query(query);
+    const noticeRows = (res.notices || []).map((n) => ({ notice: n.message }));
+    const rows = res.rows && res.rows.length ? res.rows : noticeRows.length ? noticeRows : [];
+    return { ok: true, status: 200, data: rows };
+  } catch (err) {
+    return { ok: false, status: 500, data: err.message };
+  } finally {
+    try { await client.end(); } catch {}
+  }
 }
 
 const ASSERTIONS = `

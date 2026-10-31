@@ -9,7 +9,11 @@ if (fs.existsSync(file)) {
     const i = line.indexOf("=");
     if (i > 0 && !line.trim().startsWith("#")) {
       const key = line.slice(0, i).trim();
-      const value = line.slice(i + 1).trim();
+      let value = line.slice(i + 1).trim();
+      // تكافؤ علامتن التنصيص المحيطة ('...' أو "...")
+      if ((value.startsWith("'") && value.endsWith("'")) || (value.startsWith('"') && value.endsWith('"'))) {
+        value = value.slice(1, -1);
+      }
       if (key && !process.env[key]) process.env[key] = value;
     }
   });

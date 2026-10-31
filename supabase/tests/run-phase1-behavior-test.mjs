@@ -9,20 +9,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const token = readFileSync(join(ROOT, 'secrets/SUPABASE_ACCESS_TOKEN'), 'utf8').trim();
-const API = 'https://api.supabase.com/v1/projects/iksjhjxwphmvthryfeae/database/query';
-
-async function run(query) {
-  const res = await fetch(API, {
-    method: 'POST',
-    headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query }),
-  });
-  const text = await res.text();
-  let data;
-  try { data = JSON.parse(text); } catch { data = [{ raw: text }]; }
-  return { ok: res.ok, status: res.status, data };
-}
+import { run } from './db-gateway.mjs';
 
 const EXPECTED = [
   'T01 إنشاء مستند استلام مفتوح من أمر الشراء',
@@ -377,12 +364,6 @@ exception
 end $body$;
 
 select label from public._wms_test_results order by label;
-
-rollback;
-
-drop table if exists public._wms_test_results;
-drop function if exists public._ok(boolean, text);
-drop function if exists public._expect_error(text, text, text);
 `;
 
 const FK_CHECK = `select count(*) as fk_ok from pg_constraint

@@ -22,22 +22,8 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const token = readFileSync(join(ROOT, 'secrets/SUPABASE_ACCESS_TOKEN'), 'utf8').trim();
+import { run } from './db-gateway.mjs';
 const MIGRATION = join(ROOT, 'supabase/migrations/202610250003_inventory_row_locking.sql');
-const API = 'https://api.supabase.com/v1/projects/iksjhjxwphmvthryfeae/database/query';
-
-async function run(query) {
-  const res = await fetch(API, {
-    method: 'POST',
-    headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query }),
-    signal: AbortSignal.timeout(180000),
-  });
-  const text = await res.text();
-  let data;
-  try { data = JSON.parse(text); } catch { data = [{ raw: text }]; }
-  return { ok: res.ok, status: res.status, data };
-}
 
 const migrationSql = readFileSync(MIGRATION, 'utf8');
 
@@ -309,7 +295,7 @@ end $locktest$;`;
 // التحقق من أن ROLLBACK لم يترك أي أثر على الإنتاج
 const STATE_SQL = `select
   (to_regprocedure('public.wms_inventory_lock(uuid,uuid,text)') is not null) as helper_persisted,
-  (select prosrc like '%wms_inventory_lock%' from pg_proc where proname = 'p_proc_receive_goods') as fn_changed,
+  (select md5(coalesce(prosrc,'')) from pg_proc where proname = 'p_proc_receive_goods') as fn_md5,
   (select count(*) from public.tenants where code = 'LKPTST') as test_tenants,
   (select count(*) from public.goods_receipts where receipt_number like 'GR-LOCK-%') as test_receipts`;
 
@@ -354,7 +340,7 @@ if (JSON.stringify(postRow) !== JSON.stringify(preRow)) {
   console.error('❌ ROLLBACK لم يُلغي كل التغييرات:', { before: preRow, after: postRow });
   process.exit(1);
 }
-if (postRow.helper_persisted || postRow.fn_changed) {
+if (postRow.helper_persisted || postRow.fn_md5 !== preRow.fn_md5) {
   console.error('❌ الترحيل أو دواله بقيا محفوظين بعد ROLLBACK:', postRow);
   process.exit(1);
 }
