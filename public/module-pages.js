@@ -238,6 +238,8 @@ async function mpPriceLists(body, client) {
           valid_from: validFrom,
           valid_to: validTo || null,
           status: "draft",
+          // price_type NOT NULL ومقيّد بـ(base|contract|customer_special|quantity_tier)
+          price_type: "base",
           created_by: scope.user_id || null
         });
         await mpPriceLists(body, client);
@@ -275,6 +277,8 @@ async function mpPriceLists(body, client) {
           price_list_id: f.getAttribute("data-mp-add-item"),
           product_id: productId,
           price,
+          // unit_price NOT NULL بلا قيمة افتراضية — تُسجَّل بقيمة البيع نفسها
+          unit_price: price,
           min_qty: minQty
         });
         await mpPriceLists(body, client);
@@ -410,13 +414,22 @@ async function mpPromotions(body, client) {
       const value = Number(fd.get("value") || 0);
       if (!Number.isFinite(value) || value < 0) return errEl && (errEl.textContent = "القيمة يجب أن تكون صفرًا أو أكثر");
       const usageLimit = String(fd.get("usage_limit") || "").trim();
+      const kind = String(fd.get("kind") || "percent");
+      // promotion_type NOT NULL ومقيّد بقيم مختلفة عن kind — تُشتقّ من النوع المختار
+      const promotionType = {
+        percent: "percentage_discount",
+        amount: "fixed_amount_discount",
+        buy_x_get_y: "buy_x_get_y",
+        bundle: "bundle",
+      }[kind] || "percentage_discount";
       try {
         await mpInsert(client, "promotions", {
           tenant_id: scope.tenant_id,
           warehouse_id: scope.warehouse_id,
           name,
           name_ar: String(fd.get("name_ar") || "").trim() || name,
-          kind: String(fd.get("kind") || "percent"),
+          kind,
+          promotion_type: promotionType,
           value,
           min_order_amount: Number(fd.get("min_order_amount") || 0),
           max_discount: String(fd.get("max_discount") || "").trim() ? Number(fd.get("max_discount")) : null,
@@ -652,6 +665,9 @@ async function mpPayroll(body, client) {
           warehouse_id: scope.warehouse_id,
           period_start: from,
           period_end: to,
+          // pay_period_start/pay_period_end NOT NULL بلا قيمة افتراضية — الفترة نفسها
+          pay_period_start: from,
+          pay_period_end: to,
           notes: String(fd.get("notes") || "").trim() || null,
           status: "draft",
           created_by: scope.user_id || null

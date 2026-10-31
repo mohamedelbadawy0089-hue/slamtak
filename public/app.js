@@ -1153,6 +1153,7 @@ async function loadSectionData(routePath, title) {
             const order_number = 'PO-' + Date.now().toString().slice(-8);
             const payload = {
               order_number,
+              tenant_id: (await assertWarehouseScope(client)).tenant_id,
               supplier_id,
               warehouse_id,
               order_date: fd.get('invoice_date') || new Date().toISOString().slice(0,10),
