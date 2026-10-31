@@ -1,3 +1,25 @@
+// يحمل .env.local قبل الاستيرادات الأخرى (يتجاوز المتغيرات الموجودة مسبقًا في البيئة،
+// ويدعم القيم المقتبسة؛ لأن المنصة أعادت كتابة الملف بقيم فيه علامات تنصيص)
+const fsEnv = require('fs');
+const pathEnv = require('path');
+try {
+  fsEnv.readFileSync(pathEnv.join(__dirname, '.env.local'), 'utf8').split('\n').forEach((line) => {
+    const i = line.indexOf('=');
+    if (i > 0 && !line.trim().startsWith('#')) {
+      const key = line.slice(0, i).trim();
+      let value = line.slice(i + 1).trim();
+      if ((value.startsWith("'") && value.endsWith("'")) || (value.startsWith('"') && value.endsWith('"'))) {
+        value = value.slice(1, -1);
+      }
+      if (key && !process.env[key]) process.env[key] = value;
+    }
+  });
+} catch { /* .env.local غير موجودة */ }
+// الرابط العام للمشروع غير سري — يُستعمل بديلاً إذا أعادت المنصة كتابة الملف وفقده
+if (!process.env.SUPABASE_URL) {
+  process.env.SUPABASE_URL = 'https://iksjhjxwphmvthryfeae.supabase.co';
+}
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
