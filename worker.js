@@ -779,7 +779,8 @@ const PUBLIC_API_PATHS = new Set([
   "/api/auth/me",
   "/api/auth/login",
   "/api/auth/register",
-  "/api/auth/warehouse"
+  "/api/auth/warehouse",
+  "/api/health"
 ]);
 // مسارات تُقبل POST فقط؛ وكل ما عداها قراءة بـ GET (كان DELETE يرجع 200).
 const POST_API_PATHS = new Set([
@@ -825,6 +826,7 @@ async function handleApi(request, env, url) {
     });
   }
 
+  if (path === "/api/health") return json({ status: "ok", timestamp: new Date().toISOString() });
   // Auth routes
   if (path === "/api/auth/me") return handleMe(request, env);
   if (path === "/api/auth/login") return handleLogin(request, env);
