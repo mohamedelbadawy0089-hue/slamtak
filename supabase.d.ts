@@ -1,20 +1,11 @@
-declare module '@supabase/supabase-js' {
-  interface SupabaseClient {
+declare namespace Supabase {
+  interface Client {
     auth: {
-      getUser(): Promise<{ data: { user: any } }>;
-      onAuthStateChange(
-        callback: (event: string, session: { user: any }) => void
-      ): { data: { subscription: { unsubscribe: () => void } } };
+      getUser(): Promise<{ data: { user: any } | null }>;
+      signInWithPassword(data: { email: string; password: string }): Promise<any>;
+      signUp(data: { email: string; password: string }): Promise<any>;
+      signOut(): Promise<any>;
     };
-    from(table: string): { select: (columns: string, options?: any) => any; single: () => any; insert: (data: any) => any };
-  }
-}
-
-declare global {
-  namespace NodeJS {
-    interface ProcessEnv {
-      SUPABASE_URL: string;
-      SUPABASE_SERVICE_ROLE_KEY: string;
-    }
+    from(tableName: string): any;
   }
 }

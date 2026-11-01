@@ -1,13 +1,7 @@
 {
-  "name": "inventory-management",
-  "main": "worker.js",
-  "compatibility_date": "2026-10-18",
-  "assets": {
-    "directory": "./public",
-    "binding": "ASSETS",
-    "not_found_handling": "single-page-application"
-  },
-  "vars": {
-    "SUPABASE_URL": "https://iksjhjxwphmvthryfeae.supabase.co"
+  "name": "slamtak",
+  "compatibility_date": "2026-01-15",
+  "pages": {
+    "build_output_dir": "public"
   }
 }
