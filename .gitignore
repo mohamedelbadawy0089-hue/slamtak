@@ -1,26 +1,7 @@
-# Dependencies
 node_modules/
-
-# Build output
-dist/
-
-# TypeScript
-tsconfig.tsbuildinfo
-
-# Environment / secrets
 .env.local
-.secrets/
+*.tsbuildinfo
+dist/
+logs/
 secrets/
-.dev.vars
-*.key
-*.pem
-
-# Runtime
-.nodemon.json
-*.log
-
-# Optional: generated test scaffolding (tests/sales_migration_test.py is checked in as source)
-# supabase/tests/
-
-# Pages worker (يُولَّد أثناء النشر في CI)
-public/_worker.js
+.wrangler/
