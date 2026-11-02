@@ -380,19 +380,20 @@ async function verifySession() {
       access_token: s.access_token,
     };
 
-    // جلب العضوية الحقيقية من user_warehouses: tenant_id + المخزن + الدور (عبر roles)
+    // جلب العضوية الحقيقية والفعليّة فقط من user_warehouses - بدون أي افتراضات
     try {
       const uw = await client.from('user_warehouses')
-        .select('tenant_id, warehouse_id, is_default, role_id, role:roles(name)')
+        .select('tenant_id, warehouse_id, is_default, role_id, role:roles(name), created_at')
         .eq('user_id', user.id)
-        .order('is_default', { ascending: false })
-        .limit(10);
+        .order('created_at', { ascending: true })
+        .limit(20);
       const membershipRows = uw && Array.isArray(uw.data) ? uw.data : [];
       if (membershipRows.length) {
-        const preferred = membershipRows.find((r) => r && r.is_default) || membershipRows[0];
+        // الاعتماد على العضوية الفعلية الوحيدة أو الأولى حسب السجل الحقيقي
+        const preferred = membershipRows[0];
         appSession.tenant_id = preferred.tenant_id || "";
-        appSession.warehouse_id = preferred.warehouse_id || appSession.warehouse_id || "";
-        // الدور الحقيقي يحدد اللوحة: manager/owner/admin → لوحة المدير، غير ذلك → لوحة الموظف
+        appSession.warehouse_id = preferred.warehouse_id || "";
+        // الدور الحقيقي يحدد اللوحة بدقة
         const roleName = pickRoleName(preferred);
         if (roleName) appSession.role = roleName;
         appSession.memberships = membershipRows.map((r) => ({ tenant_id: r.tenant_id, warehouse_id: r.warehouse_id, role: pickRoleName(r) }));
