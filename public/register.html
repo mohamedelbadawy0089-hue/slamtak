@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>تسجيل مخزن جديد - Slamtak ERP</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <h1>
+      🆕 إنشاء مخزن جديد
+    </h1>
+    <div class="card">
+      <label>اسم المخزن
+        <input type="text" name="warehouse" required placeholder="مثال: مخزن القاهرة" style="width:100%;padding:0.5rem;margin-top:0.25rem;" />
+      </label>
+      <label>رقم التليفون
+        <input type="tel" name="phone" required placeholder="01012345678" inputmode="numeric" style="width:100%;padding:0.5rem;margin-top:0.25rem;" />
+      </label>
+      <label>المحافظة (قائمة تدعم البحث)
+        <div style="position:relative;">
+          <input type="text" id="governorate-input" name="governorate" required autocomplete="off" placeholder="اكتب للبحث... مثال: القاهرة" style="width:100%;padding:0.5rem;margin-top:0.25rem;box-sizing:border-box;" />
+          <div id="governorate-menu" style="display:none;position:absolute;top:100%;right:0;left:0;background:#fff;border:1px solid #ccc;border-radius:6px;max-height:200px;overflow-y:auto;z-index:50;box-shadow:0 4px 12px rgba(0,0,0,0.15);"></div>
+        </div>
+      </label>
+      <label>البريد الإلكتروني
+        <input type="email" name="email" required placeholder="user@example.com" style="width:100%;padding:0.5rem;margin-top:0.25rem;" />
+      </label>
+      <label>كلمة المرور
+        <input type="password" name="password" required minlength="6" placeholder="••••••" style="width:100%;padding:0.5rem;margin-top:0.25rem;" />
+      </label>
+      <label>تأكيد كلمة المرور
+        <input type="password" name="password2" required minlength="6" placeholder="••••••" style="width:100%;padding:0.5rem;margin-top:0.25rem;" />
+      </label>
+      <label>كلمة مرور المدير
+        <input type="password" name="admin_password" required minlength="6" placeholder="••••••" style="width:100%;padding:0.5rem;margin-top:0.25rem;" />
+      </label>
+      <label>تأكيد كلمة مرور المدير
+        <input type="password" name="admin_password2" required minlength="6" placeholder="••••••" style="width:100%;padding:0.5rem;margin-top:0.25rem;" />
+      </label>
+      <p id="auth-form-error" style="color:#d33;min-height:1.2em;margin:0;"></p>
+      <button class="btn primary" type="submit">تسجيل المخزن</button>
+      <p class="muted" style="font-size:0.85rem;margin:0;">مصادقة حقيقية عبر Supabase — تُحمى قاعدة البيانات بسياسات الأمان (RLS).</p>
+      <a class="btn" data-link href="/login">لدي حساب بالفعل — تسجيل دخول</a>
+      <a class="btn" data-link href="/">← العودة للرئيسية</a>
+    </div>
+  </div>
+
+  <script src="supabase-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Test</title>
+</head>
+<body>
+  <div id="app"></div>
+  <script src="https://slamtak.pages.dev/supabase-config.js"></script>
+  <script src="https://slamtak.pages.dev/supabase.js"></script>
+  <script>
+    window.addEventListener('load', function() {
+      console.log('window.SUPABASE_CONFIG:', !!window.SUPABASE_CONFIG);
+      console.log('window.supabase:', !!window.supabase);
+      console.log('window.supabase.createClient:', typeof window.supabase.createClient);
+      try {
+        var sb = window.supabase.createClient(
+          window.SUPABASE_CONFIG.url,
+          window.SUPABASE_CONFIG.anonKey,
+          {auth: {persistSession: true}}
+        );
+        console.log('createClient OK, sb.auth:', typeof sb.auth);
+      } catch(e) {
+        console.log('createClient ERROR:', e.message);
+      }
+    });
+  </script>
+</body>
+</html>

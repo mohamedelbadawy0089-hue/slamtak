@@ -1,1 +1,21 @@
-{"name":"slamtak","version":"1.0.0","private":true,"scripts":{"dev":"node start.js","build":"tsc","start":"node start.js"},"dependencies":{"@supabase/supabase-js":"^2.0.0","wrangler":"^3.0.0"},"devDependencies":{"@babel/parser":"^7.0.0","@babel/generator":"^7.0.0","@babel/traverse":"^7.0.0","typescript":"^5.0.0"}}
+{
+  "name": "slamtak",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "node start.js",
+    "build": "tsc",
+    "start": "node start.js",
+    "deploy:prod": "wrangler pages deploy ./public --project-name slamtak --branch main --commit-dirty=true"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.0.0",
+    "wrangler": "^3.0.0"
+  },
+  "devDependencies": {
+    "@babel/parser": "^7.0.0",
+    "@babel/generator": "^7.0.0",
+    "@babel/traverse": "^7.0.0",
+    "typescript": "^5.0.0"
+  }
+}

@@ -8,11 +8,38 @@
   <meta http-equiv="Expires" content="0" />
   <title>نظام إدارة المخزن</title>
   <link rel="stylesheet" href="styles.css" />
+
 </head>
 <body>
+  <!-- Delivery promotion banner (optional) -->
   <div id="app"></div>
+  <!-- Supabase: public config + client library (real auth & PostgreSQL via RLS) -->
   <script src="supabase-config.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-  <script src="app.js"></script>
+  <script src="supabase.js"></script>
+  <!-- Load app.js last with cache-busting to ensure all routers/libs are loaded first -->
+  <script src="module-pages.js?v=202610290403"></script>
+  <script src="rbac-pages.js?v=202610290401"></script>
+  <script src="tenant-context.js"></script>
+  <script src="tenant-helper.js"></script>
+  <script src="dashboard-tenant.js"></script>
+  <script src="employee-permissions.js"></script>
+  <script src="post-login-setup.js"></script>
+  <script src="super-admin.js"></script>
+  <script src="subscriptions-manager.js"></script>
+  ''<script src="audit-check.js"></script>
+  <script src="ai-inventory.js"></script>
+  <script src="tenant-query-filter.js"></script>
+  <script src="dashboard-tenant.js"></script>
+  <script src="app.js?v=202610290405"></script>
+  <!-- Conditional Eruda debugging tool - only loads when debug=true in URL -->
+  <script>
+    // تحميل Eruda فقط إذا كان الرابط يحتوي على debug=true
+    if (window.location.search.includes('debug=true')) {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/eruda';
+      script.onload = function () { eruda.init(); };
+      document.head.appendChild(script);
+    }
+  </script>
 </body>
 </html>
