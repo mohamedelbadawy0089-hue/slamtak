@@ -271,7 +271,7 @@ const MODULE_ROUTES = ["/inventory", "/receiving", "/sales", "/purchases", "/pur
   "/hr", "/hr/dashboard", "/hr/employees", "/hr/employees/new", "/hr/departments", "/hr/attendance", "/hr/leaves", "/hr/payroll", "/hr/recruitment", "/hr/performance", "/hr/assets", "/hr/settings",
   "/pricing", "/pricing/price-lists", "/pricing/promotions", "/pricing/discounts", "/pricing/segments", "/pricing/approvals", "/pricing/reports", "/team", "/team/new", "/team/roles", "/team/audit",
   "/ai", "/ai/predictions", "/ai/alerts", "/ai/models",
-  "/employee"];
+  "/employee", "/platform-admin"];
 
 // --- Strict Authentication Guard ---
 // All routes that require a verified warehouse session before they may render.
@@ -805,6 +805,18 @@ async function render() {
   renderRouteView(routePath, null);
 }
 
+// فحص مدير المنصة
+async function isPlatformAdmin(){
+  try {
+    const client = getSupabase();
+    if(!client) return false;
+    const u = await client.auth.getUser();
+    if(!u?.data?.user) return false;
+    const { data } = await client.from('profiles').select('is_platform_admin').eq('id', u.data.user.id).maybeSingle();
+    return !!(data && data.is_platform_admin);
+  } catch(e){ return false; }
+}
+
 // --- لوحة الموظف (Employee Dashboard) ---
 // منفصلة عن لوحة المدير: بياناتها وخياراتها محصورة بنفس tenant_id للمخزن الذي أضافه
 // مديره. قبل الرسم تُعاد كتابة سياق RLS (set_tenant_context) حتى تبقى كل استعلامات
@@ -897,6 +909,24 @@ function renderEmployeeView(appEl, session) {
   })();
 }
 
+// --- لوحة تحكم مدير المنصة (Platform Admin) ---
+async function renderPlatformAdmin(appEl, session){
+  const s = session || getValidSession() || {};
+  const client = getSupabase();
+  appEl.innerHTML = `<div class="page"><header class="app-header"><h1>🛡️ لوحة تحكم مدير المنصة</h1><button class="btn" id="pa-logout">تسجيل الخروج</button></header><main style="padding:1rem;"><div class="card"><h3>الحسابات والمخازن</h3><div id="pa-list">جارٍ التحميل...</div></div></main></div>`;
+  document.getElementById('pa-logout')?.addEventListener('click', async()=>{ try{ if(client) await client.auth.signOut(); }catch(_){} clearSession(); clearStep2Mark(); navigate('/login');});
+  try {
+    // try to load
+    const res = await fetch('/api/platform/admin/overview').catch(()=>null);
+    if(res && res.ok){
+      const data = await res.json();
+      document.getElementById('pa-list').innerHTML = '<pre style="white-space:pre-wrap">'+escapeHtml(JSON.stringify(data,null,2))+'</pre>';
+    } else {
+      document.getElementById('pa-list').innerHTML = '<p class="muted">يتطلب صلاحيات مدير منصة. (يمكن تعيين is_platform_admin في profiles)</p>';
+    }
+  } catch(e){ document.getElementById('pa-list').innerHTML = '<p class="muted">خطأ في التحميل</p>'; }
+}
+
 // Renders the view for a route whose URL is already correct (no history changes).
 // This breaks the pushState -> render -> navigate infinite recursion.
 function renderRouteView(routePath, session) {
@@ -924,6 +954,10 @@ function renderRouteView(routePath, session) {
   // لوحة الموظف: منفصلة عن لوحة المدير وعمرها نفس tenant_id المخزن
   if (routePath === "/employee") {
     renderEmployeeView(appEl, session);
+    return;
+  }
+  if (routePath === "/platform-admin") {
+    renderPlatformAdmin(appEl, session);
     return;
   }
 

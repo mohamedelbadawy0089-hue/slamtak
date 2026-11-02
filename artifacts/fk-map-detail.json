@@ -1,0 +1,604 @@
+[
+ {
+  "table": "attendance",
+  "fks": [
+   {
+    "child_col": "employee_id",
+    "parent_table": "employees",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "shift_id",
+    "parent_table": "shifts",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "employee_assets",
+  "fks": [
+   {
+    "child_col": "employee_id",
+    "parent_table": "employees",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "employee_contracts",
+  "fks": [
+   {
+    "child_col": "employee_id",
+    "parent_table": "employees",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "employee_documents",
+  "fks": [
+   {
+    "child_col": "employee_id",
+    "parent_table": "employees",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "employee_loans",
+  "fks": [
+   {
+    "child_col": "employee_id",
+    "parent_table": "employees",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "employee_movements",
+  "fks": [
+   {
+    "child_col": "employee_id",
+    "parent_table": "employees",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "new_department_id",
+    "parent_table": "departments",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "new_job_title_id",
+    "parent_table": "job_titles",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "new_warehouse_id",
+    "parent_table": "warehouses",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "old_department_id",
+    "parent_table": "departments",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "old_job_title_id",
+    "parent_table": "job_titles",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "old_warehouse_id",
+    "parent_table": "warehouses",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "goods_receipt_items",
+  "fks": [
+   {
+    "child_col": "goods_receipt_id",
+    "parent_table": "goods_receipts",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "product_id",
+    "parent_table": "products",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "journal_entry_lines",
+  "fks": [
+   {
+    "child_col": "account_id",
+    "parent_table": "chart_of_accounts",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "entry_id",
+    "parent_table": "journal_entries",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "leave_balances",
+  "fks": [
+   {
+    "child_col": "employee_id",
+    "parent_table": "employees",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "leave_type_id",
+    "parent_table": "leave_types",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "leave_requests",
+  "fks": [
+   {
+    "child_col": "approved_by",
+    "parent_table": "employees",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "employee_id",
+    "parent_table": "employees",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "leave_type_id",
+    "parent_table": "leave_types",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "leave_types",
+  "fks": [
+   {
+    "child_col": "company_id",
+    "parent_table": "companies",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "payroll_items",
+  "fks": [
+   {
+    "child_col": "employee_id",
+    "parent_table": "warehouse_employees",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "payroll_run_id",
+    "parent_table": "payroll_runs",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "payroll_settlements",
+  "fks": [
+   {
+    "child_col": "employee_id",
+    "parent_table": "warehouse_employees",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "payroll_run_id",
+    "parent_table": "payroll_runs",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "payslips",
+  "fks": [
+   {
+    "child_col": "employee_id",
+    "parent_table": "employees",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "payroll_run_id",
+    "parent_table": "payroll_runs",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "performance_reviews",
+  "fks": [
+   {
+    "child_col": "employee_id",
+    "parent_table": "employees",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "reviewer_id",
+    "parent_table": "employees",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "price_list_items",
+  "fks": [
+   {
+    "child_col": "price_list_id",
+    "parent_table": "price_lists",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "product_id",
+    "parent_table": "products",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "price_list_segments",
+  "fks": [
+   {
+    "child_col": "price_list_id",
+    "parent_table": "price_lists",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "segment_id",
+    "parent_table": "customer_segments",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "promotion_customers",
+  "fks": [
+   {
+    "child_col": "customer_id",
+    "parent_table": "customers",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "promotion_id",
+    "parent_table": "promotions",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "segment_id",
+    "parent_table": "customer_segments",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "promotion_items",
+  "fks": [
+   {
+    "child_col": "product_id",
+    "parent_table": "products",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "promotion_id",
+    "parent_table": "promotions",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "promotion_usage",
+  "fks": [
+   {
+    "child_col": "customer_id",
+    "parent_table": "customers",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "promotion_id",
+    "parent_table": "promotions",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "sales_invoice_id",
+    "parent_table": "sales_invoices",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "sales_order_id",
+    "parent_table": "sales_orders",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "purchase_invoice_items",
+  "fks": [
+   {
+    "child_col": "product_id",
+    "parent_table": "products",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "purchase_invoice_id",
+    "parent_table": "purchase_invoices",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "purchase_order_items",
+  "fks": [
+   {
+    "child_col": "product_id",
+    "parent_table": "products",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "purchase_order_id",
+    "parent_table": "purchase_orders",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "purchase_request_items",
+  "fks": [
+   {
+    "child_col": "product_id",
+    "parent_table": "products",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "request_id",
+    "parent_table": "purchase_requests",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "return_items",
+  "fks": [
+   {
+    "child_col": "product_id",
+    "parent_table": "products",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "return_id",
+    "parent_table": "returns",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "role_permissions",
+  "fks": [
+   {
+    "child_col": "role_id",
+    "parent_table": "roles",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "permission_id",
+    "parent_table": "permissions",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "sales_invoice_items",
+  "fks": [
+   {
+    "child_col": "product_id",
+    "parent_table": "products",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "sales_invoice_id",
+    "parent_table": "sales_invoices",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "sales_order_items",
+  "fks": [
+   {
+    "child_col": "product_id",
+    "parent_table": "products",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "sales_order_id",
+    "parent_table": "sales_orders",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "sales_quote_items",
+  "fks": [
+   {
+    "child_col": "product_id",
+    "parent_table": "products",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "quote_id",
+    "parent_table": "sales_quotes",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "settings",
+  "fks": []
+ },
+ {
+  "table": "shifts",
+  "fks": [
+   {
+    "child_col": "company_id",
+    "parent_table": "companies",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "stock_transfer_items",
+  "fks": [
+   {
+    "child_col": "product_id",
+    "parent_table": "products",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "stock_transfer_id",
+    "parent_table": "stock_transfers",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "password_reset_tokens",
+  "fks": [
+   {
+    "child_col": "user_id",
+    "parent_table": "users",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "refresh_tokens",
+  "fks": [
+   {
+    "child_col": "user_id",
+    "parent_table": "users",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "login_pins",
+  "fks": [
+   {
+    "child_col": "user_id",
+    "parent_table": "profiles",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "preparation_phone",
+  "fks": []
+ },
+ {
+  "table": "warehouse_password_hashes",
+  "fks": []
+ },
+ {
+  "table": "customer_segment_members",
+  "fks": [
+   {
+    "child_col": "customer_id",
+    "parent_table": "customers",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "segment_id",
+    "parent_table": "customer_segments",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "automation_status_transitions",
+  "fks": [
+   {
+    "child_col": "rule_id",
+    "parent_table": "automation_rules",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "candidates",
+  "fks": [
+   {
+    "child_col": "job_opening_id",
+    "parent_table": "job_openings",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "interviews",
+  "fks": [
+   {
+    "child_col": "candidate_id",
+    "parent_table": "candidates",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "interviewer_id",
+    "parent_table": "employees",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "job_openings",
+  "fks": [
+   {
+    "child_col": "company_id",
+    "parent_table": "companies",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "department_id",
+    "parent_table": "departments",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "job_title_id",
+    "parent_table": "job_titles",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "hr_notifications",
+  "fks": [
+   {
+    "child_col": "company_id",
+    "parent_table": "companies",
+    "parent_col": "id"
+   },
+   {
+    "child_col": "recipient_id",
+    "parent_table": "employees",
+    "parent_col": "id"
+   }
+  ]
+ },
+ {
+  "table": "hrm_audit_logs",
+  "fks": [
+   {
+    "child_col": "company_id",
+    "parent_table": "companies",
+    "parent_col": "id"
+   }
+  ]
+ }
+]

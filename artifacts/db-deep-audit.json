@@ -1,0 +1,2129 @@
+[
+ {
+  "table": "tenants",
+  "cols": [
+   {
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": "uuid_generate_v4()"
+   },
+   {
+    "column_name": "name",
+    "data_type": "character varying",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "email",
+    "data_type": "character varying",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "phone",
+    "data_type": "character varying",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "address",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "city",
+    "data_type": "character varying",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "country",
+    "data_type": "character varying",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "postal_code",
+    "data_type": "character varying",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "is_active",
+    "data_type": "boolean",
+    "is_nullable": "NO",
+    "column_default": "true"
+   },
+   {
+    "column_name": "subscription_plan",
+    "data_type": "character varying",
+    "is_nullable": "YES",
+    "column_default": "'basic'::character varying"
+   },
+   {
+    "column_name": "subscription_expiry_date",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "max_warehouses",
+    "data_type": "integer",
+    "is_nullable": "YES",
+    "column_default": "5"
+   },
+   {
+    "column_name": "max_users",
+    "data_type": "integer",
+    "is_nullable": "YES",
+    "column_default": "10"
+   },
+   {
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()"
+   },
+   {
+    "column_name": "updated_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()"
+   },
+   {
+    "column_name": "deleted_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "name_ar",
+    "data_type": "character varying",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "created_by",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "updated_by",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "code",
+    "data_type": "character varying",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "description",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "logo_url",
+    "data_type": "character varying",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "website",
+    "data_type": "character varying",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "subscription_plan_id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "subscription_start_date",
+    "data_type": "date",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "subscription_end_date",
+    "data_type": "date",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "trial_ends_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "settings",
+    "data_type": "jsonb",
+    "is_nullable": "NO",
+    "column_default": "'{}'::jsonb"
+   }
+  ]
+ },
+ {
+  "table": "organizations",
+  "cols": [
+   {
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+   },
+   {
+    "column_name": "name",
+    "data_type": "text",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "kind",
+    "data_type": "text",
+    "is_nullable": "NO",
+    "column_default": "'warehouse'::text"
+   },
+   {
+    "column_name": "owner_user_id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "tax_registration_no",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "manager_password_hash",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()"
+   },
+   {
+    "column_name": "updated_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()"
+   }
+  ]
+ },
+ {
+  "table": "warehouses",
+  "cols": [
+   {
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": "uuid_generate_v4()"
+   },
+   {
+    "column_name": "tenant_id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "name",
+    "data_type": "character varying",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "code",
+    "data_type": "character varying",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "address",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "city",
+    "data_type": "character varying",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "country",
+    "data_type": "character varying",
+    "is_nullable": "NO",
+    "column_default": "'Egypt'::character varying"
+   },
+   {
+    "column_name": "postal_code",
+    "data_type": "character varying",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "is_main",
+    "data_type": "boolean",
+    "is_nullable": "NO",
+    "column_default": "false"
+   },
+   {
+    "column_name": "is_active",
+    "data_type": "boolean",
+    "is_nullable": "NO",
+    "column_default": "true"
+   },
+   {
+    "column_name": "latitude",
+    "data_type": "numeric",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "longitude",
+    "data_type": "numeric",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "manager_id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "contact_person",
+    "data_type": "character varying",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "contact_phone",
+    "data_type": "character varying",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "contact_email",
+    "data_type": "character varying",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()"
+   },
+   {
+    "column_name": "updated_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()"
+   },
+   {
+    "column_name": "deleted_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "password_hash",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "phone",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "governorate",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+   }
+  ]
+ },
+ {
+  "table": "user_warehouses",
+  "cols": [
+   {
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+   },
+   {
+    "column_name": "user_id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "warehouse_id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "is_default",
+    "data_type": "boolean",
+    "is_nullable": "YES",
+    "column_default": "false"
+   },
+   {
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "column_default": "CURRENT_TIMESTAMP"
+   },
+   {
+    "column_name": "tenant_id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "permissions",
+    "data_type": "jsonb",
+    "is_nullable": "YES",
+    "column_default": "'{}'::jsonb"
+   },
+   {
+    "column_name": "role_id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "is_active",
+    "data_type": "boolean",
+    "is_nullable": "NO",
+    "column_default": "true"
+   }
+  ]
+ },
+ {
+  "table": "roles",
+  "cols": [
+   {
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": "uuid_generate_v4()"
+   },
+   {
+    "column_name": "name",
+    "data_type": "character varying",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "description",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "permissions",
+    "data_type": "jsonb",
+    "is_nullable": "YES",
+    "column_default": "'{}'::jsonb"
+   },
+   {
+    "column_name": "is_system",
+    "data_type": "boolean",
+    "is_nullable": "YES",
+    "column_default": "false"
+   },
+   {
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()"
+   },
+   {
+    "column_name": "updated_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()"
+   },
+   {
+    "column_name": "deleted_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "tenant_id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "created_by",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "updated_by",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "name_ar",
+    "data_type": "character varying",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "is_system_role",
+    "data_type": "boolean",
+    "is_nullable": "NO",
+    "column_default": "false"
+   },
+   {
+    "column_name": "is_active",
+    "data_type": "boolean",
+    "is_nullable": "NO",
+    "column_default": "true"
+   }
+  ]
+ },
+ {
+  "table": "profiles",
+  "cols": [
+   {
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "full_name",
+    "data_type": "text",
+    "is_nullable": "NO",
+    "column_default": "''::text"
+   },
+   {
+    "column_name": "phone",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "governorate",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "role",
+    "data_type": "text",
+    "is_nullable": "NO",
+    "column_default": "'viewer'::text"
+   },
+   {
+    "column_name": "is_active",
+    "data_type": "boolean",
+    "is_nullable": "NO",
+    "column_default": "true"
+   },
+   {
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()"
+   },
+   {
+    "column_name": "updated_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()"
+   }
+  ]
+ },
+ {
+  "table": "permissions",
+  "cols": [
+   {
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+   },
+   {
+    "column_name": "name",
+    "data_type": "character varying",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "description",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "module",
+    "data_type": "character varying",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "action",
+    "data_type": "character varying",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "resource",
+    "data_type": "character varying",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "CURRENT_TIMESTAMP"
+   },
+   {
+    "column_name": "updated_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "CURRENT_TIMESTAMP"
+   },
+   {
+    "column_name": "category",
+    "data_type": "text",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "name_ar",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "sort_order",
+    "data_type": "integer",
+    "is_nullable": "NO",
+    "column_default": "100"
+   },
+   {
+    "column_name": "is_enforced",
+    "data_type": "boolean",
+    "is_nullable": "NO",
+    "column_default": "false"
+   }
+  ]
+ },
+ {
+  "table": "role_permissions",
+  "cols": [
+   {
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+   },
+   {
+    "column_name": "role_id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "permission_id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "column_default": "CURRENT_TIMESTAMP"
+   }
+  ]
+ },
+ {
+  "table": "settings",
+  "cols": [
+   {
+    "column_name": "id",
+    "data_type": "integer",
+    "is_nullable": "NO",
+    "column_default": "nextval('settings_id_seq'::regclass)"
+   },
+   {
+    "column_name": "key",
+    "data_type": "character varying",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "value",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "updated_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "column_default": "now()"
+   }
+  ]
+ },
+ {
+  "table": "subscription_plans",
+  "cols": [
+   {
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+   },
+   {
+    "column_name": "name",
+    "data_type": "character varying",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "name_ar",
+    "data_type": "character varying",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "description",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "price_monthly",
+    "data_type": "numeric",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "price_yearly",
+    "data_type": "numeric",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "max_warehouses",
+    "data_type": "integer",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "max_users",
+    "data_type": "integer",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "max_products",
+    "data_type": "integer",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "features",
+    "data_type": "jsonb",
+    "is_nullable": "NO",
+    "column_default": "'[]'::jsonb"
+   },
+   {
+    "column_name": "is_active",
+    "data_type": "boolean",
+    "is_nullable": "YES",
+    "column_default": "true"
+   },
+   {
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "column_default": "CURRENT_TIMESTAMP"
+   },
+   {
+    "column_name": "updated_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "column_default": "CURRENT_TIMESTAMP"
+   },
+   {
+    "column_name": "deleted_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "column_default": null
+   }
+  ]
+ },
+ {
+  "table": "master_products",
+  "cols": [
+   {
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": "uuid_generate_v4()"
+   },
+   {
+    "column_name": "name_en",
+    "data_type": "text",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "active_ingredient",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "concentration",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "pharmaceutical_form",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "manufacturer",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "base_price_egp",
+    "data_type": "numeric",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "column_default": "now()"
+   }
+  ]
+ },
+ {
+  "table": "audit_logs",
+  "cols": [
+   {
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": "uuid_generate_v4()"
+   },
+   {
+    "column_name": "tenant_id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "user_id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "action",
+    "data_type": "character varying",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "entity_type",
+    "data_type": "character varying",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "entity_id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "old_values",
+    "data_type": "jsonb",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "new_values",
+    "data_type": "jsonb",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "ip_address",
+    "data_type": "character varying",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "user_agent",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()"
+   },
+   {
+    "column_name": "warehouse_id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "updated_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "CURRENT_TIMESTAMP"
+   }
+  ]
+ },
+ {
+  "table": "hrm_audit_logs",
+  "cols": [
+   {
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+   },
+   {
+    "column_name": "company_id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "user_id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "user_name",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "action",
+    "data_type": "text",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "entity_type",
+    "data_type": "text",
+    "is_nullable": "NO",
+    "column_default": null
+   },
+   {
+    "column_name": "entity_id",
+    "data_type": "uuid",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "old_values",
+    "data_type": "jsonb",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "new_values",
+    "data_type": "jsonb",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "ip_address",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "user_agent",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
+   },
+   {
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()"
+   }
+  ]
+ },
+ {
+  "policies_of": "tenants",
+  "rows": [
+   {
+    "polname": "tenants_client_read",
+    "polcmd": "r",
+    "polroles": [
+     16481
+    ],
+    "using_q": "(id = ( SELECT (NULLIF(current_setting('app.current_tenant_id'::text, true), ''::text))::uuid AS \"nullif\"))",
+    "check_q": null
+   }
+  ]
+ },
+ {
+  "policies_of": "warehouses",
+  "rows": [
+   {
+    "polname": "warehouses_client_read",
+    "polcmd": "r",
+    "polroles": [
+     16481
+    ],
+    "using_q": "((tenant_id = ( SELECT (NULLIF(current_setting('app.current_tenant_id'::text, true), ''::text))::uuid AS \"nullif\")) AND (id = ( SELECT (NULLIF(current_setting('app.current_warehouse_id'::text, true), ''::text))::uuid AS \"nullif\")))",
+    "check_q": null
+   }
+  ]
+ },
+ {
+  "policies_of": "user_warehouses",
+  "rows": [
+   {
+    "polname": "app_warehouse_scope",
+    "polcmd": "*",
+    "polroles": [
+     0
+    ],
+    "using_q": "((tenant_id = ( SELECT (NULLIF(current_setting('app.current_tenant_id'::text, true), ''::text))::uuid AS \"nullif\")) AND (warehouse_id = ( SELECT (NULLIF(current_setting('app.current_warehouse_id'::text, true), ''::text))::uuid AS \"nullif\")))",
+    "check_q": "((tenant_id = ( SELECT (NULLIF(current_setting('app.current_tenant_id'::text, true), ''::text))::uuid AS \"nullif\")) AND (warehouse_id = ( SELECT (NULLIF(current_setting('app.current_warehouse_id'::text, true), ''::text))::uuid AS \"nullif\")))"
+   },
+   {
+    "polname": "users_can_read_own_permissions",
+    "polcmd": "r",
+    "polroles": [
+     16481
+    ],
+    "using_q": "((auth.uid() = user_id) OR (EXISTS ( SELECT 1\n   FROM warehouses w\n  WHERE ((w.id = user_warehouses.warehouse_id) AND (w.manager_id = auth.uid())))))",
+    "check_q": null
+   },
+   {
+    "polname": "rb_user_warehouses_read",
+    "polcmd": "r",
+    "polroles": [
+     16481
+    ],
+    "using_q": "((auth.uid() = user_id) OR (EXISTS ( SELECT 1\n   FROM warehouses w\n  WHERE ((w.id = user_warehouses.warehouse_id) AND (w.manager_id = auth.uid())))) OR (EXISTS ( SELECT 1\n   FROM profiles p\n  WHERE ((p.id = auth.uid()) AND (p.role = ANY (ARRAY['super_admin'::text, 'admin'::text, 'owner'::text]))))))",
+    "check_q": null
+   }
+  ]
+ },
+ {
+  "policies_of": "roles",
+  "rows": [
+   {
+    "polname": "rb_roles_read",
+    "polcmd": "r",
+    "polroles": [
+     16481
+    ],
+    "using_q": "(deleted_at IS NULL)",
+    "check_q": null
+   }
+  ]
+ },
+ {
+  "policies_of": "profiles",
+  "rows": [
+   {
+    "polname": "Users can view own profile",
+    "polcmd": "r",
+    "polroles": [
+     16481
+    ],
+    "using_q": "(auth.uid() = id)",
+    "check_q": null
+   },
+   {
+    "polname": "profiles_read_warehouse_scope",
+    "polcmd": "r",
+    "polroles": [
+     16481
+    ],
+    "using_q": "((id = auth.uid()) OR (wms_ctx_role() = ANY (ARRAY['super_admin'::text, 'super-admin'::text, 'admin'::text, 'owner'::text])) OR wms_same_warehouse_user(id))",
+    "check_q": null
+   }
+  ]
+ },
+ {
+  "policies_of": "permissions",
+  "rows": [
+   {
+    "polname": "permissions_select_authenticated",
+    "polcmd": "r",
+    "polroles": [
+     16481
+    ],
+    "using_q": "true",
+    "check_q": null
+   },
+   {
+    "polname": "rb_permissions_read",
+    "polcmd": "r",
+    "polroles": [
+     16481
+    ],
+    "using_q": "true",
+    "check_q": null
+   }
+  ]
+ },
+ {
+  "policies_of": "role_permissions",
+  "rows": [
+   {
+    "polname": "rb_role_permissions_read",
+    "polcmd": "r",
+    "polroles": [
+     16481
+    ],
+    "using_q": "true",
+    "check_q": null
+   }
+  ]
+ },
+ {
+  "policies_of": "subscription_plans",
+  "rows": [
+   {
+    "polname": "subscription_plans_client_read",
+    "polcmd": "r",
+    "polroles": [
+     16481
+    ],
+    "using_q": "(current_tenant_id() IS NOT NULL)",
+    "check_q": null
+   },
+   {
+    "polname": "subscription_plans_select_authenticated",
+    "polcmd": "r",
+    "polroles": [
+     16481
+    ],
+    "using_q": "true",
+    "check_q": null
+   }
+  ]
+ },
+ {
+  "policies_of": "master_products",
+  "rows": [
+   {
+    "polname": "Allow authenticated read access",
+    "polcmd": "r",
+    "polroles": [
+     16481
+    ],
+    "using_q": "true",
+    "check_q": null
+   },
+   {
+    "polname": "Allow anon read access",
+    "polcmd": "r",
+    "polroles": [
+     16480
+    ],
+    "using_q": "true",
+    "check_q": null
+   },
+   {
+    "polname": "rbac_read_gate",
+    "polcmd": "r",
+    "polroles": [
+     16481
+    ],
+    "using_q": "rbac_can_view_module('products'::text)",
+    "check_q": null
+   }
+  ]
+ },
+ {
+  "policies_of": "audit_logs",
+  "rows": [
+   {
+    "polname": "audit_logs_client_read",
+    "polcmd": "r",
+    "polroles": [
+     16481
+    ],
+    "using_q": "((wms_ctx_role() = ANY (ARRAY['super_admin'::text, 'super-admin'::text, 'admin'::text, 'owner'::text])) OR ((wms_ctx_warehouse_id() IS NOT NULL) AND (NOT (warehouse_id IS DISTINCT FROM wms_ctx_warehouse_id())) AND (NOT (tenant_id IS DISTINCT FROM wms_ctx_tenant_id()))) OR ((warehouse_id IS NULL) AND (wms_ctx_warehouse_id() IS NULL)))",
+    "check_q": null
+   }
+  ]
+ },
+ {
+  "policies_of": "hrm_audit_logs",
+  "rows": [
+   {
+    "polname": "Enable insert for authenticated users",
+    "polcmd": "a",
+    "polroles": [
+     16481
+    ],
+    "using_q": null,
+    "check_q": "true"
+   },
+   {
+    "polname": "Enable read access for authenticated users",
+    "polcmd": "r",
+    "polroles": [
+     16481
+    ],
+    "using_q": "true",
+    "check_q": null
+   }
+  ]
+ },
+ {
+  "policies_of": "sales_invoice_items",
+  "rows": [
+   {
+    "polname": "app_wh_parent_scope",
+    "polcmd": "*",
+    "using_q": "((EXISTS ( SELECT 1\n   FROM products parent_row\n  WHERE ((parent_row.id = sales_invoice_items.product_id) AND (parent_row.tenant_id = ( SELECT (NULLIF(current_setting('app.current_tenant_id'::text, true), ''::text))::uuid AS \"nullif\")) AND (parent_row.warehouse_id = ( SELECT (NULLIF(current_setting('app.current_warehouse_id'::text, true), ''::text))::uuid AS \"nullif\"))))) AND (EXISTS ( SELECT 1\n   FROM sales_invoices parent_row\n  WHERE ((parent_row.id = sales_invoice_items.sales_invoice_id) AND (parent_row.tenant_id = ( SELECT (NULLIF(current_setting('app.current_tenant_id'::text, true), ''::text))::uuid AS \"nullif\")) AND (parent_row.warehouse_id = ( SELECT (NULLIF(current_setting('app.current_warehouse_id'::text, true), ''::text))::uuid AS \"nullif\"))))))",
+    "check_q": "((EXISTS ( SELECT 1\n   FROM products parent_row\n  WHERE ((parent_row.id = sales_invoice_items.product_id) AND (parent_row.tenant_id = ( SELECT (NULLIF(current_setting('app.current_tenant_id'::text, true), ''::text))::uuid AS \"nullif\")) AND (parent_row.warehouse_id = ( SELECT (NULLIF(current_setting('app.current_warehouse_id'::text, true), ''::text))::uuid AS \"nullif\"))))) AND (EXISTS ( SELECT 1\n   FROM sales_invoices parent_row\n  WHERE ((parent_row.id = sales_invoice_items.sales_invoice_id) AND (parent_row.tenant_id = ( SELECT (NULLIF(current_setting('app.current_tenant_id'::text, true), ''::text))::uuid AS \"nullif\")) AND (parent_row.warehouse_id = ( SELECT (NULLIF(current_setting('app.current_warehouse_id'::text, true), ''::text))::uuid AS \"nullif\"))))))"
+   },
+   {
+    "polname": "rbac_read_gate",
+    "polcmd": "r",
+    "using_q": "rbac_can_view_module('sales'::text)",
+    "check_q": null
+   }
+  ]
+ },
+ {
+  "policies_of": "return_items",
+  "rows": [
+   {
+    "polname": "app_wh_parent_scope",
+    "polcmd": "*",
+    "using_q": "((EXISTS ( SELECT 1\n   FROM returns parent_row\n  WHERE ((parent_row.id = return_items.return_id) AND (parent_row.tenant_id = ( SELECT (NULLIF(current_setting('app.current_tenant_id'::text, true), ''::text))::uuid AS \"nullif\")) AND (parent_row.warehouse_id = ( SELECT (NULLIF(current_setting('app.current_warehouse_id'::text, true), ''::text))::uuid AS \"nullif\"))))) AND (EXISTS ( SELECT 1\n   FROM products parent_row\n  WHERE ((parent_row.id = return_items.product_id) AND (parent_row.tenant_id = ( SELECT (NULLIF(current_setting('app.current_tenant_id'::text, true), ''::text))::uuid AS \"nullif\")) AND (parent_row.warehouse_id = ( SELECT (NULLIF(current_setting('app.current_warehouse_id'::text, true), ''::text))::uuid AS \"nullif\"))))))",
+    "check_q": "((EXISTS ( SELECT 1\n   FROM returns parent_row\n  WHERE ((parent_row.id = return_items.return_id) AND (parent_row.tenant_id = ( SELECT (NULLIF(current_setting('app.current_tenant_id'::text, true), ''::text))::uuid AS \"nullif\")) AND (parent_row.warehouse_id = ( SELECT (NULLIF(current_setting('app.current_warehouse_id'::text, true), ''::text))::uuid AS \"nullif\"))))) AND (EXISTS ( SELECT 1\n   FROM products parent_row\n  WHERE ((parent_row.id = return_items.product_id) AND (parent_row.tenant_id = ( SELECT (NULLIF(current_setting('app.current_tenant_id'::text, true), ''::text))::uuid AS \"nullif\")) AND (parent_row.warehouse_id = ( SELECT (NULLIF(current_setting('app.current_warehouse_id'::text, true), ''::text))::uuid AS \"nullif\"))))))"
+   }
+  ]
+ },
+ {
+  "policies_of": "payroll_items",
+  "rows": [
+   {
+    "polname": "payroll_items_member",
+    "polcmd": "*",
+    "using_q": "(EXISTS ( SELECT 1\n   FROM (payroll_runs pr\n     JOIN user_warehouses uw ON ((uw.warehouse_id = pr.warehouse_id)))\n  WHERE ((pr.id = payroll_items.payroll_run_id) AND (uw.user_id = auth.uid()))))",
+    "check_q": "(EXISTS ( SELECT 1\n   FROM (payroll_runs pr\n     JOIN user_warehouses uw ON ((uw.warehouse_id = pr.warehouse_id)))\n  WHERE ((pr.id = payroll_items.payroll_run_id) AND (uw.user_id = auth.uid()))))"
+   },
+   {
+    "polname": "payroll_items_read_gate",
+    "polcmd": "r",
+    "using_q": "(EXISTS ( SELECT 1\n   FROM payroll_runs pr\n  WHERE ((pr.id = payroll_items.payroll_run_id) AND ((pr.warehouse_id)::text = ANY ((rbac_view_warehouses('payroll'::text))::text[])))))",
+    "check_q": null
+   }
+  ]
+ },
+ {
+  "policies_of": "profiles",
+  "rows": [
+   {
+    "polname": "Users can view own profile",
+    "polcmd": "r",
+    "using_q": "(auth.uid() = id)",
+    "check_q": null
+   },
+   {
+    "polname": "profiles_read_warehouse_scope",
+    "polcmd": "r",
+    "using_q": "((id = auth.uid()) OR (wms_ctx_role() = ANY (ARRAY['super_admin'::text, 'super-admin'::text, 'admin'::text, 'owner'::text])) OR wms_same_warehouse_user(id))",
+    "check_q": null
+   }
+  ]
+ },
+ {
+  "policies_of": "settings",
+  "rows": []
+ },
+ {
+  "fkmap": [
+   {
+    "table": "attendance",
+    "fks": [
+     {
+      "child_col": "employee_id",
+      "parent_table": "employees",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "shift_id",
+      "parent_table": "shifts",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "automation_status_transitions",
+    "fks": [
+     {
+      "child_col": "rule_id",
+      "parent_table": "automation_rules",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "candidates",
+    "fks": [
+     {
+      "child_col": "job_opening_id",
+      "parent_table": "job_openings",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "customer_segment_members",
+    "fks": [
+     {
+      "child_col": "customer_id",
+      "parent_table": "customers",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "segment_id",
+      "parent_table": "customer_segments",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "employee_assets",
+    "fks": [
+     {
+      "child_col": "employee_id",
+      "parent_table": "employees",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "employee_contracts",
+    "fks": [
+     {
+      "child_col": "employee_id",
+      "parent_table": "employees",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "employee_documents",
+    "fks": [
+     {
+      "child_col": "employee_id",
+      "parent_table": "employees",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "employee_loans",
+    "fks": [
+     {
+      "child_col": "employee_id",
+      "parent_table": "employees",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "employee_movements",
+    "fks": [
+     {
+      "child_col": "employee_id",
+      "parent_table": "employees",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "new_department_id",
+      "parent_table": "departments",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "new_job_title_id",
+      "parent_table": "job_titles",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "new_warehouse_id",
+      "parent_table": "warehouses",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "old_department_id",
+      "parent_table": "departments",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "old_job_title_id",
+      "parent_table": "job_titles",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "old_warehouse_id",
+      "parent_table": "warehouses",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "goods_receipt_items",
+    "fks": [
+     {
+      "child_col": "goods_receipt_id",
+      "parent_table": "goods_receipts",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "product_id",
+      "parent_table": "products",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "hr_notifications",
+    "fks": [
+     {
+      "child_col": "company_id",
+      "parent_table": "companies",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "recipient_id",
+      "parent_table": "employees",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "hrm_audit_logs",
+    "fks": [
+     {
+      "child_col": "company_id",
+      "parent_table": "companies",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "interviews",
+    "fks": [
+     {
+      "child_col": "candidate_id",
+      "parent_table": "candidates",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "interviewer_id",
+      "parent_table": "employees",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "job_openings",
+    "fks": [
+     {
+      "child_col": "company_id",
+      "parent_table": "companies",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "department_id",
+      "parent_table": "departments",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "job_title_id",
+      "parent_table": "job_titles",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "journal_entry_lines",
+    "fks": [
+     {
+      "child_col": "account_id",
+      "parent_table": "chart_of_accounts",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "entry_id",
+      "parent_table": "journal_entries",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "leave_balances",
+    "fks": [
+     {
+      "child_col": "employee_id",
+      "parent_table": "employees",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "leave_type_id",
+      "parent_table": "leave_types",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "leave_requests",
+    "fks": [
+     {
+      "child_col": "approved_by",
+      "parent_table": "employees",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "employee_id",
+      "parent_table": "employees",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "leave_type_id",
+      "parent_table": "leave_types",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "leave_types",
+    "fks": [
+     {
+      "child_col": "company_id",
+      "parent_table": "companies",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "login_pins",
+    "fks": [
+     {
+      "child_col": "user_id",
+      "parent_table": "profiles",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "payroll_items",
+    "fks": [
+     {
+      "child_col": "employee_id",
+      "parent_table": "warehouse_employees",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "payroll_run_id",
+      "parent_table": "payroll_runs",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "payroll_settlements",
+    "fks": [
+     {
+      "child_col": "employee_id",
+      "parent_table": "warehouse_employees",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "payroll_run_id",
+      "parent_table": "payroll_runs",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "payslips",
+    "fks": [
+     {
+      "child_col": "employee_id",
+      "parent_table": "employees",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "payroll_run_id",
+      "parent_table": "payroll_runs",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "performance_reviews",
+    "fks": [
+     {
+      "child_col": "employee_id",
+      "parent_table": "employees",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "reviewer_id",
+      "parent_table": "employees",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "price_list_items",
+    "fks": [
+     {
+      "child_col": "price_list_id",
+      "parent_table": "price_lists",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "product_id",
+      "parent_table": "products",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "price_list_segments",
+    "fks": [
+     {
+      "child_col": "price_list_id",
+      "parent_table": "price_lists",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "segment_id",
+      "parent_table": "customer_segments",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "promotion_customers",
+    "fks": [
+     {
+      "child_col": "customer_id",
+      "parent_table": "customers",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "promotion_id",
+      "parent_table": "promotions",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "segment_id",
+      "parent_table": "customer_segments",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "promotion_items",
+    "fks": [
+     {
+      "child_col": "product_id",
+      "parent_table": "products",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "promotion_id",
+      "parent_table": "promotions",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "promotion_usage",
+    "fks": [
+     {
+      "child_col": "customer_id",
+      "parent_table": "customers",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "promotion_id",
+      "parent_table": "promotions",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "sales_invoice_id",
+      "parent_table": "sales_invoices",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "sales_order_id",
+      "parent_table": "sales_orders",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "purchase_invoice_items",
+    "fks": [
+     {
+      "child_col": "product_id",
+      "parent_table": "products",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "purchase_invoice_id",
+      "parent_table": "purchase_invoices",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "purchase_order_items",
+    "fks": [
+     {
+      "child_col": "product_id",
+      "parent_table": "products",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "purchase_order_id",
+      "parent_table": "purchase_orders",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "purchase_request_items",
+    "fks": [
+     {
+      "child_col": "product_id",
+      "parent_table": "products",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "request_id",
+      "parent_table": "purchase_requests",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "refresh_tokens",
+    "fks": [
+     {
+      "child_col": "user_id",
+      "parent_table": "users",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "return_items",
+    "fks": [
+     {
+      "child_col": "product_id",
+      "parent_table": "products",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "return_id",
+      "parent_table": "returns",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "role_permissions",
+    "fks": [
+     {
+      "child_col": "role_id",
+      "parent_table": "roles",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "permission_id",
+      "parent_table": "permissions",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "sales_invoice_items",
+    "fks": [
+     {
+      "child_col": "product_id",
+      "parent_table": "products",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "sales_invoice_id",
+      "parent_table": "sales_invoices",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "sales_order_items",
+    "fks": [
+     {
+      "child_col": "product_id",
+      "parent_table": "products",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "sales_order_id",
+      "parent_table": "sales_orders",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "sales_quote_items",
+    "fks": [
+     {
+      "child_col": "product_id",
+      "parent_table": "products",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "quote_id",
+      "parent_table": "sales_quotes",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "settings",
+    "fks": []
+   },
+   {
+    "table": "shifts",
+    "fks": [
+     {
+      "child_col": "company_id",
+      "parent_table": "companies",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "stock_transfer_items",
+    "fks": [
+     {
+      "child_col": "product_id",
+      "parent_table": "products",
+      "parent_col": "id"
+     },
+     {
+      "child_col": "stock_transfer_id",
+      "parent_table": "stock_transfers",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "password_reset_tokens",
+    "fks": [
+     {
+      "child_col": "user_id",
+      "parent_table": "users",
+      "parent_col": "id"
+     }
+    ]
+   },
+   {
+    "table": "preparation_phone",
+    "fks": []
+   },
+   {
+    "table": "warehouse_password_hashes",
+    "fks": []
+   }
+  ]
+ },
+ {
+  "helpers": [
+   {
+    "name": "add_staff_member",
+    "args": "p_tenant_id uuid, p_email text, p_password_hash text, p_staff_password_hash text, p_first_name text, p_last_name text, p_phone text, p_store_permissions jsonb"
+   },
+   {
+    "name": "add_staff_member",
+    "args": "p_tenant_id uuid, p_first_name text, p_last_name text, p_email text, p_password_hash text, p_phone text, p_permissions jsonb"
+   },
+   {
+    "name": "apply_tenant_rls",
+    "args": "p_table regclass"
+   },
+   {
+    "name": "auto_create_warehouse_for_user",
+    "args": ""
+   },
+   {
+    "name": "auto_create_warehouse_on_signup",
+    "args": ""
+   },
+   {
+    "name": "bulk_paste_warehouse_products_flexible",
+    "args": "p_warehouse_id uuid, p_products text"
+   },
+   {
+    "name": "bulk_upsert_warehouse_products_flexible",
+    "args": "p_warehouse_id uuid, p_products jsonb"
+   },
+   {
+    "name": "create_warehouse_on_user_insert",
+    "args": ""
+   },
+   {
+    "name": "create_warehouse_partition",
+    "args": ""
+   },
+   {
+    "name": "current_store_role",
+    "args": ""
+   },
+   {
+    "name": "current_tenant_id",
+    "args": ""
+   },
+   {
+    "name": "current_user_role",
+    "args": ""
+   },
+   {
+    "name": "current_user_warehouse_id",
+    "args": ""
+   },
+   {
+    "name": "current_warehouse_id",
+    "args": ""
+   },
+   {
+    "name": "delete_all_warehouse_products",
+    "args": "p_warehouse_id uuid"
+   },
+   {
+    "name": "delete_my_warehouse_products",
+    "args": ""
+   },
+   {
+    "name": "delete_staff_member",
+    "args": "p_user_id uuid, p_tenant_id uuid"
+   },
+   {
+    "name": "drop_warehouse_partition",
+    "args": ""
+   },
+   {
+    "name": "generate_unique_warehouse_code",
+    "args": ""
+   },
+   {
+    "name": "get_user_warehouse_id",
+    "args": ""
+   },
+   {
+    "name": "get_warehouse_products_flexible",
+    "args": "p_warehouse_id uuid, p_limit integer, p_offset integer, p_search text"
+   },
+   {
+    "name": "handle_new_user_warehouse",
+    "args": ""
+   },
+   {
+    "name": "handle_new_warehouse",
+    "args": ""
+   },
+   {
+    "name": "notify_warehouse_products_flexible_delete",
+    "args": ""
+   },
+   {
+    "name": "notify_warehouse_products_flexible_insert",
+    "args": ""
+   },
+   {
+    "name": "notify_warehouse_products_flexible_update",
+    "args": ""
+   },
+   {
+    "name": "payroll_run_warehouse",
+    "args": "p_run uuid"
+   },
+   {
+    "name": "prevent_warehouse_id_change",
+    "args": ""
+   },
+   {
+    "name": "rbac_member_get",
+    "args": "p_warehouse uuid, p_user_id uuid"
+   },
+   {
+    "name": "rbac_member_set",
+    "args": "p_warehouse uuid, p_user_id uuid, p_role_ids uuid[], p_direct jsonb, p_is_active boolean"
+   },
+   {
+    "name": "rbac_member_set_active",
+    "args": "p_warehouse uuid, p_user_id uuid, p_active boolean"
+   },
+   {
+    "name": "rbac_my_context",
+    "args": ""
+   },
+   {
+    "name": "rbac_role_delete",
+    "args": "p_role_id uuid, p_warehouse uuid"
+   },
+   {
+    "name": "rbac_role_duplicate",
+    "args": "p_role_id uuid, p_name text, p_name_ar text, p_warehouse uuid"
+   },
+   {
+    "name": "rbac_role_get",
+    "args": "p_role_id uuid"
+   },
+   {
+    "name": "rbac_role_upsert",
+    "args": "p_role_id uuid, p_name text, p_name_ar text, p_description text, p_permissions text[], p_warehouse uuid"
+   },
+   {
+    "name": "rbac_roles_list",
+    "args": ""
+   },
+   {
+    "name": "rbac_view_warehouses",
+    "args": "p_module text"
+   },
+   {
+    "name": "register_tenant",
+    "args": "p_store_name text, p_email text, p_phone text, p_city text, p_password_hash text, p_manager_password_hash text, p_code text"
+   },
+   {
+    "name": "resolve_login_role",
+    "args": ""
+   },
+   {
+    "name": "set_active_warehouse_id",
+    "args": ""
+   },
+   {
+    "name": "set_tenant_context",
+    "args": "tenant_id uuid"
+   },
+   {
+    "name": "team_remove_member",
+    "args": "p_warehouse uuid, p_user_id uuid"
+   },
+   {
+    "name": "team_upsert_member",
+    "args": "p_warehouse uuid, p_email text, p_role_name text, p_permissions jsonb"
+   },
+   {
+    "name": "tg_user_warehouses_fill",
+    "args": ""
+   },
+   {
+    "name": "update_staff_member",
+    "args": "p_user_id uuid, p_tenant_id uuid, p_first_name text, p_last_name text, p_phone text, p_is_active boolean, p_permissions jsonb"
+   },
+   {
+    "name": "update_warehouse_partition",
+    "args": ""
+   },
+   {
+    "name": "upsert_warehouse_products_flexible",
+    "args": "p_warehouse_id uuid, p_products jsonb"
+   },
+   {
+    "name": "validate_warehouse_user_id",
+    "args": ""
+   },
+   {
+    "name": "wms_assert_user_warehouse",
+    "args": "p_user_id uuid, p_warehouse_id uuid"
+   },
+   {
+    "name": "wms_context",
+    "args": ""
+   },
+   {
+    "name": "wms_ctx_role",
+    "args": ""
+   },
+   {
+    "name": "wms_ctx_tenant_id",
+    "args": ""
+   },
+   {
+    "name": "wms_ctx_warehouse_id",
+    "args": ""
+   },
+   {
+    "name": "wms_is_member_warehouse",
+    "args": "p_warehouse_id uuid"
+   },
+   {
+    "name": "wms_same_warehouse_user",
+    "args": "p_user_id uuid"
+   }
+  ]
+ }
+]

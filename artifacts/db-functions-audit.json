@@ -1,0 +1,1657 @@
+[
+ {
+  "name": "add_staff_member",
+  "args": "p_tenant_id uuid, p_first_name text, p_last_name text, p_email text, p_password_hash text, p_phone text, p_permissions jsonb",
+  "secdef": true
+ },
+ {
+  "name": "add_staff_member",
+  "args": "p_tenant_id uuid, p_email text, p_password_hash text, p_staff_password_hash text, p_first_name text, p_last_name text, p_phone text, p_store_permissions jsonb",
+  "secdef": true
+ },
+ {
+  "name": "apply_parent_rls",
+  "args": "p_table regclass, p_fk_column text, p_parent regclass, p_parent_pk text",
+  "secdef": false
+ },
+ {
+  "name": "apply_tenant_rls",
+  "args": "p_table regclass",
+  "secdef": false
+ },
+ {
+  "name": "armor",
+  "args": "bytea, text[], text[]",
+  "secdef": false
+ },
+ {
+  "name": "armor",
+  "args": "bytea",
+  "secdef": false
+ },
+ {
+  "name": "audit_log_client",
+  "args": "p_action text, p_entity_type text, p_entity_id uuid, p_details jsonb",
+  "secdef": true
+ },
+ {
+  "name": "auto_create_monthly_partitions",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "auto_create_warehouse_for_user",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "auto_create_warehouse_on_signup",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "auto_set_user_id",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "auto_update_order_status",
+  "args": "p_entity_type text, p_entity_id uuid, p_to_status text, p_reason text, p_rule_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "batch_process_drugs_with_batch_number",
+  "args": "p_warehouse_id uuid, p_drugs jsonb",
+  "secdef": false
+ },
+ {
+  "name": "bulk_insert_invoice_items",
+  "args": "p_invoice_id uuid, p_items jsonb",
+  "secdef": false
+ },
+ {
+  "name": "bulk_insert_products",
+  "args": "p_warehouse_id uuid, p_products jsonb",
+  "secdef": false
+ },
+ {
+  "name": "bulk_paste_warehouse_products_flexible",
+  "args": "p_warehouse_id uuid, p_products text",
+  "secdef": true
+ },
+ {
+  "name": "bulk_upsert_warehouse_products_flexible",
+  "args": "p_warehouse_id uuid, p_products jsonb",
+  "secdef": true
+ },
+ {
+  "name": "calculate_final_price",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "calculate_reorder_quantity",
+  "args": "p_warehouse_id uuid, p_product_id uuid",
+  "secdef": false
+ },
+ {
+  "name": "check_products_needing_reorder",
+  "args": "p_warehouse_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "convert_date_string",
+  "args": "p_date_str text",
+  "secdef": false
+ },
+ {
+  "name": "create_auto_purchase_draft",
+  "args": "p_warehouse_id uuid, p_product_id uuid, p_suggested_quantity integer, p_reason text, p_rule_id uuid, p_execution_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "create_stage2_pin",
+  "args": "p_digest text",
+  "secdef": true
+ },
+ {
+  "name": "create_warehouse_on_user_insert",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "create_warehouse_partition",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "crypt",
+  "args": "text, text",
+  "secdef": false
+ },
+ {
+  "name": "current_actor_manages",
+  "args": "p_warehouse uuid",
+  "secdef": true
+ },
+ {
+  "name": "current_store_role",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "current_tenant_id",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "current_user_id",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "current_user_role",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "current_user_warehouse_id",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "current_warehouse_id",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "dearmor",
+  "args": "text",
+  "secdef": false
+ },
+ {
+  "name": "decrypt",
+  "args": "bytea, bytea, text",
+  "secdef": false
+ },
+ {
+  "name": "decrypt_iv",
+  "args": "bytea, bytea, bytea, text",
+  "secdef": false
+ },
+ {
+  "name": "delete_all_warehouse_products",
+  "args": "p_warehouse_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "delete_my_warehouse_products",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "delete_staff_member",
+  "args": "p_user_id uuid, p_tenant_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "digest",
+  "args": "text, text",
+  "secdef": false
+ },
+ {
+  "name": "digest",
+  "args": "bytea, text",
+  "secdef": false
+ },
+ {
+  "name": "drop_warehouse_partition",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "employee_create",
+  "args": "p_warehouse uuid, p_full_name text, p_username text, p_password text, p_role_name text, p_permissions jsonb",
+  "secdef": true
+ },
+ {
+  "name": "employee_login_email",
+  "args": "p_username text",
+  "secdef": true
+ },
+ {
+  "name": "encrypt",
+  "args": "bytea, bytea, text",
+  "secdef": false
+ },
+ {
+  "name": "encrypt_iv",
+  "args": "bytea, bytea, bytea, text",
+  "secdef": false
+ },
+ {
+  "name": "enterprise_bulk_upsert",
+  "args": "products_chunk jsonb",
+  "secdef": false
+ },
+ {
+  "name": "f_bank_transaction_gl_trigger",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "f_block_closed_period",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "f_block_closed_period_by_date",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "f_cash_wallet_balance_audit",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "f_create_tax_transactions_purchases",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "f_create_tax_transactions_sales",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "f_sale_block_hard_delete",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "f_trigger_insert_asset_depreciation",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "f_trigger_update_asset_depreciation",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "f_update_customer_balance",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "f_update_supplier_balance",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "fn_balance_sheet",
+  "args": "p_as_of_date date",
+  "secdef": true
+ },
+ {
+  "name": "fn_income_statement",
+  "args": "p_start_date date, p_end_date date",
+  "secdef": true
+ },
+ {
+  "name": "fn_period_close",
+  "args": "p_period_date date, p_user_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "fn_retain_earnings_transfer",
+  "args": "p_period_end_date date, p_user_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "gen_random_bytes",
+  "args": "integer",
+  "secdef": false
+ },
+ {
+  "name": "gen_random_uuid",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "gen_salt",
+  "args": "text, integer",
+  "secdef": false
+ },
+ {
+  "name": "gen_salt",
+  "args": "text",
+  "secdef": false
+ },
+ {
+  "name": "generate_employee_number",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "generate_invoice_number",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "generate_unique_warehouse_code",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "get_auth_user_id",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "get_current_user_id",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "get_next_invoice_number",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "get_product_price",
+  "args": "p_product_id uuid, p_customer_id uuid, p_warehouse_id uuid, p_quantity numeric",
+  "secdef": true
+ },
+ {
+  "name": "get_products_paginated_optimized",
+  "args": "p_warehouse_id uuid, p_limit integer, p_offset integer, p_search text, p_sort_field text, p_sort_dir text",
+  "secdef": true
+ },
+ {
+  "name": "get_staff_list",
+  "args": "p_tenant_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "get_store_users_for_login",
+  "args": "p_tenant_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "get_user_by_id",
+  "args": "p_user_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "get_user_for_login",
+  "args": "p_email text",
+  "secdef": true
+ },
+ {
+  "name": "get_user_warehouse_id",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "get_warehouse_products_flexible",
+  "args": "p_warehouse_id uuid, p_limit integer, p_offset integer, p_search text",
+  "secdef": true
+ },
+ {
+  "name": "gin_btree_consistent",
+  "args": "internal, smallint, anyelement, integer, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_anyenum",
+  "args": "anyenum, anyenum, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_bit",
+  "args": "bit, bit, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_bool",
+  "args": "boolean, boolean, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_bpchar",
+  "args": "character, character, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_bytea",
+  "args": "bytea, bytea, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_char",
+  "args": "\"char\", \"char\", smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_cidr",
+  "args": "cidr, cidr, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_date",
+  "args": "date, date, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_float4",
+  "args": "real, real, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_float8",
+  "args": "double precision, double precision, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_inet",
+  "args": "inet, inet, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_int2",
+  "args": "smallint, smallint, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_int4",
+  "args": "integer, integer, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_int8",
+  "args": "bigint, bigint, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_interval",
+  "args": "interval, interval, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_macaddr",
+  "args": "macaddr, macaddr, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_macaddr8",
+  "args": "macaddr8, macaddr8, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_money",
+  "args": "money, money, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_name",
+  "args": "name, name, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_numeric",
+  "args": "numeric, numeric, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_oid",
+  "args": "oid, oid, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_text",
+  "args": "text, text, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_time",
+  "args": "time without time zone, time without time zone, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_timestamp",
+  "args": "timestamp without time zone, timestamp without time zone, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_timestamptz",
+  "args": "timestamp with time zone, timestamp with time zone, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_timetz",
+  "args": "time with time zone, time with time zone, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_uuid",
+  "args": "uuid, uuid, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_compare_prefix_varbit",
+  "args": "bit varying, bit varying, smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_enum_cmp",
+  "args": "anyenum, anyenum",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_anyenum",
+  "args": "anyenum, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_bit",
+  "args": "bit, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_bool",
+  "args": "boolean, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_bpchar",
+  "args": "character, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_bytea",
+  "args": "bytea, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_char",
+  "args": "\"char\", internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_cidr",
+  "args": "cidr, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_date",
+  "args": "date, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_float4",
+  "args": "real, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_float8",
+  "args": "double precision, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_inet",
+  "args": "inet, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_int2",
+  "args": "smallint, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_int4",
+  "args": "integer, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_int8",
+  "args": "bigint, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_interval",
+  "args": "interval, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_macaddr",
+  "args": "macaddr, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_macaddr8",
+  "args": "macaddr8, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_money",
+  "args": "money, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_name",
+  "args": "name, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_numeric",
+  "args": "numeric, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_oid",
+  "args": "oid, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_text",
+  "args": "text, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_time",
+  "args": "time without time zone, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_timestamp",
+  "args": "timestamp without time zone, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_timestamptz",
+  "args": "timestamp with time zone, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_timetz",
+  "args": "time with time zone, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_trgm",
+  "args": "text, internal, smallint, internal, internal, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_uuid",
+  "args": "uuid, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_query_varbit",
+  "args": "bit varying, internal, smallint, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_anyenum",
+  "args": "anyenum, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_bit",
+  "args": "bit, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_bool",
+  "args": "boolean, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_bpchar",
+  "args": "character, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_bytea",
+  "args": "bytea, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_char",
+  "args": "\"char\", internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_cidr",
+  "args": "cidr, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_date",
+  "args": "date, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_float4",
+  "args": "real, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_float8",
+  "args": "double precision, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_inet",
+  "args": "inet, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_int2",
+  "args": "smallint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_int4",
+  "args": "integer, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_int8",
+  "args": "bigint, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_interval",
+  "args": "interval, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_macaddr",
+  "args": "macaddr, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_macaddr8",
+  "args": "macaddr8, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_money",
+  "args": "money, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_name",
+  "args": "name, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_numeric",
+  "args": "numeric, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_oid",
+  "args": "oid, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_text",
+  "args": "text, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_time",
+  "args": "time without time zone, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_timestamp",
+  "args": "timestamp without time zone, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_timestamptz",
+  "args": "timestamp with time zone, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_timetz",
+  "args": "time with time zone, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_trgm",
+  "args": "text, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_uuid",
+  "args": "uuid, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_extract_value_varbit",
+  "args": "bit varying, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_numeric_cmp",
+  "args": "numeric, numeric",
+  "secdef": false
+ },
+ {
+  "name": "gin_trgm_consistent",
+  "args": "internal, smallint, text, integer, internal, internal, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gin_trgm_triconsistent",
+  "args": "internal, smallint, text, integer, internal, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gtrgm_compress",
+  "args": "internal",
+  "secdef": false
+ },
+ {
+  "name": "gtrgm_consistent",
+  "args": "internal, text, smallint, oid, internal",
+  "secdef": false
+ },
+ {
+  "name": "gtrgm_decompress",
+  "args": "internal",
+  "secdef": false
+ },
+ {
+  "name": "gtrgm_distance",
+  "args": "internal, text, smallint, oid, internal",
+  "secdef": false
+ },
+ {
+  "name": "gtrgm_in",
+  "args": "cstring",
+  "secdef": false
+ },
+ {
+  "name": "gtrgm_options",
+  "args": "internal",
+  "secdef": false
+ },
+ {
+  "name": "gtrgm_out",
+  "args": "gtrgm",
+  "secdef": false
+ },
+ {
+  "name": "gtrgm_penalty",
+  "args": "internal, internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gtrgm_picksplit",
+  "args": "internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "gtrgm_same",
+  "args": "gtrgm, gtrgm, internal",
+  "secdef": false
+ },
+ {
+  "name": "gtrgm_union",
+  "args": "internal, internal",
+  "secdef": false
+ },
+ {
+  "name": "handle_new_user_warehouse",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "handle_new_warehouse",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "has_permission",
+  "args": "p_permission text, p_warehouse_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "hmac",
+  "args": "bytea, bytea, text",
+  "secdef": false
+ },
+ {
+  "name": "hmac",
+  "args": "text, text, text",
+  "secdef": false
+ },
+ {
+  "name": "login_user",
+  "args": "p_email text, p_password text",
+  "secdef": true
+ },
+ {
+  "name": "map_header_to_product_column",
+  "args": "h text",
+  "secdef": false
+ },
+ {
+  "name": "notify_warehouse_products_flexible_delete",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "notify_warehouse_products_flexible_insert",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "notify_warehouse_products_flexible_update",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "p_create_purchase_gl_entries",
+  "args": "p_purchase_order_id uuid, p_user_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "p_create_sale_gl_entries",
+  "args": "p_invoice_id uuid, p_user_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "p_proc_receive_goods",
+  "args": "p_purchase_order_id uuid, p_items jsonb, p_notes text, p_user_id uuid, p_receipt_number text",
+  "secdef": true
+ },
+ {
+  "name": "p_purge_old_data",
+  "args": "p_retention_months integer, p_dry_run boolean, p_tables text[]",
+  "secdef": true
+ },
+ {
+  "name": "p_purge_old_data_auto",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "p_sale_approve_invoice",
+  "args": "p_invoice_id uuid, p_user_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "p_sale_create_return",
+  "args": "p_invoice_id uuid, p_items jsonb, p_reason text, p_user_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "p_sale_next_number",
+  "args": "p_prefix text, p_warehouse_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "p_sale_record_payment",
+  "args": "p_invoice_id uuid, p_amount numeric, p_payment_method text, p_payment_number text, p_notes text, p_user_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "payroll_item_compute",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "payroll_items_lock",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "payroll_recalc_totals",
+  "args": "p_run uuid",
+  "secdef": true
+ },
+ {
+  "name": "payroll_run_settle",
+  "args": "p_run uuid, p_amount numeric, p_reason text, p_employee uuid, p_kind text",
+  "secdef": true
+ },
+ {
+  "name": "payroll_run_warehouse",
+  "args": "p_run uuid",
+  "secdef": true
+ },
+ {
+  "name": "payroll_runs_immutable",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "payroll_settlement_immutable",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "payroll_sync_totals",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "pgp_armor_headers",
+  "args": "text, OUT key text, OUT value text",
+  "secdef": false
+ },
+ {
+  "name": "pgp_key_id",
+  "args": "bytea",
+  "secdef": false
+ },
+ {
+  "name": "pgp_pub_decrypt",
+  "args": "bytea, bytea, text",
+  "secdef": false
+ },
+ {
+  "name": "pgp_pub_decrypt",
+  "args": "bytea, bytea",
+  "secdef": false
+ },
+ {
+  "name": "pgp_pub_decrypt",
+  "args": "bytea, bytea, text, text",
+  "secdef": false
+ },
+ {
+  "name": "pgp_pub_decrypt_bytea",
+  "args": "bytea, bytea, text, text",
+  "secdef": false
+ },
+ {
+  "name": "pgp_pub_decrypt_bytea",
+  "args": "bytea, bytea, text",
+  "secdef": false
+ },
+ {
+  "name": "pgp_pub_decrypt_bytea",
+  "args": "bytea, bytea",
+  "secdef": false
+ },
+ {
+  "name": "pgp_pub_encrypt",
+  "args": "text, bytea",
+  "secdef": false
+ },
+ {
+  "name": "pgp_pub_encrypt",
+  "args": "text, bytea, text",
+  "secdef": false
+ },
+ {
+  "name": "pgp_pub_encrypt_bytea",
+  "args": "bytea, bytea, text",
+  "secdef": false
+ },
+ {
+  "name": "pgp_pub_encrypt_bytea",
+  "args": "bytea, bytea",
+  "secdef": false
+ },
+ {
+  "name": "pgp_sym_decrypt",
+  "args": "bytea, text, text",
+  "secdef": false
+ },
+ {
+  "name": "pgp_sym_decrypt",
+  "args": "bytea, text",
+  "secdef": false
+ },
+ {
+  "name": "pgp_sym_decrypt_bytea",
+  "args": "bytea, text",
+  "secdef": false
+ },
+ {
+  "name": "pgp_sym_decrypt_bytea",
+  "args": "bytea, text, text",
+  "secdef": false
+ },
+ {
+  "name": "pgp_sym_encrypt",
+  "args": "text, text, text",
+  "secdef": false
+ },
+ {
+  "name": "pgp_sym_encrypt",
+  "args": "text, text",
+  "secdef": false
+ },
+ {
+  "name": "pgp_sym_encrypt_bytea",
+  "args": "bytea, text",
+  "secdef": false
+ },
+ {
+  "name": "pgp_sym_encrypt_bytea",
+  "args": "bytea, text, text",
+  "secdef": false
+ },
+ {
+  "name": "prevent_user_id_change",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "prevent_warehouse_id_change",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "process_bulk_excel_data",
+  "args": "p_raw_data text, p_warehouse_id text",
+  "secdef": false
+ },
+ {
+  "name": "process_drug_entry",
+  "args": "p_batch_number text, p_trade_name text, p_quantity numeric, p_public_price numeric, p_purchase_discount numeric, p_sales_discount numeric, p_production_date date, p_expiry_date date, p_category text, p_warehouse_id uuid",
+  "secdef": false
+ },
+ {
+  "name": "process_raw_import",
+  "args": "raw_data jsonb, target_warehouse_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "rbac_attach_enforcement",
+  "args": "p_table text, p_op text, p_perm text",
+  "secdef": true
+ },
+ {
+  "name": "rbac_audit_list",
+  "args": "p_warehouse uuid, p_action text, p_limit integer, p_offset integer",
+  "secdef": true
+ },
+ {
+  "name": "rbac_can_view_module",
+  "args": "p_module text",
+  "secdef": true
+ },
+ {
+  "name": "rbac_catalog",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "rbac_catalog_stats",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "rbac_effective_permissions",
+  "args": "p_user uuid, p_warehouse uuid",
+  "secdef": true
+ },
+ {
+  "name": "rbac_enforce",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "rbac_enforce_status",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "rbac_enforce_via_parent",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "rbac_expand",
+  "args": "p_permission text",
+  "secdef": false
+ },
+ {
+  "name": "rbac_grantable",
+  "args": "p_warehouse uuid",
+  "secdef": true
+ },
+ {
+  "name": "rbac_is_owner",
+  "args": "p_user uuid, p_warehouse uuid",
+  "secdef": true
+ },
+ {
+  "name": "rbac_member_get",
+  "args": "p_warehouse uuid, p_user_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "rbac_member_set",
+  "args": "p_warehouse uuid, p_user_id uuid, p_role_ids uuid[], p_direct jsonb, p_is_active boolean",
+  "secdef": true
+ },
+ {
+  "name": "rbac_member_set_active",
+  "args": "p_warehouse uuid, p_user_id uuid, p_active boolean",
+  "secdef": true
+ },
+ {
+  "name": "rbac_my_context",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "rbac_normalize",
+  "args": "p_permission text",
+  "secdef": false
+ },
+ {
+  "name": "rbac_require",
+  "args": "p_permission text, p_warehouse uuid",
+  "secdef": true
+ },
+ {
+  "name": "rbac_role_delete",
+  "args": "p_role_id uuid, p_warehouse uuid",
+  "secdef": true
+ },
+ {
+  "name": "rbac_role_duplicate",
+  "args": "p_role_id uuid, p_name text, p_name_ar text, p_warehouse uuid",
+  "secdef": true
+ },
+ {
+  "name": "rbac_role_get",
+  "args": "p_role_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "rbac_role_upsert",
+  "args": "p_role_id uuid, p_name text, p_name_ar text, p_description text, p_permissions text[], p_warehouse uuid",
+  "secdef": true
+ },
+ {
+  "name": "rbac_roles_list",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "rbac_view_warehouses",
+  "args": "p_module text",
+  "secdef": true
+ },
+ {
+  "name": "register_tenant",
+  "args": "p_store_name text, p_email text, p_phone text, p_city text, p_password_hash text, p_manager_password_hash text, p_code text",
+  "secdef": true
+ },
+ {
+  "name": "report_overview",
+  "args": "p_from date, p_to date",
+  "secdef": false
+ },
+ {
+  "name": "report_sales_page",
+  "args": "p_from date, p_to date, p_search text, p_limit integer, p_offset integer",
+  "secdef": false
+ },
+ {
+  "name": "report_stagnant_page",
+  "args": "p_stale_days integer, p_search text, p_limit integer, p_offset integer",
+  "secdef": false
+ },
+ {
+  "name": "report_stock_page",
+  "args": "p_search text, p_limit integer, p_offset integer",
+  "secdef": false
+ },
+ {
+  "name": "report_stock_summary",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "report_top_products",
+  "args": "p_from date, p_to date, p_limit integer",
+  "secdef": false
+ },
+ {
+  "name": "resolve_drug_column_name",
+  "args": "canonical_name text",
+  "secdef": false
+ },
+ {
+  "name": "resolve_login_role",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "rls_auto_enable",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "search_drugs",
+  "args": "p_warehouse_id text, p_search_term character varying, p_batch_number character varying, p_trade_name character varying, p_limit integer, p_offset integer",
+  "secdef": false
+ },
+ {
+  "name": "search_static_pharmacies",
+  "args": "search_term text, p_gov text, p_city text, p_district text",
+  "secdef": true
+ },
+ {
+  "name": "set_active_warehouse_id",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "set_limit",
+  "args": "real",
+  "secdef": false
+ },
+ {
+  "name": "set_product_user_id",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "set_tenant_context",
+  "args": "tenant_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "setup_user_after_signup",
+  "args": "p_user_id uuid, p_email text, p_phone text",
+  "secdef": true
+ },
+ {
+  "name": "show_limit",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "show_trgm",
+  "args": "text",
+  "secdef": false
+ },
+ {
+  "name": "similarity",
+  "args": "text, text",
+  "secdef": false
+ },
+ {
+  "name": "similarity_dist",
+  "args": "text, text",
+  "secdef": false
+ },
+ {
+  "name": "similarity_op",
+  "args": "text, text",
+  "secdef": false
+ },
+ {
+  "name": "strict_word_similarity",
+  "args": "text, text",
+  "secdef": false
+ },
+ {
+  "name": "strict_word_similarity_commutator_op",
+  "args": "text, text",
+  "secdef": false
+ },
+ {
+  "name": "strict_word_similarity_dist_commutator_op",
+  "args": "text, text",
+  "secdef": false
+ },
+ {
+  "name": "strict_word_similarity_dist_op",
+  "args": "text, text",
+  "secdef": false
+ },
+ {
+  "name": "strict_word_similarity_op",
+  "args": "text, text",
+  "secdef": false
+ },
+ {
+  "name": "team_list",
+  "args": "p_warehouse uuid",
+  "secdef": true
+ },
+ {
+  "name": "team_remove_member",
+  "args": "p_warehouse uuid, p_user_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "team_upsert_member",
+  "args": "p_warehouse uuid, p_email text, p_role_name text, p_permissions jsonb",
+  "secdef": true
+ },
+ {
+  "name": "tg_audit_logs_immutable",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "tg_permissions_fill_meta",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "tg_user_warehouses_fill",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "trg_purchase_order_gl_automation",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "trg_sales_invoice_gl_automation",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "two_step_verify",
+  "args": "p_password text",
+  "secdef": true
+ },
+ {
+  "name": "update_drugs_updated_at",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "update_inventory_on_movement",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "update_staff_member",
+  "args": "p_user_id uuid, p_tenant_id uuid, p_first_name text, p_last_name text, p_phone text, p_is_active boolean, p_permissions jsonb",
+  "secdef": true
+ },
+ {
+  "name": "update_updated_at_column",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "update_warehouse_partition",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "upsert_warehouse_products_flexible",
+  "args": "p_warehouse_id uuid, p_products jsonb",
+  "secdef": true
+ },
+ {
+  "name": "validate_warehouse_user_id",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "verify_manager_password",
+  "args": "p_user_id uuid, p_password text",
+  "secdef": true
+ },
+ {
+  "name": "verify_stage2_pin",
+  "args": "p_digest text",
+  "secdef": true
+ },
+ {
+  "name": "wms_assert_user_warehouse",
+  "args": "p_user_id uuid, p_warehouse_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "wms_context",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "wms_ctx_role",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "wms_ctx_tenant_id",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "wms_ctx_warehouse_id",
+  "args": "",
+  "secdef": true
+ },
+ {
+  "name": "wms_current_user",
+  "args": "p_user_id uuid",
+  "secdef": false
+ },
+ {
+  "name": "wms_gr_apply_items",
+  "args": "p_receipt_id uuid, p_purchase_order_id uuid, p_items jsonb",
+  "secdef": true
+ },
+ {
+  "name": "wms_gr_cancel",
+  "args": "p_receipt_id uuid, p_user_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "wms_gr_create",
+  "args": "p_purchase_order_id uuid, p_items jsonb, p_notes text, p_user_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "wms_gr_list",
+  "args": "p_status text, p_search text, p_limit integer, p_user_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "wms_gr_next_number",
+  "args": "p_warehouse_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "wms_gr_post",
+  "args": "p_receipt_id uuid, p_user_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "wms_gr_set_items",
+  "args": "p_receipt_id uuid, p_items jsonb, p_user_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "wms_is_member_warehouse",
+  "args": "p_warehouse_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "wms_ledger_immutable",
+  "args": "",
+  "secdef": false
+ },
+ {
+  "name": "wms_manager_password_set",
+  "args": "p_hash text",
+  "secdef": true
+ },
+ {
+  "name": "wms_movements_list",
+  "args": "p_limit integer, p_offset integer, p_search text, p_user_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "wms_po_list",
+  "args": "p_search text, p_limit integer, p_user_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "wms_product_create",
+  "args": "p_name text, p_name_ar text, p_barcode text, p_unit text, p_shelf_life_months integer, p_min_stock integer, p_max_stock integer, p_user_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "wms_product_list",
+  "args": "p_search text, p_limit integer, p_user_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "wms_register_workspace",
+  "args": "p_name text, p_phone text, p_governorate text, p_admin_hash text",
+  "secdef": true
+ },
+ {
+  "name": "wms_same_warehouse_user",
+  "args": "p_user_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "wms_stock_list",
+  "args": "p_search text, p_status text, p_limit integer, p_offset integer, p_user_id uuid",
+  "secdef": true
+ },
+ {
+  "name": "word_similarity",
+  "args": "text, text",
+  "secdef": false
+ },
+ {
+  "name": "word_similarity_commutator_op",
+  "args": "text, text",
+  "secdef": false
+ },
+ {
+  "name": "word_similarity_dist_commutator_op",
+  "args": "text, text",
+  "secdef": false
+ },
+ {
+  "name": "word_similarity_dist_op",
+  "args": "text, text",
+  "secdef": false
+ },
+ {
+  "name": "word_similarity_op",
+  "args": "text, text",
+  "secdef": false
+ }
+]
