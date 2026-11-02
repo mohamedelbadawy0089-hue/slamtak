@@ -270,7 +270,8 @@ const MODULE_ROUTES = ["/inventory", "/receiving", "/sales", "/purchases", "/pur
   "/automation", "/automation/dashboard", "/automation/rules", "/automation/reorder", "/automation/alerts", "/automation/executions",
   "/hr", "/hr/dashboard", "/hr/employees", "/hr/employees/new", "/hr/departments", "/hr/attendance", "/hr/leaves", "/hr/payroll", "/hr/recruitment", "/hr/performance", "/hr/assets", "/hr/settings",
   "/pricing", "/pricing/price-lists", "/pricing/promotions", "/pricing/discounts", "/pricing/segments", "/pricing/approvals", "/pricing/reports", "/team", "/team/new", "/team/roles", "/team/audit",
-  "/ai", "/ai/predictions", "/ai/alerts", "/ai/models"];
+  "/ai", "/ai/predictions", "/ai/alerts", "/ai/models",
+  "/employee"];
 
 // --- Strict Authentication Guard ---
 // All routes that require a verified warehouse session before they may render.
@@ -379,10 +380,23 @@ async function verifySession() {
       access_token: s.access_token,
     };
 
-    // جلب tenant_id الحقيقي من user_warehouses
+    // جلب العضوية الحقيقية من user_warehouses: tenant_id + المخزن + الدور (عبر roles)
     try {
-      const uw = await client.from('user_warehouses').select('tenant_id').eq('user_id', user.id).limit(1).single();
-      if (uw.data) appSession.tenant_id = uw.data.tenant_id;
+      const uw = await client.from('user_warehouses')
+        .select('tenant_id, warehouse_id, is_default, role_id, role:roles(name)')
+        .eq('user_id', user.id)
+        .order('is_default', { ascending: false })
+        .limit(10);
+      const membershipRows = uw && Array.isArray(uw.data) ? uw.data : [];
+      if (membershipRows.length) {
+        const preferred = membershipRows.find((r) => r && r.is_default) || membershipRows[0];
+        appSession.tenant_id = preferred.tenant_id || "";
+        appSession.warehouse_id = preferred.warehouse_id || appSession.warehouse_id || "";
+        // الدور الحقيقي يحدد اللوحة: manager/owner/admin → لوحة المدير، غير ذلك → لوحة الموظف
+        const roleName = pickRoleName(preferred);
+        if (roleName) appSession.role = roleName;
+        appSession.memberships = membershipRows.map((r) => ({ tenant_id: r.tenant_id, warehouse_id: r.warehouse_id, role: pickRoleName(r) }));
+      }
     } catch(e) {}
     appSession.tenant_id = appSession.tenant_id || "";
 
@@ -495,7 +509,21 @@ const ROUTE_PERMISSIONS = [
   { prefix: "/team/audit", perm: "audit.view" }
 ];
 
-const FULL_ACCESS_ROLES = ["super admin", "tenant admin", "super_admin", "tenant_admin", "owner"];
+const FULL_ACCESS_ROLES = ["super admin", "tenant admin", "super_admin", "tenant_admin", "owner", "manager"];
+
+// هل دور المستخدم مدير (يُوجَّه إلى لوحة المدير) أم موظف (يُوجَّه إلى لوحة الموظف)؟
+function isManagerRole(role) {
+  const r = String(role || "").toLowerCase().replace(/[\s_-]+/g, " ").trim();
+  if (!r) return false; // دور غير معروف → يعامل موظفاً (الأقل صلاحيات)
+  if (r === "manager" || r === "owner" || r === "admin") return true;
+  return r.indexOf("admin") !== -1
+    || FULL_ACCESS_ROLES.map((x) => x.toLowerCase().replace(/[\s_-]+/g, " ")).indexOf(r) !== -1;
+}
+
+// المسار الهدف حسب نوع المستخدم: مدير → لوحة المدير، موظف → لوحة الموظف
+function resolveDashboardRoute(role) {
+  return isManagerRole(role) ? "/" : "/employee";
+}
 
 let __permCtx = { user_id: null, role: "", permissions: {}, warehouse_id: "", tenant_id: "", loaded: false, full: false };
 
@@ -749,6 +777,10 @@ async function render() {
     }
     await loadPermissionContext(getSupabase(), session).catch(() => null);
     
+    // الرئيسية "/" = لوحة تحكم المدير — إن كان المستخدم موظفاً فوّجه مباشرة إلى لوحة الموظف
+    if (routePath === '/' && !isManagerRole(session.role)) {
+      return navigate(resolveDashboardRoute(session.role));
+    }
     // إذا كان المسار هو /، استخدم الواجهة الجديدة للمخزن المستقل
     if (routePath === '/') {
       try {
@@ -773,6 +805,98 @@ async function render() {
   renderRouteView(routePath, null);
 }
 
+// --- لوحة الموظف (Employee Dashboard) ---
+// منفصلة عن لوحة المدير: بياناتها وخياراتها محصورة بنفس tenant_id للمخزن الذي أضافه
+// مديره. قبل الرسم تُعاد كتابة سياق RLS (set_tenant_context) حتى تبقى كل استعلامات
+// الصفحة وبقية الوحدات مقيدة بمستأجر الموظف وحده.
+function employeeEditableModules() {
+  return [
+    { href: "/inventory", icon: "📦", title: "المخزون", perm: "inventory.read", desc: "الأصناف والحركات والأرصدة" },
+    { href: "/sales", icon: "🛍️", title: "المبيعات", perm: "sales.read", desc: "الفواتير والمرتجعات والمدفوعات" },
+    { href: "/receiving", icon: "📥", title: "الاستلام", perm: "purchases.read", desc: "استلام أوامر الشراء" },
+    { href: "/delivery", icon: "🚚", title: "التوصيل", perm: "sales.read", desc: "الطلبات والمسارات والسائقين" },
+    { href: "/customer-service", icon: "🎧", title: "خدمة العملاء", perm: "customers.read", desc: "التذاكر والشكاوى" },
+    { href: "/reports", icon: "📊", title: "التقارير", perm: "reports.read", desc: "تقارير المبيعات والمخزون" },
+    { href: "/hr", icon: "👥", title: "الموارد البشرية", perm: "employees.view", desc: "الحضور والإجازات" }
+  ];
+}
+
+function renderEmployeeView(appEl, session) {
+  const s = session || getValidSession() || {};
+  const tenantId = (session && session.tenant_id) || (window.__permCtx && __permCtx.tenant_id) || "";
+  const role = s.role || "employee";
+  const allowed = employeeEditableModules().filter((m) => can(m.perm));
+  const cardsHtml = allowed.length
+    ? allowed.map((m) => `
+        <a class="card link-card" data-link href="${m.href}" data-perm="${m.perm}">
+          <h3>${m.icon} ${m.title}</h3>
+          <p>${m.desc}</p>
+          <span class="card-cta">فتح ←</span>
+        </a>`).join("")
+    : `<p class="muted">لم يُمنح حسابك صلاحيات على أي قسم بعد — راجع مدير المخزن.</p>`;
+
+  appEl.innerHTML = `
+    <div class="page">
+      <header class="app-header">
+        <h1>👤 لوحة الموظف</h1>
+        <span class="muted" style="margin-left:1rem;">${s.name || s.email || ""}</span>
+        <button class="btn" id="logout-btn" type="button">تسجيل الخروج</button>
+      </header>
+      <nav class="app-nav" aria-label="تنقل الموظف">
+        <a href="/employee" data-link class="nav-link" style="background:#0f766e;color:white;">🧭 لوحة الموظف</a>
+        ${allowed.map((m) => `<a href="${m.href}" data-link class="nav-link" data-perm="${m.perm}">${m.icon} ${m.title}</a>`).join("")}
+      </nav>
+      <main style="padding:1rem;">
+        <div style="background:#f0f9ff;border:1px solid #93d0ff;border-radius:8px;padding:0.75rem;margin-bottom:1rem;color:#0c4a6e;font-size:0.85rem;">
+          🔒 بياناتك مرتبطة بمخزنك فقط — معزولة تماماً عن المخازن الأخرى (Tenant Isolation).
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-bottom:1rem;">
+          <div class="card" style="padding:1rem;">
+            <h3 style="margin-top:0;">ℹ️ بيانات المخزن</h3>
+            <table style="width:100%;font-size:0.9rem;border-collapse:collapse;">
+              <tr><td style="padding:0.4rem;color:#666;">المستأجر (tenant_id)</td><td style="font-weight:bold;font-family:monospace;font-size:0.8rem;" id="emp-tenant-id">${tenantId ? esc(tenantId) : "—"}</td></tr>
+              <tr><td style="padding:0.4rem;color:#666;">الدور</td><td style="font-weight:bold;">${esc(role)}</td></tr>
+              <tr><td style="padding:0.4rem;color:#666;">حالة العزل</td><td id="emp-tenant-status" style="font-weight:bold;color:#16a34a;">جارٍ التحقق…</td></tr>
+            </table>
+          </div>
+          <div class="card" style="padding:1rem;">
+            <h3 style="margin-top:0;">✅ أقسامي المسموحة</h3>
+            <p class="muted" style="margin:0.25rem 0;">تظهر هنا فقط الأقسام التي يملك صلاحيتها، والبيانات الخلفية مقيدة بخادم المستأجر دائماً.</p>
+            <p style="margin:0;" id="emp-perm-count"><b>${allowed.length}</b> قسم</p>
+          </div>
+        </div>
+        <div class="modules-grid grid">${cardsHtml}</div>
+      </main>
+    </div>`;
+
+  applyPermissionGating(appEl);
+
+  const logoutBtn = document.getElementById("logout-btn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      const client = getSupabase();
+      try { if (client) await client.auth.signOut(); } catch (_) {}
+      clearSession();
+      clearStep2Mark();
+      navigate("/login");
+    });
+  }
+
+  // ربط tenant_id بلوحة الموظف: إعادة ضبط سياق RLS في كل فتح للتأكد من الحدة
+  (async () => {
+    const client = getSupabase();
+    if (!client || !tenantId) return;
+    try {
+      await client.rpc("set_tenant_context", { tenant_id: tenantId });
+      const statusEl = document.getElementById("emp-tenant-status");
+      if (statusEl) statusEl.textContent = "✅ مقيد ضمن مستأجر " + esc(String(tenantId).slice(0, 8)) + "…";
+    } catch (_) {
+      const statusEl = document.getElementById("emp-tenant-status");
+      if (statusEl) { statusEl.textContent = "⚠️ تعذر ضبط سياق المستأجر"; statusEl.style.color = "#dc2626"; }
+    }
+  })();
+}
+
 // Renders the view for a route whose URL is already correct (no history changes).
 // This breaks the pushState -> render -> navigate infinite recursion.
 function renderRouteView(routePath, session) {
@@ -794,6 +918,12 @@ function renderRouteView(routePath, session) {
   const requiredPerm = routePermission(routePath);
   if (requiredPerm && !can(requiredPerm)) {
     renderForbidden(appEl, requiredPerm);
+    return;
+  }
+
+  // لوحة الموظف: منفصلة عن لوحة المدير وعمرها نفس tenant_id المخزن
+  if (routePath === "/employee") {
+    renderEmployeeView(appEl, session);
     return;
   }
 
@@ -3309,17 +3439,16 @@ function renderStep2Form(appEl, info) {
           : "كلمة المرور الثانية غير صحيحة — تم الرفض فورًا.");
         return;
       }
-      // نجاح المرحلتين معًا → فتح لوحة التحكم
+      // نجاح المرحلتين معًا → تجهيز الجلسة ثم توجيه حسب نوع المستخدم
       writeStep2Mark(info.id);
-      setSession({
-        id: info.id,
-        email: info.email,
-        role: (info.meta && info.meta.role) || "manager",
-        name: info.name,
-        warehouse_id: info.warehouse_id || "",
-        access_token: info.token
-      });
-      navigate("/");
+      const sessionInfo = await verifySession();
+      if (!sessionInfo) {
+        setErr("تم التحقق من كلمة المرور لكن تعذر تجهيز الجلسة — أعد المحاولة.");
+        return;
+      }
+      // المدير → لوحة تحكم المدير | الموظف → لوحة الموظف لنفس المخزن
+      // (tenant_id مربوط بالجلسة والسياق محفوظ داخل verifySession قبل فتح أي لوحة)
+      navigate(resolveDashboardRoute(sessionInfo.role));
     } catch (err) {
       setErr(authErrorMessage(err, "تعذر التحقق من كلمة المرور"));
     }
