@@ -382,7 +382,7 @@ async function verifySession() {
 
     // جلب العضوية الحقيقية والفعليّة فقط من user_warehouses - بدون أي افتراضات
     try {
-      const uw = await client.from('user_warehouses')
+      const uw = await sb.from('user_warehouses')
         .select('tenant_id, warehouse_id, is_default, role_id, role:roles(name), created_at')
         .eq('user_id', user.id)
         .order('created_at', { ascending: true })
@@ -941,7 +941,7 @@ function renderRouteView(routePath, session) {
 
   // Local login / new-warehouse forms (no backend required).
   if (routePath === "/login" || routePath === "/register") {
-    renderLocalAuthForm(appEl, routePath);
+    renderAuth(appEl, routePath);
     return;
   }
 
@@ -3168,7 +3168,7 @@ async function renderMovementsTab(client, panel) {
 // رسالة عابرة (flash) تُعرض مرة واحدة في نموذج تسجيل الدخول ثم تُمسح
 let authFlash = "";
 
-function renderLocalAuthForm(appEl, routePath) {
+function renderAuth(appEl, routePath) {
   const isRegister = routePath === "/register";
   const isIndependentStore = routePath === "/register/store";
   const flash = authFlash;
