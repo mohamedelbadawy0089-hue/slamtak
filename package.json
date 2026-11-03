@@ -10,11 +10,12 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.0.0",
+    "pg": "^8.23.1",
     "wrangler": "^3.0.0"
   },
   "devDependencies": {
-    "@babel/parser": "^7.0.0",
     "@babel/generator": "^7.0.0",
+    "@babel/parser": "^7.0.0",
     "@babel/traverse": "^7.0.0",
     "typescript": "^5.0.0"
   }
