@@ -1,0 +1,10 @@
+import pg from 'pg';
+import config from '../supabase/config.js';
+const ref=(config.url||'').replace('https://','').split('.')[0];
+const c=new pg.Client({host:'db.'+ref+'.supabase.co',port:5432,user:'postgres',password:process.env.SUPABASE_DB_PASSWORD,database:'postgres',ssl:{rejectUnauthorized:false}});
+await c.connect();
+const q=async(s)=>{try{const r=await c.query(s); return r.rows}catch(e){return [{err:e.message}]}}
+console.log('current_warehouse_id src:', JSON.stringify((await q(`select pg_get_functiondef(p.oid) from pg_proc p where p.proname='current_warehouse_id'`)).map(t=>t.pg_get_functiondef)));
+console.log('\npurchase_approvals entity_types:', JSON.stringify((await q(`select distinct entity_type from purchase_approvals limit 20`)).map(e=>e.entity_type)));
+console.log('\napproval tables:', (await q(`select tablename from pg_tables where schemaname='public' and tablename like '%approval%'`))[0].map(e=>e.tablename).join('\n'));
+await c.end();
