@@ -3466,12 +3466,28 @@ function renderStep2Form(appEl, info) {
       const data = result && result.data;
       if (!data || data.granted !== true) {
         const reason = data && data.reason;
-        setErr(reason === "rate_limited" ? "محاولات كثيرة — انتظر 10 دقائق قبل إعادة المحاولة."
-          : reason === "suspended" ? "الحساب موقوف — راجع مدير النظام (الرفض فوري)."
-          : reason === "no_membership" ? "حسابك غير مرتبط بمخزن — تواصل مع مدير النظام."
-          : reason === "no_second_factor_yet" ? "لا توجد بصمة تحقق ثانية محفوظة لحسابك — اطلب ضبطها من مدير المخزن."
-          : reason === "invalid_password" ? "كلمة المرور الثانية غير صالحة."
-          : "كلمة المرور الثانية غير صحيحة — تم الرفض فورًا.");
+                if (reason === "rate_limited") {
+          setErr("محاولات كثيرة — انتظر 10 دقائق قبل إعادة المحاولة.");
+        } else if (reason === "suspended") {
+          setErr("الحساب موقوف — راجع مدير النظام (الرفض فوري.)");
+        } else if (reason === "no_membership") {
+          setErr("حسابك غير مرتبط بمخزن — تواصل مع Director system.");
+        } else if (reason === "no_second_factor_yet") {
+          // New account without second factor registered: allow access
+          // Determine role from user_warehouses and proceed to dashboard
+          writeStep2Mark(info.id);
+          const sessionInfo = await verifySession();
+          if (!sessionInfo) {
+            setErr("تم التحقق من كلمة المرور لكن تعذر تجهيز الجلسة — أعد المحاولة.");
+            return;
+          }
+          // المدير → لوحة تحكم المدير | الموظف → لوحة الموظف لنفس المخزن
+          navigate(resolveDashboardRoute(sessionInfo.role));
+          return;
+        } else {
+          //including "invalid_password" and "wrong_password" reasons
+          setErr("كلمة المرور غير صحيحة — تم الرفض فورًا.");
+        };
         return;
       }
       // نجاح المرحلتين معًا → تجهيز الجلسة ثم توجيه حسب نوع المستخدم
