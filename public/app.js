@@ -3457,6 +3457,9 @@ function renderStep2Form(appEl, info) {
     if (!client) { setErr("تعذر الاتصال بقاعدة Supabase"); return; }
     try {
       // المرحلة الثانية على الخادم: two_step_verify -- لا بصمات ولا مقارنات في المتصفح
+      const { data: sessData } = await client.auth.getSession();
+      const uid = (sessData && sessData.session && sessData.session.user && sessData.session.user.id) || "";
+      if (!uid) { setErr("انتهت الجلسة — أعد تسجيل الدخول."); return; }
       const hash = await sha256b64url(pw);
       const result = await client.rpc("two_step_verify", { p_password: hash });
       if (result && result.error) {
@@ -3475,14 +3478,14 @@ function renderStep2Form(appEl, info) {
         } else if (reason === "no_second_factor_yet") {
           // New account without second factor registered: allow access
           // Determine role from user_warehouses and proceed to dashboard
-          writeStep2Mark(info.id);
+          writeStep2Mark(uid);
           const sessionInfo = await verifySession();
           if (!sessionInfo) {
             setErr("تم التحقق من كلمة المرور لكن تعذر تجهيز الجلسة — أعد المحاولة.");
             return;
           }
           // المدير → لوحة تحكم المدير | الموظف → لوحة الموظف لنفس المخزن
-          navigate(resolveDashboardRoute(sessionInfo.role));
+          navigate(resolveDashboardRoute((data && data.role) || sessionInfo.role));
           return;
         } else {
           //including "invalid_password" and "wrong_password" reasons
@@ -3491,7 +3494,7 @@ function renderStep2Form(appEl, info) {
         return;
       }
       // نجاح المرحلتين معًا → تجهيز الجلسة ثم توجيه حسب نوع المستخدم
-      writeStep2Mark(info.id);
+      writeStep2Mark(uid);
       const sessionInfo = await verifySession();
       if (!sessionInfo) {
         setErr("تم التحقق من كلمة المرور لكن تعذر تجهيز الجلسة — أعد المحاولة.");
@@ -3499,7 +3502,7 @@ function renderStep2Form(appEl, info) {
       }
       // المدير → لوحة تحكم المدير | الموظف → لوحة الموظف لنفس المخزن
       // (tenant_id مربوط بالجلسة والسياق محفوظ داخل verifySession قبل فتح أي لوحة)
-      navigate(resolveDashboardRoute(sessionInfo.role));
+      navigate(resolveDashboardRoute((data && data.role) || sessionInfo.role));
     } catch (err) {
       setErr(authErrorMessage(err, "تعذر التحقق من كلمة المرور"));
     }
