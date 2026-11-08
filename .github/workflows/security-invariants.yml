@@ -1,0 +1,58 @@
+name: security-invariants
+
+# بوابة قبل الدمج: تبني المخطط من ملفات الهجرة على قاعدة جديدة، ثم تفشل عند أي
+# تراجع في الأدوار أو الامتيازات أو RLS. الفحص على قاعدة الإنتاج يبقى يدويًا:
+#   SUPABASE_DB_PASSWORD=... npm run check:security
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  invariants:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: postgres
+      PGSSLMODE: disable
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      # مجلد الهجرات يحمل تاريخ النظام السابق (‎202610…‎): تفترض ملفاته مخططًا
+      # و auth.users قائمين. البناء من الصفر يكون من هجرتَي المعمارية الجديدة.
+      - name: Apply baseline migrations
+        run: >-
+          node scripts/apply-migrations.mjs
+          supabase/migrations/20261108000001_init_schema.sql
+          supabase/migrations/20261108000002_seed_and_harden.sql
+
+      - name: Check security invariants
+        run: npm run check:security

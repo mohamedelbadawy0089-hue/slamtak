@@ -6,7 +6,8 @@
     "dev": "node start.js",
     "build": "tsc",
     "start": "node start.js",
-    "deploy:prod": "wrangler pages deploy ./public --project-name slamtak --branch main --commit-dirty=true"
+    "deploy:prod": "wrangler pages deploy ./public --project-name slamtak --branch main --commit-dirty=true",
+    "check:security": "node scripts/check-security-invariants.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.0.0",

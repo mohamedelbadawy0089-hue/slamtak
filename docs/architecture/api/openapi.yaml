@@ -1,0 +1,3440 @@
+openapi: 3.1.0
+info:
+  title: Slamtak WMS API
+  version: 1.0.0
+  summary: واجهة إدارة مخازن الأدوية — عقد v1 المعتمد
+  description: |
+    هذا الملف هو **العقد الملزم** بين الواجهة والخادم. يُولَّد منه عميل TypeScript
+    في `packages/contracts`، وأي تغيير كاسر يستلزم `/api/v2` بحسب `10-api-architecture.md` §5.
+
+    ## قواعد ملزمة
+    - الهوية والمخزن يُستنتجان من الجلسة والعضوية، **لا** من الجسم أو رأس طلب.
+    - كل طلب مغيّر يقبل `Idempotency-Key`؛ تكراره بنفس الجسم يعيد نفس الاستجابة.
+    - كل مورد ذي `version` يفرض `If-Match` وإلا `428`.
+    - المورد التابع لمخزن آخر يعيد `404` لا `403`.
+    - كل خطأ بصيغة RFC 9457 مع `code` ثابت و`requestId`.
+  contact:
+    name: Slamtak Architecture Team
+    url: https://docs.slamtak.com
+  license:
+    name: Proprietary
+    identifier: LicenseRef-Proprietary
+servers:
+  - url: https://app.slamtak.com/api/v1
+    description: الإنتاج
+  - url: https://staging.slamtak.com/api/v1
+    description: الاختبار
+tags:
+  - name: Auth
+    description: تسجيل الدخول، الجلسات، MFA، وتصعيد الصلاحية المؤقت.
+  - name: Tenancy
+    description: المخزن والفروع والمخازن والإعدادات.
+  - name: Users
+    description: المستخدمون والأدوار والصلاحيات.
+  - name: Catalog
+    description: الأدوية والتصنيفات والوحدات وقوائم الأسعار.
+  - name: Inventory
+    description: الأرصدة والتشغيلات والحركات والتسويات والتحويلات والجرد.
+  - name: Purchasing
+    description: الموردون وأوامر الشراء والاستلام وفواتير الموردين والمرتجعات.
+  - name: Sales
+    description: العملاء والفواتير والمرتجعات والتحصيل.
+  - name: Delivery
+    description: خطوط السير ومهام التوصيل وإثبات التسليم.
+  - name: Finance
+    description: دليل الحسابات والقيود والخزينة والتقارير الضريبية.
+  - name: HR
+    description: الموظفون والحضور والرواتب.
+  - name: Reports
+    description: تقارير جاهزة وتصدير غير متزامن.
+  - name: Notifications
+    description: الإشعارات وتفضيلاتها.
+  - name: Platform
+    description: "لوحة المنصة: تعاقد واستخدام وصحة — بلا بيانات تشغيلية للمخازن."
+security:
+  - cookieAuth: []
+  - bearerAuth: []
+
+paths:
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: تسجيل الدخول بالبريد وكلمة المرور
+      operationId: login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginRequest' }
+      responses:
+        '200':
+          description: نجاح — إما جلسة كاملة أو تحدي MFA
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoginResponse' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '429':
+          description: تجاوز حد المحاولات (5/دقيقة)
+          headers:
+            Retry-After: { $ref: '#/components/headers/RetryAfter' }
+            RateLimit-Remaining: { $ref: '#/components/headers/RateLimitRemaining' }
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Problem' }
+  /auth/mfa/verify:
+    post:
+      tags: [Auth]
+      summary: تأكيد رمز TOTP أو رمز الاستعادة
+      operationId: verifyMfa
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MfaVerifyRequest' }
+      responses:
+        '200':
+          description: جلسة كاملة
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoginResponse' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: تدوير رمز الوصول (Refresh متداول)
+      operationId: refresh
+      security: [{ refreshCookie: [] }]
+      responses:
+        '200':
+          description: رموز جديدة؛ إعادة استخدام رمز قديم تُبطل العائلة كاملة
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoginResponse' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: إبطال الجلسة الحالية
+      operationId: logout
+      responses:
+        '204': { description: أُبطلت الجلسة }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: الهوية والعضويات والصلاحيات الفعالة
+      operationId: getMe
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Me' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /auth/step-up:
+    post:
+      tags: [Auth]
+      summary: تصعيد مؤقت للعمليات الحساسة (تعديل أرصدة، اعتماد جرد)
+      operationId: stepUp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [password]
+              properties:
+                password: { type: string, writeOnly: true, minLength: 12, maxLength: 128 }
+                totpCode: { type: string, pattern: '^[0-9]{6}$' }
+              additionalProperties: false
+      responses:
+        '200':
+          description: نافذة تصعيد 10 دقائق
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        required: [stepUpUntil]
+                        properties:
+                          stepUpUntil: { type: string, format: date-time }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /auth/password/change:
+    post:
+      tags: [Auth]
+      summary: تغيير كلمة المرور (يُبطل كل الجلسات الأخرى)
+      operationId: changePassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [currentPassword, newPassword]
+              properties:
+                currentPassword: { type: string, writeOnly: true, minLength: 12, maxLength: 128 }
+                newPassword: { type: string, writeOnly: true, minLength: 12, maxLength: 128 }
+              additionalProperties: false
+      responses:
+        '204': { description: تم التغيير وأُبطلت الجلسات الأخرى }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /auth/realtime-token:
+    post:
+      tags: [Auth]
+      summary: إصدار توكن قصير لاشتراك Realtime (لا يصلح لبقية الواجهة)
+      operationId: issueRealtimeToken
+      description: |
+        توكن ES256 عمره 60 دقيقة، حمولته `sub` و`role: authenticated` و`tenant_id` و`scope: realtime` فقط.
+        يُستهلك لإصداره معدل منخفض، ولا يُصدر لحساب معطّل أو جلسة مُبطلة. انظر `28` §7.1 وADR-024.
+      responses:
+        '200':
+          description: توكن الاشتراك وموضوع القناة الخاصة
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        required: [token, expiresAt, topic, url]
+                        properties:
+                          token:
+                            type: string
+                            description: توكن الاشتراك — لا يُسجَّل في السجلات ولا يُخزَّن
+                          expiresAt: { type: string, format: date-time }
+                          topic: { type: string, pattern: '^tenant:[0-9a-fA-F-]{36}$' }
+                          url: { type: string, format: uri }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  /tenant:
+    get:
+      tags: [Tenancy]
+      summary: بيانات المخزن (Tenant) الحالي
+      operationId: getTenant
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Tenant' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    patch:
+      tags: [Tenancy]
+      summary: تعديل بيانات المخزن
+      operationId: updateTenant
+      parameters:
+        - $ref: '#/components/parameters/IfMatch'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string, minLength: 3, maxLength: 120 }
+                taxId: { type: string, maxLength: 30 }
+                licenseNumber: { type: string, maxLength: 60 }
+                timezone: { type: string, examples: [Africa/Cairo] }
+              additionalProperties: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Tenant' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '428': { $ref: '#/components/responses/PreconditionRequired' }
+  /warehouse:
+    get:
+      tags: [Tenancy]
+      summary: المخزن الوحيد للحساب
+      description: |
+        حساب واحد = مخزن واحد (ADR-025). لا معرّف مخزن في المسار أو الطلب:
+        يُشتق من عضوية المستخدم على الخادم، ويُعاد هنا للعرض فقط.
+      operationId: getWarehouse
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Warehouse' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    patch:
+      tags: [Tenancy]
+      summary: تعديل بيانات المخزن (الاسم، العنوان، الترخيص)
+      description: لا يغيّر `code` ولا ينشئ مخزنًا؛ الحقول البنيوية ثابتة.
+      operationId: updateWarehouse
+      parameters:
+        - $ref: '#/components/parameters/IfMatch'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/WarehouseUpdate' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Warehouse' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '428': { $ref: '#/components/responses/PreconditionRequired' }
+  /settings:
+    get:
+      tags: [Tenancy]
+      summary: إعدادات المخزن (سياسات FEFO، تنبيهات الانتهاء، الترقيم)
+      operationId: getSettings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Settings' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    patch:
+      tags: [Tenancy]
+      summary: تعديل الإعدادات
+      operationId: updateSettings
+      parameters:
+        - $ref: '#/components/parameters/IfMatch'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Settings' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Settings' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '428': { $ref: '#/components/responses/PreconditionRequired' }
+
+  /users:
+    get:
+      tags: [Users]
+      summary: قائمة المستخدمين في المخزن
+      operationId: listUsers
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+        - name: status
+          in: query
+          schema: { type: string, enum: [active, suspended] }
+        - name: search
+          in: query
+          schema: { type: string, minLength: 3, maxLength: 80 }
+      responses:
+        '200': { $ref: '#/components/responses/UserPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Users]
+      summary: دعوة مستخدم جديد
+      operationId: inviteUser
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UserInvite' }
+      responses:
+        '201':
+          description: أُرسلت الدعوة
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/User' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /users/{id}:
+    parameters: [{ $ref: '#/components/parameters/PathId' }]
+    patch:
+      tags: [Users]
+      summary: تعديل بيانات مستخدم
+      operationId: updateUser
+      parameters:
+        - $ref: '#/components/parameters/IfMatch'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullName: { type: string, minLength: 3, maxLength: 120 }
+                phone: { type: string, maxLength: 20 }
+              additionalProperties: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/User' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /users/{id}/suspend:
+    parameters: [{ $ref: '#/components/parameters/PathId' }]
+    post:
+      tags: [Users]
+      summary: تعليق مستخدم وإبطال جلساته
+      operationId: suspendUser
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason: { type: string, minLength: 5, maxLength: 500 }
+              additionalProperties: false
+      responses:
+        '204': { description: عُلّق }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /roles:
+    get:
+      tags: [Users]
+      summary: قائمة الأدوار
+      operationId: listRoles
+      responses:
+        '200': { $ref: '#/components/responses/RolePage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Users]
+      summary: إنشاء دور
+      operationId: createRole
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Role' }
+      responses:
+        '201':
+          description: أُنشئ
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Role' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /roles/{id}/permissions:
+    parameters: [{ $ref: '#/components/parameters/PathId' }]
+    put:
+      tags: [Users]
+      summary: ضبط صلاحيات دور (منع منح ما لا تملكه)
+      operationId: setRolePermissions
+      parameters:
+        - $ref: '#/components/parameters/IfMatch'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [permissions]
+              properties:
+                permissions:
+                  type: array
+                  maxItems: 300
+                  items: { type: string, pattern: '^[a-z_]+(\.[a-z_]+)+$' }
+              additionalProperties: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Role' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /users/{id}/roles:
+    parameters: [{ $ref: '#/components/parameters/PathId' }]
+    put:
+      tags: [Users]
+      summary: إسناد أدوار لمستخدم
+      operationId: setUserRoles
+      parameters:
+        - $ref: '#/components/parameters/IfMatch'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [roleIds]
+              properties:
+                roleIds:
+                  type: array
+                  items: { type: string, format: uuid }
+              additionalProperties: false
+      responses:
+        '204': { description: تم الإسناد }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /medicines:
+    get:
+      tags: [Catalog]
+      summary: بحث الأدوية
+      operationId: listMedicines
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+        - name: search
+          in: query
+          description: بحث ثلاثي (trigram) بالاسم أو الباركود أو المادة الفعالة
+          schema: { type: string, minLength: 3, maxLength: 80 }
+        - name: categoryId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: active
+          in: query
+          schema: { type: boolean, default: true }
+      responses:
+        '200': { $ref: '#/components/responses/MedicinePage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Catalog]
+      summary: إضافة دواء
+      operationId: createMedicine
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MedicineInput' }
+      responses:
+        '201':
+          description: أُنشئ
+          headers:
+            ETag: { $ref: '#/components/headers/ETag' }
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Medicine' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /medicines/{id}:
+    parameters: [{ $ref: '#/components/parameters/PathId' }]
+    get:
+      tags: [Catalog]
+      summary: تفاصيل دواء مع أرصدته
+      operationId: getMedicine
+      responses:
+        '200':
+          description: OK
+          headers:
+            ETag: { $ref: '#/components/headers/ETag' }
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Medicine' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      tags: [Catalog]
+      summary: تعديل دواء
+      operationId: updateMedicine
+      parameters:
+        - $ref: '#/components/parameters/IfMatch'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MedicineInput' }
+      responses:
+        '200':
+          description: OK
+          headers:
+            ETag: { $ref: '#/components/headers/ETag' }
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Medicine' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '428': { $ref: '#/components/responses/PreconditionRequired' }
+  /medicines/import:
+    post:
+      tags: [Catalog]
+      summary: استيراد أدوية من ملف (مهمة غير متزامنة)
+      operationId: importMedicines
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: xlsx/csv ≤ 10MB
+                dryRun: { type: boolean, default: true }
+              additionalProperties: false
+      responses:
+        '202':
+          description: قُبل للتحقق — النتيجة عبر `/jobs/{id}`
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/JobRef' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /categories:
+    get:
+      tags: [Catalog]
+      summary: قائمة التصنيفات
+      operationId: listCategories
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200': { $ref: '#/components/responses/CategoryPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Catalog]
+      summary: إضافة تصنيف
+      operationId: createCategory
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string, minLength: 2, maxLength: 120 }
+                parentId: { type: ['string', 'null'], format: uuid }
+              additionalProperties: false
+      responses:
+        '201':
+          description: أُنشئ
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Category' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /units:
+    get:
+      tags: [Catalog]
+      summary: قائمة وحدات القياس
+      operationId: listUnits
+      responses:
+        '200': { $ref: '#/components/responses/UnitPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Catalog]
+      summary: إضافة وحدة قياس
+      operationId: createUnit
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, code]
+              properties:
+                name: { type: string, maxLength: 60 }
+                code: { type: string, maxLength: 12 }
+                baseUnitId: { type: ['string', 'null'], format: uuid }
+                factor: { type: number, exclusiveMinimum: 0, default: 1 }
+              additionalProperties: false
+      responses:
+        '201':
+          description: أُنشئ
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Unit' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /price-lists:
+    get:
+      tags: [Catalog]
+      summary: قوائم الأسعار
+      operationId: listPriceLists
+      responses:
+        '200': { $ref: '#/components/responses/PriceListPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Catalog]
+      summary: إنشاء قائمة أسعار
+      operationId: createPriceList
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, kind]
+              properties:
+                name: { type: string, maxLength: 80 }
+                kind: { type: string, enum: [retail, wholesale, insurance, cost] }
+                currency: { type: string, pattern: '^[A-Z]{3}$', default: EGP }
+              additionalProperties: false
+      responses:
+        '201':
+          description: أُنشئ
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/PriceList' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /price-lists/{id}/items:
+    parameters: [{ $ref: '#/components/parameters/PathId' }]
+    put:
+      tags: [Catalog]
+      summary: استبدال بنود قائمة أسعار
+      operationId: setPriceListItems
+      parameters:
+        - $ref: '#/components/parameters/IfMatch'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [items]
+              properties:
+                items:
+                  type: array
+                  maxItems: 5000
+                  items: { $ref: '#/components/schemas/PriceListItem' }
+              additionalProperties: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/PriceList' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+
+  /stock:
+    get:
+      tags: [Inventory]
+      summary: أرصدة المخزون مجمّعة حسب الدواء
+      operationId: listStock
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+        - name: medicineId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: belowMin
+          in: query
+          schema: { type: boolean }
+        - name: expiringBefore
+          in: query
+          schema: { type: string, format: date }
+      responses:
+        '200': { $ref: '#/components/responses/StockPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /stock/batches:
+    get:
+      tags: [Inventory]
+      summary: التشغيلات (Batches) بترتيب FEFO
+      operationId: listStockBatches
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+        - name: medicineId
+          in: query
+          required: true
+          schema: { type: string, format: uuid }
+        - name: includeBlocked
+          in: query
+          schema: { type: boolean, default: false }
+      responses:
+        '200': { $ref: '#/components/responses/StockBatchPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /stock/movements:
+    get:
+      tags: [Inventory]
+      summary: سجل الحركات (إلحاقي، غير قابل للتعديل)
+      operationId: listStockMovements
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+        - name: medicineId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: batchId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: movementType
+          in: query
+          schema:
+            type: string
+            enum: [opening, purchase, sale, sale_return, adjustment, count_gain, count_loss, expiry_writeoff, damage_writeoff]
+        - name: from
+          in: query
+          schema: { type: string, format: date-time }
+        - name: to
+          in: query
+          schema: { type: string, format: date-time }
+      responses:
+        '200': { $ref: '#/components/responses/StockMovementPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /stock/adjustments:
+    post:
+      tags: [Inventory]
+      summary: تسوية مخزنية موثقة (يتطلب سببًا وتصعيدًا)
+      operationId: createAdjustment
+      description: |
+        لا يوجد أي مسار يعدّل الرصيد مباشرة. كل تغيير يمر بحركة موثقة بسبب إلزامي،
+        ويُسجَّل في سجل التدقيق مع الفاعل و`requestId`.
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/StepUpHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AdjustmentRequest' }
+      responses:
+        '201':
+          description: سُجّلت التسوية كحركة
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/StockMovement' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+        '423': { $ref: '#/components/responses/PeriodClosed' }
+  /stock/counts:
+    get:
+      tags: [Inventory]
+      summary: قائمة عمليات الجرد
+      operationId: listStockCounts
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+        - name: status
+          in: query
+          schema: { type: string, enum: [draft, counting, pending_approval, approved, cancelled] }
+      responses:
+        '200': { $ref: '#/components/responses/StockCountPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Inventory]
+      summary: بدء جرد (تجميد حركة الأصناف المدرجة)
+      operationId: createStockCount
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [scope]
+              properties:
+                scope: { type: string, enum: [full, category, medicine_list] }
+                categoryId: { type: ['string', 'null'], format: uuid }
+                medicineIds:
+                  type: array
+                  maxItems: 2000
+                  items: { type: string, format: uuid }
+              additionalProperties: false
+      responses:
+        '201':
+          description: أُنشئ الجرد
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/StockCount' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /stock/counts/{id}/approve:
+    parameters: [{ $ref: '#/components/parameters/PathId' }]
+    post:
+      tags: [Inventory]
+      summary: اعتماد فروقات الجرد (يولّد حركات تسوية)
+      operationId: approveStockCount
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/StepUpHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason: { type: string, minLength: 5, maxLength: 500 }
+              additionalProperties: false
+      responses:
+        '200':
+          description: اعتمد وأُغلقت الفروقات بحركات موثقة
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/StockCount' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '423': { $ref: '#/components/responses/PeriodClosed' }
+
+  /suppliers:
+    get:
+      tags: [Purchasing]
+      summary: قائمة الموردين
+      operationId: listSuppliers
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+        - name: search
+          in: query
+          schema: { type: string, minLength: 3, maxLength: 80 }
+      responses:
+        '200': { $ref: '#/components/responses/SupplierPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Purchasing]
+      summary: إضافة مورد
+      operationId: createSupplier
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Supplier' }
+      responses:
+        '201':
+          description: أُنشئ
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Supplier' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /purchase-orders:
+    get:
+      tags: [Purchasing]
+      summary: أوامر الشراء
+      operationId: listPurchaseOrders
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+        - name: status
+          in: query
+          schema: { type: string, enum: [draft, submitted, partially_received, received, cancelled] }
+      responses:
+        '200': { $ref: '#/components/responses/PurchaseOrderPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Purchasing]
+      summary: إنشاء أمر شراء
+      operationId: createPurchaseOrder
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PurchaseOrderInput' }
+      responses:
+        '201':
+          description: أُنشئ
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/PurchaseOrder' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /purchase-orders/{id}/submit:
+    parameters: [{ $ref: '#/components/parameters/PathId' }]
+    post:
+      tags: [Purchasing]
+      summary: إرسال أمر الشراء للمورد
+      operationId: submitPurchaseOrder
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      responses:
+        '200':
+          description: أُرسل
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/PurchaseOrder' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /goods-receipts:
+    post:
+      tags: [Purchasing]
+      summary: استلام بضاعة (ينشئ تشغيلات وحركات purchase)
+      operationId: createGoodsReceipt
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/StepUpHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/GoodsReceiptInput' }
+      responses:
+        '201':
+          description: استُلمت وأُنشئت الحركات
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/GoodsReceipt' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /supplier-invoices:
+    post:
+      tags: [Purchasing]
+      summary: تسجيل فاتورة مورد (مطابقة ثلاثية)
+      operationId: createSupplierInvoice
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SupplierInvoiceInput' }
+      responses:
+        '201':
+          description: سُجّلت
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/SupplierInvoice' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /supplier-returns:
+    post:
+      tags: [Purchasing]
+      summary: مرتجع إلى مورد (حركة سالبة موثقة)
+      operationId: createSupplierReturn
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SupplierReturnInput' }
+      responses:
+        '201':
+          description: سُجّل
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/SupplierReturn' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+
+  /customers:
+    get:
+      tags: [Sales]
+      summary: قائمة العملاء
+      operationId: listCustomers
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+        - name: search
+          in: query
+          schema: { type: string, minLength: 3, maxLength: 80 }
+      responses:
+        '200': { $ref: '#/components/responses/CustomerPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Sales]
+      summary: إضافة عميل
+      operationId: createCustomer
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Customer' }
+      responses:
+        '201':
+          description: أُنشئ
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Customer' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /sales/invoices:
+    get:
+      tags: [Sales]
+      summary: قائمة فواتير البيع
+      operationId: listSalesInvoices
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+        - name: status
+          in: query
+          schema: { type: string, enum: [draft, confirmed, cancelled] }
+        - name: customerId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+      responses:
+        '200': { $ref: '#/components/responses/SalesInvoicePage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Sales]
+      summary: إنشاء فاتورة بيع (مسودة أو مؤكدة)
+      operationId: createSalesInvoice
+      description: |
+        التسعير يُحسب على الخادم من قائمة الأسعار؛ أي سعر في الجسم يُتجاهل ويُسجَّل تحذير.
+        التخصيص يتبع FEFO ويُعاد في allocations؛ التشغيلة المنتهية أو المحجوبة لا تُخصص.
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SalesInvoiceInput' }
+      responses:
+        '201':
+          description: أُنشئت
+          headers:
+            ETag: { $ref: '#/components/headers/ETag' }
+            Location: { $ref: '#/components/headers/Location' }
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/SalesInvoice' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+        '423': { $ref: '#/components/responses/PeriodClosed' }
+  /sales/invoices/{id}/confirm:
+    parameters: [{ $ref: '#/components/parameters/PathId' }]
+    post:
+      tags: [Sales]
+      summary: تأكيد مسودة فاتورة (يرحّل الحركات)
+      operationId: confirmSalesInvoice
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      responses:
+        '200':
+          description: أكدت ورُحّلت
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/SalesInvoice' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /sales/invoices/{id}/cancel:
+    parameters: [{ $ref: '#/components/parameters/PathId' }]
+    post:
+      tags: [Sales]
+      summary: إلغاء فاتورة (حركات عكسية لا حذف)
+      operationId: cancelSalesInvoice
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason: { type: string, minLength: 5, maxLength: 500 }
+              additionalProperties: false
+      responses:
+        '200':
+          description: أُلغيت بحركات عكسية
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/SalesInvoice' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '423': { $ref: '#/components/responses/PeriodClosed' }
+  /sales/returns:
+    post:
+      tags: [Sales]
+      summary: مرتجع بيع
+      operationId: createSalesReturn
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SalesReturnInput' }
+      responses:
+        '201':
+          description: سُجّل
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/SalesReturn' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /sales/payments:
+    post:
+      tags: [Sales]
+      summary: تحصيل دفعة من عميل
+      operationId: createSalesPayment
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/StepUpHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PaymentInput' }
+      responses:
+        '201':
+          description: سُجّلت
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Payment' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+
+  /delivery/routes:
+    get:
+      tags: [Delivery]
+      summary: خطوط السير
+      operationId: listDeliveryRoutes
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200': { $ref: '#/components/responses/DeliveryRoutePage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Delivery]
+      summary: إنشاء خط سير
+      operationId: createDeliveryRoute
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DeliveryRoute' }
+      responses:
+        '201':
+          description: أُنشئ
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/DeliveryRoute' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /delivery/tasks:
+    get:
+      tags: [Delivery]
+      summary: مهام التوصيل
+      operationId: listDeliveryTasks
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+        - name: status
+          in: query
+          schema: { type: string, enum: [pending, assigned, out_for_delivery, delivered, failed] }
+      responses:
+        '200': { $ref: '#/components/responses/DeliveryTaskPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Delivery]
+      summary: إنشاء مهمة توصيل
+      operationId: createDeliveryTask
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DeliveryTask' }
+      responses:
+        '201':
+          description: أُنشئت
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/DeliveryTask' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /delivery/tasks/{id}/proof:
+    parameters: [{ $ref: '#/components/parameters/PathId' }]
+    post:
+      tags: [Delivery]
+      summary: إثبات التسليم
+      operationId: submitProofOfDelivery
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProofOfDelivery' }
+      responses:
+        '200':
+          description: سُجّل الإثبات
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/DeliveryTask' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+
+  /accounts:
+    get:
+      tags: [Finance]
+      summary: دليل الحسابات
+      operationId: listAccounts
+      responses:
+        '200': { $ref: '#/components/responses/AccountPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Finance]
+      summary: إضافة حساب
+      operationId: createAccount
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Account' }
+      responses:
+        '201':
+          description: أُنشئ
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Account' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /journal-entries:
+    get:
+      tags: [Finance]
+      summary: القيود اليومية
+      operationId: listJournalEntries
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+        - name: status
+          in: query
+          schema: { type: string, enum: [draft, posted, reversed] }
+      responses:
+        '200': { $ref: '#/components/responses/JournalEntryPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Finance]
+      summary: إنشاء قيد يدوي (متوازن إلزاميًا)
+      operationId: createJournalEntry
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/JournalEntryInput' }
+      responses:
+        '201':
+          description: أُنشئ
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/JournalEntry' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /journal-entries/{id}/post:
+    parameters: [{ $ref: '#/components/parameters/PathId' }]
+    post:
+      tags: [Finance]
+      summary: ترحيل قيد (يمنع التعديل بعده)
+      operationId: postJournalEntry
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/StepUpHeader'
+      responses:
+        '200':
+          description: رُحّل
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/JournalEntry' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '423': { $ref: '#/components/responses/PeriodClosed' }
+  /cash-transactions:
+    get:
+      tags: [Finance]
+      summary: حركة الخزينة
+      operationId: listCashTransactions
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200': { $ref: '#/components/responses/CashTransactionPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Finance]
+      summary: تسجيل حركة خزينة
+      operationId: createCashTransaction
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/StepUpHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CashTransactionInput' }
+      responses:
+        '201':
+          description: سُجّلت
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/CashTransaction' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /tax/reports:
+    get:
+      tags: [Finance]
+      summary: تقارير ضريبية (ملخص VAT)
+      operationId: getTaxReport
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          required: true
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/TaxReport' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+
+  /employees:
+    get:
+      tags: [HR]
+      summary: قائمة الموظفين
+      operationId: listEmployees
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200': { $ref: '#/components/responses/EmployeePage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [HR]
+      summary: إضافة موظف
+      operationId: createEmployee
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [fullName, branchId, baseSalary]
+              properties:
+                userId: { type: ['string', 'null'], format: uuid }
+                fullName: { type: string, minLength: 3, maxLength: 120 }
+                jobTitle: { type: string, maxLength: 80 }
+                branchId: { type: string, format: uuid }
+                baseSalary: { type: number, exclusiveMinimum: 0 }
+                hiredAt: { type: string, format: date }
+              additionalProperties: false
+      responses:
+        '201':
+          description: أُنشئ
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Employee' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /attendance/check-in:
+    post:
+      tags: [HR]
+      summary: تسجيل حضور/انصراف
+      operationId: attendanceCheckIn
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [employeeId, kind]
+              properties:
+                employeeId: { type: string, format: uuid }
+                kind: { type: string, enum: [in, out] }
+                at: { type: string, format: date-time }
+              additionalProperties: false
+      responses:
+        '201':
+          description: سُجّل
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Attendance' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /payroll-runs:
+    get:
+      tags: [HR]
+      summary: دورات الرواتب
+      operationId: listPayrollRuns
+      responses:
+        '200': { $ref: '#/components/responses/PayrollRunPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [HR]
+      summary: إنشاء دورة رواتب لشهر
+      operationId: createPayrollRun
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [month]
+              properties:
+                month: { type: string, pattern: '^[0-9]{4}-(0[1-9]|1[0-2])$' }
+              additionalProperties: false
+      responses:
+        '201':
+          description: أُنشئت
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/PayrollRun' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /payroll-runs/{id}/approve:
+    parameters: [{ $ref: '#/components/parameters/PathId' }]
+    post:
+      tags: [HR]
+      summary: اعتماد دورة رواتب (فصل مهام)
+      operationId: approvePayrollRun
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      responses:
+        '200':
+          description: اعتُمدت
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/PayrollRun' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /reports/{report}:
+    parameters:
+      - name: report
+        in: path
+        required: true
+        schema:
+          type: string
+          enum: [stock-valuation, expiry, low-stock, sales-daily, purchases, profit, movements-ledger, stock-count-variance]
+    get:
+      tags: [Reports]
+      summary: تقارير جاهزة (قائمة بيضاء صريحة)
+      operationId: getReport
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - name: asOf
+          in: query
+          schema: { type: string, format: date-time }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: '#/components/schemas/ReportRow' }
+                      meta: { $ref: '#/components/schemas/PageMeta' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /exports:
+    post:
+      tags: [Reports]
+      summary: طلب تصدير غير متزامن
+      operationId: createExport
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ExportRequest' }
+      responses:
+        '202':
+          description: قُبل
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/JobRef' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+  /jobs/{id}:
+    parameters: [{ $ref: '#/components/parameters/PathId' }]
+    get:
+      tags: [Reports]
+      summary: حالة مهمة خلفية
+      operationId: getJob
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Job' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /notifications:
+    get:
+      tags: [Notifications]
+      summary: إشعارات المستخدم
+      operationId: listNotifications
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+        - name: unreadOnly
+          in: query
+          schema: { type: boolean, default: false }
+      responses:
+        '200': { $ref: '#/components/responses/NotificationPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /notifications/{id}/read:
+    parameters: [{ $ref: '#/components/parameters/PathId' }]
+    post:
+      tags: [Notifications]
+      summary: تعليم إشعار كمقروء
+      operationId: readNotification
+      responses:
+        '204': { description: تم }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /notification-preferences:
+    get:
+      tags: [Notifications]
+      summary: تفضيلات الإشعار
+      operationId: getNotificationPreferences
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/NotificationPreferences' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    put:
+      tags: [Notifications]
+      summary: تحديث تفضيلات الإشعار
+      operationId: setNotificationPreferences
+      parameters:
+        - $ref: '#/components/parameters/IfMatch'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/NotificationPreferences' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/NotificationPreferences' }
+
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /platform/tenants:
+    get:
+      tags: [Platform]
+      summary: قائمة المخازن (لوحة المنصة — بلا بيانات تشغيلية)
+      operationId: platformListTenants
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+        - name: status
+          in: query
+          schema: { type: string, enum: [trial, active, suspended, churned] }
+      responses:
+        '200': { $ref: '#/components/responses/PlatformTenantPage' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+    post:
+      tags: [Platform]
+      summary: إنشاء حساب مخزن (Tenant) ومخزنه الوحيد
+      description: |
+        ينشئ صف `tenants` + **مخزنًا واحدًا** + عضوية المالك + الإعدادات الافتراضية
+        في معاملة واحدة (ADR-025). لا يوجد أي مسار يضيف مخزنًا لحساب قائم، ولا
+        يستطيع مسؤول المنصة تغيير قاعدة «حساب واحد = مخزن واحد».
+      operationId: platformCreateTenant
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PlatformTenantInput' }
+      responses:
+        '201':
+          description: أُنشئ
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/PlatformTenant' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /platform/tenants/{id}/suspend:
+    parameters: [{ $ref: '#/components/parameters/PathId' }]
+    post:
+      tags: [Platform]
+      summary: تعليق حساب مخزن (يمنع الكتابة فورًا)
+      operationId: platformSuspendTenant
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason: { type: string, minLength: 5, maxLength: 500 }
+              additionalProperties: false
+      responses:
+        '204': { description: عُلّق }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /platform/plans:
+    get:
+      tags: [Platform]
+      summary: الخطط والحدود
+      operationId: platformListPlans
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: '#/components/schemas/Plan' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /platform/health:
+    get:
+      tags: [Platform]
+      summary: صحة النظام (بلا بيانات عملاء)
+      operationId: platformHealth
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Health' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+        '503':
+          description: تدهور
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Problem' }
+  /platform/usage:
+    get:
+      tags: [Platform]
+      summary: استهلاك المخزن مقابل حدود الخطة (أرقام مجمّعة فقط)
+      operationId: platformUsage
+      parameters:
+        - name: tenantId
+          in: query
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Usage' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: __Host-slamtak_at
+      description: كوكي وصول HttpOnly؛ الويب فقط، مع CSRF double-submit.
+    refreshCookie:
+      type: apiKey
+      in: cookie
+      name: __Host-slamtak_rt
+      description: كوكي تجديد متداول؛ يُدوَّر مع كل استخدام.
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: للموبايل وتكاملات الخادم؛ ES256، عمر 10 دقائق.
+
+  parameters:
+    Cursor:
+      name: cursor
+      in: query
+      description: مؤشر ترميز opaque من استجابة سابقة.
+      schema: { type: string, maxLength: 512 }
+    Limit:
+      name: limit
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 100, default: 25 }
+    PathId:
+      name: id
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    IfMatch:
+      name: If-Match
+      in: header
+      description: رقم النسخة؛ إلزامي على الموارد ذات version.
+      schema: { type: string, pattern: '^"[0-9]+"$' }
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      description: مفتاح فريد للطلب (UUIDv7) صالح 24 ساعة.
+      schema: { type: string, minLength: 16, maxLength: 128 }
+    StepUpHeader:
+      name: X-Step-Up
+      in: header
+      description: مطلوب للعمليات الحساسة؛ يحمل رمز التصعيد قصير العمر.
+      schema: { type: string, minLength: 20 }
+
+  headers:
+    Location:
+      schema: { type: string, format: uri-reference }
+    ETag:
+      schema: { type: string, pattern: '^"[0-9]+"$' }
+    RetryAfter:
+      schema: { type: integer, minimum: 1 }
+    RateLimitRemaining:
+      schema: { type: integer, minimum: 0 }
+
+  responses:
+    Unauthorized: &unauth
+      description: بلا هوية صالحة
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example:
+            type: https://docs.slamtak.com/errors/auth-required
+            title: المصادقة مطلوبة
+            status: 401
+            code: AUTH_REQUIRED
+            instance: /api/v1/stock
+            requestId: 01J8Z3K4M5N6P7Q8R9S0T1U2V3
+    Forbidden: &forbid
+      description: صلاحية غير كافية أو مخزن آخر
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example:
+            type: https://docs.slamtak.com/errors/permission-denied
+            title: الصلاحية غير كافية
+            status: 403
+            code: PERMISSION_DENIED
+            instance: /api/v1/stock/adjustments
+            requestId: 01J8Z3K4M5N6P7Q8R9S0T1U2V3
+    NotFound: &notfound
+      description: غير موجود (يشمل موارد مخزن آخر — بلا كشف وجود)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example:
+            type: https://docs.slamtak.com/errors/resource-not-found
+            title: المورد غير موجود
+            status: 404
+            code: RESOURCE_NOT_FOUND
+            instance: /api/v1/sales/invoices/8f2c1a7e-0000-0000-0000-000000000000
+            requestId: 01J8Z3K4M5N6P7Q8R9S0T1U2V3
+    Conflict: &conflict
+      description: تعارض نسخة أو رصيد أو مفتاح تكرار
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          examples:
+            version:
+              value:
+                type: https://docs.slamtak.com/errors/version-conflict
+                title: تعارض نسخة
+                status: 409
+                code: VERSION_CONFLICT
+                detail: النسخة الحالية 7 والمرسلة 5
+                instance: /api/v1/medicines/aaaaaaaa-0000-0000-0000-0000000000c1
+                requestId: 01J8Z3K4M5N6P7Q8R9S0T1U2V3
+            stock:
+              value:
+                type: https://docs.slamtak.com/errors/insufficient-stock
+                title: الرصيد غير كافٍ
+                status: 409
+                code: INSUFFICIENT_STOCK
+                detail: المتوفر 12 والمطلوب 15
+                instance: /api/v1/sales/invoices
+                requestId: 01J8Z3K4M5N6P7Q8R9S0T1U2V3
+                errors:
+                  - field: lines[2].qty
+                    code: EXCEEDS_AVAILABLE
+                    message: الكمية أكبر من المتاح في التشغيلات الصالحة
+    Unprocessable: &invalid
+      description: فشل التحقق
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example:
+            type: https://docs.slamtak.com/errors/validation-failed
+            title: بيانات غير صالحة
+            status: 422
+            code: VALIDATION_FAILED
+            instance: /api/v1/medicines
+            requestId: 01J8Z3K4M5N6P7Q8R9S0T1U2V3
+            errors:
+              - field: name
+                code: TOO_SHORT
+                message: الاسم أقصر من 3 أحرف
+    PeriodClosed: &closed
+      description: الفترة المحاسبية مغلقة
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example:
+            type: https://docs.slamtak.com/errors/period-closed
+            title: الفترة مغلقة
+            status: 423
+            code: PERIOD_CLOSED
+            instance: /api/v1/sales/invoices
+            requestId: 01J8Z3K4M5N6P7Q8R9S0T1U2V3
+    PreconditionRequired: &pre
+      description: If-Match مطلوب
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example:
+            type: https://docs.slamtak.com/errors/precondition-required
+            title: شرط مسبق مطلوب
+            status: 428
+            code: PRECONDITION_REQUIRED
+            instance: /api/v1/tenant
+            requestId: 01J8Z3K4M5N6P7Q8R9S0T1U2V3
+    RateLimited: &limited
+      description: تجاوز حد المعدل
+      headers:
+        Retry-After: { $ref: '#/components/headers/RetryAfter' }
+        RateLimit-Remaining: { $ref: '#/components/headers/RateLimitRemaining' }
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example:
+            type: https://docs.slamtak.com/errors/rate-limited
+            title: طلبات كثيرة
+            status: 429
+            code: RATE_LIMITED
+            instance: /api/v1/auth/login
+            requestId: 01J8Z3K4M5N6P7Q8R9S0T1U2V3
+
+    UserPage:
+      description: صفحة مستخدمين
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/PageEnvelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/User' }
+
+    RolePage:
+      description: صفحة أدوار
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/PageEnvelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Role' }
+
+    MedicinePage:
+      description: صفحة أدوية
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/PageEnvelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Medicine' }
+
+    CategoryPage:
+      description: صفحة تصنيفات
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/PageEnvelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Category' }
+
+    UnitPage:
+      description: صفحة وحدات
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/PageEnvelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Unit' }
+
+    PriceListPage:
+      description: صفحة قوائم أسعار
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/PageEnvelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/PriceList' }
+
+    StockPage:
+      description: صفحة أرصدة
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/PageEnvelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/StockRow' }
+
+    StockBatchPage:
+      description: صفحة تشغيلات FEFO
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/PageEnvelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/StockBatch' }
+
+    StockMovementPage:
+      description: صفحة حركات
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/PageEnvelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/StockMovement' }
+
+    StockCountPage:
+      description: صفحة جرد
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/PageEnvelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/StockCount' }
+
+    SupplierPage:
+      description: صفحة موردين
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/PageEnvelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Supplier' }
+
+    PurchaseOrderPage:
+      description: صفحة أوامر شراء
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/PageEnvelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/PurchaseOrder' }
+
+    CustomerPage:
+      description: صفحة عملاء
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/PageEnvelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Customer' }
+
+    SalesInvoicePage:
+      description: صفحة فواتير
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/PageEnvelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/SalesInvoice' }
+
+    DeliveryRoutePage:
+      description: صفحة خطوط سير
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/PageEnvelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/DeliveryRoute' }
+
+    DeliveryTaskPage:
+      description: صفحة مهام توصيل
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/PageEnvelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/DeliveryTask' }
+
+    AccountPage:
+      description: صفحة حسابات
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/PageEnvelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Account' }
+
+    JournalEntryPage:
+      description: صفحة قيود
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/PageEnvelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/JournalEntry' }
+
+    CashTransactionPage:
+      description: صفحة خزينة
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/PageEnvelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/CashTransaction' }
+
+    EmployeePage:
+      description: صفحة موظفين
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/PageEnvelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Employee' }
+
+    PayrollRunPage:
+      description: صفحة رواتب
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/PageEnvelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/PayrollRun' }
+
+    NotificationPage:
+      description: صفحة إشعارات
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/PageEnvelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Notification' }
+
+    PlatformTenantPage:
+      description: صفحة مخازن المنصة
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/PageEnvelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/PlatformTenant' }
+  schemas:
+    ErrorItem:
+      type: object
+      required: [field, code, message]
+      properties:
+        field: { type: string }
+        code: { type: string }
+        message: { type: string }
+      additionalProperties: false
+    Problem:
+      type: object
+      description: RFC 9457 Problem Details مع code ثابت وrequestId.
+      required: [type, title, status, code, requestId]
+      properties:
+        type: { type: string, format: uri }
+        title: { type: string }
+        status: { type: integer }
+        code: { type: string }
+        detail: { type: string }
+        instance: { type: string }
+        requestId: { type: string }
+        errors:
+          type: array
+          items: { $ref: '#/components/schemas/ErrorItem' }
+      additionalProperties: true
+    Envelope:
+      type: object
+      required: [data, meta]
+      properties:
+        data: {}
+        meta: { $ref: '#/components/schemas/Meta' }
+    PageEnvelope:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items: {}
+        meta: { $ref: '#/components/schemas/PageMeta' }
+    Meta:
+      type: object
+      required: [requestId]
+      properties:
+        requestId: { type: string }
+        version: { type: integer, minimum: 1 }
+    PageMeta:
+      type: object
+      required: [requestId, hasMore]
+      properties:
+        requestId: { type: string }
+        nextCursor: { type: ['string', 'null'] }
+        hasMore: { type: boolean }
+        total: { type: integer, minimum: 0 }
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email, maxLength: 254 }
+        password: { type: string, writeOnly: true, minLength: 12, maxLength: 128 }
+        tenantSlug:
+          type: string
+          maxLength: 60
+          description: اختياري لتحديد المخزن عند تعدد العضويات؛ لا يُستخدم للتفويض.
+      additionalProperties: false
+    MfaVerifyRequest:
+      type: object
+      required: [mfaToken, code]
+      properties:
+        mfaToken: { type: string, minLength: 20 }
+        code: { type: string, pattern: '^[0-9]{6}$' }
+        recoveryCode: { type: string, maxLength: 40 }
+      additionalProperties: false
+    LoginResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          oneOf:
+            - $ref: '#/components/schemas/SessionEstablished'
+            - $ref: '#/components/schemas/MfaChallenge'
+        meta: { $ref: '#/components/schemas/Meta' }
+    SessionEstablished:
+      type: object
+      required: [status, expiresAt]
+      properties:
+        status: { const: authenticated }
+        expiresAt: { type: string, format: date-time }
+        mfaEnrolled: { type: boolean }
+      additionalProperties: false
+    MfaChallenge:
+      type: object
+      required: [status, mfaToken]
+      properties:
+        status: { const: mfa_required }
+        mfaToken: { type: string }
+      additionalProperties: false
+    Me:
+      type: object
+      required: [user, memberships, permissions]
+      properties:
+        user:
+          type: object
+          required: [id, email, fullName, mfaEnrolled]
+          properties:
+            id: { type: string, format: uuid }
+            email: { type: string, format: email }
+            fullName: { type: string }
+            mfaEnrolled: { type: boolean }
+            locale: { type: string, examples: [ar-EG] }
+          additionalProperties: false
+        memberships:
+          type: array
+          items:
+            type: object
+            required: [tenantId, tenantName, warehouseId, roles]
+            properties:
+              tenantId: { type: string, format: uuid }
+              tenantName: { type: string }
+              warehouseId: { type: string, format: uuid, readOnly: true }
+              roles: { type: array, items: { type: string } }
+            additionalProperties: false
+        permissions:
+          type: array
+          items: { type: string, pattern: '^[a-z_]+(\.[a-z_]+)+$' }
+        stepUpUntil: { type: ['string', 'null'], format: date-time }
+      additionalProperties: false
+
+    Tenant:
+      type: object
+      required: [id, name, slug, status, version]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        slug: { type: string }
+        status: { type: string, enum: [trial, active, suspended, churned] }
+        taxId: { type: ['string', 'null'] }
+        licenseNumber: { type: ['string', 'null'] }
+        timezone: { type: string }
+        createdAt: { type: string, format: date-time }
+        version: { type: integer, minimum: 1 }
+      additionalProperties: false
+    Warehouse:
+      type: object
+      description: المخزن الوحيد للحساب — لا يُنشأ ولا يُحذف عبر واجهة الـAPI (ADR-025).
+      required: [id, code, name, isActive]
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        code: { type: string, readOnly: true, examples: [MAIN] }
+        name: { type: string, minLength: 2, maxLength: 120 }
+        address: { type: ['string', 'null'], maxLength: 300 }
+        licenseNo: { type: ['string', 'null'], maxLength: 60 }
+        isActive: { type: boolean }
+        version: { type: integer, readOnly: true }
+      additionalProperties: false
+    WarehouseUpdate:
+      type: object
+      properties:
+        name: { type: string, minLength: 2, maxLength: 120 }
+        address: { type: ['string', 'null'], maxLength: 300 }
+        licenseNo: { type: ['string', 'null'], maxLength: 60 }
+      additionalProperties: false
+    Settings:
+      type: object
+      properties:
+        fefoEnabled: { type: boolean, default: true }
+        blockExpiredSales: { type: boolean, default: true }
+        expiryAlertDays: { type: integer, minimum: 1, maximum: 365, default: 90 }
+        allowNegativeStock: { type: boolean, default: false, readOnly: true }
+        requireStepUpForAdjustments: { type: boolean, default: true }
+        documentPrefixes:
+          type: object
+          additionalProperties: { type: string, maxLength: 6 }
+        version: { type: integer, readOnly: true }
+      additionalProperties: false
+
+    User:
+      type: object
+      required: [id, email, fullName, status, roles]
+      properties:
+        id: { type: string, format: uuid }
+        email: { type: string, format: email }
+        fullName: { type: string }
+        phone: { type: ['string', 'null'] }
+        status: { type: string, enum: [invited, active, suspended] }
+        roles: { type: array, items: { type: string } }
+        warehouseId: { type: string, format: uuid, readOnly: true }
+        mfaEnrolled: { type: boolean }
+        lastLoginAt: { type: ['string', 'null'], format: date-time }
+        version: { type: integer }
+      additionalProperties: false
+    UserInvite:
+      type: object
+      required: [email, fullName, roleIds]
+      properties:
+        email: { type: string, format: email, maxLength: 254 }
+        fullName: { type: string, minLength: 3, maxLength: 120 }
+        roleIds: { type: array, minItems: 1, items: { type: string, format: uuid } }
+      additionalProperties: false
+    Role:
+      type: object
+      required: [name]
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        name: { type: string, minLength: 2, maxLength: 60 }
+        description: { type: string, maxLength: 300 }
+        permissions: { type: array, items: { type: string } }
+        isSystem: { type: boolean, readOnly: true }
+        version: { type: integer, readOnly: true }
+      additionalProperties: false
+
+    Category:
+      type: object
+      required: [id, name]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        parentId: { type: ['string', 'null'], format: uuid }
+        medicineCount: { type: integer, readOnly: true }
+      additionalProperties: false
+    Unit:
+      type: object
+      required: [id, name, code]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        code: { type: string }
+        baseUnitId: { type: ['string', 'null'], format: uuid }
+        factor: { type: number, exclusiveMinimum: 0 }
+      additionalProperties: false
+    MedicineInput:
+      type: object
+      required: [name, categoryId, unitId, minStock]
+      properties:
+        name: { type: string, minLength: 3, maxLength: 200 }
+        scientificName: { type: string, maxLength: 200 }
+        barcode: { type: string, maxLength: 64 }
+        categoryId: { type: string, format: uuid }
+        unitId: { type: string, format: uuid }
+        minStock: { type: number, minimum: 0 }
+        maxStock: { type: number, minimum: 0 }
+        reorderPoint: { type: number, minimum: 0 }
+        storageConditions: { type: string, enum: [room, cold_chain, freezer, controlled] }
+        isControlled: { type: boolean, default: false }
+        isActive: { type: boolean, default: true }
+      additionalProperties: false
+    Medicine:
+      type: object
+      required: [id, name, categoryId, unitId, isActive, version]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        scientificName: { type: ['string', 'null'] }
+        barcode: { type: ['string', 'null'] }
+        categoryId: { type: string, format: uuid }
+        categoryName: { type: string }
+        unitId: { type: string, format: uuid }
+        unitName: { type: string }
+        minStock: { type: number }
+        maxStock: { type: ['number', 'null'] }
+        reorderPoint: { type: ['number', 'null'] }
+        storageConditions: { type: string }
+        isControlled: { type: boolean }
+        isActive: { type: boolean }
+        totalOnHand: { type: number, readOnly: true }
+        version: { type: integer }
+      additionalProperties: false
+    PriceList:
+      type: object
+      required: [id, name, kind, currency]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        kind: { type: string, enum: [retail, wholesale, insurance, cost] }
+        currency: { type: string, pattern: '^[A-Z]{3}$' }
+        itemsCount: { type: integer, readOnly: true }
+        version: { type: integer }
+      additionalProperties: false
+    PriceListItem:
+      type: object
+      required: [medicineId, price]
+      properties:
+        medicineId: { type: string, format: uuid }
+        price: { type: number, exclusiveMinimum: 0 }
+        minQty: { type: number, minimum: 1, default: 1 }
+      additionalProperties: false
+
+    StockRow:
+      type: object
+      required: [medicineId, medicineName, warehouseId, onHand, reserved, available]
+      properties:
+        medicineId: { type: string, format: uuid }
+        medicineName: { type: string }
+        warehouseId: { type: string, format: uuid }
+        warehouseName: { type: string }
+        onHand: { type: number }
+        reserved: { type: number }
+        available: { type: number }
+        minStock: { type: number }
+        belowMin: { type: boolean }
+        nearestExpiry: { type: ['string', 'null'], format: date }
+        stockValue: { type: number, description: بالجنيه المصري بسعر التكلفة }
+      additionalProperties: false
+    StockBatch:
+      type: object
+      required: [id, medicineId, batchNumber, expiryDate, qtyOnHand, status]
+      properties:
+        id: { type: string, format: uuid }
+        medicineId: { type: string, format: uuid }
+        warehouseId: { type: string, format: uuid }
+        locationId: { type: string, format: uuid }
+        batchNumber: { type: string }
+        expiryDate: { type: string, format: date }
+        qtyOnHand: { type: number }
+        qtyReserved: { type: number }
+        unitCost: { type: number }
+        status: { type: string, enum: [available, blocked, expired, quarantine] }
+        daysToExpiry: { type: integer, readOnly: true }
+        fefoRank: { type: integer, readOnly: true, description: 1 = أول ما يُصرف }
+        version: { type: integer }
+      additionalProperties: false
+    StockMovement:
+      type: object
+      required: [id, movementType, qtyDelta, medicineId, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        movementType:
+          type: string
+          enum: [opening, purchase, sale, sale_return, adjustment, count_gain, count_loss, expiry_writeoff, damage_writeoff]
+        qtyDelta: { type: number, description: موجب وارد، سالب صادر }
+        medicineId: { type: string, format: uuid }
+        batchId: { type: ['string', 'null'], format: uuid }
+        warehouseId: { type: string, format: uuid }
+        sourceType: { type: string, examples: [sales_invoice] }
+        sourceId: { type: ['string', 'null'], format: uuid }
+        reason: { type: ['string', 'null'] }
+        createdBy: { type: string, format: uuid }
+        createdAt: { type: string, format: date-time, readOnly: true }
+      additionalProperties: false
+    AdjustmentRequest:
+      type: object
+      required: [medicineId, qtyDelta, reason]
+      properties:
+        medicineId: { type: string, format: uuid }
+        batchId: { type: ['string', 'null'], format: uuid }
+        batchNumber: { type: string, maxLength: 60 }
+        expiryDate: { type: string, format: date }
+        qtyDelta: { type: number, description: لا يقبل صفرًا }
+        reason:
+          type: string
+          minLength: 5
+          maxLength: 500
+          description: إلزامي دائمًا — لا تسوية بلا سبب موثق.
+        attachmentId: { type: ['string', 'null'], format: uuid }
+      additionalProperties: false
+    StockCount:
+      type: object
+      required: [id, status, warehouseId, scope]
+      properties:
+        id: { type: string, format: uuid }
+        status: { type: string, enum: [draft, counting, pending_approval, approved, cancelled] }
+        warehouseId: { type: string, format: uuid }
+        scope: { type: string, enum: [full, category, medicine_list] }
+        countedItems: { type: integer }
+        varianceItems: { type: integer }
+        varianceValue: { type: number }
+        approvedBy: { type: ['string', 'null'], format: uuid }
+        approvedAt: { type: ['string', 'null'], format: date-time }
+        version: { type: integer }
+      additionalProperties: false
+
+    Supplier:
+      type: object
+      required: [name]
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        name: { type: string, minLength: 2, maxLength: 160 }
+        phone: { type: string, maxLength: 20 }
+        email: { type: string, format: email }
+        taxId: { type: string, maxLength: 30 }
+        paymentTermsDays: { type: integer, minimum: 0, maximum: 365, default: 30 }
+        version: { type: integer, readOnly: true }
+      additionalProperties: false
+    PurchaseOrderInput:
+      type: object
+      required: [supplierId, lines]
+      properties:
+        supplierId: { type: string, format: uuid }
+        expectedAt: { type: string, format: date }
+        lines:
+          type: array
+          minItems: 1
+          maxItems: 500
+          items:
+            type: object
+            required: [medicineId, qty, unitCost]
+            properties:
+              medicineId: { type: string, format: uuid }
+              qty: { type: number, exclusiveMinimum: 0 }
+              unitCost: { type: number, exclusiveMinimum: 0 }
+            additionalProperties: false
+      additionalProperties: false
+    PurchaseOrder:
+      type: object
+      required: [id, docNumber, status, supplierId, lines]
+      properties:
+        id: { type: string, format: uuid }
+        docNumber: { type: string, examples: [PO-2026-000012] }
+        status: { type: string, enum: [draft, submitted, partially_received, received, cancelled] }
+        supplierId: { type: string, format: uuid }
+        warehouseId: { type: string, format: uuid }
+        total: { type: number }
+        lines:
+          type: array
+          items:
+            type: object
+            required: [medicineId, qty, receivedQty, unitCost]
+            properties:
+              medicineId: { type: string, format: uuid }
+              qty: { type: number }
+              receivedQty: { type: number }
+              unitCost: { type: number }
+            additionalProperties: false
+        version: { type: integer }
+      additionalProperties: false
+    GoodsReceiptInput:
+      type: object
+      required: [supplierId, lines]
+      properties:
+        purchaseOrderId: { type: ['string', 'null'], format: uuid }
+        supplierId: { type: string, format: uuid }
+        supplierInvoiceNumber: { type: string, maxLength: 60 }
+        lines:
+          type: array
+          minItems: 1
+          maxItems: 500
+          items:
+            type: object
+            required: [medicineId, batchNumber, expiryDate, qty, unitCost]
+            properties:
+              medicineId: { type: string, format: uuid }
+              batchNumber: { type: string, minLength: 1, maxLength: 60 }
+              expiryDate: { type: string, format: date }
+              qty: { type: number, exclusiveMinimum: 0 }
+              unitCost: { type: number, exclusiveMinimum: 0 }
+              locationId: { type: string, format: uuid }
+            additionalProperties: false
+      additionalProperties: false
+    GoodsReceipt:
+      type: object
+      required: [id, docNumber, documentNumber, movements]
+      properties:
+        id: { type: string, format: uuid }
+        docNumber: { type: string }
+        documentNumber: { type: string, examples: [GRN-2026-000034] }
+        movements:
+          type: array
+          items: { $ref: '#/components/schemas/StockMovement' }
+      additionalProperties: false
+    SupplierInvoiceInput:
+      type: object
+      required: [supplierId, number, invoiceDate, lines]
+      properties:
+        supplierId: { type: string, format: uuid }
+        goodsReceiptId: { type: ['string', 'null'], format: uuid }
+        number: { type: string, maxLength: 60 }
+        invoiceDate: { type: string, format: date }
+        dueDate: { type: string, format: date }
+        lines:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [medicineId, qty, unitCost]
+            properties:
+              medicineId: { type: string, format: uuid }
+              qty: { type: number, exclusiveMinimum: 0 }
+              unitCost: { type: number, exclusiveMinimum: 0 }
+              taxRate: { type: number, minimum: 0, maximum: 100, default: 0 }
+            additionalProperties: false
+      additionalProperties: false
+    SupplierInvoice:
+      type: object
+      required: [id, number, total, status]
+      properties:
+        id: { type: string, format: uuid }
+        number: { type: string }
+        total: { type: number }
+        taxTotal: { type: number }
+        status: { type: string, enum: [pending_match, matched, disputed, paid] }
+        varianceFlags:
+          type: array
+          items: { type: string, enum: [qty_mismatch, price_mismatch, no_receipt] }
+      additionalProperties: false
+    SupplierReturnInput:
+      type: object
+      required: [supplierId, lines, reason]
+      properties:
+        supplierId: { type: string, format: uuid }
+        reason: { type: string, minLength: 5, maxLength: 500 }
+        lines:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [batchId, qty]
+            properties:
+              batchId: { type: string, format: uuid }
+              qty: { type: number, exclusiveMinimum: 0 }
+            additionalProperties: false
+      additionalProperties: false
+    SupplierReturn:
+      type: object
+      required: [id, docNumber, movements]
+      properties:
+        id: { type: string, format: uuid }
+        docNumber: { type: string }
+        movements:
+          type: array
+          items: { $ref: '#/components/schemas/StockMovement' }
+      additionalProperties: false
+
+    Customer:
+      type: object
+      required: [name]
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        name: { type: string, minLength: 2, maxLength: 160 }
+        type: { type: string, enum: [pharmacy, hospital, clinic, walk_in] }
+        phone: { type: string, maxLength: 20 }
+        creditLimit: { type: number, minimum: 0, default: 0 }
+        priceListId: { type: ['string', 'null'], format: uuid }
+        version: { type: integer, readOnly: true }
+      additionalProperties: false
+    SalesInvoiceInput:
+      type: object
+      required: [lines]
+      properties:
+        customerId: { type: ['string', 'null'], format: uuid }
+        priceListId: { type: ['string', 'null'], format: uuid }
+        issueDraft:
+          type: boolean
+          default: false
+          description: true = حفظ كمسودة بلا ترحيل حركات.
+        paidAmount: { type: number, minimum: 0, default: 0 }
+        lines:
+          type: array
+          minItems: 1
+          maxItems: 200
+          items:
+            type: object
+            required: [medicineId, qty]
+            properties:
+              medicineId: { type: string, format: uuid }
+              qty: { type: number, exclusiveMinimum: 0 }
+              discountPct: { type: number, minimum: 0, maximum: 100, default: 0 }
+            additionalProperties: false
+        notes: { type: string, maxLength: 1000 }
+      additionalProperties: false
+    SalesInvoice:
+      type: object
+      required: [id, docNumber, status, lines, totals, version]
+      properties:
+        id: { type: string, format: uuid }
+        docNumber: { type: string, examples: [INV-2026-000123] }
+        status: { type: string, enum: [draft, confirmed, cancelled] }
+        customerId: { type: ['string', 'null'], format: uuid }
+        warehouseId: { type: string, format: uuid }
+        lines:
+          type: array
+          items: { $ref: '#/components/schemas/SalesInvoiceLine' }
+        totals: { $ref: '#/components/schemas/InvoiceTotals' }
+        issuedAt: { type: ['string', 'null'], format: date-time }
+        confirmedAt: { type: ['string', 'null'], format: date-time }
+        cancelledAt: { type: ['string', 'null'], format: date-time }
+        cancellationReason: { type: ['string', 'null'] }
+        version: { type: integer }
+      additionalProperties: false
+    SalesInvoiceLine:
+      type: object
+      required: [id, medicineId, qty, unitPrice, lineTotal, allocations]
+      properties:
+        id: { type: string, format: uuid }
+        medicineId: { type: string, format: uuid }
+        medicineName: { type: string }
+        qty: { type: number }
+        unitPrice: { type: number, description: محسوب على الخادم من قائمة الأسعار }
+        discountPct: { type: number }
+        lineTotal: { type: number }
+        allocations:
+          type: array
+          description: تخصيص FEFO الفعلي من التشغيلات (الأقرب انتهاءً أولًا).
+          items:
+            type: object
+            required: [batchId, batchNumber, expiryDate, qty]
+            properties:
+              batchId: { type: string, format: uuid }
+              batchNumber: { type: string }
+              expiryDate: { type: string, format: date }
+              qty: { type: number }
+            additionalProperties: false
+      additionalProperties: false
+    InvoiceTotals:
+      type: object
+      required: [subtotal, discount, tax, total]
+      properties:
+        subtotal: { type: number }
+        discount: { type: number }
+        tax: { type: number }
+        total: { type: number }
+        paid: { type: number }
+        due: { type: number }
+      additionalProperties: false
+    SalesReturnInput:
+      type: object
+      required: [invoiceId, lines, reason]
+      properties:
+        invoiceId: { type: string, format: uuid }
+        reason: { type: string, minLength: 5, maxLength: 500 }
+        restock:
+          type: boolean
+          default: true
+          description: false = إتلاف (حركة damage_writeoff) بدل إرجاع للرصيد.
+        lines:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [lineId, qty]
+            properties:
+              lineId: { type: string, format: uuid }
+              qty: { type: number, exclusiveMinimum: 0 }
+              batchId: { type: ['string', 'null'], format: uuid }
+            additionalProperties: false
+      additionalProperties: false
+    SalesReturn:
+      type: object
+      required: [id, docNumber, creditNoteNumber, movements]
+      properties:
+        id: { type: string, format: uuid }
+        docNumber: { type: string }
+        creditNoteNumber: { type: string, examples: [CN-2026-000007] }
+        movements:
+          type: array
+          items: { $ref: '#/components/schemas/StockMovement' }
+      additionalProperties: false
+    PaymentInput:
+      type: object
+      required: [customerId, amount, method]
+      properties:
+        customerId: { type: string, format: uuid }
+        invoiceId: { type: ['string', 'null'], format: uuid }
+        amount: { type: number, exclusiveMinimum: 0 }
+        method: { type: string, enum: [cash, bank_transfer, cheque, card] }
+        reference: { type: string, maxLength: 80 }
+        receivedAt: { type: string, format: date-time }
+      additionalProperties: false
+    Payment:
+      type: object
+      required: [id, receiptNumber, amount, method]
+      properties:
+        id: { type: string, format: uuid }
+        receiptNumber: { type: string }
+        amount: { type: number }
+        method: { type: string }
+        allocatedTo: { type: array, items: { type: string, format: uuid } }
+      additionalProperties: false
+
+    DeliveryRoute:
+      type: object
+      required: [name, date, stops]
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        name: { type: string, maxLength: 120 }
+        date: { type: string, format: date }
+        driverId: { type: ['string', 'null'], format: uuid }
+        stops:
+          type: array
+          maxItems: 200
+          items:
+            type: object
+            required: [customerId]
+            properties:
+              customerId: { type: string, format: uuid }
+              sequence: { type: integer, minimum: 1 }
+            additionalProperties: false
+      additionalProperties: false
+    DeliveryTask:
+      type: object
+      required: [invoiceId, customerId]
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        invoiceId: { type: string, format: uuid }
+        routeId: { type: ['string', 'null'], format: uuid }
+        customerId: { type: string, format: uuid }
+        assignedTo: { type: ['string', 'null'], format: uuid }
+        status: { type: string, enum: [pending, assigned, out_for_delivery, delivered, failed], readOnly: true }
+        scheduledFor: { type: string, format: date-time }
+      additionalProperties: false
+    ProofOfDelivery:
+      type: object
+      required: [signatureFileId, receiverName]
+      properties:
+        signatureFileId: { type: string, format: uuid }
+        photoFileIds: { type: array, maxItems: 5, items: { type: string, format: uuid } }
+        receiverName: { type: string, maxLength: 120 }
+        location:
+          type: object
+          properties:
+            lat: { type: number, minimum: -90, maximum: 90 }
+            lng: { type: number, minimum: -180, maximum: 180 }
+          additionalProperties: false
+      additionalProperties: false
+
+    Account:
+      type: object
+      required: [code, name, type]
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        code: { type: string, pattern: '^[0-9]{4,10}$' }
+        name: { type: string, maxLength: 160 }
+        type: { type: string, enum: [asset, liability, equity, revenue, expense] }
+        parentId: { type: ['string', 'null'], format: uuid }
+        isPostable: { type: boolean, default: true }
+      additionalProperties: false
+    JournalEntryInput:
+      type: object
+      required: [date, memo, lines]
+      properties:
+        date: { type: string, format: date }
+        memo: { type: string, minLength: 5, maxLength: 500 }
+        lines:
+          type: array
+          minItems: 2
+          items:
+            type: object
+            required: [accountId, debit, credit]
+            properties:
+              accountId: { type: string, format: uuid }
+              debit: { type: number, minimum: 0 }
+              credit: { type: number, minimum: 0 }
+            additionalProperties: false
+      additionalProperties: false
+    JournalEntry:
+      type: object
+      required: [id, docNumber, status, date, totalDebit, totalCredit]
+      properties:
+        id: { type: string, format: uuid }
+        docNumber: { type: string }
+        status: { type: string, enum: [draft, posted, reversed] }
+        date: { type: string, format: date }
+        totalDebit: { type: number }
+        totalCredit: { type: number }
+        version: { type: integer }
+      additionalProperties: false
+    CashTransactionInput:
+      type: object
+      required: [accountId, direction, amount, method]
+      properties:
+        accountId: { type: string, format: uuid }
+        direction: { type: string, enum: [in, out] }
+        amount: { type: number, exclusiveMinimum: 0 }
+        method: { type: string, enum: [cash, bank_transfer, cheque, card] }
+        reference: { type: string, maxLength: 80 }
+        note: { type: string, maxLength: 300 }
+      additionalProperties: false
+    CashTransaction:
+      type: object
+      required: [id, direction, amount, balanceAfter]
+      properties:
+        id: { type: string, format: uuid }
+        direction: { type: string, enum: [in, out] }
+        amount: { type: number }
+        balanceAfter: { type: number }
+        createdAt: { type: string, format: date-time }
+      additionalProperties: false
+    TaxReport:
+      type: object
+      required: [from, to, outputVat, inputVat, netPayable]
+      properties:
+        from: { type: string, format: date }
+        to: { type: string, format: date }
+        outputVat: { type: number }
+        inputVat: { type: number }
+        netPayable: { type: number }
+        invoicesCount: { type: integer }
+      additionalProperties: false
+
+    Employee:
+      type: object
+      required: [id, fullName, status]
+      properties:
+        id: { type: string, format: uuid }
+        fullName: { type: string }
+        jobTitle: { type: string }
+        branchId: { type: string, format: uuid }
+        status: { type: string, enum: [active, on_leave, terminated] }
+        baseSalary: { type: number, description: لا يُعاد إلا لمن يملك hr.salary.read }
+      additionalProperties: false
+    Attendance:
+      type: object
+      required: [id, employeeId, kind, at]
+      properties:
+        id: { type: string, format: uuid }
+        employeeId: { type: string, format: uuid }
+        kind: { type: string, enum: [in, out] }
+        at: { type: string, format: date-time }
+      additionalProperties: false
+    PayrollRun:
+      type: object
+      required: [id, month, status, totalNet]
+      properties:
+        id: { type: string, format: uuid }
+        month: { type: string, examples: ['2026-11'] }
+        status: { type: string, enum: [draft, pending_approval, approved, paid] }
+        totalNet: { type: number }
+        approvedBy: { type: ['string', 'null'], format: uuid }
+        version: { type: integer }
+      additionalProperties: false
+
+    ReportRow:
+      type: object
+      description: صف مرن حسب التقرير؛ المفاتيح معرّفة في مخطط التقرير داخل packages/contracts.
+      additionalProperties: true
+    ExportRequest:
+      type: object
+      required: [type, format]
+      properties:
+        type: { type: string, enum: [stock-valuation, expiry, low-stock, sales-daily, purchases, profit, movements-ledger, stock-count-variance] }
+        format: { type: string, enum: [xlsx, csv, pdf] }
+        filters:
+          type: object
+          additionalProperties: true
+      additionalProperties: false
+    JobRef:
+      type: object
+      required: [jobId, pollAfterMs]
+      properties:
+        jobId: { type: string, format: uuid }
+        pollAfterMs: { type: integer, minimum: 500 }
+      additionalProperties: false
+    Job:
+      type: object
+      required: [id, status, progress]
+      properties:
+        id: { type: string, format: uuid }
+        status: { type: string, enum: [queued, running, done, failed, cancelled] }
+        progress: { type: integer, minimum: 0, maximum: 100 }
+        rowsProcessed: { type: integer }
+        errorsCount: { type: integer }
+        downloadUrl: { type: ['string', 'null'], format: uri, description: رابط موقّع 15 دقيقة }
+        failureReason: { type: ['string', 'null'] }
+      additionalProperties: false
+
+    Notification:
+      type: object
+      required: [id, type, title, createdAt, read]
+      properties:
+        id: { type: string, format: uuid }
+        type: { type: string, enum: [low_stock, expiring_batch, expired_batch, invoice_confirmed, transfer_received, approval_request, security_alert] }
+        title: { type: string }
+        body: { type: string }
+        entityType: { type: ['string', 'null'] }
+        entityId: { type: ['string', 'null'], format: uuid }
+        read: { type: boolean }
+        createdAt: { type: string, format: date-time }
+      additionalProperties: false
+    NotificationPreferences:
+      type: object
+      properties:
+        email: { type: boolean, default: true }
+        inApp: { type: boolean, default: true }
+        webhook: { type: boolean, default: false }
+        expiryAlertDays: { type: integer, minimum: 1, maximum: 365, default: 90 }
+        lowStockOnlyBelowMin: { type: boolean, default: true }
+        version: { type: integer, readOnly: true }
+      additionalProperties: false
+
+    Plan:
+      type: object
+      required: [code, name, limits]
+      properties:
+        code: { type: string, examples: [starter] }
+        name: { type: string }
+        limits:
+          type: object
+          properties:
+            maxUsers: { type: integer }
+            maxMedicines: { type: integer }
+            exportsPerDay: { type: integer }
+          additionalProperties: false
+      additionalProperties: false
+    PlatformTenantInput:
+      type: object
+      required: [name, ownerEmail, planCode]
+      properties:
+        name: { type: string, minLength: 2, maxLength: 120 }
+        ownerEmail: { type: string, format: email }
+        planCode: { type: string }
+      additionalProperties: false
+    PlatformTenant:
+      type: object
+      description: بيانات التعاقد فقط — لا أرصدة ولا فواتير ولا عملاء.
+      required: [id, name, status, planCode, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        status: { type: string, enum: [trial, active, suspended, churned] }
+        planCode: { type: string }
+        usersCount: { type: integer }
+        createdAt: { type: string, format: date-time }
+        suspendedReason: { type: ['string', 'null'] }
+      additionalProperties: false
+    Usage:
+      type: object
+      required: [tenantId, users, warehouses, medicines, exportsToday]
+      properties:
+        tenantId: { type: string, format: uuid }
+        users: { type: integer }
+        warehouses: { type: integer }
+        medicines: { type: integer }
+        exportsToday: { type: integer }
+        storageBytes: { type: integer }
+      additionalProperties: false
+    Health:
+      type: object
+      required: [status, checks]
+      properties:
+        status: { type: string, enum: [ok, degraded, down] }
+        checks:
+          type: array
+          items:
+            type: object
+            required: [name, status, latencyMs]
+            properties:
+              name: { type: string }
+              status: { type: string, enum: [ok, degraded, down] }
+              latencyMs: { type: integer }
+            additionalProperties: false
+      additionalProperties: false

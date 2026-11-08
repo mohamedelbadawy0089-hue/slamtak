@@ -1,0 +1,51 @@
+name: security-invariants-production
+
+# فحص دوري على قاعدة الإنتاج (pharma1) — يكشف الانحراف الناتج عن تعديل يدوي في
+# لوحة Supabase، وهو ما لا تراه بوابة CI لأنها تبني المخطط من الملفات.
+#
+# الإعداد (مرة واحدة) في المستودع:
+#   Settings → Secrets and variables → Actions
+#   - Secret  SUPABASE_DB_PASSWORD   كلمة مرور قاعدة المشروع
+#   - متغيّران اختياريّان إن كان الاتصال عبر Session Pooler بدل الاتصال المباشر:
+#       Variable SUPABASE_DB_HOST   مثل aws-0-eu-central-1.pooler.supabase.com
+#       Variable SUPABASE_DB_USER   مثل postgres.<project-ref>
+#
+# لماذا قد تحتاج الـPooler: الاتصال المباشر `db.<ref>.supabase.co` صار IPv6 فقط
+# في المشاريع الحديثة، وrunners في GitHub تدعم IPv4 فقط. الـPooler يعطي IPv4.
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  invariants-production:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Check security invariants on production
+        env:
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          PGHOST: ${{ vars.SUPABASE_DB_HOST }}
+          PGUSER: ${{ vars.SUPABASE_DB_USER }}
+        run: |
+          # السكربت يُرجع 2 عند تعذّر الفحص (لا كلمة مرور/لا اتصال) و1 عند انحراف.
+          # كلاهما يُفشل المهمة، وهذه الرسالة تفرّق بين «لم نفحص» و«فحصنا ووجدنا».
+          if [ -z "$SUPABASE_DB_PASSWORD" ]; then
+            echo "::error::SUPABASE_DB_PASSWORD غير مضبوط في أسرار المستودع — لم يُنفَّذ أي فحص."
+            exit 1
+          fi
+          npm run check:security
