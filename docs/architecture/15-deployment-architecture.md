@@ -56,15 +56,18 @@ jobs:
         image: redis:7
     steps:
       - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm lint && pnpm typecheck
-      - run: pnpm test:unit -- --coverage
-      - run: pnpm test:integration
-      - run: pnpm test:isolation        # يفشل البناء عند أي تسريب
-      - run: pnpm db:migrate:from-zero && pnpm db:schema:diff
-      - run: pnpm security:audit && pnpm security:secrets && pnpm security:trivy
-      - run: pnpm build
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run lint && npm run typecheck
+      - run: npm run test:unit -- --coverage
+      - run: npm run test:integration
+      - run: npm run test:isolation        # يفشل البناء عند أي تسريب
+      - run: npm run db:migrate:from-zero && npm run db:schema:diff
+      - run: npm run security:audit && npm run security:secrets && npm run security:trivy
+      - run: npm run build
 ```
 
 | البوابة | شرط النجاح | مدة مستهدفة |

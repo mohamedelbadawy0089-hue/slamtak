@@ -1,8 +1,8 @@
 // مطابقة إصدارات أكشنات GitHub بين وثائق المعمارية وسير العمل الفعلي (بلا شبكة وبلا تبعيات).
 // المصدر الحاكم هو .github/workflows/*.yml: كل أكشن مذكور في الوثائق ومستخدم هناك
 // يجب أن يطابق إصداره الرئيسي، وأي انحراف يُفشل الفحص.
-// أكشن مذكور في الوثائق وغير مستخدم في أي workflow يُنبَّه عليه لا يُفشل، لأن الوثيقة
-// تحوي مقتطفات تصميمية معلنة (15 §2 «مختصر تصميمي») قد تسبق تنفيذها.
+// أكشن مذكور في الوثائق وغير مستخدم في أي workflow انحراف أيضًا ويُفشل الفحص: وثيقة
+// تصف CI لا يجوز أن تنسب إلى المستودع أكشنًا لا يشغّله.
 // التشغيل: npm run check:docs-actions   (رمز الخروج 1 عند أي انحراف)
 import fs from 'node:fs';
 import path from 'node:path';
@@ -13,10 +13,8 @@ const workflowsDir = path.join(root, '.github/workflows');
 const docsDir = path.join(root, 'docs/architecture');
 
 const failures = [];
-const advisories = [];
 const pass = (m) => console.log(`PASS  ${m}`);
 const fail = (m) => (failures.push(m), console.log(`FAIL  ${m}`));
-const warn = (m) => (advisories.push(m), console.log(`WARN  ${m}`));
 
 // uses: owner/action@ref — يتجاهل المسارات المحلية (./) وصور docker://
 const useRe = /uses:\s*([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+)@([^\s#'"]+)/g;
@@ -68,13 +66,12 @@ for (const file of docFiles) {
     });
 }
 
-// 3) المقارنة: الانحراف في الإصدار يُفشل، والذكر غير المستخدم يُنبَّه
+// 3) المقارنة: انحراف الإصدار أو أكشن مذكور وغير مستخدم — كلاهما فشل
 const drift = [];
-const unshared = [];
 for (const doc of mentioned) {
   const actual = used.get(doc.key);
   if (!actual) {
-    unshared.push(doc);
+    drift.push(`\`${doc.action}@${doc.ref}\` في ${doc.file}:${doc.line} غير مستخدم في أي workflow`);
     continue;
   }
   const refs = [...new Set(actual.map((a) => a.ref))];
@@ -89,21 +86,14 @@ for (const doc of mentioned) {
 }
 
 drift.length
-  ? drift.forEach((d) => fail(`انحراف إصدار أكشن: ${d}`))
-  : pass(
-      `كل الأكشنات المشتركة مطابقة (${mentioned.filter((m) => used.has(m.key)).length} مرجعًا في الوثائق)`,
-    );
-
-unshared.forEach((u) =>
-  warn(`${u.file}:${u.line} → \`${u.action}@${u.ref}\` غير مستخدم في أي workflow (لا إصدار للمقارنة)`),
-);
-
+  ? drift.forEach((d) => fail(`انحراف أكشن: ${d}`))
+  : pass(`كل أكشنات الوثائق مطابقة ومستخدمة (${mentioned.length} مرجعًا)`);
 const docCount = new Set(mentioned.map((m) => m.file)).size;
 const actionCount = used.size;
 console.log(
-  `\n${failures.length ? '❌' : '✅'} ${failures.length} فشل · ${advisories.length} تنبيه · ${mentioned.length} مرجعًا في ${docCount} ملفًا · ${actionCount} أكشنًا في ${fs.readdirSync(workflowsDir).filter((f) => /\.ya?ml$/.test(f)).length} workflow`,
+  `\n${failures.length ? '❌' : '✅'} ${failures.length} فشل · ${mentioned.length} مرجعًا في ${docCount} ملفًا · ${actionCount} أكشنًا في ${fs.readdirSync(workflowsDir).filter((f) => /\.ya?ml$/.test(f)).length} workflow`,
 );
 if (failures.length) {
-  console.error('\nوحّد الإصدار في الوثيقة أو في الـ workflow ثم أعد التشغيل.');
+  console.error('\nوحّد إصدار الوثيقة مع الـ workflow، أو أزل الأكشن غير المستخدم منها، ثم أعد التشغيل.');
   process.exit(1);
 }
