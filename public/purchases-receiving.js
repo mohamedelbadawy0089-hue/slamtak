@@ -674,8 +674,136 @@
     }
   };
 
-  window.printGrReceipt = function(grId) {
-    window.open('/api/receipts/' + grId + '/print', '_blank');
+  // ===== طباعة إيصال الاستلام (بديل /api/receipts/:id/print) =====
+  // تفتح النافذة فورًا قبل أي await، لأن المتصفح يحجب النوافذ التي تُفتح بعد انتظار غير متزامن.
+  window.printGrReceipt = async function(grId) {
+    const win = window.open('', '_blank');
+    if (!win) {
+      showNotification('المتصفح منع فتح نافذة الطباعة — اسمح بالنوافذ المنبثقة لهذا الموقع', 'error');
+      return;
+    }
+
+    win.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>إيصال استلام</title></head><body style="font-family:system-ui,sans-serif;padding:1rem;">جارٍ تجهيز الإيصال…</body></html>');
+    win.document.close();
+
+    function fail(message) {
+      try { win.close(); } catch (e) { /* أُغلقت يدويًا */ }
+      showNotification(message, 'error');
+    }
+
+    const session = getCurrentSession();
+    if (!session) {
+      fail('يجب تسجيل الدخول أولاً');
+      return;
+    }
+
+    const client = getSupabaseClient();
+    if (!client) {
+      fail('خطأ في الاتصال بقاعدة البيانات');
+      return;
+    }
+
+    let gr = null;
+    try {
+      // نفس استعلام viewGrReceipt كي لا نفترض أعمدة أو علاقات غير موجودة في القاعدة.
+      const res = await client
+        .from('goods_receipts')
+        .select(`
+          *,
+          items:goods_receipt_items(
+            *,
+            product:products(id,name,name_ar,scientific_name,barcode,sku,dosage_form,strength,unit_of_measure),
+            purchase_order:purchase_orders(id,order_number)
+          )
+        `)
+        .eq('id', grId)
+        .single();
+
+      if (res.error) {
+        console.error('Error:', res.error);
+        fail('خطأ: ' + (res.error.message || 'فشل الجلب'));
+        return;
+      }
+      gr = res.data;
+    } catch (e) {
+      console.error('Error:', e);
+      fail('خطأ في الاتصال');
+      return;
+    }
+
+    if (!gr) {
+      fail('إيصال الاستلام غير موجود');
+      return;
+    }
+
+    const receiptItems = gr.items || [];
+    const totalQty = receiptItems.reduce(function(sum, item) { return sum + Number(item.quantity || 0); }, 0);
+    const totalAmount = receiptItems.reduce(function(sum, item) {
+      const price = Number(item.unit_price || 0);
+      const discount = Number(item.discount_percent) || 0;
+      return sum + Number(item.quantity || 0) * price * (1 - discount / 100);
+    }, 0);
+    const orderNumber = (gr.purchase_order && gr.purchase_order.order_number) || '—';
+    const createdStr = (gr.created_at ? new Date(gr.created_at) : new Date()).toLocaleDateString('ar-EG', { dateStyle: 'medium' });
+    // draft و posted و cancelled كلها قيم ممكنة في goods_receipts.status؛ أي قيمة أخرى تُطبع كما هي.
+    const statusLabel = { draft: 'مسودة', posted: 'مُصدَّر', cancelled: 'ملغى' }[gr.status] || gr.status || '—';
+
+    const rows = receiptItems.map(function(item) {
+      const product = item.product || {};
+      const name = product.name_ar || product.name || '—';
+      const unit = product.unit_of_measure || 'وحدة';
+      const lineTotal = Number(item.quantity || 0) * Number(item.unit_price || 0) * (1 - (Number(item.discount_percent) || 0) / 100);
+      return '<tr>'
+        + '<td>' + esc(name) + '</td>'
+        + '<td>' + esc(String(item.quantity || 0)) + ' ' + esc(unit) + '</td>'
+        + '<td class="num">' + esc(formatCurrency(Number(item.unit_price || 0))) + '</td>'
+        + '<td class="num">' + esc(String(item.discount_percent || 0)) + '%</td>'
+        + '<td class="num strong">' + esc(formatCurrency(lineTotal)) + '</td>'
+        + '</tr>';
+    }).join('');
+
+    const html = '<!DOCTYPE html>'
+      + '<html lang="ar" dir="rtl"><head><meta charset="utf-8">'
+      + '<title>إيصال استلام ' + esc(String(gr.id).slice(0, 8)) + '</title>'
+      + '<style>'
+      + '@page{size:A4;margin:12mm;}'
+      + 'body{font-family:system-ui,"Segoe UI",Tahoma,sans-serif;color:#111;margin:0;padding:1rem;}'
+      + 'h1{font-size:1.4rem;margin:0 0 0.25rem 0;}'
+      + '.muted{color:#555;font-size:0.85rem;}'
+      + '.head{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;border-bottom:2px solid #333;padding-bottom:0.75rem;margin-bottom:1rem;}'
+      + '.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0.5rem;margin-bottom:1rem;font-size:0.9rem;}'
+      + '.meta div span{display:block;color:#555;font-size:0.78rem;}'
+      + 'table{width:100%;border-collapse:collapse;font-size:0.9rem;}'
+      + 'th,td{padding:0.45rem;border-bottom:1px solid #ddd;text-align:right;}'
+      + 'thead th{background:#f1f5f9;border-bottom:2px solid #333;}'
+      + '.num{text-align:left;font-variant-numeric:tabular-nums;}'
+      + '.strong{font-weight:bold;}'
+      + 'tfoot td{border-top:2px solid #333;font-weight:bold;}'
+      + '.actions{margin-bottom:1rem;}'
+      + '.actions button{font:inherit;padding:0.5rem 1rem;cursor:pointer;}'
+      + '@media print{.no-print{display:none !important;}body{padding:0;}}'
+      + '</style></head><body>'
+      + '<div class="actions no-print"><button type="button" onclick="window.print()">🖨️ طباعة</button></div>'
+      + '<div class="head"><div><h1>📦 إيصال استلام</h1>'
+      + '<div class="muted">رقم الإيصال: ' + esc(String(gr.id)) + '</div></div>'
+      + '<div class="muted">أمر الشراء: ' + esc(String(orderNumber)) + '</div></div>'
+      + '<div class="meta">'
+      + '<div><span>التاريخ</span>' + esc(createdStr) + '</div>'
+      + '<div><span>الحالة</span>' + esc(statusLabel) + '</div>'
+      + '<div><span>المخزن</span>' + esc(gr.warehouse_id ? String(gr.warehouse_id).slice(0, 8) : '—') + '</div>'
+      + '<div><span>عدد الأصناف</span>' + esc(String(receiptItems.length)) + '</div>'
+      + '<div><span>إجمالي الكمية</span>' + esc(String(totalQty)) + '</div>'
+      + '</div>'
+      + '<table><thead><tr><th>المنتج</th><th>الكمية</th><th class="num">السعر</th><th class="num">الخصم %</th><th class="num">الإجمالي</th></tr></thead>'
+      + '<tbody>' + (rows || '<tr><td colspan="5">لا توجد أصناف</td></tr>') + '</tbody>'
+      + '<tfoot><tr><td colspan="4">إجمالي المبلغ</td><td class="num">' + esc(formatCurrency(totalAmount)) + ' جنيه</td></tr></tfoot>'
+      + '</table></body></html>';
+
+    win.document.write(html);
+    win.document.close();
+    setTimeout(function() {
+      try { win.focus(); win.print(); } catch (e) { console.error('print failed:', e); }
+    }, 150);
   };
 
   // ===== عرض واحد =====
