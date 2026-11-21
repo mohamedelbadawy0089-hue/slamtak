@@ -5,6 +5,8 @@
 // تصف CI لا يجوز أن تنسب إلى المستودع أكشنًا لا يشغّله.
 // والعكس بالعكس: كل أكشن يشغّله المستودع يجب أن يكون مذكورًا في الوثائق، وإلا فوثيقة
 // النشر تصف خط أنابيب أنقص مما يُنفَّذ فعلاً.
+// ويُقارن أيضًا إصدار Node: `node-version` في مقتطفات الوثائق، و`node-version` في
+// الـ workflows، و`engines.node` في package.json — أي اختلاف في الإصدار الرئيسي يُفشل.
 // التشغيل: npm run check:docs-actions   (رمز الخروج 1 عند أي انحراف)
 import fs from 'node:fs';
 import path from 'node:path';
@@ -35,15 +37,20 @@ const walk = (dir) =>
   });
 
 // 1) الأكشنات الفعلية في الـ workflows
+const workflowFiles = fs
+  .readdirSync(workflowsDir)
+  .filter((f) => /\.ya?ml$/.test(f))
+  .map((f) => path.join(workflowsDir, f))
+  .sort();
 const used = new Map(); // action → [{file, line, ref}]
-for (const file of fs.readdirSync(workflowsDir).filter((f) => /\.ya?ml$/.test(f))) {
-  const lines = fs.readFileSync(path.join(workflowsDir, file), 'utf8').split('\n');
+for (const file of workflowFiles) {
+  const lines = fs.readFileSync(file, 'utf8').split('\n');
   lines.forEach((line, i) => {
     if (isComment(line)) return;
     for (const m of line.matchAll(useRe)) {
       const key = actionKey(m[1]);
       if (!used.has(key)) used.set(key, []);
-      used.get(key).push({ file: `.github/workflows/${file}`, line: i + 1, action: m[1], ref: m[2] });
+      used.get(key).push({ file: path.relative(root, file), line: i + 1, action: m[1], ref: m[2] });
     }
   });
 }
@@ -103,14 +110,49 @@ undocumented.length
       ),
     )
   : pass(`كل أكشنات الـ workflows مذكورة في الوثائق (${used.size})`);
+// 5) إصدار Node: الوثائق والـ workflows و engines.node — الإصدار الرئيسي يجب أن يتوحد
+const nodeVersionRe = /node-version:\s*['"]?([0-9][^\s'"#,]*)/g;
+const nodeMajor = (v) => String(v).match(/^v?(\d+)/)?.[1] ?? String(v);
+const nodeVersionsIn = (files) =>
+  files.flatMap((file) =>
+    fs
+      .readFileSync(file, 'utf8')
+      .split('\n')
+      .flatMap((line, i) =>
+        isComment(line)
+          ? []
+          : [...line.matchAll(nodeVersionRe)].map((m) => ({
+              location: `${path.relative(root, file)}:${i + 1}`,
+              version: m[1],
+            })),
+      ),
+  );
+
+const engineNode = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'))?.engines?.node;
+const nodeEntries = [
+  ...nodeVersionsIn(docFiles),
+  ...nodeVersionsIn(workflowFiles),
+  ...(engineNode ? [{ location: 'package.json engines.node', version: engineNode }] : []),
+];
+const nodeMajors = [...new Set(nodeEntries.map((e) => nodeMajor(e.version)))];
+if (nodeMajors.length > 1) {
+  fail(
+    `اختلاف إصدار Node: ${nodeEntries.map((e) => `\`${e.version}\` (${e.location})`).join(' · ')}`,
+  );
+} else if (nodeEntries.length) {
+  pass(`إصدار Node موحّد (${nodeMajors[0]}) في الوثائق والـ workflows و engines.node`);
+} else {
+  pass('لا إصدار Node مذكور في أي مصدر — لا شيء للمقارنة');
+}
+
 const docCount = new Set(mentioned.map((m) => m.file)).size;
 const actionCount = used.size;
 console.log(
-  `\n${failures.length ? '❌' : '✅'} ${failures.length} فشل · ${mentioned.length} مرجعًا في ${docCount} ملفًا · ${actionCount} أكشنًا في ${fs.readdirSync(workflowsDir).filter((f) => /\.ya?ml$/.test(f)).length} workflow`,
+  `\n${failures.length ? '❌' : '✅'} ${failures.length} فشل · ${mentioned.length} مرجعًا في ${docCount} ملفًا · ${actionCount} أكشنًا في ${workflowFiles.length} workflow`,
 );
 if (failures.length) {
   console.error(
-    '\nوحّد إصدار الوثيقة مع الـ workflow، أو أزل الأكشن غير المستخدم منها، أو وثّق الأكشن الذي يشغّله المستودع، ثم أعد التشغيل.',
+    '\nأصلح ما سبق — إصدار أكشن، أو أكشن غير مستخدم/غير موثّق، أو node-version — ثم أعد التشغيل.',
   );
   process.exit(1);
 }
