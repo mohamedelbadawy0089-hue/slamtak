@@ -1,4 +1,4 @@
-// مطابقة إصدارات أكشنات GitHub بين وثائق المعمارية وسير العمل الفعلي (بلا شبكة وبلا تبعيات).
+// مطابقة إصدارات أكشنات GitHub بين وثائق المستودع وسير العمل الفعلي (بلا شبكة وبلا تبعيات).
 // المصدر الحاكم هو .github/workflows/*.yml: كل أكشن مذكور في الوثائق ومستخدم هناك
 // يجب أن يطابق إصداره الرئيسي، وأي انحراف يُفشل الفحص.
 // أكشن مذكور في الوثائق وغير مستخدم في أي workflow انحراف أيضًا ويُفشل الفحص: وثيقة
@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const workflowsDir = path.join(root, '.github/workflows');
-const docsDir = path.join(root, 'docs/architecture');
+const docsDir = path.join(root, 'docs');
 
 const failures = [];
 const pass = (m) => console.log(`PASS  ${m}`);
@@ -46,7 +46,7 @@ for (const file of fs.readdirSync(workflowsDir).filter((f) => /\.ya?ml$/.test(f)
   });
 }
 
-// 2) الأكشنات المذكورة في وثائق المعمارية
+// 2) الأكشنات المذكورة في كل وثائق docs/ (معمارية، runbooks، وغيرها)
 const docFiles = walk(docsDir).filter((f) => f.endsWith('.md')).sort();
 const mentioned = [];
 for (const file of docFiles) {
