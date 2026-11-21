@@ -6,7 +6,8 @@
 // والعكس بالعكس: كل أكشن يشغّله المستودع يجب أن يكون مذكورًا في الوثائق، وإلا فوثيقة
 // النشر تصف خط أنابيب أنقص مما يُنفَّذ فعلاً.
 // ويُقارن أيضًا إصدار Node: `node-version` في مقتطفات الوثائق، و`node-version` في
-// الـ workflows، و`engines.node` في package.json — أي اختلاف في الإصدار الرئيسي يُفشل.
+// الـ workflows، و`engines.node` في package.json، ووسم صورة `node:NN[-…]` في مقتطفات
+// Dockerfile/Compose — أي اختلاف في الإصدار الرئيسي يُفشل.
 // التشغيل: npm run check:docs-actions   (رمز الخروج 1 عند أي انحراف)
 import fs from 'node:fs';
 import path from 'node:path';
@@ -26,6 +27,12 @@ const isComment = (line) => /^\s*#/.test(line);
 const actionKey = (action) => action.toLowerCase();
 // قيمة node-version في سطر واحد (واحدة لكل سطر، فلا حاجة إلى نمط شامل).
 const nodeVersionIn = (line) => line.match(/node-version:\s*['"]?([0-9][^\s'"#,]*)/)?.[1] ?? null;
+// وسم صورة Node في مقتطفات Dockerfile/Compose فقط: سطر `FROM node:22-alpine` أو
+// `image: node:22` → "22…". لا يُفحص النثر، فلا يفشل ذكر `node:18` في شرح أو جدول.
+const imageNodeIn = (line) =>
+  line.match(/^\s*FROM\s+node:(\d+(?:\.\d+)*)/i)?.[1] ??
+  line.match(/\bimage:\s*node:(\d+(?:\.\d+)*)/)?.[1] ??
+  null;
 // الإصدار الرئيسي: 22 و 22.x و 22.20.0 و ">=22" كلها → "22".
 // الإصدار الرئيسي: v5 و v5.1.0 → v5؛ و SHA كامل → يُقارن نصًّا.
 const refKey = (ref) => {
@@ -67,6 +74,7 @@ for (const file of workflowFiles) {
 const docFiles = walk(docsDir).filter((f) => f.endsWith('.md')).sort();
 const mentioned = [];
 const docNodes = []; // node-version في الوثائق
+const docImages = []; // وسم صورة Node في مقتطفات Dockerfile/Compose داخل الوثائق
 for (const file of docFiles) {
   const location = (i) => `${path.relative(root, file)}:${i + 1}`;
   fs.readFileSync(file, 'utf8')
@@ -84,6 +92,8 @@ for (const file of docFiles) {
       }
       const version = nodeVersionIn(line);
       if (version) docNodes.push({ location: location(i), version });
+      const image = imageNodeIn(line);
+      if (image) docImages.push({ location: location(i), version: image });
     });
 }
 
@@ -127,6 +137,7 @@ undocumented.length
 const engineNode = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')).engines?.node;
 const nodeEntries = [
   ...docNodes,
+  ...docImages,
   ...workflowNodes,
   ...(engineNode ? [{ location: 'package.json engines.node', version: engineNode }] : []),
 ];
@@ -136,7 +147,9 @@ if (nodeMajors.length > 1) {
     `اختلاف إصدار Node: ${nodeEntries.map((e) => `\`${e.version}\` (${e.location})`).join(' · ')}`,
   );
 } else if (nodeEntries.length) {
-  pass(`إصدار Node موحّد (${nodeMajors[0]}) في الوثائق والـ workflows و engines.node`);
+  pass(
+    `إصدار Node موحّد (${nodeMajors[0]}) في الوثائق والـ workflows و engines.node وصور Dockerfile`,
+  );
 } else {
   pass('لا إصدار Node مذكور في أي مصدر — لا شيء للمقارنة');
 }
@@ -148,7 +161,7 @@ console.log(
 );
 if (failures.length) {
   console.error(
-    '\nأصلح ما سبق — إصدار أكشن، أو أكشن غير مستخدم/غير موثّق، أو node-version — ثم أعد التشغيل.',
+    '\nأصلح ما سبق — إصدار أكشن، أو أكشن غير مستخدم/غير موثّق، أو إصدار Node (node-version أو وسم صورة) — ثم أعد التشغيل.',
   );
   process.exit(1);
 }
