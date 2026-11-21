@@ -53,7 +53,8 @@ services:
 
 ```mermaid
 flowchart LR
-    PR["Pull Request"] --> L["Lint + Types + Arch"]
+    PR["Pull Request"] --> DOCS["Docs (AR): check:docs-ar"]
+    DOCS --> L["Lint + Types + Arch"]
     L --> U["Unit + Integration"]
     U --> D["DB/RLS (pgTAP)"]
     D --> C["Contract (OpenAPI)"]
@@ -71,6 +72,7 @@ flowchart LR
 | المرحلة | الزمن المستهدف | الفشل يعني |
 |---|---|---|
 | Lint/Types | ≤ 2 د | لا merge |
+| Docs (AR): `check:docs-ar` (النطاق في السكربت) | ≤ 10 ث | لا merge |
 | Unit+Integration | ≤ 6 د | لا merge |
 | DB/RLS | ≤ 3 د | لا merge |
 | E2E | ≤ 8 د | لا merge |

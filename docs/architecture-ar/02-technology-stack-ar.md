@@ -150,6 +150,11 @@ slamtak/
 │  ├─ contracts/                  # Zod + OpenAPI + أنواع مشتركة
 │  ├─ ui/                         # مكونات shadcn المشتركة
 │  └─ config/                     # eslint/tsconfig/tailwind
+├─ modules/                       # الوحدات الحدودية (انظر 01 §4)
+│  └─ inventory/                  # نفس البنية لكل وحدة: catalog, sales, purchasing…
+│     ├─ domain/ application/ infrastructure/ api/
+│     ├─ public.ts                # العقد العام الوحيد للوحدة — لا يُستورد من غيره
+│     └─ tests/
 ├─ infra/
 │  ├─ docker/{Dockerfile.api,compose.dev.yml,compose.prod.yml}   # ملف B
 │  ├─ github/workflows/{ci.yml,deploy-preview.yml,deploy-prod.yml,backup.yml}

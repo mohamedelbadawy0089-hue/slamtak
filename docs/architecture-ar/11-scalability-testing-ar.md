@@ -152,6 +152,7 @@
 |---|---|
 | Typecheck | صفر أخطاء (`tsc --noEmit`) |
 | Lint/Arch | ESLint + dependency-cruiser + فحص "لا localStorage" + "كل route له permission" |
+| Docs (AR) | `npm run check:docs-ar` — نطاق الفحص في `scripts/check-architecture-ar-docs.mjs` |
 | Unit + Integration | كلها خضراء |
 | DB/RLS | pgTAP أخضر + اختبارات A1–A12 |
 | Contract | `openapi.yaml` محدّث ومطابق |
