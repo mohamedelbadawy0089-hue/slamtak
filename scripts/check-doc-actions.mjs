@@ -27,11 +27,12 @@ const isComment = (line) => /^\s*#/.test(line);
 const actionKey = (action) => action.toLowerCase();
 // قيمة node-version في سطر واحد (واحدة لكل سطر، فلا حاجة إلى نمط شامل).
 const nodeVersionIn = (line) => line.match(/node-version:\s*['"]?([0-9][^\s'"#,]*)/)?.[1] ?? null;
-// وسم صورة Node في مقتطفات Dockerfile/Compose فقط: سطر `FROM node:22-alpine` أو
-// `image: node:22` → "22…". لا يُفحص النثر، فلا يفشل ذكر `node:18` في شرح أو جدول.
+// وسم صورة Node في مقتطفات Dockerfile/Compose فقط: `FROM node:22-alpine`،
+// `FROM --platform=linux/amd64 node:22`، `image: node:22`، `image: docker.io/library/node:22`
+// → "22…". لا يُفحص النثر، فلا يفشل ذكر `node:18` في شرح أو جدول.
 const imageNodeIn = (line) =>
-  line.match(/^\s*FROM\s+node:(\d+(?:\.\d+)*)/i)?.[1] ??
-  line.match(/\bimage:\s*node:(\d+(?:\.\d+)*)/)?.[1] ??
+  line.match(/^\s*FROM\s+(?:--\S+\s+)*(?<![\w.-])(?:[\w.:-]+\/)*node:(\d+(?:\.\d+)*)/i)?.[1] ??
+  line.match(/\bimage:\s*["']?(?<![\w.-])(?:[\w.:-]+\/)*node:(\d+(?:\.\d+)*)/i)?.[1] ??
   null;
 // الإصدار الرئيسي: 22 و 22.x و 22.20.0 و ">=22" كلها → "22".
 // الإصدار الرئيسي: v5 و v5.1.0 → v5؛ و SHA كامل → يُقارن نصًّا.
