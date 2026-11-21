@@ -27,6 +27,9 @@ jobs:
       - name: Check Arabic architecture docs
         run: npm run check:docs-ar
 
+      - name: Check docs action versions match workflows
+        run: npm run check:docs-actions
+
   # بوابة الأنواع: tsconfig يغطي src/ بما فيه ملفات .tsx، وفشل خيار jsx مرّ
   # سابقًا بلا فحص لأن لا مهمة كانت تشغّل tsc.
   typecheck:
