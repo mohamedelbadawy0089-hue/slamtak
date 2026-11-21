@@ -24,11 +24,15 @@ const fail = (m) => (failures.push(m), console.log(`FAIL  ${m}`));
 const useRe = /uses:\s*([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+)@([^\s#'"]+)/g;
 const isComment = (line) => /^\s*#/.test(line);
 const actionKey = (action) => action.toLowerCase();
+// قيمة node-version في سطر واحد (واحدة لكل سطر، فلا حاجة إلى نمط شامل).
+const nodeVersionIn = (line) => line.match(/node-version:\s*['"]?([0-9][^\s'"#,]*)/)?.[1] ?? null;
+// الإصدار الرئيسي: 22 و 22.x و 22.20.0 و ">=22" كلها → "22".
 // الإصدار الرئيسي: v5 و v5.1.0 → v5؛ و SHA كامل → يُقارن نصًّا.
 const refKey = (ref) => {
   const m = ref.match(/^v?(\d+)(?:\.\d+)*$/);
   return m ? `v${m[1]}` : ref.toLowerCase();
 };
+const nodeMajor = (v) => String(v).match(/(\d+)/)?.[1] ?? String(v);
 
 const walk = (dir) =>
   fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
@@ -43,8 +47,10 @@ const workflowFiles = fs
   .map((f) => path.join(workflowsDir, f))
   .sort();
 const used = new Map(); // action → [{file, line, ref}]
+const workflowNodes = []; // node-version في الـ workflows
 for (const file of workflowFiles) {
   const lines = fs.readFileSync(file, 'utf8').split('\n');
+  const location = (i) => `${path.relative(root, file)}:${i + 1}`;
   lines.forEach((line, i) => {
     if (isComment(line)) return;
     for (const m of line.matchAll(useRe)) {
@@ -52,13 +58,17 @@ for (const file of workflowFiles) {
       if (!used.has(key)) used.set(key, []);
       used.get(key).push({ file: path.relative(root, file), line: i + 1, action: m[1], ref: m[2] });
     }
+    const version = nodeVersionIn(line);
+    if (version) workflowNodes.push({ location: location(i), version });
   });
 }
 
 // 2) الأكشنات المذكورة في كل وثائق docs/ (معمارية، runbooks، وغيرها)
 const docFiles = walk(docsDir).filter((f) => f.endsWith('.md')).sort();
 const mentioned = [];
+const docNodes = []; // node-version في الوثائق
 for (const file of docFiles) {
+  const location = (i) => `${path.relative(root, file)}:${i + 1}`;
   fs.readFileSync(file, 'utf8')
     .split('\n')
     .forEach((line, i) => {
@@ -72,6 +82,8 @@ for (const file of docFiles) {
           key: actionKey(m[1]),
         });
       }
+      const version = nodeVersionIn(line);
+      if (version) docNodes.push({ location: location(i), version });
     });
 }
 
@@ -110,28 +122,12 @@ undocumented.length
       ),
     )
   : pass(`كل أكشنات الـ workflows مذكورة في الوثائق (${used.size})`);
-// 5) إصدار Node: الوثائق والـ workflows و engines.node — الإصدار الرئيسي يجب أن يتوحد
-const nodeVersionRe = /node-version:\s*['"]?([0-9][^\s'"#,]*)/g;
-const nodeMajor = (v) => String(v).match(/^v?(\d+)/)?.[1] ?? String(v);
-const nodeVersionsIn = (files) =>
-  files.flatMap((file) =>
-    fs
-      .readFileSync(file, 'utf8')
-      .split('\n')
-      .flatMap((line, i) =>
-        isComment(line)
-          ? []
-          : [...line.matchAll(nodeVersionRe)].map((m) => ({
-              location: `${path.relative(root, file)}:${i + 1}`,
-              version: m[1],
-            })),
-      ),
-  );
 
-const engineNode = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'))?.engines?.node;
+// 5) إصدار Node: الوثائق والـ workflows و engines.node — الإصدار الرئيسي يجب أن يتوحد
+const engineNode = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')).engines?.node;
 const nodeEntries = [
-  ...nodeVersionsIn(docFiles),
-  ...nodeVersionsIn(workflowFiles),
+  ...docNodes,
+  ...workflowNodes,
   ...(engineNode ? [{ location: 'package.json engines.node', version: engineNode }] : []),
 ];
 const nodeMajors = [...new Set(nodeEntries.map((e) => nodeMajor(e.version)))];
