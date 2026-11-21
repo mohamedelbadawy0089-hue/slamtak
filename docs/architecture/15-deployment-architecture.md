@@ -82,6 +82,37 @@ jobs:
 
 **زمن الدمج المستهدف: ≤ 20 دقيقة.** أطول من ذلك يعني تدهور جودة أو بنية اختبار ضعيفة.
 
+### 2.1 نشر الواجهة الثابتة على GitHub Pages
+
+الواجهة ملفات ثابتة في `public/`؛ تُنشر كما هي بلا بناء، لذلك تُخدم على جذر الموقع (`https://<user>.github.io/slamtak/`) مباشرة بدل مسار فرعي.
+
+```yaml
+# .github/workflows/pages.yml (المصدر الفعلي)
+name: pages
+on:
+  push: { branches: [main], paths: ['public/**', '.github/workflows/pages.yml'] }
+  workflow_dispatch:
+permissions: { contents: read, pages: write, id-token: write }
+concurrency: { group: pages, cancel-in-progress: true }
+jobs:
+  deploy:
+    environment: { name: github-pages, url: '${{ steps.deployment.outputs.page_url }}' }
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with: { path: public }
+      - id: deployment
+        uses: actions/deploy-pages@v5
+```
+
+| القاعدة | السبب |
+|---|---|
+| المصدر `build_type: workflow` لا `legacy` | نمط الفرع يقبل `/` أو `/docs` فقط، ولا يمكنه اختيار `public/` |
+| بلا `npm ci` ولا بناء | الملفات جاهزة في `public/`؛ البناء يضيف زمنًا بلا مخرج جديد |
+| `path: public` | ما يُنشر هو المجلد نفسه، لا نسخة منه |
+
 ---
 
 ## 3. الصور (Docker)
