@@ -128,7 +128,7 @@ CMD ["node", "dist/main.js"]
 # ترتيب إلزامي
 1. نسخة احتياطية/تأكيد PITR
 2. pg_dump --schema-only  (للمقارنة)
-3. pnpm db:migrate        # هجرات متوافقة للخلف فقط
+3. npm run db:migrate     # هجرات متوافقة للخلف فقط
 4. نشر التطبيق الجديد
 5. تحقق: /health/ready + smoke tests
 6. (لاحقًا في إصدار منفصل) حذف الأعمدة القديمة
