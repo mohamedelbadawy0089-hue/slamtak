@@ -3,6 +3,8 @@
 // يجب أن يطابق إصداره الرئيسي، وأي انحراف يُفشل الفحص.
 // أكشن مذكور في الوثائق وغير مستخدم في أي workflow انحراف أيضًا ويُفشل الفحص: وثيقة
 // تصف CI لا يجوز أن تنسب إلى المستودع أكشنًا لا يشغّله.
+// والعكس بالعكس: كل أكشن يشغّله المستودع يجب أن يكون مذكورًا في الوثائق، وإلا فوثيقة
+// النشر تصف خط أنابيب أنقص مما يُنفَّذ فعلاً.
 // التشغيل: npm run check:docs-actions   (رمز الخروج 1 عند أي انحراف)
 import fs from 'node:fs';
 import path from 'node:path';
@@ -88,12 +90,27 @@ for (const doc of mentioned) {
 drift.length
   ? drift.forEach((d) => fail(`انحراف أكشن: ${d}`))
   : pass(`كل أكشنات الوثائق مطابقة ومستخدمة (${mentioned.length} مرجعًا)`);
+
+// 4) الاتجاه المعاكس: لا يجوز أن يشغّل المستودع أكشنًا لم تذكره الوثائق
+const documented = new Set(mentioned.map((m) => m.key));
+const undocumented = [...used].filter(([key]) => !documented.has(key));
+undocumented.length
+  ? undocumented.forEach(([, refs]) =>
+      fail(
+        `أكشن مستخدم وغير مذكور في الوثائق: \`${refs[0].action}@${refs[0].ref}\` (${refs
+          .map((r) => `${r.file}:${r.line}`)
+          .join(', ')})`,
+      ),
+    )
+  : pass(`كل أكشنات الـ workflows مذكورة في الوثائق (${used.size})`);
 const docCount = new Set(mentioned.map((m) => m.file)).size;
 const actionCount = used.size;
 console.log(
   `\n${failures.length ? '❌' : '✅'} ${failures.length} فشل · ${mentioned.length} مرجعًا في ${docCount} ملفًا · ${actionCount} أكشنًا في ${fs.readdirSync(workflowsDir).filter((f) => /\.ya?ml$/.test(f)).length} workflow`,
 );
 if (failures.length) {
-  console.error('\nوحّد إصدار الوثيقة مع الـ workflow، أو أزل الأكشن غير المستخدم منها، ثم أعد التشغيل.');
+  console.error(
+    '\nوحّد إصدار الوثيقة مع الـ workflow، أو أزل الأكشن غير المستخدم منها، أو وثّق الأكشن الذي يشغّله المستودع، ثم أعد التشغيل.',
+  );
   process.exit(1);
 }
