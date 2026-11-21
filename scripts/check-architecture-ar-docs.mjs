@@ -14,6 +14,7 @@ const searchDirs = [
   path.join(root, 'docs/architecture'),
   path.join(root, 'docs/architecture/api'),
   path.join(root, 'supabase/tests'),
+  path.join(root, 'supabase/migrations'),
 ];
 
 const failures = [];
@@ -177,7 +178,8 @@ treeLine ? pass(`شجرة 02 تُظهر العقد: ${treeLine.trim()}`) : fail(
 
 // 6) كل ملف مشار إليه موجود فعلًا. تُستثنى أسماء القوالب (<date>، YYYYMM…)، ويُنبَّه
 //    على ملف مخطّط له في الوثائق ولم يُنشأ بعد بدل إفشال البوابة.
-const planned = new Set(['0000_baseline.sql']);
+// ملفات مخطّط لها: تُنبَّه لا تُفشل. فارغة اليوم — أضف الاسم هنا يوم يُذكر قبل إنشائه.
+const planned = new Set();
 const fileIssues = new Set();
 let fileRefs = 0;
 
