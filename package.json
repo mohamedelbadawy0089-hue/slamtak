@@ -2,6 +2,9 @@
   "name": "slamtak",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "dev": "node start.js",
     "build": "tsc",
