@@ -55,7 +55,7 @@ jobs:
       redis:
         image: redis:7
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint && pnpm typecheck
