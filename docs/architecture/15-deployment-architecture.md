@@ -90,13 +90,12 @@ jobs:
 # infra/docker/api.Dockerfile (تصميم مرجعي)
 FROM node:22-alpine AS deps
 WORKDIR /app
-COPY pnpm-lock.yaml package.json ./
-RUN corepack enable && pnpm fetch --prod=false
+COPY package.json package-lock.json ./
+RUN npm ci --no-audit --no-fund
 COPY . .
-RUN pnpm install --frozen-lockfile --offline
 
 FROM deps AS build
-RUN pnpm --filter @slamtak/api build
+RUN npm run build
 
 FROM node:22-alpine AS runtime
 RUN addgroup -S app && adduser -S app -G app
