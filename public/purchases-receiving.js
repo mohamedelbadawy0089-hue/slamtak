@@ -47,7 +47,7 @@
     currentPOId = poId;
     const client = getSupabaseClient();
     if (!client) {
-      showNotification('خطأ في الاتصال بقاعدة البيانات', 'error');
+      renderLoadError('تعذر الاتصال بقاعدة البيانات', 'لم يُنشأ عميل Supabase — تحقق من تحميل supabase-config.js ومفتاح anon.', null);
       return;
     }
 
@@ -67,14 +67,18 @@
         .eq('id', poId)
         .single();
 
-      if (!poRes.data) {
-        showNotification('أمر الشراء غير موجود', 'error');
-        setTimeout(() => navigate('/purchases'), 1500);
+      if (poRes.data) {
+        currentPO = poRes.data;
+        items = poRes.data.items || [];
+      } else {
+        // لا يُترك الصفحة فارغة: نعرض السبب مع زر رجوع.
+        renderLoadError(
+          poRes.error ? 'تعذر جلب أمر الشراء' : 'أمر الشراء غير موجود',
+          poRes.error ? describeError(poRes.error) : 'تحقق من رقم أمر الشراء أو أنه لم يُحذف.',
+          poRes.error && (poRes.error.code || poRes.error.status)
+        );
         return;
       }
-
-      currentPO = poRes.data;
-      items = poRes.data.items || [];
 
       // جلب إيصالات الاستلام الموجودة
       const grRes = await client
@@ -90,8 +94,40 @@
       renderPage();
     } catch (e) {
       console.error('Error loading purchase order:', e);
-      showNotification('خطأ: ' + (e.message || 'فشل الجلب'), 'error');
+      renderLoadError('تعذر جلب أمر الشراء', describeError(e), e && (e.code || e.status));
     }
+  }
+
+  // رسالة خطأ مقروءة بدل صفحة بيضاء عند فشل الجلب.
+  function describeError(e) {
+    if (!e) return 'سبب غير معروف';
+    const parts = [e.message || String(e)];
+    if (e.status) parts.push('HTTP ' + e.status);
+    if (e.code) parts.push('(' + e.code + ')');
+    if (e.details) parts.push(e.details);
+    if (e.hint) parts.push('تلميح: ' + e.hint);
+    return parts.filter(Boolean).join(' — ');
+  }
+
+  function renderLoadError(title, detail, code) {
+    const host = document.getElementById('section-body');
+    if (!host) {
+      showNotification(title + ': ' + detail, 'error');
+      return;
+    }
+    host.innerHTML = `
+      <div class="card" style="border-right:4px solid #dc2626;text-align:right;">
+        <h3 style="margin:0 0 0.5rem;color:#dc2626;">⚠️ ${esc(title)}</h3>
+        <p class="muted" style="margin:0 0 0.75rem;">${esc(detail)}</p>
+        ${code ? `<p class="muted" style="margin:0 0 0.75rem;font-size:0.8rem;">الرمز: ${esc(String(code))}</p>` : ''}
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <a class="btn" data-link href="/purchases/receiving">🔙 رجوع لقائمة الاستلام</a>
+          <a class="btn" data-link href="/purchases/orders">📋 أوامر الشراء</a>
+          <button class="btn" type="button" id="reload-po-btn">🔄 إعادة المحاولة</button>
+        </div>
+      </div>`;
+    const retry = document.getElementById('reload-po-btn');
+    if (retry) retry.addEventListener('click', () => loadPurchaseOrder(currentPOId));
   }
 
   // ===== حساب الإحصائيات =====
