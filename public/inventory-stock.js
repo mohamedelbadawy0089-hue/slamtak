@@ -1,6 +1,6 @@
 // ============================================================
 // مخزون مشترك: زيادة رصيد inventory وتسجيل الحركة في مكان واحد
-// تستخدمه purchases-invoices.js و purchases-receiving-direct.js
+// تستخدمه purchases-invoices.js و purchases-receiving.js
 // ============================================================
 
 (function() {

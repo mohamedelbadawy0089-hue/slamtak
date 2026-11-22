@@ -481,7 +481,7 @@
       const problems = [];
 
       // المخزون في هذا المخطط الحيّ هو inventory (رصيد لكل منتج/مستودع) و inventory_movements (سجل الحركات)،
-      // وهو ما تستخدمه purchases-receiving-direct.js و p_receive_purchase_order. جداول stock_batches
+      // وهو ما تستخدمه p_receive_purchase_order. جداول stock_batches
       // و stock_movements في الهجرات تحتاج location_id و batch_id غير الموجودين في بيانات الفاتورة.
       for (const row of pending) {
         const moved = await window.SlamtakStock.applyIn(client, {

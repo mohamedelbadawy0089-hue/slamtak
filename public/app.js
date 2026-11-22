@@ -1246,6 +1246,34 @@ function sectionEmptyHtml(msg) {
   return `<div style="text-align:center;padding:1rem;"><p class="muted">${msg}</p></div>`;
 }
 
+// شاشات public/purchases-*.js تقرأ #section-body لحظة تنفيذها، فلا تصلح في index.html:
+// الحاوية تُرسم بعده. لذلك تُحمَّل هنا بعد رسم الصفحة، مرة واحدة لكل ملف.
+const PURCHASES_SCREEN_FILES = {
+  "/purchases/invoices": "purchases-invoices.js",
+  "/purchases/suppliers": "purchases-suppliers.js",
+  "/purchases/returns": "purchases-returns.js",
+  "/purchases/approvals": "purchases-approvals.js",
+  "/purchases/payments": "purchases-payments.js",
+};
+const loadedScreenFiles = new Set();
+
+function ensureScreenScript(file) {
+  if (loadedScreenFiles.has(file)) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector('script[data-screen="' + file + '"]');
+    const el = existing || document.createElement("script");
+    const done = () => { loadedScreenFiles.add(file); resolve(); };
+    const fail = () => reject(new Error(file));
+    el.addEventListener("load", done, { once: true });
+    el.addEventListener("error", fail, { once: true });
+    if (existing) return;
+    el.src = file;
+    el.async = true;
+    el.dataset.screen = file;
+    document.body.appendChild(el);
+  });
+}
+
 async function loadSectionData(routePath, title) {
   const body = document.getElementById("section-body");
   if (!body) return;
@@ -1618,20 +1646,23 @@ async function loadSectionData(routePath, title) {
       return;
     }
 
-    if (routePath === "/purchases/invoices" || routePath === "/purchases/payments" || routePath === "/purchases/returns" || routePath === "/purchases/approvals" || routePath === "/purchases/suppliers") {
-      body.innerHTML = `
-        <div class="card">
-          <h3>${titles[routePath] || routePath}</h3>
-          <p class="muted">شاشة متكاملة جاهزة - تدعم البحث، الفلترة، الترقيم، الطباعة والتصدير</p>
-          <div style="margin-top:1rem;padding:1rem;background:#eff6ff;border-radius:8px;">
-            <p>✅ ربط كامل بالموردين وأوامر الشراء والإيصالات</p>
-            <p>✅ تتبع حالات الفاتورة: مسودة / قيد المراجعة / معتمدة / مستلمة جزئياً / مستلمة بالكامل</p>
-            <p>✅ دعم الاستلام الجزئي والكامل، تتبع الدفعات، المطابقة مع أمر الشراء</p>
-            <p>✅ تسجيل Batch/تاريخ الصلاحية، موقع التخزين، شروط التخزين</p>
-            <p>✅ سجل تدقيق كامل للعمليات الحساسة</p>
-          </div>
-        </div>
-      `;
+    // شاشات المشتريات المفصّلة: تُحمَّل عند الطلب بدل بطاقة تسويقية ثابتة بلا وظيفة.
+    if (PURCHASES_SCREEN_FILES[routePath]) {
+      try {
+        await ensureScreenScript(PURCHASES_SCREEN_FILES[routePath]);
+      } catch (e) {
+        body.innerHTML = sectionErrorHtml("تعذر تحميل شاشة المشتريات: " + ((e && e.message) || e));
+      }
+      return;
+    }
+
+    // تفاصيل أمر الشراء والاستلام: purchases-receiving.js (يعرض الأصناف وزر الطباعة).
+    if (/^\/purchases\/orders\/.+/.test(routePath)) {
+      try {
+        await ensureScreenScript("purchases-receiving.js");
+      } catch (e) {
+        body.innerHTML = sectionErrorHtml("تعذر تحميل صفحة الاستلام: " + ((e && e.message) || e));
+      }
       return;
     }
 
