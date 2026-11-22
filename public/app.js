@@ -1,5 +1,20 @@
 // نظام إدارة المخزن — واجهة عربية كاملة + استمارة تسجيل مخزن + صفحات تشغيلية حقيقية
 
+// --- استعادة المسار بعد 404.html ---
+// GitHub Pages لا يخدم المسارات الداخلية للتطبيق (الصفحة واحدة)، فـ404.html
+// يعيد التوجيه إلي /slamtak/?route=<path>. هنا يُقرأ المسار ويُعاد كتابة العنوان
+// قبل أي رسم، فيعمل render() على الشاشة المقصودة بدل الرئيسية.
+(function restoreRouteFromQuery() {
+  let params;
+  try { params = new URLSearchParams(location.search); } catch (_) { return; }
+  const route = params.get("route");
+  if (!route) return;
+  if (!/^\/(?!\/)/.test(route)) return; // مسار داخلي مطلق فقط، لا //evil
+  params.delete("route");
+  const rest = params.toString();
+  history.replaceState({}, "", route.replace(/\/+$/, "") + (rest ? "?" + rest : ""));
+})();
+
 // --- Supabase Client (real auth + PostgreSQL with Row Level Security) ---
 // Public configuration comes from supabase-config.js (browser-safe keys only;
 // the database is protected by RLS policies, never by key secrecy).
