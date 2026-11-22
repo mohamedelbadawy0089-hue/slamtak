@@ -1,0 +1,60 @@
+---
+# فحص دوري لصحة Supabase — قراءة فقط (GET/OPTIONS).
+# يرصد PGRST002 وسقوط GoTrue قبل أن يشتكي مستخدم من "الصفحات فارغة".
+# لا يطبع أي سر: السكربت يحجب المفاتيح في خرجه، وهنا لا نستخدم set -x ولا echo للأسرار.
+name: supabase-health
+
+on:
+  schedule:
+    - cron: '15 */6 * * *' # كل ست ساعات
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supabase-health
+  cancel-in-progress: true
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: هل الأسرار مضبوطة؟
+        id: secrets
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_ANON_KEY" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=تخطّي فحص Supabase::SUPABASE_URL و/أو SUPABASE_ANON_KEY غير مضبوطين في Settings → Secrets and variables → Actions. لم يُنفَّذ أي فحص وهذه ليست نجاحًا مؤكدًا."
+          fi
+
+      - name: فحص صحة Supabase
+        if: steps.secrets.outputs.configured == 'true'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          code=0
+          npm run --silent check:supabase || code=$?
+          case "$code" in
+            0) echo "✅ كل خدمات Supabase تستجيب."; exit 0 ;;
+            1) echo "::error title=إعداد ناقص::لم يجد الفحص SUPABASE_URL أو SUPABASE_ANON_KEY رغم تفعيل الخطوة."; exit 1 ;;
+            2) echo "::error title=PGRST002 — PostgREST لا يبني schema cache::المصادقة تعمل والقاعدة حيّة، لكن REST يرجع 503. الخطوات: نفّذ supabase/diagnostics/read-only-checks.sql في SQL Editor واتبع أقسامه 1–7، فإن عاد ⌈NOTIFY pgrst, 'reload schema'⌋ بلا نتيجة فـSettings → General → Restart project."; exit 1 ;;
+            3) echo "::error title=فشل المصادقة::GoTrue لا يستجيب أو المشروع متوقف/مُعلَّق. Restart أو Restore من لوحة Supabase."; exit 1 ;;
+            4) echo "::error title=فشل شبكة::لا وصول إلى مشروع Supabase من الـrunner (تحقق من SUPABASE_URL)."; exit 1 ;;
+            *) echo "::error title=رمز خروج غير متوقع::$code"; exit 1 ;;
+          esac
