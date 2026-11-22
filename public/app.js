@@ -962,15 +962,16 @@ async function renderPlatformAdmin(appEl, session){
   appEl.innerHTML = `<div class="page"><header class="app-header"><h1>🛡️ لوحة تحكم مدير المنصة</h1><button class="btn" id="pa-logout">تسجيل الخروج</button></header><main style="padding:1rem;"><div class="card"><h3>الحسابات والمخازن</h3><div id="pa-list">جارٍ التحميل...</div></div></main></div>`;
   document.getElementById('pa-logout')?.addEventListener('click', async()=>{ try{ if(client) await client.auth.signOut(); }catch(_){} clearSession(); clearStep2Mark(); navigate('/login');});
   try {
-    // try to load
-    const res = await fetch('/api/platform/admin/overview').catch(()=>null);
-    if(res && res.ok){
-      const data = await res.json();
-      document.getElementById('pa-list').innerHTML = '<pre style="white-space:pre-wrap">'+escapeHtml(JSON.stringify(data,null,2))+'</pre>';
-    } else {
-      document.getElementById('pa-list').innerHTML = '<p class="muted">يتطلب صلاحيات مدير منصة. (يمكن تعيين is_platform_admin في profiles)</p>';
-    }
-  } catch(e){ document.getElementById('pa-list').innerHTML = '<p class="muted">خطأ في التحميل</p>'; }
+    // نقطة النهاية موجودة في src/api/platform.js، وتُطلب تحت جذر النشر (appUrl)
+    // لا على جذر النطاق: GitHub Pages تستضيف التطبيق تحت APP_BASE ولا خادم فيها.
+    const res = await api(appUrl('/api/platform/admin/overview'));
+    document.getElementById('pa-list').innerHTML = '<pre style="white-space:pre-wrap">'+escapeHtml(JSON.stringify(res,null,2))+'</pre>';
+  } catch(e){
+    // لا خادم على GitHub Pages (404) أو لا صلاحية (401/403): رسالة الصلاحيات
+    // أوضح من 404 صامت في الشبكة.
+    const hint = e && e.status && e.status !== 404 ? ' (' + e.status + ')' : '';
+    document.getElementById('pa-list').innerHTML = '<p class="muted">يتطلب صلاحيات مدير منصة. (يمكن تعيين is_platform_admin في profiles)' + hint + '</p>';
+  }
 }
 
 // Renders the view for a route whose URL is already correct (no history changes).
