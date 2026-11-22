@@ -40,7 +40,7 @@
     return null;
   }
 
-  const path = window.location.pathname;
+  const path = window.SlamtakRoute ? window.SlamtakRoute.current() : window.location.pathname;
   if (!path.startsWith('/purchases')) return;
 
   const sectionBody = document.getElementById('section-body');

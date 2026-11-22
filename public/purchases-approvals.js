@@ -39,7 +39,7 @@
 
   // ===== المسار =====
 
-  const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
+  const currentPath = window.SlamtakRoute ? window.SlamtakRoute.current() : (window.location.pathname.replace(/\/+$/, '') || '/');
   if (!currentPath.startsWith('/purchases/approvals')) return;
 
   const sectionBody = document.getElementById('section-body');

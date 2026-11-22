@@ -1,5 +1,35 @@
 // نظام إدارة المخزن — واجهة عربية كاملة + استمارة تسجيل مخزن + صفحات تشغيلية حقيقية
 
+// --- بادئة النشر (APP_BASE) ---
+// التطبيق يكتب مسارات مطلقة من الجذر (/purchases/...) لأنه كُتب للاستضافة على جذر
+// نطاق. على GitHub Pages يُنشر المشروع تحت /slamtak/، فكان العنوان يخرج من مجلد
+// النشر ويضرب 404 الموقع الجذري عند التحديث (Site not found). هنا تُشتق البادئة
+// مرة واحدة من مكان تحميل app.js نفسه، وتُضاف عند الكتابة وتُجرَّد عند القراءة.
+const APP_BASE = (function () {
+  try {
+    const src = (document.currentScript && document.currentScript.src) || document.baseURI;
+    return new URL(".", src).pathname.replace(/\/+$/, ""); // "" · "/slamtak"
+  } catch (_) {
+    return "";
+  }
+})();
+
+// يحوّل عنوان المتصفح إلى مسار التطبيق الداخلي: /slamtak/purchases → /purchases
+function appPath(p) {
+  const s = String(p || "").replace(/\/+$/, "") || "/";
+  if (!APP_BASE) return s;
+  if (s === APP_BASE) return "/";
+  return s.indexOf(APP_BASE + "/") === 0 ? s.slice(APP_BASE.length) : s;
+}
+
+// عنوان المتصفح لمسار داخلي: /purchases → /slamtak/purchases
+function appUrl(path) {
+  return APP_BASE + (path || "/");
+}
+
+// متاح للشاشات المحمّلة عند الطلب، لأن كلًّا منها يقارن location.pathname بنفسه.
+window.SlamtakRoute = { base: APP_BASE, current: () => appPath(location.pathname), url: appUrl };
+
 // --- استعادة المسار بعد 404.html ---
 // GitHub Pages لا يخدم المسارات الداخلية للتطبيق (الصفحة واحدة)، فـ404.html
 // يعيد التوجيه إلي /slamtak/?route=<path>. هنا يُقرأ المسار ويُعاد كتابة العنوان
@@ -12,7 +42,7 @@
   if (!/^\/(?!\/)/.test(route)) return; // مسار داخلي مطلق فقط، لا //evil
   params.delete("route");
   const rest = params.toString();
-  history.replaceState({}, "", route.replace(/\/+$/, "") + (rest ? "?" + rest : ""));
+  history.replaceState({}, "", appUrl(appPath(route)) + (rest ? "?" + rest : ""));
 })();
 
 // --- Supabase Client (real auth + PostgreSQL with Row Level Security) ---
@@ -34,7 +64,7 @@ function getSupabase() {
   sbClient.auth.onAuthStateChange((event) => {
     if (event === "SIGNED_OUT") {
       clearSession();
-      const p = location.pathname.replace(/\/+$/, "") || "/";
+      const p = appPath(location.pathname);
       if (isProtectedRoute(p)) navigate("/login");
     }
   });
@@ -765,7 +795,7 @@ function renderLoading() {
 }
 
 async function render() {
-  let path = location.pathname.replace(/\/+$/, "") || "/";
+  let path = appPath(location.pathname);
   const routePath = routes[path];
   
   // Safety check: ensure routePath is valid before using it
@@ -786,7 +816,7 @@ async function render() {
       return navigate("/login"); // 3) block dashboard, go to login
     }
     // المستخدم قد يتنقل أثناء التحقق — أعد الرسم للمسار الحالي بدل رسم قديم
-    const nowPath = location.pathname.replace(/\/+$/, "") || "/";
+    const nowPath = appPath(location.pathname);
     if (nowPath !== path) return render();
     if (path !== routePath) {
       return safeNavigate(routePath);
@@ -3611,11 +3641,11 @@ function wireGovernorateSearch() {
 
 function navigate(path) {
   const target = path.replace(/\/+$/, "") || "/";
-  const current = location.pathname.replace(/\/+$/, "") || "/";
+  const current = appPath(location.pathname);
   // Only push history when the URL actually changes — calling pushState for the
   // same path re-triggers render() and causes "Maximum call stack size exceeded".
   if (current !== target) {
-    history.pushState({}, "", target);
+    history.pushState({}, "", appUrl(target));
   }
   render();
 }

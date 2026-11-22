@@ -851,7 +851,7 @@
 
   // ===== بدء الصفحة =====
 
-  const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
+  const currentPath = window.SlamtakRoute ? window.SlamtakRoute.current() : (window.location.pathname.replace(/\/+$/, '') || '/');
   const orderMatch = currentPath.match(/^\/purchases\/orders\/(.+)$/);
   if (orderMatch) {
     renderOrderDetail(orderMatch[1]);
