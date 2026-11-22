@@ -323,48 +323,23 @@
         });
       }
 
-      // تحديث المخزون
+      // تحديث المخزون وتسجيل الحركة: دالة مشتركة ذرّية (public/inventory-stock.js).
+      const now = new Date().toISOString();
       for (const item of validItems) {
-        const inventoryRes = await client
-          .from('inventory')
-          .select('id')
-          .eq('product_id', item.product_id)
-          .eq('warehouse_id', session.warehouse_id)
-          .single();
-
-        if (inventoryRes.data) {
-          const currentQty = Number(inventoryRes.data.quantity) || 0;
-          await client.from('inventory').update({
-            quantity: currentQty + Number(item.quantity),
-            last_counted_at: new Date().toISOString(),
-          }).eq('id', inventoryRes.data.id);
-        } else {
-          await client.from('inventory').insert({
-            id: crypto.randomUUID ? crypto.randomUUID() : 'INV-' + Date.now().toString(36),
-            product_id: item.product_id,
-            warehouse_id: session.warehouse_id,
-            quantity: Number(item.quantity),
-            unit_of_measure: item.unit_of_measure || 'piece',
-            last_counted_at: new Date().toISOString(),
-          });
-        }
-
-        // سجل حركة
-        await client.from('inventory_movements').insert({
-          id: crypto.randomUUID ? crypto.randomUUID() : 'IME-' + Date.now().toString(36),
-          inventory_id: (inventoryRes.data && inventoryRes.data.id) || null,
-          product_id: item.product_id,
-          warehouse_id: session.warehouse_id,
-          movement_type: 'in',
+        const moved = await window.SlamtakStock.applyIn(client, {
+          productId: item.product_id,
+          warehouseId: session.warehouse_id,
           quantity: Number(item.quantity),
-          unit_of_measure: item.unit_of_measure || 'piece',
-          source_type: 'goods_receipt',
-          source_id: grId,
-          reference_number: grId,
-          created_by: session.id,
-          created_at: new Date().toISOString(),
+          unitOfMeasure: item.unit_of_measure || 'piece',
+          sourceId: grId,
+          referenceNumber: grId,
+          createdBy: session.id,
+          now: now,
           notes: item.notes || null,
         });
+        if (moved.error) {
+          showNotification('فشل تحديث مخزون صنف: ' + (moved.error.message || 'خطأ غير معروف'), 'error');
+        }
       }
 
       showNotification(`تم إنشاء إيصال الاستلام ${grId} ✓`, 'success');

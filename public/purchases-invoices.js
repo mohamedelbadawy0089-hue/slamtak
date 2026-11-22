@@ -359,24 +359,164 @@
     navigate('/purchases/orders/' + invId);
   };
 
+  // ===== استلام الفاتورة عبر Supabase (بديل /api/purchase_orders/:id/receive) =====
+  // لا خادم API في المستودع، فالاستلام يُنفّذ على نفس الجداول التي تستخدمها صفحة الاستلام،
+  // و RLS على goods_receipts و goods_receipt_items و purchase_orders هي التي تفرض الصلاحية.
   window.receiveInvoice = async function(invId) {
     if (!confirm('هل تريد استلام فاتورة ' + invId + '؟')) return;
 
+    const session = getCurrentSession();
+    if (!session) {
+      showNotification('يجب تسجيل الدخول أولاً', 'error');
+      return;
+    }
+
+    const client = getSupabaseClient();
+    if (!client) {
+      showNotification('خطأ في الاتصال بقاعدة البيانات', 'error');
+      return;
+    }
+
     try {
-      const response = await fetch('/api/purchase_orders/' + invId + '/receive', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ warehouse_id: localStorage.getItem('session') ? JSON.parse(localStorage.getItem('session')).warehouse_id : null }),
+      const poRes = await client
+        .from('purchase_orders')
+        .select('id,status,warehouse_id,items:purchase_order_items(id,product_id,quantity,unit_price,discount_percent,product:products(unit_of_measure))')
+        .eq('id', invId)
+        .single();
+
+      if (poRes.error || !poRes.data) {
+        showNotification('خطأ: ' + ((poRes.error && poRes.error.message) || 'الفاتورة غير موجودة'), 'error');
+        return;
+      }
+
+      const po = poRes.data;
+      if (po.status === 'cancelled') {
+        showNotification('الفاتورة ملغاة — لا يمكن استلامها', 'error');
+        return;
+      }
+
+      const grRes = await client
+        .from('goods_receipts')
+        .select('id,status,items:goods_receipt_items(purchase_order_item_id,quantity)')
+        .eq('purchase_order_id', invId);
+
+      if (grRes.error) {
+        showNotification('خطأ: ' + (grRes.error.message || 'فشل جلب إيصالات الاستلام'), 'error');
+        return;
+      }
+
+      const receipts = grRes.data || [];
+      const receivedQty = {};
+      receipts.forEach(function(receipt) {
+        (receipt.items || []).forEach(function(row) {
+          const key = row.purchase_order_item_id;
+          receivedQty[key] = (receivedQty[key] || 0) + (Number(row.quantity) || 0);
+        });
       });
 
-      const data = await response.json();
+      // الباقي لكل صنف، فما استُلم سابقًا لا يُستلم مرتين.
+      const pending = (po.items || [])
+        .map(function(item) {
+          return { item: item, remaining: (Number(item.quantity) || 0) - (receivedQty[item.id] || 0) };
+        })
+        .filter(function(row) { return row.remaining > 0; });
 
-      if (data.error) {
-        showNotification('خطأ: ' + data.error, 'error');
+      if (!pending.length) {
+        showNotification('كل أصناف الفاتورة مستلمة بالفعل', 'info');
+        return;
+      }
+
+      const warehouseId = session.warehouse_id || po.warehouse_id;
+
+      // أعِد استخدام إيصال مسودة قائم بدل تكديس إيصالات، وإلا أنشئ واحدًا.
+      const draft = receipts.find(function(receipt) { return receipt.status === 'draft'; });
+      let receiptId = draft && draft.id;
+
+      if (!receiptId) {
+        const created = await client
+          .from('goods_receipts')
+          .insert({
+            id: crypto.randomUUID ? crypto.randomUUID() : 'GR-' + Date.now().toString(36),
+            purchase_order_id: invId,
+            warehouse_id: warehouseId,
+            created_by: session.id,
+            created_at: new Date().toISOString(),
+            status: 'draft',
+          })
+          .select('id')
+          .single();
+
+        if (created.error || !created.data) {
+          showNotification('خطأ: ' + ((created.error && created.error.message) || 'فشل إنشاء إيصال الاستلام'), 'error');
+          return;
+        }
+        receiptId = created.data.id;
+      }
+
+      const now = new Date().toISOString();
+      const rows = pending.map(function(row, index) {
+        return {
+          id: crypto.randomUUID ? crypto.randomUUID() : 'GRI-' + Date.now().toString(36) + '-' + index,
+          goods_receipt_id: receiptId,
+          purchase_order_item_id: row.item.id,
+          product_id: row.item.product_id,
+          quantity: row.remaining,
+          unit_price: row.item.unit_price,
+          discount_percent: row.item.discount_percent || 0,
+          created_at: now,
+        };
+      });
+
+      const inserted = await client.from('goods_receipt_items').insert(rows);
+      if (inserted.error) {
+        // لا نترك إيصالًا فارغًا خلفنا إن أنشأناه في هذه المحاولة؛ المسودة القائمة قد تحوي أصنافًا سابقة فنُبقيها.
+        if (!draft) {
+          const cleanup = await client.from('goods_receipts').delete().eq('id', receiptId);
+          if (cleanup.error) console.error('cleanup empty receipt failed:', cleanup.error);
+        }
+        showNotification('خطأ: ' + (inserted.error.message || 'فشل تسجيل الأصناف المستلمة'), 'error');
+        return;
+      }
+
+      const problems = [];
+
+      // المخزون في هذا المخطط الحيّ هو inventory (رصيد لكل منتج/مستودع) و inventory_movements (سجل الحركات)،
+      // وهو ما تستخدمه purchases-receiving-direct.js و p_receive_purchase_order. جداول stock_batches
+      // و stock_movements في الهجرات تحتاج location_id و batch_id غير الموجودين في بيانات الفاتورة.
+      for (const row of pending) {
+        const moved = await window.SlamtakStock.applyIn(client, {
+          productId: row.item.product_id,
+          warehouseId: warehouseId,
+          quantity: row.remaining,
+          unitOfMeasure: (row.item.product && row.item.product.unit_of_measure) || 'piece',
+          sourceId: receiptId,
+          referenceNumber: receiptId,
+          createdBy: session.id,
+          now: now,
+        });
+        if (moved.error) problems.push('فشل تحديث رصيد الصنف: ' + (moved.error.message || 'خطأ غير معروف'));
+      }
+
+      // الإيصال لا يبقى draft: الإصدار هو ما يعتمده المستند، وأمر الشراء يصبح received
+      // لأن الاستلام يغطّي كل الباقي. فشل أي خطوة يُبلّغ عنه صراحةً بدل ادّعاء نجاح كامل.
+      const posted = await client
+        .from('goods_receipts')
+        .update({ status: 'posted', updated_at: now })
+        .eq('id', receiptId);
+
+      const updated = await client
+        .from('purchase_orders')
+        .update({ status: 'received', updated_at: now })
+        .eq('id', invId);
+      if (posted.error) problems.push('فشل إصدار الإيصال: ' + (posted.error.message || 'خطأ غير معروف'));
+      if (updated.error) problems.push('فشل تحديث حالة الفاتورة: ' + (updated.error.message || 'خطأ غير معروف'));
+
+      if (problems.length) {
+        showNotification('تم تسجيل الأصناف، لكن ' + problems.join(' · '), 'warning');
       } else {
         showNotification('تم استلام الفاتورة ✓', 'success');
-        loadInvoices();
       }
+      loadInvoices();
     } catch (e) {
       console.error('Error:', e);
       showNotification('خطأ في الاتصال', 'error');
