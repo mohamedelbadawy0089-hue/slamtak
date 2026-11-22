@@ -1256,6 +1256,9 @@ const PURCHASES_SCREEN_FILES = {
   "/purchases/payments": "purchases-payments.js",
 };
 const loadedScreenFiles = new Set();
+// عنوان الأصل يُلتقط قبل أي pushState: بعد التنقل يصبح المسار /login فلا يصلح
+// حلّ المسار النسبي عليه (ينتهي إلى /purchases-x.js على جذر النطاق = 404).
+const APP_ASSET_BASE = document.baseURI;
 
 function ensureScreenScript(file) {
   if (loadedScreenFiles.has(file)) return Promise.resolve();
@@ -1263,11 +1266,11 @@ function ensureScreenScript(file) {
     const existing = document.querySelector('script[data-screen="' + file + '"]');
     const el = existing || document.createElement("script");
     const done = () => { loadedScreenFiles.add(file); resolve(); };
-    const fail = () => reject(new Error(file));
+    const fail = () => reject(new Error('تعذر تحميل ' + file + ' من ' + new URL(file, APP_ASSET_BASE).href));
     el.addEventListener("load", done, { once: true });
     el.addEventListener("error", fail, { once: true });
     if (existing) return;
-    el.src = file;
+    el.src = new URL(file, APP_ASSET_BASE).href;
     el.async = true;
     el.dataset.screen = file;
     document.body.appendChild(el);
