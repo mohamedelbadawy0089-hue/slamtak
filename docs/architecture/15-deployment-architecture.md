@@ -113,6 +113,66 @@ jobs:
 | بلا `npm ci` ولا بناء | الملفات جاهزة في `public/`؛ البناء يضيف زمنًا بلا مخرج جديد |
 | `path: public` | ما يُنشر هو المجلد نفسه، لا نسخة منه |
 
+### 2.2 فحص صحة Supabase (`supabase-health`)
+
+أعطال المنصة لا تظهر في وقت النشر بل عند أول مستخدم: `503` مع `PGRST002` («Could not query the database for the schema cache») يجعل كل جدول يبدو فارغًا، و`GoTrue` قد يكون ساقطًا وحده. لذلك لا يُختبَر المشروع بـ«الصفحة فتحت» بل بفحص قراءة فقط يجري كل ست ساعات.
+
+```yaml
+# .github/workflows/supabase-health.yml (المصدر الفعلي)
+name: supabase-health
+on:
+  schedule: [{ cron: '15 */6 * * *' }]
+  workflow_dispatch:
+permissions: { contents: read }
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: { node-version: '22' }
+      - id: secrets   # يكتب configured=true/false؛ بلا سرّين يتخطّى بإشعار
+      - if: steps.secrets.outputs.configured == 'true'
+        env: { SUPABASE_URL: '${{ secrets.SUPABASE_URL }}', SUPABASE_ANON_KEY: '${{ secrets.SUPABASE_ANON_KEY }}' }
+        run: npm run --silent check:supabase   # 0 سليم · 2 PGRST002 · 3 مصادقة · 4 شبكة
+```
+
+| القاعدة | السبب |
+|---|---|
+| `GET`/`OPTIONS` فقط، ولا استدعاء RPC | بعض الدوال (`two_step_verify`) لها أثر جانبي، والفحص الدوري لا يجوز أن يكتب |
+| مفتاح `anon` وحده، ولا `service_role` | لا حاجة لصلاحيات كتابة؛ والقراءة المحجوبة بـRLS تعود `401/403` وهي علامة سليمة |
+| التخطّي بإشعار عند غياب الأسرار، لا فشل | غياب السرّ ليس عطلًا في المنصة؛ لكن الإشعار يصرّح أن «لا فحص جرى» كي لا يُقرأ الأخضر كنجاح |
+| الفشل عند `PGRST002` برسالة تحيل إلى `supabase/diagnostics/read-only-checks.sql` | التشخيص يُنفَّذ من SQL Editor، والرسالة تختصر الطريق بدل «فشل غامض» |
+| `permissions: contents: read` | الفحص لا يحتاج أي كتابة على المستودع |
+
+**ضبط السرّين (مرة واحدة لكل مستودع):**
+
+1. افتح `Settings → Secrets and variables → Actions` في المستودع.
+2. **New repository secret** بالاسم `SUPABASE_URL`، والقيمة نفس `url` في `public/supabase-config.js` (`https://<ref>.supabase.co`).
+3. **New repository secret** بالاسم `SUPABASE_ANON_KEY`، والقيمة نفس `anonKey` من الملف ذاته.
+
+| الشرط | التفصيل |
+|---|---|
+| النوع | **Repository secrets** لا Environment secrets: الـworkflow لا يعرّف `environment:` فلن يُقرأ سرّ البيئة |
+| الأسماء | حساسة لحالة الأحرف: `SUPABASE_URL` و`SUPABASE_ANON_KEY` بالضبط |
+| ما لا يُضاف | `service_role` — لا يستخدمه الفحص ويوسّع الصلاحيات بلا داعٍ |
+| القيم لا تُعرض | بعد الحفظ لا يمكن قراءتها، فقط **Update**؛ والإخراج يحجب أي مفتاح حتى لو ظهر في رسالة خطأ |
+
+**التشغيل اليدوي أول مرة:**
+
+1. `Actions` ← `supabase-health` في الشريط الجانبي ← **Run workflow** ← الفرع `main` ← **Run workflow**.
+2. راقب الخطوات: `Checkout` · `Node` · «هل الأسرار مضبوطة؟» (يظهر `configured=true`) · «فحص صحة Supabase».
+3. النتيجة السليمة: الخطوة الأخيرة تطبع `✅ كل خدمات Supabase تستجيب` وتكون البادرة خضراء.
+4. عند `PGRST002` تفشل الخطوة بعنوان `PGRST002 — PostgREST لا يبني schema cache` مع خطوتي الإصلاح؛ بعد الإصلاح أعد التشغيل من الزر نفسه.
+
+**محليًا بلا GitHub:**
+
+```bash
+SUPABASE_URL='https://<ref>.supabase.co' SUPABASE_ANON_KEY='<anonKey>' npm run check:supabase
+```
+
+رموز الخروج: `0` سليم · `1` إعداد مفقود · `2` PGRST002/انقطاع PostgREST · `3` مصادقة أو مشروع متوقف · `4` شبكة. والجدول يطلق التشغيل تلقائيًا عند `15 */6 * * *` بتوقيت UTC.
+
 ---
 
 ## 3. الصور (Docker)
@@ -250,6 +310,7 @@ sequenceDiagram
 | `SENTRY_DSN` | — | ✅ | اختياري |
 | `LOG_LEVEL` | `info` | — | إعدادات الدالة |
 | `R2_ACCOUNT_ID` / `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` / `R2_BUCKET` | — | ✅ | **أسرار GitHub Actions** فقط — لا تُوضع في الدوال |
+| `SUPABASE_ANON_KEY` | المفتاح العام نفسه في `public/supabase-config.js` | ✅ (سرّ مستودع) | **أسرار GitHub Actions** لسير `supabase-health` فقط — يُحجب في الإخراج، ولا يُضاف `service_role` |
 
 **ما ليس متغير بيئة:** المفتاح العام الذي يستورده Realtime للتحقق من توكناتنا يُضبط في إعدادات المشروع (JWT secret / Third-Party Auth)، لا في متغيرات الدوال — ولا يُكتب في أي ملف في المستودع.
 
