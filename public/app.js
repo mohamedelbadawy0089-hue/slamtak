@@ -1259,18 +1259,34 @@ const loadedScreenFiles = new Set();
 // عنوان الأصل يُلتقط قبل أي pushState: بعد التنقل يصبح المسار /login فلا يصلح
 // حلّ المسار النسبي عليه (ينتهي إلى /purchases-x.js على جذر النطاق = 404).
 const APP_ASSET_BASE = document.baseURI;
+// رقم إصدار app.js نفسه (من وسم <script src="app.js?v=...">) يُستخدم لكسر كاش
+// شاشات المشتريات المحمَّلة عند الطلب: GitHub Pages يخزّن الملف عشر دقائق، فكان
+// المستخدم قد يحصل على نسخة قديمة بعد أي إصلاح.
+const APP_ASSET_VERSION = (function () {
+  const tag = Array.prototype.slice.call(document.scripts)
+    .find((s) => /(^|\/)app\.js(\?|$)/.test(s.src || ""));
+  const m = tag && tag.src.match(/[?&]v=([^&]+)/);
+  return m ? m[1] : "";
+})();
+
+function screenScriptUrl(file) {
+  const url = new URL(file, APP_ASSET_BASE);
+  if (APP_ASSET_VERSION) url.searchParams.set("v", APP_ASSET_VERSION);
+  return url.href;
+}
 
 function ensureScreenScript(file) {
   if (loadedScreenFiles.has(file)) return Promise.resolve();
+  const src = screenScriptUrl(file);
   return new Promise((resolve, reject) => {
     const existing = document.querySelector('script[data-screen="' + file + '"]');
     const el = existing || document.createElement("script");
     const done = () => { loadedScreenFiles.add(file); resolve(); };
-    const fail = () => reject(new Error('تعذر تحميل ' + file + ' من ' + new URL(file, APP_ASSET_BASE).href));
+    const fail = () => reject(new Error('تعذر تحميل ' + file + ' من ' + src));
     el.addEventListener("load", done, { once: true });
     el.addEventListener("error", fail, { once: true });
     if (existing) return;
-    el.src = new URL(file, APP_ASSET_BASE).href;
+    el.src = src;
     el.async = true;
     el.dataset.screen = file;
     document.body.appendChild(el);

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>جارٍ إعادة التوجيه إلى نظام إدارة المخزن…</title>
+  <link rel="stylesheet" href="/slamtak/styles.css" onerror="this.remove()" />
+  <script>
+    // GitHub Pages لا يعرف مسارات التطبيق الداخلية: التطبيق يستخدم pushState
+    // فيكتب /purchases/... على جذر النطاق، وأي تحديث للصفحة يصل إلى هنا.
+    // نعيد التوجيه إلى جذر المشروع بدل صفحة "Page not found".
+    (function () {
+      var target = '/slamtak/';
+      try {
+        window.location.replace(target);
+      } catch (e) {
+        window.location.href = target;
+      }
+    })();
+  </script>
+  <noscript><meta http-equiv="refresh" content="0; url=/slamtak/" /></noscript>
+  <style>
+    body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; display: flex; min-height: 100vh; margin: 0; align-items: center; justify-content: center; background: #f8fafc; color: #0f172a; }
+    .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.75rem 2rem; text-align: center; max-width: 26rem; }
+    a { color: #1d4ed8; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1 style="font-size:1.15rem;margin:0 0 0.5rem;">جارٍ إعادة التوجيه…</h1>
+    <p style="margin:0 0 0.75rem;color:#475569;">هذه الصفحة غير موجودة كملف مستقل، والتطبيق يعمل من صفحة واحدة.</p>
+    <p style="margin:0;"><a href="/slamtak/">الدخول إلى النظام</a></p>
+  </div>
+</body>
+</html>
