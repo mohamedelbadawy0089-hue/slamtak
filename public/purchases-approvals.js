@@ -429,7 +429,7 @@
     if (typeof window.safeNavigate === 'function') {
       window.safeNavigate(path);
     } else {
-      window.location.href = path;
+      window.location.href = window.SlamtakRoute ? window.SlamtakRoute.url(path) : path;
     }
   }
 
