@@ -40,7 +40,7 @@
 
   // ===== المسار =====
 
-  const currentPath = window.SlamtakRoute ? window.SlamtakRoute.current() : (window.location.pathname.replace(/\/+$/, '') || '/');
+  const currentPath = window.SlamtakRoute.current();
   if (!currentPath.startsWith('/purchases/returns')) return;
 
   const sectionBody = document.getElementById('section-body');

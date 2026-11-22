@@ -41,7 +41,7 @@
 
   // ===== المسار =====
 
-  const currentPath = window.SlamtakRoute ? window.SlamtakRoute.current() : (window.location.pathname.replace(/\/+$/, '') || '/');
+  const currentPath = window.SlamtakRoute.current();
   if (!currentPath.startsWith('/purchases/payments')) return;
 
   const sectionBody = document.getElementById('section-body');
