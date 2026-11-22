@@ -1631,7 +1631,7 @@ async function loadSectionData(routePath, title) {
                     <td style="padding:0.5rem;">${o.supplier?.name_ar||o.supplier?.name||"—"}</td>
                     <td style="padding:0.5rem;">${o.order_date||"—"}</td>
                     <td style="padding:0.5rem;">${Number(o.total_amount||0).toLocaleString('ar-EG')}</td>
-                    <td style="padding:0.5rem;"><button class="btn" onclick="alert('سيتم فتح شاشة الاستلام لأمر الشراء ${o.order_number || o.id} - دعم الاستلام الجزئي، إدخال Batch، تاريخ الصلاحية، موقع التخزين')">استلام البضائع</button></td>
+                    <td style="padding:0.5rem;"><a class="btn" data-link href="/purchases/orders/${o.id}">استلام البضائع</a></td>
                   </tr>`).join("")}
                 </tbody>
               </table>
