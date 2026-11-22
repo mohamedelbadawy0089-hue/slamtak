@@ -12,7 +12,8 @@
     "deploy:prod": "wrangler pages deploy ./public --project-name slamtak --branch main --commit-dirty=true",
     "check:security": "node scripts/check-security-invariants.mjs",
     "check:docs-ar": "node scripts/check-architecture-ar-docs.mjs",
-    "check:docs-actions": "node scripts/check-doc-actions.mjs"
+    "check:docs-actions": "node scripts/check-doc-actions.mjs",
+    "check:supabase": "node scripts/supabase-health.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.0.0",
