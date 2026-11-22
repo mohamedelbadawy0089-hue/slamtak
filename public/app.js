@@ -4076,14 +4076,23 @@ async function loadStaffNewSection(body, client) {
 // --- Event Delegation ---
 
 document.addEventListener("click", (e) => {
-  const a = e.target.closest("a[data-link]");
+  const a = e.target.closest("a[href]");
   if (!a) return;
-  e.preventDefault();
-  // Use safe navigation for internal links
   const linkHref = a.getAttribute("href");
-  if (linkHref) {
-    safeNavigate(linkHref);
+  if (!linkHref) return;
+  // أي رابط داخلي مطلق من الجذر (/purchases…) يُوجّه عبر الراوتر، لا فقط
+  // الموسوم بـdata-link: النقر العادي على غيره كان يطلب مسار الجذر ويعطي
+  // "Site not found" لأن التطبيق منشور تحت APP_BASE.
+  const isInternal = linkHref.charAt(0) === "/" && linkHref.charAt(1) !== "/";
+  if (!a.hasAttribute("data-link") && !isInternal) return;
+  if (a.hasAttribute("download") || a.getAttribute("target") === "_blank") return;
+  e.preventDefault();
+  // في تبويب جديد يُفتح بعنوان داخل مجلد النشر، وإلا فهو مسار جذر ميت.
+  if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) {
+    window.open(appUrl(linkHref), "_blank", "noopener");
+    return;
   }
+  safeNavigate(linkHref);
 });
 
 // --- Boot: strict authentication guard ---

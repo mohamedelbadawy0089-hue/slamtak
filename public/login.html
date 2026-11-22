@@ -47,6 +47,12 @@
       );
     }
 
+    // جذر النشر محسوب من العنوان الحالي (/slamtak/) بدل '/' الذي يخرج من مجلد
+    // المشروع على GitHub Pages فيعطي "Site not found".
+    function deployRoot() {
+      return location.pathname.replace(/[^/]*$/, '') || '/';
+    }
+
     if (form) {
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -69,7 +75,7 @@
             return;
           }
           if (data.user) {
-            window.location.href = '/';
+            window.location.href = deployRoot();
           }
         } catch (err) {
           errorEl.textContent = err.message || 'حدث خطأ غير متوقع';
@@ -81,7 +87,7 @@
     const sb = getSb();
     if (sb) {
       sb.auth.getUser().then(({ data: { user } }) => {
-        if (user) window.location.href = '/';
+        if (user) window.location.href = deployRoot();
       });
     }
   })();
