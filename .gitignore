@@ -1,8 +1,16 @@
 node_modules/
-.env.local
+
+# Secrets — never commit. Keep local copies only.
+.dev.vars
+.dev.vars.*
+.env
+.env.*
+!.env.example
+
 *.tsbuildinfo
 dist/
 logs/
 secrets/
 .wrangler/
+
 /freebuff-sites-build/
