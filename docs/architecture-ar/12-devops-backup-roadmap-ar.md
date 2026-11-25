@@ -84,6 +84,66 @@ flowchart LR
 
 **نشر Edge Functions:** نشر دوال الـ API (Supabase Edge Functions، في الملف A) بأمر واحد بعد نجاح البوابات، وترحيل القاعدة كخطوة منفصلة قابلة للتتبع.
 
+### 4.1 فحص صحة Supabase (`supabase-health`)
+
+بوابات CI تفحص الكود، لكنها لا تكشف أن المنصة نفسها ساقطة: `503` مع `PGRST002` («Could not query the database for the schema cache») يجعل كل جدول يبدو فارغًا، وقد يسقط `GoTrue` وحده فيفشل الدخول بينما الصفحة تفتح. لذلك يشمل خط الأنابيب فحصًا دوريًا للقراءة فقط، مصدره `.github/workflows/supabase-health.yml` ويشغّل `npm run check:supabase` كل ست ساعات (وفي الطلب اليدوي).
+
+```yaml
+# .github/workflows/supabase-health.yml (المصدر الفعلي)
+name: supabase-health
+on:
+  schedule: [{ cron: '15 */6 * * *' }]   # كل 6 ساعات بتوقيت UTC
+  workflow_dispatch:
+permissions: { contents: read }
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: { node-version: '22' }
+      - id: secrets   # يكتب configured=true/false؛ بلا سرّين يتخطّى بإشعار لا بفشل
+      - if: steps.secrets.outputs.configured == 'true'
+        env: { SUPABASE_URL: '${{ secrets.SUPABASE_URL }}', SUPABASE_ANON_KEY: '${{ secrets.SUPABASE_ANON_KEY }}' }
+        run: npm run --silent check:supabase   # 0 سليم · 2 PGRST002 · 3 مصادقة · 4 شبكة
+```
+
+| القاعدة | السبب |
+|---|---|
+| `GET`/`OPTIONS` فقط، ولا استدعاء RPC | بعض الدوال (`two_step_verify`) لها أثر جانبي، والفحص الدوري لا يجوز أن يكتب |
+| مفتاح `anon` وحده، ولا `service_role` | لا حاجة لصلاحيات كتابة؛ والقراءة المحجوبة بـRLS تعود `401/403` وهي علامة سليمة |
+| التخطّي بإشعار عند غياب الأسرار، لا فشل | غياب السرّ ليس عطلًا في المنصة؛ لكن الإشعار يصرّح أن «لا فحص جرى» كي لا يُقرأ الأخضر كنجاح |
+| الفشل عند `PGRST002` برسالة تحيل إلى `supabase/diagnostics/read-only-checks.sql` | التشخيص يُنفَّذ من SQL Editor، والرسالة تختصر الطريق بدل «فشل غامض» |
+| `permissions: contents: read` | الفحص لا يحتاج أي كتابة على المستودع |
+
+**ضبط السرّين (مرة واحدة لكل مستودع):**
+
+1. `Settings → Secrets and variables → Actions` في المستودع.
+2. **New repository secret** بالاسم `SUPABASE_URL`، والقيمة نفس `url` في `public/supabase-config.js` (`https://<ref>.supabase.co`).
+3. **New repository secret** بالاسم `SUPABASE_ANON_KEY`، والقيمة نفس `anonKey` من الملف ذاته.
+
+| الشرط | التفصيل |
+|---|---|
+| النوع | **Repository secrets** لا Environment secrets: الـworkflow لا يعرّف `environment:` فلن يُقرأ سرّ البيئة |
+| الأسماء | حساسة لحالة الأحرف: `SUPABASE_URL` و`SUPABASE_ANON_KEY` بالضبط |
+| ما لا يُضاف | `service_role` — لا يستخدمه الفحص ويوسّع الصلاحيات بلا داعٍ |
+| القيم لا تُعرض | بعد الحفظ لا يمكن قراءتها، فقط **Update**؛ والإخراج يحجب أي مفتاح حتى لو ظهر في رسالة خطأ |
+
+**التشغيل اليدوي أول مرة:**
+
+1. `Actions` ← `supabase-health` في الشريط الجانبي ← **Run workflow** ← الفرع `main` ← **Run workflow**.
+2. راقب الخطوات: `Checkout` · `Node` · «هل الأسرار مضبوطة؟» (`configured=true`) · «فحص صحة Supabase».
+3. النتيجة السليمة: `✅ كل خدمات Supabase تستجيب` وبادرة خضراء.
+4. عند `PGRST002` تفشل الخطوة بعنوان `PGRST002 — PostgREST لا يبني schema cache` مع خطوتي الإصلاح؛ بعد الإصلاح أعد التشغيل من الزر نفسه.
+
+**محليًا بلا GitHub:**
+
+```bash
+SUPABASE_URL='https://<ref>.supabase.co' SUPABASE_ANON_KEY='<anonKey>' npm run check:supabase
+```
+
+رموز الخروج: `0` سليم · `1` إعداد مفقود · `2` PGRST002/انقطاع PostgREST · `3` مصادقة أو مشروع متوقف · `4` شبكة. النسخة الإنجليزية المطابقة لهذا البند: [`docs/architecture/15-deployment-architecture.md`](../architecture/15-deployment-architecture.md) §2.2.
+
 ---
 
 ## 5. الهجرات في النشر
@@ -120,6 +180,7 @@ flowchart LR
 | طابور | `app.jobs` | مهام معلقة/فاشلة | > 100 أو dead_letter |
 | أمن | `audit_logs` | `TENANT_MISMATCH`, فشل دخول | فوري للحالة الحرجة |
 | نسخ | مهمة النسخ | نجاح/حجم/مدة | فشل = فوري |
+| منصة | سير `supabase-health` (§4.1) | `PGRST002` / سقوط `GoTrue` | فشل التشغيل أو إشعار «لا فحص جرى» |
 
 **السجلات:** JSON منظّم (`pino`)، حقول: `ts, level, requestId, tenantId, userId, route, status, durationMs, code`. لا بيانات شخصية/أسرار. احتفاظ 30 يومًا (90 للأمن).
 
@@ -231,6 +292,7 @@ flowchart LR
 ## 15. معايير قبول هذه الوثيقة
 
 - [ ] خط CI/CD موثّق ببوابات لا يمكن تجاوزها.
+- [ ] فحص صحة المنصة (`supabase-health`، §4.1) مضبوط السرّين ومُشغَّل مرة واحدة على الأقل.
 - [ ] ثلاث بيئات منفصلة + Staging يُعاد بناؤه أسبوعيًا.
 - [ ] خطة نسخ بأربع نسخ و3 مواقع ومفاتيح منفصلة.
 - [ ] تمرين استعادة منفّذ وموثّق قبل Gate C.
