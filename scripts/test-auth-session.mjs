@@ -71,7 +71,7 @@ function build({ client = null, storage = memoryStorage(), sessionWriteOk = true
   const body = [
     region('step2-guard'),
     region('auth-session-core'),
-    'return { verifySession, step2Ok, writeStep2Mark, clearStep2Mark, resumePendingStep2, AUTH_FAIL, getTried: () => __step2ResumeTried };',
+    'return { verifySession, step2Ok, writeStep2Mark, clearStep2Mark, resumePendingStep2, sessionSetupError, AUTH_FAIL, getTried: () => __step2ResumeTried, setTried: (v) => { __step2ResumeTried = !!v; } };',
   ].join('\n');
 
   const api = new Function(...names, body)(...names.map((n) => globals[n]));
@@ -191,6 +191,41 @@ test('الحارس: محاولة تسليم واحدة ثم رسالة بدل ا
   assert.match(errBox.textContent, /تعذّر إعادة فتح جلستك/, 'رسالة واضحة للمستخدم');
 });
 
+test('الحارس: سبب storage_failed يظهر نصًّا صريحًا بدل الرسالة العامة', async () => {
+  const user = { id: 'u-1', email: 'a@b.c', user_metadata: { role: 'manager' } };
+  const { api, calls, errBox } = build({
+    client: { getSession: async () => ({ data: { session: { user, access_token: 't' } }, error: null }) },
+    user,
+  });
+  api.writeStep2Mark('u-1');
+  api.setTried(true); // render() يضبط الحارس قبل التوجيه عند storage_failed
+
+  // /login بعد فشل verifySession: السبب يمرَّر مع الاستدعاء
+  await api.resumePendingStep2({}, api.AUTH_FAIL.STORAGE_FAILED);
+  assert.deepEqual(calls.navigate, []);
+  assert.match(errBox.textContent, /تعذّر تثبيت الجلسة في هذا المتصفح/);
+  assert.doesNotMatch(errBox.textContent, /انتهت صلاحيتها أو مُنع تخزين المتصفح/, 'ليست الرسالة العامة');
+
+  // وبلا سبب يبقى سلوك الحارس القديم كما هو
+  errBox.textContent = '';
+  await api.resumePendingStep2({});
+  assert.match(errBox.textContent, /تعذّر إعادة فتح جلستك/, 'الرسالة العامة عند غياب السبب');
+});
+
+test('sessionSetupError: لكل سبب رسالته الخاصة', () => {
+  const { api } = build();
+  const { AUTH_FAIL } = api;
+  const reasons = [AUTH_FAIL.NO_CLIENT, AUTH_FAIL.NO_SESSION, AUTH_FAIL.STEP2_PENDING, AUTH_FAIL.STORAGE_FAILED, AUTH_FAIL.ERROR];
+  const messages = reasons.map((r) => api.sessionSetupError(r));
+  messages.forEach((m) => assert.equal(typeof m === 'string' && m.length > 10, true, 'لكل سبب نص غير فارغ'));
+  const specific = [AUTH_FAIL.NO_SESSION, AUTH_FAIL.STEP2_PENDING, AUTH_FAIL.STORAGE_FAILED].map((r) => api.sessionSetupError(r));
+  assert.equal(new Set(specific).size, 3, 'الثلاثة المميزة لا تشترك في نص');
+  specific.forEach((m) => assert.notEqual(m, api.sessionSetupError(AUTH_FAIL.ERROR), 'لا نرجع للرسالة العامة'));
+  assert.match(api.sessionSetupError(AUTH_FAIL.STORAGE_FAILED), /تثبيت الجلسة/);
+  assert.match(api.sessionSetupError(AUTH_FAIL.STEP2_PENDING), /الخطوة الثانية/);
+  assert.match(api.sessionSetupError(AUTH_FAIL.NO_SESSION), /انتهت الجلسة/);
+});
+
 test('الحارس: بلا علامة لا توجيه إلى الرئيسية', async () => {
   const user = { id: 'u-1', email: 'a@b.c', user_metadata: {} };
   const { api, calls, errBox } = build({
@@ -214,4 +249,8 @@ test('ربط الكود: نتائج verifySession تُقرأ بالسبب لا �
   assert.equal(/if \(\s*!auth\.ok\s*\)/.test(APP_SRC), true, 'render يستخدم auth.ok');
   assert.equal(/if \(!sessionInfo\)/.test(APP_SRC), false, 'لا بقايا لفحص الصدق على نتيجة verifySession');
   assert.equal(/reason === AUTH_FAIL\.STORAGE_FAILED/.test(APP_SRC), true, 'فشل التخزين مميّز عن انتهاء الجلسة');
+  // السبب يعبر من render إلى /login بدل ضياعه
+  assert.equal(/authFailureReason = auth\.reason/.test(APP_SRC), true, 'render يحفظ السبب قبل التوجيه');
+  assert.equal(/const failure = authFailureReason;\s*\n\s*authFailureReason = "";/.test(APP_SRC), true, 'renderAuth يستهلك السبب مرة واحدة');
+  assert.equal(/resumePendingStep2\(appEl, failure\)/.test(APP_SRC), true, 'السبب يُمرَّر إلى /login');
 });

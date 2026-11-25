@@ -479,9 +479,9 @@ async function verifySession() {
     return { ok: false, reason: AUTH_FAIL.ERROR };
   }
 }
-// #endregion auth-session-core
 
-// رسالة واجهة مطابقة لسبب الفشل الصريح (لا رسالة عامة واحدة)
+// رسالة واجهة مطابقة لسبب الفشل الصريح (لا رسالة عامة واحدة).
+// داخل الوسم كي يختبر scripts/test-auth-session.mjs نفس الرسائل المعروضة.
 function sessionSetupError(reason) {
   if (reason === AUTH_FAIL.STORAGE_FAILED) {
     return "تم التحقق من كلمة المرور، لكن تعذّر تثبيت الجلسة في هذا المتصفح (وضع خاص أو مساحة ممتلئة) — حرّر مساحة أو استخدم نافذة عادية.";
@@ -494,6 +494,7 @@ function sessionSetupError(reason) {
   }
   return "تم التحقق من كلمة المرور لكن تعذر تجهيز الجلسة — أعد المحاولة.";
 }
+// #endregion auth-session-core
 
 // Lock screen shown while the session is being verified. It replaces the app
 // container so no dashboard element can be visible before verification.
@@ -846,6 +847,8 @@ async function render() {
     const auth = await verifySession(); // 2) verify the account
     if (!auth.ok) {
       clearSession();
+      // السبب يذهب إلى /login ليُعرض نصًّا صريحًا بدل الرسالة العامة
+      authFailureReason = auth.reason || "";
       // فشل التخزين ليس جلسة منتهية: لا نعيد المحاولة بين /login و/ بلا نهاية
       if (auth.reason === AUTH_FAIL.STORAGE_FAILED) __step2ResumeTried = true;
       return navigate("/login"); // 3) block dashboard, go to login
@@ -3299,12 +3302,17 @@ async function renderMovementsTab(client, panel) {
 // (subject to RLS). verifySession() blocks the dashboard without a session.
 // رسالة عابرة (flash) تُعرض مرة واحدة في نموذج تسجيل الدخول ثم تُمسح
 let authFlash = "";
+// سبب فشل verifySession الذي أوصل المستخدم إلى /login: يُعرض نصًّا صريحًا
+// (مثلاً storage_failed) بدل الرسالة العامة، ويُمسح بعد عرضه مرة واحدة.
+let authFailureReason = "";
 
 function renderAuth(appEl, routePath) {
   const isRegister = routePath === "/register";
   const isIndependentStore = routePath === "/register/store";
   const flash = authFlash;
   authFlash = "";
+  const failure = authFailureReason;
+  authFailureReason = "";
   appEl.innerHTML = `
     <div class="page">
       <header class="app-header">
@@ -3384,8 +3392,13 @@ function renderAuth(appEl, routePath) {
 
   const form = document.getElementById("local-auth-form");
   if (!form) return;
+  // السبب الصريح يظهر فورًا في النموذج، ولو لم يصل resumePendingStep2 لفرع الحارس
+  if (failure) {
+    const fErrEl = document.getElementById("auth-form-error");
+    if (fErrEl) fErrEl.textContent = sessionSetupError(failure);
+  }
   if (isIndependentStore || isRegister) wireGovernorateSearch();
-  else resumePendingStep2(appEl);
+  else resumePendingStep2(appEl, failure);
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const fd = new FormData(form);
@@ -3552,7 +3565,7 @@ function clearStep2Mark() {
 // جمع كلمات مرور المدير المخزنة: جدول المخازن أولاً ثم جدول الهاش (تحت RLS)
 // إن كانت هناك جلسة Supabase سليمة لم تُكمل بعد الخطوة الثانية،
 // اعرض نموذج كلمة مرور المدير مباشرة بدلاً من الخطوة الأولى.
-async function resumePendingStep2(appEl) {
+async function resumePendingStep2(appEl, failReason) {
   const client = getSupabase();
   if (!client) return;
   try {
@@ -3565,7 +3578,7 @@ async function resumePendingStep2(appEl) {
       if (__step2ResumeTried) {
         // سلمناه مرة وفشل verifySession — لا نُعيد الكرّة، نُظهر السبب بدل الدوران
         const errEl = document.getElementById("auth-form-error");
-        if (errEl) errEl.textContent = SESSION_RETRY_MSG;
+        if (errEl) errEl.textContent = failReason ? sessionSetupError(failReason) : SESSION_RETRY_MSG;
         return;
       }
       __step2ResumeTried = true;
