@@ -176,6 +176,36 @@ SUPABASE_URL='https://<ref>.supabase.co' SUPABASE_ANON_KEY='<anonKey>' npm run c
 
 **عند `PGRST002`:** نفّذ خطوات [`30`](30-postgrest-pgrst002-runbook.md) بالترتيب (شجرة القرار → `NOTIFY` → Restart → التحقق)، وهي ملخص إنجليزي للدليل الكامل [`14`](../architecture-ar/14-postgrest-pgrst002-runbook-ar.md). أهم خطوة أولى: قسم 8 في ملف الفحوص يقارن `pgrst.db_schemas` بالأسماء الموجودة فعلًا. لا تُصلح بتغيير السياسات أو `statement_timeout` قبل قراءة السجلات.
 
+### 2.3 بوابة روابط الوثائق (`docs-links`)
+
+الوثائق تُقرأ كما تُنشر: رابط نسبي مكسور أو `#مرساة` لعنوان أُعيدت تسميته يُفقد القارئ طريقه بصمت، ولا تكشفه بوابتا `check:docs-ar` و`check:docs-actions` لأنهما تفحصان الملفات المشار إليها والأكشنات لا الروابط. لذلك يشتغل `npm run check:docs-links` على `docs/architecture` و`docs/architecture-ar` ويُفشل عند:
+
+| الحالة | مثال | النتيجة |
+|---|---|---|
+| ملف هدف غير موجود | هدف `99-plan.md` داخل رابط نصي | `FAIL … غير موجود` |
+| مجلد/صورة مفقودة | صورة هدفها `api/missing.png` | `FAIL … غير موجود` |
+| مرساة لا تطابق أي عنوان | `#2-لا-يوجد` داخل الوثيقة، أو `20-adr.md#adr-999` | `FAIL … مرساة غير موجودة` |
+| هدف خارج المستودع | `../../outside.md` | `FAIL … خارج المستودع` |
+
+المعرّفات تُحسب بقواعد GitHub نفسها (حروف صغيرة، حذف الترقيم، المسافات → `-`، وتكرار العنوان يأخذ `-1`)، والأسوار الثلاثية تُستثنى فلا تُقرأ الأوامر والأمثلة روابط. الروابط الخارجية متجاوَزة قصدًا ليبقى الفحص بلا شبكة.
+
+```yaml
+# .github/workflows/docs-links.yml (المصدر الفعلي)
+name: docs-links
+on:
+  push: { branches: [main], paths: ['docs/**', 'scripts/check-doc-links.mjs', '.github/workflows/docs-links.yml'] }
+  pull_request: { paths: ['docs/**', 'scripts/check-doc-links.mjs'] }
+  workflow_dispatch:
+permissions: { contents: read }
+steps:
+  - uses: actions/checkout@v5
+  - uses: actions/setup-node@v5
+    with: { node-version: '22' }
+  - run: npm run --silent check:docs-links
+```
+
+الرمز غير الصفري يُفشل السير، فتظهر الوثيقة المكسورة في سجل التشغيل باسم الملف والسطر والهدف قبل الدمج.
+
 ---
 
 ## 3. الصور (Docker)
