@@ -134,8 +134,36 @@ select '7) تتبّع الهجرات' as section,
 
 
 -- ---------------------------------------------------------------------------
--- 8) اختياري — إعادة تحميل الكاش (ليس قراءة، لكنه لا يغيّر بيانات ولا مخططًا)
---    لا تفكّ التعليق إلا بعد مراجعة الأقسام 1–6. عند الحاجة فقط:
+-- 8) هل كل schema معلن في PostgREST موجود فعلًا في القاعدة؟
+--    السبب الأشهر لـPGRST002: PostgREST لا يبني الكاش إذا أشار db_schemas إلى
+--    schema محذوف. الشرح الكامل وخطوات الإصلاح في
+--    docs/architecture-ar/14-postgrest-pgrst002-runbook-ar.md
+--
+--    المتوقع في 8a: صف واحد بـ scope = 'db-wide' أو 'authenticator'، وقيمته
+--    pgrst.db_schemas = public (وأي schema تستخدمه فعلًا).
+--    المتوقع في 8b: كل اسم مذكور في 8a موجود في قائمة أسماء 8b.
+--    اسم معلن وغير موجود ⇒ أزله من Project Settings → Data API → Exposed schemas
+--    (أو أعد إنشاء الـschema إن كان لازمًا) ثم أعد التحميل من القسم 9.
+-- ---------------------------------------------------------------------------
+select '8a) إعداد pgrst الفعّال' as section,
+       coalesce(r.rolname, 'db-wide') as scope,
+       s.setconfig
+from pg_db_role_setting s
+left join pg_roles r on r.oid = s.setrole
+where (s.setdatabase = 0 or s.setdatabase = (select oid from pg_database where datname = current_database()))
+  and exists (select 1 from unnest(s.setconfig) c where c like 'pgrst.%');
+
+select '8b) الأسماء الموجودة فعلًا' as section,
+       n.nspname
+from pg_namespace n
+where n.nspname not like 'pg\_%'
+  and n.nspname <> 'information_schema'
+order by n.nspname;
+
+
+-- ---------------------------------------------------------------------------
+-- 9) اختياري — إعادة تحميل الكاش (ليس قراءة، لكنه لا يغيّر بيانات ولا مخططًا)
+--    لا تفكّ التعليق إلا بعد مراجعة الأقسام 1–8. عند الحاجة فقط:
 --
 -- NOTIFY pgrst, 'reload schema';
 -- NOTIFY pgrst, 'reload config';

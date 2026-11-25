@@ -108,7 +108,7 @@ if (!authOk) {
 if (!restOk) {
   console.error(
     rest.code === 'PGRST002'
-      ? '❌ PGRST002: المصادقة تعمل لكن PostgREST لا يبني schema cache — القاعدة حيّة والكاش معطوب، وليس التطبيق.\n   نفّذ supabase/diagnostics/read-only-checks.sql في SQL Editor ثم اتبع مخرجه.'
+      ? '❌ PGRST002: المصادقة تعمل لكن PostgREST لا يبني schema cache — القاعدة حيّة والكاش معطوب، وليس التطبيق.\n   اتبع الدليل: docs/architecture-ar/14-postgrest-pgrst002-runbook-ar.md\n   وابدأ بفحوص القراءة: supabase/diagnostics/read-only-checks.sql (الأقسام 1–8).'
       : `❌ PostgREST لا يخدم القراءة (${rest.status}${rest.code ? ' · ' + rest.code : ''}).`,
   );
   process.exit(2);
