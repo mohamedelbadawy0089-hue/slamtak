@@ -3,6 +3,8 @@ name: security-invariants
 # بوابة قبل الدمج: تبني المخطط من ملفات الهجرة على قاعدة جديدة، ثم تفشل عند أي
 # تراجع في الأدوار أو الامتيازات أو RLS. الفحص على قاعدة الإنتاج يبقى يدويًا:
 #   SUPABASE_DB_PASSWORD=... npm run check:security
+# بوابات الوثائق الثلاث (check:docs-ar وcheck:docs-actions وcheck:docs-links)
+# انتقلت إلى .github/workflows/docs.yml، فلا تُكرَّر هنا.
 on:
   push:
     branches: [main]
@@ -10,26 +12,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  # بوابة توثيق سريعة (ثوانٍ): تمنع دمج دوسيه المعمارية العربي بإحالة قسم
-  # مكسورة أو بعقد وحدة مخالف. بلا تبعيات ولا قاعدة بيانات، فلا تحتاج npm ci.
-  docs-architecture-ar:
-    name: docs-architecture-ar
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-
-    steps:
-      - uses: actions/checkout@v5
-
-      - uses: actions/setup-node@v5
-        with:
-          node-version: '22'
-
-      - name: Check Arabic architecture docs
-        run: npm run check:docs-ar
-
-      - name: Check docs action versions match workflows
-        run: npm run check:docs-actions
-
   # بوابة الأنواع: tsconfig يغطي src/ بما فيه ملفات .tsx، وفشل خيار jsx مرّ
   # سابقًا بلا فحص لأن لا مهمة كانت تشغّل tsc.
   typecheck:

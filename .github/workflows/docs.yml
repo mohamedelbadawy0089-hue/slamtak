@@ -1,0 +1,39 @@
+---
+# بوابة الوثائق الوحيدة: بوابات عربية + أكشنات + روابط ومراسي، بمُشغِّلات متطابقة.
+# لا تحتاج تبعيات ولا قاعدة بيانات ولا شبكة، فتكفي ثوانٍ.
+#   check:docs-ar      — وثائق المعمارية العربية كاملة، وإحالات الأقسام سليمة
+#   check:docs-actions — إصدارات أكشنات الـ workflows تطابق ما توثّقه الوثائق
+#   check:docs-links   — كل رابط نسبي ومرساة #قسم في docs/architecture(-ar)
+name: docs
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  docs:
+    name: docs
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: فحص وثائق المعمارية العربية
+        run: npm run check:docs-ar
+
+      - name: فحص إصدارات أكشنات الـ workflows في الوثائق
+        run: npm run check:docs-actions
+
+      - name: فحص روابط الوثائق والمراسي
+        run: npm run check:docs-links

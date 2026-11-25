@@ -176,9 +176,39 @@ SUPABASE_URL='https://<ref>.supabase.co' SUPABASE_ANON_KEY='<anonKey>' npm run c
 
 **عند `PGRST002`:** نفّذ خطوات [`30`](30-postgrest-pgrst002-runbook.md) بالترتيب (شجرة القرار → `NOTIFY` → Restart → التحقق)، وهي ملخص إنجليزي للدليل الكامل [`14`](../architecture-ar/14-postgrest-pgrst002-runbook-ar.md). أهم خطوة أولى: قسم 8 في ملف الفحوص يقارن `pgrst.db_schemas` بالأسماء الموجودة فعلًا. لا تُصلح بتغيير السياسات أو `statement_timeout` قبل قراءة السجلات.
 
-### 2.3 بوابة روابط الوثائق (`docs-links`)
+### 2.3 بوابات الوثائق (`docs`)
 
-الوثائق تُقرأ كما تُنشر: رابط نسبي مكسور أو `#مرساة` لعنوان أُعيدت تسميته يُفقد القارئ طريقه بصمت، ولا تكشفه بوابتا `check:docs-ar` و`check:docs-actions` لأنهما تفحصان الملفات المشار إليها والأكشنات لا الروابط. لذلك يشتغل `npm run check:docs-links` على `docs/architecture` و`docs/architecture-ar` ويُفشل عند:
+الوثائق تُقرأ كما تُنشر، فثلاث بوابات تحميها في سير واحد `.github/workflows/docs.yml`:
+
+| البوابة | ماذا تحمي | المصدر |
+|---|---|---|
+| `check:docs-ar` | وثائق المعمارية العربية كاملة (01–14)، وكل إحالة قسم داخلها سليمة، وعقد الوحدة (`public.ts`) مذكور في موضعه | `scripts/check-architecture-ar-docs.mjs` |
+| `check:docs-actions` | إصدارات `uses:` في الـ workflows تطابق ما تذكره الوثائق، وبلا أكشن غير موثّق أو موثّق وغير مستخدم، وبإصدار Node موحّد | `scripts/check-doc-actions.mjs` |
+| `check:docs-links` | كل رابط نسبي ومرساة `#قسم` في `docs/architecture` و`docs/architecture-ar` | `scripts/check-doc-links.mjs` |
+
+السير يعمل بمُشغِّلات متطابقة للبوابات الثلاث: `push` إلى `main` وكل `pull_request`، بلا فلترة مسارات. السبب أن `check:docs-actions` يجب أن يرى أي تغيير في `.github/workflows/` نفسه، وفلترة المسارات كانت ستُخفي الانحراف الذي وُجدت البوابة لأجله؛ والبوابات الثلاث بلا تبعيات ولا قاعدة بيانات ولا شبكة، فتكلفتها ثوانٍ.
+
+```yaml
+# .github/workflows/docs.yml (المصدر الفعلي)
+name: docs
+on:
+  push: { branches: [main] }
+  pull_request:
+permissions: { contents: read }
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: { node-version: '22' }
+      - run: npm run check:docs-ar
+      - run: npm run check:docs-actions
+      - run: npm run check:docs-links
+```
+
+`check:docs-links` يفحص ما لا تفحصه البوابتان الأخريان: رابط نسبي مكسور أو `#مرساة` لعنوان أُعيدت تسميته يُفقد القارئ طريقه بصمت، و`check:docs-ar` يفحص الملفات المشار إليها لا الروابط، و`check:docs-actions` يفحص الأكشنات. يُفشل عند:
 
 | الحالة | مثال | النتيجة |
 |---|---|---|
@@ -189,22 +219,7 @@ SUPABASE_URL='https://<ref>.supabase.co' SUPABASE_ANON_KEY='<anonKey>' npm run c
 
 المعرّفات تُحسب بقواعد GitHub نفسها (حروف صغيرة، حذف الترقيم، المسافات → `-`، وتكرار العنوان يأخذ `-1`)، والأسوار الثلاثية تُستثنى فلا تُقرأ الأوامر والأمثلة روابط. الروابط الخارجية متجاوَزة قصدًا ليبقى الفحص بلا شبكة.
 
-```yaml
-# .github/workflows/docs-links.yml (المصدر الفعلي)
-name: docs-links
-on:
-  push: { branches: [main], paths: ['docs/**', 'scripts/check-doc-links.mjs', '.github/workflows/docs-links.yml'] }
-  pull_request: { paths: ['docs/**', 'scripts/check-doc-links.mjs'] }
-  workflow_dispatch:
-permissions: { contents: read }
-steps:
-  - uses: actions/checkout@v5
-  - uses: actions/setup-node@v5
-    with: { node-version: '22' }
-  - run: npm run --silent check:docs-links
-```
-
-الرمز غير الصفري يُفشل السير، فتظهر الوثيقة المكسورة في سجل التشغيل باسم الملف والسطر والهدف قبل الدمج.
+الرمز غير الصفري لأي بوابة يُفشل السير، فتظهر المخالفة في سجل التشغيل باسم الملف والسطر والهدف قبل الدمج. وهذا السير هو الموضع الوحيد لهذه البوابات: مهمة `docs-architecture-ar` أُزيلت من `security-invariants.yml`، وسير `docs-links.yml` المستقل حُلّ فيه، فلا تعمل بوابة مرتين ولا تغيب عن مُشغِّل.
 
 ---
 
