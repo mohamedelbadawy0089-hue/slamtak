@@ -3473,17 +3473,36 @@ function renderAuth(appEl, routePath) {
 
 // --- الخطوة الثانية: كلمة مرور المدير/الموظف ---
 // علامة نجاح الخطوة الثانية تُحفظ لكل مستخدم؛ بدونها يبقى الحارس مغلقاً.
+// تُكتب في ثلاثة مواضع: الذاكرة (تعمل حتى لو رفض المتصفح التخزين)، ثم
+// localStorage و sessionStorage. والقراءة تقبل أيّاً منها بمطابقة معرّف المستخدم.
+const STEP2_KEY = "step2_ok";
+let __step2Memory = null;
+
 function step2Ok(uid) {
-  try {
-    const m = JSON.parse(localStorage.getItem("step2_ok") || "null");
-    return !!(m && m.uid === uid);
-  } catch (_) { return false; }
+  if (!uid) return false;
+  if (__step2Memory && __step2Memory.uid === uid) return true;
+  for (const get of [() => localStorage, () => sessionStorage]) {
+    try {
+      const m = JSON.parse(get().getItem(STEP2_KEY) || "null");
+      if (m && m.uid === uid) return true;
+    } catch (_) { /* تخزين محجوب أو قيمة تالفة — جرّب المصدر التالي */ }
+  }
+  return false;
 }
 function writeStep2Mark(uid) {
-  try { localStorage.setItem("step2_ok", JSON.stringify({ uid: uid, at: Date.now() })); } catch (_) { /* ignore */ }
+  if (!uid) return false;
+  const mark = { uid: uid, at: Date.now(), v: 2 };
+  __step2Memory = mark; // لا يعتمد على إذن التخزين
+  for (const get of [() => localStorage, () => sessionStorage]) {
+    try { get().setItem(STEP2_KEY, JSON.stringify(mark)); } catch (_) { /* ignore */ }
+  }
+  return step2Ok(uid);
 }
 function clearStep2Mark() {
-  try { localStorage.removeItem("step2_ok"); } catch (_) { /* ignore */ }
+  __step2Memory = null;
+  for (const get of [() => localStorage, () => sessionStorage]) {
+    try { get().removeItem(STEP2_KEY); } catch (_) { /* ignore */ }
+  }
 }
 
 // جمع كلمات مرور المدير المخزنة: جدول المخازن أولاً ثم جدول الهاش (تحت RLS)
@@ -3496,7 +3515,12 @@ async function resumePendingStep2(appEl) {
     const { data } = await client.auth.getSession();
     if (!data || !data.session || !data.session.user) return;
     const u = data.session.user;
-    if (step2Ok(u.id)) return; // مكتملة — الحارس سيفتح لوحة التحكم
+    if (step2Ok(u.id)) {
+      // الخطوة الثانية مكتملة في هذا المتصفح: لا نُظهر نموذج الدخول من جديد،
+      // بل نسلّم للرئيسية، وهي توجّه الموظف إلى لوحة الموظف حسب دوره الحقيقي.
+      navigate("/");
+      return;
+    }
     const meta = u.user_metadata || {};
     renderStep2Form(appEl, {
       id: u.id,
@@ -3574,7 +3598,10 @@ function renderStep2Form(appEl, info) {
         } else if (reason === "no_second_factor_yet") {
           // New account without second factor registered: allow access
           // Determine role from user_warehouses and proceed to dashboard
-          writeStep2Mark(uid);
+          if (!writeStep2Mark(uid)) {
+            setErr("تعذر حفظ علامة التحقق في هذا المتصفح — اسمح بالتخزين ثم أعد المحاولة.");
+            return;
+          }
           const sessionInfo = await verifySession();
           if (!sessionInfo) {
             setErr("تم التحقق من كلمة المرور لكن تعذر تجهيز الجلسة — أعد المحاولة.");
@@ -3590,7 +3617,10 @@ function renderStep2Form(appEl, info) {
         return;
       }
       // نجاح المرحلتين معًا → تجهيز الجلسة ثم توجيه حسب نوع المستخدم
-      writeStep2Mark(uid);
+      if (!writeStep2Mark(uid)) {
+        setErr("تعذر حفظ علامة التحقق في هذا المتصفح — اسمح بالتخزين ثم أعد المحاولة.");
+        return;
+      }
       const sessionInfo = await verifySession();
       if (!sessionInfo) {
         setErr("تم التحقق من كلمة المرور لكن تعذر تجهيز الجلسة — أعد المحاولة.");
