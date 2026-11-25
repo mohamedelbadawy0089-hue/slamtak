@@ -437,7 +437,7 @@ async function verifySession() {
 
     // جلب العضوية الحقيقية والفعليّة فقط من user_warehouses - بدون أي افتراضات
     try {
-      const uw = await sb.from('user_warehouses')
+      const uw = await client.from('user_warehouses')
         .select('tenant_id, warehouse_id, is_default, role_id, role:roles(name), created_at')
         .eq('user_id', user.id)
         .order('created_at', { ascending: true })

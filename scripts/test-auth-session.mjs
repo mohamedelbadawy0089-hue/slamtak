@@ -35,7 +35,7 @@ const blockedStorage = {
 };
 
 // يبني وحدة اختبار من كود التطبيق الفعلي مع بدائل للشبكة وDOM
-function build({ client = null, storage = memoryStorage(), sessionWriteOk = true, user = { id: 'u-1' } } = {}) {
+function build({ client = null, storage = memoryStorage(), sessionWriteOk = true, user = { id: 'u-1' }, pickRoleName = () => '' } = {}) {
   const calls = { navigate: [], setSession: [], clearSession: 0, errors: [], rendered: [] };
   const errBox = { textContent: '' };
 
@@ -51,6 +51,7 @@ function build({ client = null, storage = memoryStorage(), sessionWriteOk = true
   const fakeClient = client === null ? null : {
     auth: { getSession: client.getSession },
     rpc: client.rpc || (async () => ({ data: null, error: null })),
+    from: client.from,
   };
 
   const globals = {
@@ -58,7 +59,7 @@ function build({ client = null, storage = memoryStorage(), sessionWriteOk = true
     localStorage: storage,
     sessionStorage: storage,
     getSupabase: () => fakeClient,
-    pickRoleName: () => '',
+    pickRoleName,
     setSession,
     clearSession,
     document: { getElementById: (id) => (id === 'auth-form-error' ? errBox : null) },
@@ -165,6 +166,58 @@ test('verifySession: نجاح يعيد الجلسة ويصفّر الحارس', 
   assert.ok(storage.getItem('session'), 'الجلسة مثبّتة');
 });
 
+test('verifySession: يجلب عضوية user_warehouses بالعميل الصحيح', async () => {
+  const user = { id: 'u-1', email: 'a@b.c', user_metadata: {} };
+  const calls = { from: [], eq: [], rpc: [] };
+  const rows = [{ tenant_id: 't-9', warehouse_id: 'w-3', is_default: true, role: { name: 'manager' } }];
+  // سلسلة بناء حقيقية الشكل: select -> eq -> order -> limit (يُنتظر)
+  const builder = {
+    select(cols) { calls.select = cols; return builder; },
+    eq(col, val) { calls.eq.push([col, val]); return builder; },
+    order() { return builder; },
+    limit(n) { calls.limit = n; return Promise.resolve({ data: rows, error: null }); },
+  };
+  const { api, calls: harnessCalls } = build({
+    client: {
+      getSession: async () => ({ data: { session: { user, access_token: 't' } }, error: null }),
+      from: (table) => { calls.from.push(table); return builder; },
+      rpc: async (name, args) => { calls.rpc.push([name, args]); return { data: null, error: null }; },
+    },
+    pickRoleName: (row) => (row && row.role && row.role.name) || '',
+    user,
+  });
+  api.writeStep2Mark('u-1');
+
+  const res = await api.verifySession();
+  assert.equal(res.ok, true);
+  assert.deepEqual(calls.from, ['user_warehouses'], 'الجدول الصحيح على عميل Supabase');
+  assert.deepEqual(calls.eq, [['user_id', 'u-1']], 'تصفية العضوية بمعرّف المستخدم');
+  assert.equal(res.session.tenant_id, 't-9', 'tenant_id من العضوية الفعلية');
+  assert.equal(res.session.warehouse_id, 'w-3', 'warehouse_id من العضوية الفعلية');
+  assert.equal(res.session.role, 'manager', 'الدور الحقيقي لا الافتراضي');
+  assert.equal(res.session.memberships.length, 1, 'العضويات محفوظة في الجلسة');
+  assert.ok(
+    calls.rpc.some(([name, args]) => name === 'set_tenant_context' && args.tenant_id === 't-9'),
+    'سياق RLS يُضبط على نفس المستأجر'
+  );
+  assert.equal(harnessCalls.setSession.length, 1);
+});
+
+test('verifySession: فشل جلب العضوية لا يمنع الجلسة', async () => {
+  const user = { id: 'u-1', email: 'a@b.c', user_metadata: {} };
+  const { api } = build({
+    client: {
+      getSession: async () => ({ data: { session: { user, access_token: 't' } }, error: null }),
+      from: () => { throw new Error('REST down'); },
+    },
+    user,
+  });
+  api.writeStep2Mark('u-1');
+  const res = await api.verifySession();
+  assert.equal(res.ok, true, 'RLS يُقيّد الاستعلام ولا يمنع الدخول');
+  assert.equal(res.session.tenant_id, '', 'بلا عضوية يبقى tenant_id فارغًا');
+});
+
 test('verifySession: استثناء غير متوقع يُرجع السبب error', async () => {
   const { api } = build({
     client: { getSession: async () => { throw new Error('boom'); } },
@@ -253,4 +306,7 @@ test('ربط الكود: نتائج verifySession تُقرأ بالسبب لا �
   assert.equal(/authFailureReason = auth\.reason/.test(APP_SRC), true, 'render يحفظ السبب قبل التوجيه');
   assert.equal(/const failure = authFailureReason;\s*\n\s*authFailureReason = "";/.test(APP_SRC), true, 'renderAuth يستهلك السبب مرة واحدة');
   assert.equal(/resumePendingStep2\(appEl, failure\)/.test(APP_SRC), true, 'السبب يُمرَّر إلى /login');
+  // العضوية تُقرأ من عميل Supabase المهيّأ، لا من متغيّر sb غير المعرّف
+  assert.equal(/\bsb\.from\(/.test(region('auth-session-core')), false, 'لا استخدام لمتغيّر sb في verifySession');
+  assert.equal(/await client\.from\('user_warehouses'\)/.test(APP_SRC), true, 'الاستعلام على العميل المُتحقَّق منه');
 });
