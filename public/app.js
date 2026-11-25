@@ -404,14 +404,24 @@ function getTenantId() {
   return null;
 }
 
+// #region auth-session-core (يُختبر في scripts/test-auth-session.mjs — لا تغيّر الوسم)
+// أسباب فشل التحقق صريحة بدل null واحدة: كل سبب له مسار واجهة مختلف.
+const AUTH_FAIL = {
+  NO_CLIENT: "no_client",          // لم يُتهيأ عميل Supabase (مفتاح/شبكة)
+  NO_SESSION: "no_session",        // لا جلسة مصادقة صالحة
+  STEP2_PENDING: "step2_pending",  // الجلسة سليمة لكن الخطوة الثانية لم تُنجز
+  STORAGE_FAILED: "storage_failed",// لا يمكن تثبيت الجلسة في هذا المتصفح
+  ERROR: "error"                   // استثناء غير متوقع أثناء التحقق
+};
+
 async function verifySession() {
   const client = getSupabase();
-  if (!client) return null;
+  if (!client) return { ok: false, reason: AUTH_FAIL.NO_CLIENT };
   try {
     const { data, error } = await client.auth.getSession();
     if (error || !data || !data.session) {
       clearSession();
-      return null;
+      return { ok: false, reason: AUTH_FAIL.NO_SESSION };
     }
     const s = data.session;
     const user = s.user || {};
@@ -456,15 +466,33 @@ async function verifySession() {
     // لا تُفتح لوحة التحكم قبل نجاح الخطوة الثانية (كلمة مرور المدير)
     if (!step2Ok(user.id)) {
       clearSession();
-      return null;
+      return { ok: false, reason: AUTH_FAIL.STEP2_PENDING };
     }
-    setSession(appSession);
+    if (!setSession(appSession)) {
+      clearSession();
+      return { ok: false, reason: AUTH_FAIL.STORAGE_FAILED };
+    }
     __step2ResumeTried = false; // نجحت الجلسة: يُفتح باب المحاولة من جديد
-    return appSession;
+    return { ok: true, session: appSession };
   } catch (_) {
     clearSession();
-    return null;
+    return { ok: false, reason: AUTH_FAIL.ERROR };
   }
+}
+// #endregion auth-session-core
+
+// رسالة واجهة مطابقة لسبب الفشل الصريح (لا رسالة عامة واحدة)
+function sessionSetupError(reason) {
+  if (reason === AUTH_FAIL.STORAGE_FAILED) {
+    return "تم التحقق من كلمة المرور، لكن تعذّر تثبيت الجلسة في هذا المتصفح (وضع خاص أو مساحة ممتلئة) — حرّر مساحة أو استخدم نافذة عادية.";
+  }
+  if (reason === AUTH_FAIL.STEP2_PENDING) {
+    return "الخطوة الثانية لم تكتمل في هذا المتصفح — أعد إدخال كلمة مرور المدير.";
+  }
+  if (reason === AUTH_FAIL.NO_SESSION) {
+    return "انتهت الجلسة — أعد تسجيل الدخول.";
+  }
+  return "تم التحقق من كلمة المرور لكن تعذر تجهيز الجلسة — أعد المحاولة.";
 }
 
 // Lock screen shown while the session is being verified. It replaces the app
@@ -532,8 +560,12 @@ function getSession() {
   }
   return null;
 }
-function setSession(s) { localStorage.setItem("session", JSON.stringify(s)); }
-function clearSession() { localStorage.removeItem("session"); }
+// تُرجع false عند فشل التخزين (وضع خاص/حصة ممتلئة) بدل رمي استثناء يُبتلع لاحقًا
+function setSession(s) {
+  try { localStorage.setItem("session", JSON.stringify(s)); return true; }
+  catch (_) { return false; }
+}
+function clearSession() { try { localStorage.removeItem("session"); } catch (_) { /* تخزين محجوب */ } }
 
 // --- نظام الصلاحيات (RBAC): الدور والصلاحيات من user_warehouses + roles ---
 // الفرض الحقيقي على الخادم (RLS + has_permission)؛ هذه الطبقة تُخفي أو تعطّل
@@ -811,11 +843,14 @@ async function render() {
   // session has been verified against the server.
   if (isProtectedRoute(routePath)) {
     renderAuthGate(); // 1) hide all dashboard UI
-    const session = await verifySession(); // 2) verify the account
-    if (!session) {
+    const auth = await verifySession(); // 2) verify the account
+    if (!auth.ok) {
       clearSession();
+      // فشل التخزين ليس جلسة منتهية: لا نعيد المحاولة بين /login و/ بلا نهاية
+      if (auth.reason === AUTH_FAIL.STORAGE_FAILED) __step2ResumeTried = true;
       return navigate("/login"); // 3) block dashboard, go to login
     }
+    const session = auth.session;
     // المستخدم قد يتنقل أثناء التحقق — أعد الرسم للمسار الحالي بدل رسم قديم
     const nowPath = appPath(location.pathname);
     if (nowPath !== path) return render();
@@ -3476,6 +3511,7 @@ function renderAuth(appEl, routePath) {
 // علامة نجاح الخطوة الثانية تُحفظ لكل مستخدم؛ بدونها يبقى الحارس مغلقاً.
 // تُكتب في ثلاثة مواضع: الذاكرة (تعمل حتى لو رفض المتصفح التخزين)، ثم
 // localStorage و sessionStorage. والقراءة تقبل أيّاً منها بمطابقة معرّف المستخدم.
+// #region step2-guard (يُختبر في scripts/test-auth-session.mjs — لا تغيّر الوسم)
 const STEP2_KEY = "step2_ok";
 let __step2Memory = null;
 // حارس ضد الحلقة: / يرجع إلى /login عندما يفشل verifySession، و/login يعيد
@@ -3547,6 +3583,7 @@ async function resumePendingStep2(appEl) {
     });
   } catch (_) { /* ignore */ }
 }
+// #endregion step2-guard
 
 function renderStep2Form(appEl, info) {
   appEl.innerHTML = `
@@ -3617,13 +3654,13 @@ function renderStep2Form(appEl, info) {
             setErr("تعذر حفظ علامة التحقق في هذا المتصفح — اسمح بالتخزين ثم أعد المحاولة.");
             return;
           }
-          const sessionInfo = await verifySession();
-          if (!sessionInfo) {
-            setErr("تم التحقق من كلمة المرور لكن تعذر تجهيز الجلسة — أعد المحاولة.");
+          const auth = await verifySession();
+          if (!auth.ok) {
+            setErr(sessionSetupError(auth.reason));
             return;
           }
           // المدير → لوحة تحكم المدير | الموظف → لوحة الموظف لنفس المخزن
-          navigate(resolveDashboardRoute((data && data.role) || sessionInfo.role));
+          navigate(resolveDashboardRoute((data && data.role) || auth.session.role));
           return;
         } else {
           //including "invalid_password" and "wrong_password" reasons
@@ -3636,14 +3673,14 @@ function renderStep2Form(appEl, info) {
         setErr("تعذر حفظ علامة التحقق في هذا المتصفح — اسمح بالتخزين ثم أعد المحاولة.");
         return;
       }
-      const sessionInfo = await verifySession();
-      if (!sessionInfo) {
-        setErr("تم التحقق من كلمة المرور لكن تعذر تجهيز الجلسة — أعد المحاولة.");
+      const auth = await verifySession();
+      if (!auth.ok) {
+        setErr(sessionSetupError(auth.reason));
         return;
       }
       // المدير → لوحة تحكم المدير | الموظف → لوحة الموظف لنفس المخزن
       // (tenant_id مربوط بالجلسة والسياق محفوظ داخل verifySession قبل فتح أي لوحة)
-      navigate(resolveDashboardRoute((data && data.role) || sessionInfo.role));
+      navigate(resolveDashboardRoute((data && data.role) || auth.session.role));
     } catch (err) {
       setErr(authErrorMessage(err, "تعذر التحقق من كلمة المرور"));
     }

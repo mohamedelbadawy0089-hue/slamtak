@@ -29,6 +29,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      # بوابة اختبار منطق جلسة الواجهة (علامة الخطوة الثانية + حارس التوجيه)
+      - name: اختبار منطق جلسة الواجهة
+        run: node --test scripts/test-auth-session.mjs
+
       - name: Configure Pages
         uses: actions/configure-pages@v6
 
