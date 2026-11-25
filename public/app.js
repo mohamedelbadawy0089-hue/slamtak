@@ -459,6 +459,7 @@ async function verifySession() {
       return null;
     }
     setSession(appSession);
+    __step2ResumeTried = false; // نجحت الجلسة: يُفتح باب المحاولة من جديد
     return appSession;
   } catch (_) {
     clearSession();
@@ -3477,6 +3478,13 @@ function renderAuth(appEl, routePath) {
 // localStorage و sessionStorage. والقراءة تقبل أيّاً منها بمطابقة معرّف المستخدم.
 const STEP2_KEY = "step2_ok";
 let __step2Memory = null;
+// حارس ضد الحلقة: / يرجع إلى /login عندما يفشل verifySession، و/login يعيد
+// التوجيه إلى / عند وجود علامة صالحة — فيدور المستخدم بينهما بلا نهاية إن
+// كانت الجلسة صالحة شكلاً وفاشلة فعلاً (انتهت مدة التجديد أو مُنع التخزين).
+// يُسمح بمحاولة تسليم واحدة لكل تحميل صفحة، ويُصفَّر عند نجاح verifySession.
+let __step2ResumeTried = false;
+const SESSION_RETRY_MSG =
+  "تعذّر إعادة فتح جلستك (انتهت صلاحيتها أو مُنع تخزين المتصفح) — سجّل الدخول من جديد.";
 
 function step2Ok(uid) {
   if (!uid) return false;
@@ -3518,6 +3526,13 @@ async function resumePendingStep2(appEl) {
     if (step2Ok(u.id)) {
       // الخطوة الثانية مكتملة في هذا المتصفح: لا نُظهر نموذج الدخول من جديد،
       // بل نسلّم للرئيسية، وهي توجّه الموظف إلى لوحة الموظف حسب دوره الحقيقي.
+      if (__step2ResumeTried) {
+        // سلمناه مرة وفشل verifySession — لا نُعيد الكرّة، نُظهر السبب بدل الدوران
+        const errEl = document.getElementById("auth-form-error");
+        if (errEl) errEl.textContent = SESSION_RETRY_MSG;
+        return;
+      }
+      __step2ResumeTried = true;
       navigate("/");
       return;
     }
