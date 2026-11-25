@@ -61,6 +61,7 @@
 | 27 | معمارية التكلفة الصفرية: الخدمات المجانية وحدودها وبدائلها | [27-free-tier-architecture.md](27-free-tier-architecture.md) | ✅ قيد حاكم |
 | 28 | معمارية التشغيل: Pages + Edge Functions، والحدود الحسابية | [28-supabase-edge-runtime.md](28-supabase-edge-runtime.md) | ✅ يحكم التنفيذ |
 | 29 | بذور البيانات المرجعية: الصلاحيات وأدوار النظام والخطط | [29-reference-seed.md](29-reference-seed.md) | ✅ مُختبر |
+| 30 | Runbook: إصلاح `PGRST002` (schema cache) — نسخة إنجليزية مختصرة | [30-postgrest-pgrst002-runbook.md](30-postgrest-pgrst002-runbook.md) | ✅ |
 
 **الأرقام الأساسية مُدقَّقة آليًا، لا مأخوذة من الوصف:** 10 طبقات، 27 وحدة في 9 سياقات، **39 جدولًا** في `public` + 4 في `platform`، **38** منها بـ `FORCE RLS`، **44 سياسة** (وواحدة إضافية على `realtime.messages` لم تُنفَّذ بعد)، **`T1`–`T20`: 19/19 ناجحة فعليًا** (0 كتلة فاشلة من 41)، **65 مسارًا و89 عملية** في العقد (فحص Redocly: 0 خطأ و0 تحذير)، **26 ADR**، 56 مخطط Mermaid. أوامر إعادة الفحص في `22` §8 و`26` §2.
 
