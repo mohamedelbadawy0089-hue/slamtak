@@ -6,9 +6,10 @@
 // (ثلاثة مخازن، مخزنان منفصلان، أصناف، تشغيلات) تُنشأ بدور المالك لأن سياسات RLS
 // موجّهة إلى slamtak_app وحده.
 //
-// استثناء واحد مقصود: اختبار التزامن (في آخر الملف) يفتح جلستين ويُثبّت حركات
-// إحداهما بـCOMMIT، لأن القفل لا يُختبر إلا بمعاملة تُرى للطرف الآخر. يعمل على
-// مخزن ثالث (T_C) كي لا يغيّر أرصدة بقية الاختبارات، وحركاته تُزال في `after`.
+// استثناءان مقصودان في قسم التزامن: اختبار تخصيص متواز واختبار مفتاح تكرار
+// متوازٍ يفتح كل منهما جلستين ويُثبّت إحداهما بـCOMMIT، لأن القفل لا يُختبر إلا
+// بمعاملة تُرى للطرف الآخر. لكل منهما مخزن معزول (T_C وT_D) كي لا يغيّرا أرصدة
+// بقية الاختبارات، وحركاتهما تُزال في `after`.
 //
 // المتطلب: مخطط 20261108 مبني على القاعدة:
 //   node scripts/apply-migrations.mjs supabase/migrations/20261108000001_init_schema.sql \
@@ -83,6 +84,21 @@ const B_C1 = 'cccccccc-cccc-4ccc-8ccc-ccccccccccc4'; // +90 يومًا، 5 وح�
 const B_C2 = 'cccccccc-cccc-4ccc-8ccc-ccccccccccc5'; // +200 يوم، 6 وحدات
 const U_A = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa10';
 const U_B = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb12';
+// أطراف البيع: الفاتورة تشترط عميلًا ووحدة. ومخزن رابع معزول (T_D) لاختبار
+// التكرار المتزامن وحده، كي لا يغيّر أرصدة أ/ب/ج التي تفترضها بقية الاختبارات.
+const UN_A = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa20';
+const CU_A = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa21';
+const UN_B = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb20';
+const CU_B = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb21';
+const T_D = '44444444-4444-4444-8444-444444444444';
+const W_D = 'dddddddd-dddd-4ddd-8ddd-ddddddddddd1';
+const L_D = 'dddddddd-dddd-4ddd-8ddd-ddddddddddd2';
+const M_D = 'dddddddd-dddd-4ddd-8ddd-ddddddddddd3';
+const B_D1 = 'dddddddd-dddd-4ddd-8ddd-ddddddddddd4'; // +30 يومًا، 4 وحدات
+const B_D2 = 'dddddddd-dddd-4ddd-8ddd-ddddddddddd5'; // +120 يومًا، 6 وحدات
+const U_D = 'dddddddd-dddd-4ddd-8ddd-ddddddddddd6';
+const UN_D = 'dddddddd-dddd-4ddd-8ddd-ddddddddddd7';
+const CU_D = 'dddddddd-dddd-4ddd-8ddd-ddddddddddd8';
 
 let skipReason = null;
 let owner = null;
@@ -103,8 +119,9 @@ async function openAppSession(ctx) {
   return client;
 }
 
-// ينتظر حتى تظهر جلسة تنتظر قفل صف على allocate_fefo (لا مجرد تأخير زمني).
-async function waitForRowLock(client, timeoutMs = 8000) {
+// ينتظر حتى تظهر جلسة تنتظر قفلًا في دالة تحمل اسمها في نص الاستعلام
+// (لا مجرد تأخير زمني): allocate_fefo أو post_sale.
+async function waitForRowLock(client, needle = 'allocate_fefo', timeoutMs = 8000) {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
     const { rows } = await client.query(
@@ -112,7 +129,8 @@ async function waitForRowLock(client, timeoutMs = 8000) {
          FROM pg_stat_activity
         WHERE datname = current_database()
           AND wait_event_type = 'Lock'
-          AND query ILIKE '%allocate_fefo%'`,
+          AND query ILIKE '%' || $1 || '%'`,
+      [needle],
     );
     if (rows[0].n > 0) return true;
     await new Promise((resolve) => setTimeout(resolve, 50));
@@ -187,7 +205,7 @@ async function expectFailure(client, text, params) {
 // وحده يُثبّت حركات؛ فنُعطّل الحارس لحظيًا بدور المالك ثم نُعيده في finally.
 // هذا تنظيف الاختبار لا مسارًا في المنتج: لا شيء يعطّل الحارس على قاعدة حقيقية.
 async function cleanupTenants(client) {
-  const ids = [T_A, T_B, T_C];
+  const ids = [T_A, T_B, T_C, T_D];
   await client.query('ALTER TABLE public.stock_movements DISABLE TRIGGER trg_movements_append_only');
   try {
     await client.query('DELETE FROM public.stock_movements WHERE tenant_id = ANY($1)', [ids]);
@@ -195,6 +213,9 @@ async function cleanupTenants(client) {
     await client.query('ALTER TABLE public.stock_movements ENABLE TRIGGER trg_movements_append_only');
   }
   for (const statement of [
+    `DELETE FROM public.sales_invoice_items WHERE tenant_id = ANY($1)`,
+    `DELETE FROM public.sales_invoices WHERE tenant_id = ANY($1)`,
+    `DELETE FROM public.customers WHERE tenant_id = ANY($1)`,
     `DELETE FROM public.user_permission_overrides WHERE tenant_id = ANY($1)`,
     `DELETE FROM public.user_roles WHERE tenant_id = ANY($1)`,
     `DELETE FROM public.role_permissions WHERE tenant_id = ANY($1)`,
@@ -202,6 +223,7 @@ async function cleanupTenants(client) {
     `DELETE FROM public.stock_batches WHERE tenant_id = ANY($1)`,
     `DELETE FROM public.batches WHERE tenant_id = ANY($1)`,
     `DELETE FROM public.medicines WHERE tenant_id = ANY($1)`,
+    `DELETE FROM public.units WHERE tenant_id = ANY($1)`,
     `DELETE FROM public.storage_locations WHERE tenant_id = ANY($1)`,
     `DELETE FROM public.warehouses WHERE tenant_id = ANY($1)`,
     `DELETE FROM public.tenants WHERE id = ANY($1)`,
@@ -240,7 +262,7 @@ before(async () => {
 
   // تنظيف أي بقايا من تشغيل سابق فاشل (بالترتيب الذي تحتمله المفاتيح الأجنبية).
   await cleanupTenants(owner);
-  await sql(`DELETE FROM public.users WHERE id = ANY($1)`, [[U_A, U_B]]);
+  await sql(`DELETE FROM public.users WHERE id = ANY($1)`, [[U_A, U_B, U_D]]);
 
   await sql(
     `INSERT INTO public.users (id, email, full_name, password_hash) VALUES
@@ -300,6 +322,18 @@ before(async () => {
     [T_B, W_B, L_B, M_B, B_B1],
   );
 
+  // أطراف البيع: الفاتورة تشترط عميلًا ووحدة صالحة داخل المخزن نفسه.
+  await sql(
+    `INSERT INTO public.units (tenant_id, id, code, name) VALUES
+       ($1, $3, 'box', 'علبة'), ($2, $4, 'box', 'علبة')`,
+    [T_A, T_B, UN_A, UN_B],
+  );
+  await sql(
+    `INSERT INTO public.customers (tenant_id, id, name, kind) VALUES
+       ($1, $3, 'عميل أ', 'cash'), ($2, $4, 'عميل ب', 'cash')`,
+    [T_A, T_B, CU_A, CU_B],
+  );
+
   // مخزن ج: 11 وحدة متاحة على تشغيلتين، لاختبار التزامن (8 + 8 > 11).
   await sql(`INSERT INTO public.tenants (id, slug, name) VALUES ($1, 'iso-c', 'مخزن ج')`, [T_C]);
   await sql(`INSERT INTO public.warehouses (tenant_id, id, name) VALUES ($1, $2, 'مخزن ج')`, [T_C, W_C]);
@@ -326,6 +360,45 @@ before(async () => {
     [T_C, W_C, L_C, M_C, B_C1, B_C2],
   );
 
+  // مخزن د: 10 وحدات على تشغيلتين، لاختبار مفتاح التكرار بين جلستين متزامنتين.
+  await sql(`INSERT INTO public.tenants (id, slug, name) VALUES ($1, 'iso-d', 'مخزن د')`, [T_D]);
+  await sql(`INSERT INTO public.warehouses (tenant_id, id, name) VALUES ($1, $2, 'مخزن د')`, [T_D, W_D]);
+  await sql(
+    `INSERT INTO public.storage_locations (tenant_id, id, warehouse_id, code, name, is_default)
+     VALUES ($1, $2, $3, 'DEFAULT', 'الافتراضي', true)`,
+    [T_D, L_D, W_D],
+  );
+  await sql(
+    `INSERT INTO public.medicines (tenant_id, id, sku, trade_name_ar) VALUES ($1, $2, 'ISO-D-1', 'دواء د')`,
+    [T_D, M_D],
+  );
+  await sql(
+    `INSERT INTO public.batches (tenant_id, id, medicine_id, batch_no, expiry_date, status) VALUES
+       ($1, $2, $4, 'D1', CURRENT_DATE + 30,  'active'),
+       ($1, $3, $4, 'D2', CURRENT_DATE + 120, 'active')`,
+    [T_D, B_D1, B_D2, M_D],
+  );
+  await sql(
+    `INSERT INTO public.stock_batches
+       (tenant_id, warehouse_id, location_id, medicine_id, batch_id, qty_on_hand) VALUES
+       ($1, $2, $3, $4, $5, 4),
+       ($1, $2, $3, $4, $6, 6)`,
+    [T_D, W_D, L_D, M_D, B_D1, B_D2],
+  );
+  await sql(
+    `INSERT INTO public.units (tenant_id, id, code, name) VALUES ($1, $2, 'box', 'علبة')`,
+    [T_D, UN_D],
+  );
+  await sql(
+    `INSERT INTO public.customers (tenant_id, id, name, kind) VALUES ($1, $2, 'عميل د', 'cash')`,
+    [T_D, CU_D],
+  );
+  await sql(
+    `INSERT INTO public.users (id, email, full_name, password_hash)
+     VALUES ($1, 'isolation-d@test.local', 'مستخدم د', 'x')`,
+    [U_D],
+  );
+
   // أدوار المخزنين: المالك في أ بلا أدوار في ب (لاختبار رفض الصلاحية).
   await sql(`SELECT app.seed_tenant_roles($1)`, [T_A]);
   await sql(`SELECT app.seed_tenant_roles($1)`, [T_B]);
@@ -334,13 +407,19 @@ before(async () => {
      SELECT $1, $2, id FROM public.roles WHERE tenant_id = $1 AND code = 'owner'`,
     [T_A, U_A],
   );
+  await sql(`SELECT app.seed_tenant_roles($1)`, [T_D]);
+  await sql(
+    `INSERT INTO public.user_roles (tenant_id, user_id, role_id)
+     SELECT $1, $2, id FROM public.roles WHERE tenant_id = $1 AND code = 'owner'`,
+    [T_D, U_D],
+  );
 });
 
 after(async () => {
   if (!owner) return;
   try {
     await cleanupTenants(owner);
-    await sql(`DELETE FROM public.users WHERE id = ANY($1)`, [[U_A, U_B]]);
+    await sql(`DELETE FROM public.users WHERE id = ANY($1)`, [[U_A, U_B, U_D]]);
   } finally {
     await owner.end();
   }
@@ -783,9 +862,209 @@ needsDb('FEFO: الفهرس الذي يخدم الاستعلام موجود با
   assert.match(rows[0].indexdef, /status = 'available'/);
 });
 
+// ---------------------------------------------------------------- البيع (post_sale)
+
+const postSale = (client, args) =>
+  client.query('SELECT app.post_sale($1, $2, $3, $4, $5, $6, $7) AS sale', args);
+
+needsDb('البيع: post_sale ينشئ فاتورة مؤكدة ويخصم الأقرب انتهاءً عبر حركات sale', async () => {
+  await asApp({ tenantId: T_A, userId: U_A }, async (c) => {
+    const sale = (await postSale(c, [CU_A, W_A, M_A, UN_A, 6, 12.5, 'sale-key-fefo'])).rows[0].sale;
+
+    assert.equal(sale.replayed, false, 'أول نداء ليس إعادة');
+    assert.deepEqual(
+      sale.allocations.map((a) => a.batch_no),
+      ['A1', 'A2'],
+      'التخصيص من الأقرب انتهاءً لا من الأكبر رصيدًا',
+    );
+    assert.deepEqual(sale.allocations.map((a) => Number(a.qty)), [5, 1]);
+    assert.equal(Number(sale.total), 75, '6 × 12.50');
+
+    const inv = await c.query(
+      'SELECT status, total, idempotency_key, warehouse_id FROM public.sales_invoices WHERE id = $1',
+      [sale.invoice_id],
+    );
+    assert.equal(inv.rowCount, 1);
+    assert.equal(inv.rows[0].status, 'confirmed');
+    assert.equal(Number(inv.rows[0].total), 75);
+    assert.equal(inv.rows[0].idempotency_key, 'sale-key-fefo');
+
+    const item = await c.query(
+      'SELECT medicine_id, qty, unit_price, line_total FROM public.sales_invoice_items WHERE invoice_id = $1',
+      [sale.invoice_id],
+    );
+    assert.equal(item.rowCount, 1);
+    assert.equal(item.rows[0].medicine_id, M_A);
+    assert.equal(Number(item.rows[0].qty), 6);
+    assert.equal(Number(item.rows[0].line_total), 75);
+
+    const moves = await c.query(
+      `SELECT batch_id, qty_delta, ref_type, ref_id
+         FROM public.stock_movements
+        WHERE tenant_id = $1 AND ref_type = 'sales_invoice' AND ref_id = $2`,
+      [T_A, sale.invoice_id],
+    );
+    assert.equal(moves.rowCount, 2, 'حركة sale لكل تشغيلة مخصّصة');
+    assert.equal(moves.rows.reduce((s, m) => s + Number(m.qty_delta), 0), -6);
+    for (const m of moves.rows) {
+      assert.equal(m.ref_type, 'sales_invoice');
+      assert.equal(m.ref_id, sale.invoice_id);
+    }
+
+    const bal = await c.query(
+      'SELECT batch_id, qty_on_hand FROM public.stock_batches WHERE batch_id = ANY($1)',
+      [[B_A1, B_A2]],
+    );
+    const byBatch = Object.fromEntries(bal.rows.map((r) => [r.batch_id, Number(r.qty_on_hand)]));
+    assert.deepEqual(byBatch, { [B_A1]: 0, [B_A2]: 9 }, 'الخصم مر عبر الحركات فقط');
+  });
+});
+
+needsDb('البيع: نفس مفتاح التكرار يعيد الفاتورة نفسها بلا صرف ثانٍ', async () => {
+  await asApp({ tenantId: T_A, userId: U_A }, async (c) => {
+    const args = [CU_A, W_A, M_A, UN_A, 2, 10, 'sale-key-replay'];
+    const first = (await postSale(c, args)).rows[0].sale;
+
+    const ledger = () =>
+      c.query(
+        `SELECT count(*)::int AS n, coalesce(sum(qty_delta), 0)::numeric AS total
+           FROM public.stock_movements
+          WHERE tenant_id = $1 AND ref_id = $2`,
+        [T_A, first.invoice_id],
+      );
+    const balances = () =>
+      c.query(
+        'SELECT batch_id, qty_on_hand FROM public.stock_batches WHERE batch_id = ANY($1) ORDER BY batch_id',
+        [[B_A1, B_A2]],
+      );
+
+    const before = { ledger: (await ledger()).rows, balances: (await balances()).rows };
+    const second = (await postSale(c, args)).rows[0].sale;
+
+    assert.equal(second.replayed, true, 'الإعادة تُعلَن صراحةً');
+    assert.equal(second.invoice_id, first.invoice_id, 'نفس الفاتورة لا فاتورة ثانية');
+    assert.equal(second.item_id, first.item_id);
+    assert.deepEqual(second.allocations, first.allocations, 'التخصيص المعاد هو نفسه');
+
+    assert.deepEqual((await ledger()).rows, before.ledger, 'لا حركة جديدة ولا خصم إضافي');
+    assert.deepEqual((await balances()).rows, before.balances, 'الأرصدة لم تتغير');
+  });
+});
+
+needsDb('البيع: إعادة المفتاح بكمية مختلفة مرفوضة ولا تصرف شيئًا', async () => {
+  await asApp({ tenantId: T_A, userId: U_A }, async (c) => {
+    const first = (await postSale(c, [CU_A, W_A, M_A, UN_A, 2, 10, 'sale-key-reuse'])).rows[0].sale;
+
+    const reused = await expectFailure(c, 'SELECT app.post_sale($1, $2, $3, $4, $5, $6, $7)', [
+      CU_A,
+      W_A,
+      M_A,
+      UN_A,
+      3,
+      10,
+      'sale-key-reuse',
+    ]);
+    assert.ok(reused, 'المفتاح نفسه بكمية أخرى مرفوض');
+    assert.equal(reused.code, '23505');
+    assert.match(reused.message, /SALE_IDEMPOTENCY_KEY_REUSED/);
+
+    const bal = await c.query('SELECT qty_on_hand FROM public.stock_batches WHERE batch_id = $1', [B_A1]);
+    assert.equal(Number(bal.rows[0].qty_on_hand), 3, 'خصم البيع الأول (2) وحده، لا الثاني');
+
+    const invoices = await c.query(
+      `SELECT count(*)::int AS n FROM public.sales_invoices
+        WHERE tenant_id = $1 AND idempotency_key = 'sale-key-reuse'`,
+      [T_A],
+    );
+    assert.equal(invoices.rows[0].n, 1);
+    assert.equal(first.replayed, false);
+  });
+});
+
+needsDb('البيع: نقص المتاح لا يترك فاتورة ولا حركة ولا يستهلك رقم مستند', async () => {
+  await asApp({ tenantId: T_A, userId: U_A }, async (c) => {
+    const seq = () =>
+      c.query(
+        `SELECT doc_type, fiscal_year, last_value FROM public.document_sequences
+          WHERE tenant_id = $1 AND doc_type = 'sale'`,
+        [T_A],
+      );
+    const before = (await seq()).rows;
+
+    // المتاح الفعلي 11 (A1 خمسة + A2 ستة).
+    const err = await expectFailure(c, 'SELECT app.post_sale($1, $2, $3, $4, $5, $6, $7)', [
+      CU_A,
+      W_A,
+      M_A,
+      UN_A,
+      999,
+      10,
+      'sale-key-nostock',
+    ]);
+    assert.ok(err, 'الطلب فوق المتاح مرفوض');
+    assert.equal(err.code, 'P0001');
+    assert.match(err.message, /FEFO_INSUFFICIENT_STOCK/);
+
+    const inv = await c.query(
+      `SELECT count(*)::int AS n FROM public.sales_invoices
+        WHERE tenant_id = $1 AND idempotency_key = 'sale-key-nostock'`,
+      [T_A],
+    );
+    assert.equal(inv.rows[0].n, 0, 'لا فاتورة معلقة بلا بضاعة');
+    assert.deepEqual((await seq()).rows, before, 'رقم المستند رجع بالمعاملة كلها');
+  });
+});
+
+needsDb('البيع: مفتاح فارغ أو عميل من مخزن آخر أو مستخدم بلا صلاحية مرفوض', async () => {
+  await asApp({ tenantId: T_A, userId: U_A }, async (c) => {
+    const empty = await expectFailure(c, 'SELECT app.post_sale($1, $2, $3, $4, $5, $6, $7)', [
+      CU_A,
+      W_A,
+      M_A,
+      UN_A,
+      1,
+      10,
+      '   ',
+    ]);
+    assert.ok(empty, 'المفتاح الفارغ مرفوض');
+    assert.equal(empty.code, '22023');
+    assert.match(empty.message, /SALE_IDEMPOTENCY_KEY_REQUIRED/);
+
+    const foreign = await expectFailure(c, 'SELECT app.post_sale($1, $2, $3, $4, $5, $6, $7)', [
+      CU_B,
+      W_A,
+      M_A,
+      UN_A,
+      1,
+      10,
+      'sale-key-foreign',
+    ]);
+    assert.ok(foreign, 'عميل مخزن آخر مرفوض');
+    assert.equal(foreign.code, '23503', 'قيد المفتاح الأجنبي المركّب');
+  });
+
+  // مستخدم ب مخزن ب لكنه بلا أي دور: has_permission false، فلا بيع.
+  await asApp({ tenantId: T_B, userId: U_B }, async (c) => {
+    const denied = await failure(
+      c.query('SELECT app.post_sale($1, $2, $3, $4, $5, $6, $7)', [
+        CU_B,
+        W_B,
+        M_B,
+        UN_B,
+        1,
+        10,
+        'sale-key-denied',
+      ]),
+    );
+    assert.ok(denied, 'بلا صلاحية إنشاء فاتورة لا بيع');
+    assert.equal(denied.code, '42501');
+    assert.match(denied.message, /SALE_PERMISSION_DENIED/);
+  });
+});
+
 // ---------------------------------------------------------------- التزامن
-// هذا الاختبار الوحيد الذي يُثبّت (COMMIT): القفل لا يُختبر بمعاملة تُتراجع.
-// يعمل على مخزن مستقل (T_C، 11 متاحة) وحركاته تُزال في التنظيف.
+// اختبارا هذا القسم وحدهما يُثبّتان (COMMIT): القفل لا يُختبر بمعاملة تُتراجع.
+// لكل منهما مخزن مستقل (T_C وT_D) وحركاته تُزال في التنظيف.
 
 needsDb('التزامن: تخصيصان متوازيان يزيد مجموعهما على المتاح — واحد ينجح والثاني يرتد', async () => {
   const a = await openAppSession({ tenantId: T_C });
@@ -864,4 +1143,72 @@ needsDb('التزامن: تخصيصان متوازيان يزيد مجموعهم
   );
   assert.equal(ledger.rows[0].n, 2, 'حركتان فقط: خصم واحد لكل تشغيلة');
   assert.equal(Number(ledger.rows[0].total), -8, 'مجموع الحركات = خصم التخصيص الناجح وحده');
+});
+
+needsDb('التزامن: مفتاح تكرار واحد بين جلستين — بيع واحد فقط ولا صرف مزدوج', async () => {
+  const args = [CU_D, W_D, M_D, UN_D, 6, 10, 'sale-key-concurrent'];
+  const a = await openAppSession({ tenantId: T_D, userId: U_D });
+  const b = await openAppSession({ tenantId: T_D, userId: U_D });
+  let aSale = null;
+  let bSale = null;
+  let bError = null;
+
+  try {
+    // أ: يبيع 6 من 10 ويحتفظ بقفل مفتاح الفاتورة وبأقفال التخصيص.
+    aSale = (await postSale(a, args)).rows[0].sale;
+    assert.equal(aSale.replayed, false, 'العميل أ أنشأ الفاتورة');
+
+    const bPromise = postSale(b, args).then(
+      (res) => {
+        bSale = res.rows[0].sale;
+      },
+      (err) => {
+        bError = err;
+      },
+    );
+
+    // ب بنفس المفتاح: ينتظر قبل التخصيص، فلا يخصم شيئًا ولم يفشل بعد.
+    assert.equal(await waitForRowLock(owner, 'post_sale'), true, 'العميل ب واقف على قفل في post_sale');
+    assert.equal(bSale, null, 'ب لم يُرجع بيعًا قبل أن ينهي أ معاملته');
+    assert.equal(bError, null, 'ب لم يفشل بعد');
+
+    await a.query('COMMIT');
+    await withTimeout(bPromise, 20000);
+  } finally {
+    await a.query('ROLLBACK').catch(() => {});
+    await b.query('ROLLBACK').catch(() => {});
+    await a.end().catch(() => {});
+    await b.end().catch(() => {});
+  }
+
+  assert.equal(bError, null, 'الطلب الثاني لم يفشل: أعاد الفاتورة نفسها');
+  assert.equal(bSale.replayed, true, 'الطلب الثاني إعادة لا بيع جديد');
+  assert.equal(bSale.invoice_id, aSale.invoice_id, 'فاتورة واحدة للمفتاح الواحد');
+
+  const invoices = await owner.query(
+    'SELECT count(*)::int AS n FROM public.sales_invoices WHERE tenant_id = $1',
+    [T_D],
+  );
+  assert.equal(invoices.rows[0].n, 1, 'فاتورة واحدة فقط');
+
+  // 10 − 6 = 4، والخصم وقع مرة واحدة لا مرتين (وإلا لكان 8 أو رصيد سالب).
+  const state = await owner.query(
+    'SELECT batch_id, qty_on_hand FROM public.stock_batches WHERE tenant_id = $1',
+    [T_D],
+  );
+  const byBatch = Object.fromEntries(state.rows.map((r) => [r.batch_id, Number(r.qty_on_hand)]));
+  assert.deepEqual(byBatch, { [B_D1]: 0, [B_D2]: 4 }, 'الخصم وقع مرة واحدة فقط');
+
+  const negative = await owner.query(
+    'SELECT count(*)::int AS n FROM public.stock_batches WHERE tenant_id = $1 AND qty_on_hand < 0',
+    [T_D],
+  );
+  assert.equal(negative.rows[0].n, 0, 'لا رصيد سالب');
+
+  const ledger = await owner.query(
+    'SELECT count(*)::int AS n, sum(qty_delta)::numeric AS total FROM public.stock_movements WHERE tenant_id = $1',
+    [T_D],
+  );
+  assert.equal(ledger.rows[0].n, 2, 'حركتان: خصم واحد لكل تشغيلة');
+  assert.equal(Number(ledger.rows[0].total), -6, 'مجموع الحركات = البيع الناجح وحده');
 });

@@ -44,10 +44,10 @@ FROM (VALUES
    (SELECT count(*)::text FROM platform.plans),
    'خطة free وحدها في النسخة الحالية'),
 
-  ('دوال مخطط app', '14',
+  ('دوال مخطط app', '15',
    (SELECT count(*)::text FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
      WHERE n.nspname = 'app'),
-   'دوال السياق + الحركات + الترقيم + التحقق + تخصيص FEFO + حارس الصرف'),
+   'دوال السياق + الحركات + الترقيم + التحقق + تخصيص FEFO + حارس الصرف + ترحيل البيع'),
 
   ('مشغّلات حماية المخزن', '34',
    (SELECT count(*)::text FROM pg_trigger t

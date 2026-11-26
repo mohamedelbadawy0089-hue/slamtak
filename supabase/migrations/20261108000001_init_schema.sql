@@ -663,7 +663,9 @@ CREATE TABLE sales_invoice_items (
   FOREIGN KEY (tenant_id, invoice_id) REFERENCES sales_invoices (tenant_id, id) ON DELETE CASCADE,
   FOREIGN KEY (tenant_id, medicine_id) REFERENCES medicines (tenant_id, id),
   FOREIGN KEY (tenant_id, unit_id) REFERENCES units (tenant_id, id),
-  CHECK (line_total = qty * unit_price - discount + vat_amount)
+  -- السعر بعشرتين والكمية بثلاث، فحاصل الضرب قد يحمل خمس منازل عشرية. التقريب
+  -- إلى عشرتين قبل المقارنة يمنع رفض بيع صحيح (‎0.5 × 3.75 = 1.875 → 1.88‎).
+  CHECK (line_total = round(qty * unit_price - discount + vat_amount, 2))
 );
 
 CREATE TABLE sales_returns (
@@ -698,6 +700,199 @@ CREATE TABLE sales_return_items (
   FOREIGN KEY (tenant_id, medicine_id) REFERENCES medicines (tenant_id, id),
   FOREIGN KEY (tenant_id, batch_id) REFERENCES batches (tenant_id, id)
 );
+
+-- ---- [21] ----
+-- ترحيل بيع واحد من أوله إلى آخره: يخصّص FEFO (فتأخذ الدالة أقفال الصفوف)، ثم
+-- يسجّل حركة «sale» لكل صف تخصيص (فالخصم لا يقع إلا عبر stock_movements)، ثم
+-- يربط الفاتورة بالحركات بـref_type='sales_invoice'. الواجهة تستدعي هذه الدالة
+-- وحدها ولا ترسل batch_id ولا qty_delta، فلا تستطيع تجاوز FEFO ولا تزوير كمية.
+--
+-- مفتاح التكرار هو ما يمنع الصرف المزدوج عند إعادة الإرسال: يُحجز أولًا
+-- بـON CONFLICT DO NOTHING، فلا تصل المحاولة الثانية إلى allocate_fefo قبل أن
+-- تنتهي الأولى (تنتظر على رقم المستند أو على الفهرس الفريد)، ثم تعود الفاتورة
+-- نفسها بلا تخصيص جديد. وإعادة المفتاح بكمية أو صنف أو عميل مختلف تُرفض
+-- (SALE_IDEMPOTENCY_KEY_REUSED)، فلا يصرف خطأ إدخال كميةً أخرى تحت مفتاح قديم.
+--
+-- فشل التخصيص (نقص المتاح) يُبطل المعاملة كلها: لا فاتورة، ولا حركة، ولا استهلاك
+-- لرقم مستند — لأن كل الإدراجات في نداء واحد.
+CREATE OR REPLACE FUNCTION app.post_sale(
+  p_customer uuid, p_warehouse uuid, p_medicine uuid, p_unit uuid,
+  p_qty numeric, p_unit_price numeric, p_idempotency_key text
+) RETURNS jsonb
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, app, pg_temp AS $$
+DECLARE
+  v_tenant        uuid := app.current_tenant_id();
+  v_user          uuid := app.current_user_id();
+  v_key           text := btrim(coalesce(p_idempotency_key, ''));
+  v_invoice       uuid;
+  v_item          uuid;
+  v_doc           text;
+  v_status        text;
+  v_total         numeric(14,2);
+  v_prev_med      uuid;
+  v_prev_qty      numeric;
+  v_prev_price    numeric;
+  v_prev_customer uuid;
+  v_prev_warehouse uuid;
+  v_alloc         record;
+  v_allocations   jsonb := '[]'::jsonb;
+BEGIN
+  IF p_qty IS NULL OR p_qty <= 0 THEN
+    RAISE EXCEPTION 'SALE_INVALID_QTY: الكمية يجب أن تكون أكبر من صفر'
+      USING ERRCODE = '22023';
+  END IF;
+  IF p_qty <> round(p_qty, 3) THEN
+    RAISE EXCEPTION 'SALE_INVALID_QTY: الكمية بأكثر من ثلاث منازل عشرية (%)', p_qty
+      USING ERRCODE = '22023';
+  END IF;
+  IF p_unit_price IS NULL OR p_unit_price < 0 OR p_unit_price <> round(p_unit_price, 2) THEN
+    RAISE EXCEPTION 'SALE_INVALID_PRICE: السعر يجب أن يكون غير سالب بعشرتين على الأكثر (%)', p_unit_price
+      USING ERRCODE = '22023';
+  END IF;
+  IF v_key = '' THEN
+    RAISE EXCEPTION 'SALE_IDEMPOTENCY_KEY_REQUIRED: مفتاح التكرار إلزامي ومنع الصرف المزدوج يتوقف عليه'
+      USING ERRCODE = '22023';
+  END IF;
+
+  -- RLS لا تحمي SECURITY DEFINER، فالدالة تمنع نفسها من العمل بلا سياق مخزن.
+  IF v_tenant IS NULL THEN
+    RAISE EXCEPTION 'SALE_TENANT_CONTEXT_REQUIRED: لا سياق مخزن في الجلسة'
+      USING ERRCODE = '42501';
+  END IF;
+  IF NOT app.has_permission('sales.invoice.create') THEN
+    RAISE EXCEPTION 'SALE_PERMISSION_DENIED: إنشاء فاتورة بيع يحتاج sales.invoice.create'
+      USING ERRCODE = '42501';
+  END IF;
+
+  v_total := round(p_qty * p_unit_price, 2);
+
+  SELECT i.id, i.status INTO v_invoice, v_status
+    FROM sales_invoices i
+   WHERE i.tenant_id = v_tenant AND i.idempotency_key = v_key;
+
+  IF NOT FOUND THEN
+    -- الحجز الأول: إدراج الفاتورة بمفتاحها الفريد قبل أي تخصيص. المحاولة
+    -- الثانية لنفس المفتاح تنتظر (على رقم المستند أو على الفهرس الفريد) ولا
+    -- تصل إلى allocate_fefo أبدًا.
+    v_doc := app.next_document_number(v_tenant, 'sale', extract(year FROM CURRENT_DATE)::int);
+    INSERT INTO sales_invoices
+      (tenant_id, doc_number, customer_id, warehouse_id, status,
+       subtotal, total, idempotency_key, issued_at, created_by)
+    VALUES
+      (v_tenant, v_doc, p_customer, p_warehouse, 'confirmed',
+       v_total, v_total, v_key, now(), v_user)
+    ON CONFLICT (tenant_id, idempotency_key) DO NOTHING
+    RETURNING id INTO v_invoice;
+
+    IF v_invoice IS NOT NULL THEN
+      -- التخصيص يرفع FEFO_INSUFFICIENT_STOCK فيُرجع المعاملة كلها بلا أثر.
+      FOR v_alloc IN SELECT * FROM app.allocate_fefo(v_tenant, p_warehouse, p_medicine, p_qty)
+      LOOP
+        INSERT INTO stock_movements
+          (tenant_id, warehouse_id, location_id, medicine_id, batch_id,
+           movement_type, qty_delta, unit_cost, ref_type, ref_id, created_by)
+        VALUES
+          (v_tenant, p_warehouse, v_alloc.location_id, p_medicine, v_alloc.batch_id,
+           'sale', -v_alloc.qty, v_alloc.unit_cost, 'sales_invoice', v_invoice, v_user);
+
+        v_allocations := v_allocations || jsonb_build_object(
+          'stock_batch_id', v_alloc.stock_batch_id,
+          'batch_id',       v_alloc.batch_id,
+          'batch_no',       v_alloc.batch_no,
+          'expiry_date',    v_alloc.expiry_date,
+          'location_id',    v_alloc.location_id,
+          'qty',            v_alloc.qty,
+          'unit_cost',      v_alloc.unit_cost);
+      END LOOP;
+
+      INSERT INTO sales_invoice_items
+        (tenant_id, invoice_id, medicine_id, unit_id, qty, unit_price, line_total)
+      VALUES
+        (v_tenant, v_invoice, p_medicine, p_unit, p_qty, p_unit_price, v_total)
+      RETURNING id INTO v_item;
+
+      RETURN jsonb_build_object(
+        'invoice_id',  v_invoice,
+        'item_id',     v_item,
+        'doc_number',  v_doc,
+        'total',       v_total,
+        'replayed',    false,
+        'allocations', v_allocations);
+    END IF;
+
+    -- سباق نادر: خسرنا حجز المفتاح لمعاملة متزامنة بدأت قبلا. نقرأ فاتورتها
+    -- ونعيدها بلا أي تخصيص إضافي (رقم المستند المستهلك هنا هو ثمن السباق وحده).
+    SELECT i.id, i.status INTO v_invoice, v_status
+      FROM sales_invoices i
+     WHERE i.tenant_id = v_tenant AND i.idempotency_key = v_key;
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'SALE_IDEMPOTENCY_STATE: مفتاح % محجوز بلا فاتورة', v_key
+        USING ERRCODE = 'P0001';
+    END IF;
+  END IF;
+
+  -- مسار الإعادة: نفس المفتاح يعود بنفس الفاتورة، بشرطها وبنودها نفسها.
+  IF v_status <> 'confirmed' THEN
+    RAISE EXCEPTION 'SALE_IDEMPOTENCY_CONFLICT: الفاتورة % ليست مؤكدة (حالتها %)', v_invoice, v_status
+      USING ERRCODE = '23505';
+  END IF;
+
+  SELECT i.doc_number, i.total, i.customer_id, i.warehouse_id
+    INTO v_doc, v_total, v_prev_customer, v_prev_warehouse
+    FROM sales_invoices i
+   WHERE i.tenant_id = v_tenant AND i.id = v_invoice;
+
+  SELECT it.id, it.medicine_id, it.qty, it.unit_price
+    INTO v_item, v_prev_med, v_prev_qty, v_prev_price
+    FROM sales_invoice_items it
+   WHERE it.tenant_id = v_tenant AND it.invoice_id = v_invoice
+   ORDER BY it.id
+   LIMIT 1;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'SALE_IDEMPOTENCY_CONFLICT: الفاتورة % بلا بنود', v_invoice
+      USING ERRCODE = '23505';
+  END IF;
+
+  IF v_prev_med      <> p_medicine
+     OR v_prev_qty    <> p_qty
+     OR v_prev_price  <> p_unit_price
+     OR v_prev_customer <> p_customer
+     OR v_prev_warehouse <> p_warehouse THEN
+    RAISE EXCEPTION 'SALE_IDEMPOTENCY_KEY_REUSED: المفتاح % أُستخدم لبيع آخر ببيانات مختلفة', v_key
+      USING ERRCODE = '23505';
+  END IF;
+
+  SELECT coalesce(jsonb_agg(jsonb_build_object(
+           'stock_batch_id', sb.id,
+           'batch_id',       m.batch_id,
+           'batch_no',       b.batch_no,
+           'expiry_date',    b.expiry_date,
+           'location_id',    m.location_id,
+           'qty',            -m.qty_delta,
+           'unit_cost',      m.unit_cost)
+         ORDER BY b.expiry_date, b.created_at), '[]'::jsonb)
+    INTO v_allocations
+    FROM stock_movements m
+    JOIN batches b ON b.tenant_id = m.tenant_id AND b.id = m.batch_id
+    JOIN stock_batches sb
+      ON sb.tenant_id    = m.tenant_id
+     AND sb.warehouse_id = m.warehouse_id
+     AND sb.location_id  = m.location_id
+     AND sb.batch_id     = m.batch_id
+   WHERE m.tenant_id    = v_tenant
+     AND m.ref_type     = 'sales_invoice'
+     AND m.ref_id       = v_invoice
+     AND m.movement_type = 'sale';
+
+  RETURN jsonb_build_object(
+    'invoice_id',  v_invoice,
+    'item_id',     v_item,
+    'doc_number',  v_doc,
+    'total',       v_total,
+    'replayed',    true,
+    'allocations', v_allocations);
+END $$;
 
 -- ---- [21] ----
 CREATE TABLE audit_logs (
@@ -1363,3 +1558,6 @@ GRANT EXECUTE ON FUNCTION app.record_login_attempt(text, inet, boolean, text) TO
 -- تخصيص FEFO: للتطبيق وحده، وPUBLIC ممنوع صراحةً لأن الدالة SECURITY DEFINER.
 REVOKE ALL ON FUNCTION app.allocate_fefo(uuid, uuid, uuid, numeric) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION app.allocate_fefo(uuid, uuid, uuid, numeric) TO slamtak_app;
+-- ترحيل البيع: المسار الوحيد الذي يخصم مقابل فاتورة، ولا يُنفَّذ إلا للتطبيق.
+REVOKE ALL ON FUNCTION app.post_sale(uuid, uuid, uuid, uuid, numeric, numeric, text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION app.post_sale(uuid, uuid, uuid, uuid, numeric, numeric, text) TO slamtak_app;

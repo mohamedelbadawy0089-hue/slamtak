@@ -58,7 +58,8 @@ sequenceDiagram
 | المتاح لا الرصيد | `qty_on_hand - qty_reserved` | `test:isolation` (المحجوز لا يُخصص) |
 | الرصيد السالب | `CHECK qty_on_hand >= 0` | `T6` |
 | التزامن | `SELECT ... FOR UPDATE` على صفوف التشغيلات | `CONC-1` — `test:isolation`: تخصيصان متوازيان في جلستين، واحد ينجح والثاني يرتد بلا رصيد سالب |
-| التكرار | `Idempotency-Key` 24 ساعة | `IDEM-1` |
+| ترحيل البيع | `app.post_sale` يخصّص ثم يسجّل حركات `sale` مرتبطة بالفاتورة (`ref_type='sales_invoice'`) في نداء واحد، فلا ترسل الواجهة `batch_id` ولا `qty_delta` | `test:isolation` |
+| التكرار | `sales_invoices.idempotency_key` الفريد داخل المخزن؛ إعادة المفتاح تعيد الفاتورة نفسها، وإعادته ببيانات مختلفة ترتد `SALE_IDEMPOTENCY_KEY_REUSED` | `IDEM-1` — `test:isolation`: جلستان بمفتاح واحد لا تصرفان مرتين |
 
 **لماذا `FOR UPDATE` وليس `ON CONFLICT`؟** لأن التخصيص يقرأ رصيدًا ثم يقرر؛ القراءة والكتابة يجب أن تكونا ذرّية. القفل على صف التشغيلة يمنع بيع نفس العلبة مرتين تحت التزامن. هذا بالضبط الخطأ الذي كشفه التشغيل الفعلي في `21` §9.1.
 
