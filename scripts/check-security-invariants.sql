@@ -57,7 +57,7 @@ FROM (VALUES
    'حارس tenant_id على الجداول المرتبطة'),
 
   -- حارس الصرف هو الفحص الأخير على مسار الحركة، ولا يراه أي اختبار CI على
-  -- قاعدة الإنتاج: حذفه أو تعطيله هناك يمرّ صامتًا بلا هذا الثابت.
+  -- قاعدة الإنتاج: حذفه أو تعطيله أو توسيع شرطه هناك يمرّ صامتًا بلا هذا الثابت.
   ('مشغّل حارس الصرف ودالته', '1',
    (SELECT count(*)::text
       FROM pg_trigger t
@@ -68,11 +68,17 @@ FROM (VALUES
        AND n.nspname = 'public' AND c.relname = 'stock_movements'
        AND t.tgname = 'trg_dispense_requires_usable_batch'
        AND p.proname = 'guard_dispense_movement'
-       AND t.tgenabled <> 'D'   -- غير معطّل بـDISABLE TRIGGER
+       -- O = ENABLE (العادي) وA = ENABLE ALWAYS، وهما الحالتان العاديتان.
+       -- R = ENABLE REPLICA يُعطّل المشغّل في الجلسات العادية، وD معطّل صراحةً.
+       AND t.tgenabled IN ('O', 'A')
        AND (t.tgtype & 2) = 2   -- BEFORE
        AND (t.tgtype & 4) = 4   -- INSERT (وبلا UPDATE/DELETE/TRUNCATE)
-       AND t.tgqual IS NOT NULL),  -- شرط WHEN باقٍ: الحارس على sale وحده
-   'حذفه أو تعطيله يُعيد فتح صرف المنتهي/المحجوب عبر stock_movements، ولا يراه إلا هذا الفحص المجدول على الإنتاج'),
+       -- شرط WHEN مُتحقق منه بالتحديد لا بمجرد وجوده: sale وحده، لا شرط أوسع
+       -- يمرّ معه المنتهي مثل (… = 'sale' OR true). النص من pg_get_triggerdef
+       -- لأنه تفريغ قياسي للشرط، بخلاف tgqual الذي شكله يتبع نسخة المشغّل.
+       AND pg_get_triggerdef(t.oid) ~ '\mBEFORE INSERT ON public\.stock_movements\M'
+       AND pg_get_triggerdef(t.oid) ~ '\mWHEN \(\(new\.movement_type = ''sale''::text\)\)'),
+   'حذفه أو تعطيله (REPLICA/DISABLE) أو توسيع شرط WHEN يُعيد فتح صرف المنتهي/المحجوب، ولا يراه إلا هذا الفحص المجدول على الإنتاج'),
 
   -- ------------------------------------------------------------------- RLS
   ('جداول عليها RLS مفعّلة', '38',
