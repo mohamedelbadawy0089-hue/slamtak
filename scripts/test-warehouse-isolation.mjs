@@ -1,10 +1,14 @@
-// اختبار عزل المخزنين وFEFO والصلاحيات — على قاعدة حقيقية لا على نصّ الملفات.
+// اختبار عزل المخزنين وFEFO والصلاحيات والتزامن — على قاعدة حقيقية لا على نصّ الملفات.
 //
 // يشغّل السيناريوهات بدور التطبيق الفعلي `slamtak_app` (NOBYPASSRLS) داخل معاملة
 // (ومنها استدعاء دالة التخصيص الحقيقية app.allocate_fefo، لا استعلام FEFO مكتوبًا
 // في الاختبار) يُضبط فيها سياق الطلب بـset_config، ثم يتراجع عنها، فلا يترك أثرًا. والبذور
-// (مخزنان، مخزنان منفصلان، أصناف، تشغيلات) تُنشأ بدور المالك لأن سياسات RLS
+// (ثلاثة مخازن، مخزنان منفصلان، أصناف، تشغيلات) تُنشأ بدور المالك لأن سياسات RLS
 // موجّهة إلى slamtak_app وحده.
+//
+// استثناء واحد مقصود: اختبار التزامن (في آخر الملف) يفتح جلستين ويُثبّت حركات
+// إحداهما بـCOMMIT، لأن القفل لا يُختبر إلا بمعاملة تُرى للطرف الآخر. يعمل على
+// مخزن ثالث (T_C) كي لا يغيّر أرصدة بقية الاختبارات، وحركاته تُزال في `after`.
 //
 // المتطلب: مخطط 20261108 مبني على القاعدة:
 //   node scripts/apply-migrations.mjs supabase/migrations/20261108000001_init_schema.sql \
@@ -25,6 +29,9 @@ const { options } = dbTarget();
 // معرّفات ثابتة: تسهّل الإشارة إلى الصفوف في التأكيدات، وتُحذف في النهاية.
 const T_A = '11111111-1111-4111-8111-111111111111';
 const T_B = '22222222-2222-4222-8222-222222222222';
+// مخزن ثالث لاختبار التزامن وحده: يُثبّت حركاته (COMMIT) ليختبر القفل فعليًا،
+// فيُعزل عن أرصدة أ/ب التي تفترضها بقية الاختبارات.
+const T_C = '33333333-3333-4333-8333-333333333333';
 const W_A = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1';
 const W_B = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2';
 const L_A = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2';
@@ -38,6 +45,11 @@ const B_A4 = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa8'; // الأقرب انتها�
 const B_A5 = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa9'; // رصيد صفر
 const B_A6 = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11'; // الأقرب انتهاءً لكن التشغيلة محجورة
 const B_B1 = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb7';
+const W_C = 'cccccccc-cccc-4ccc-8ccc-ccccccccccc1';
+const L_C = 'cccccccc-cccc-4ccc-8ccc-ccccccccccc2';
+const M_C = 'cccccccc-cccc-4ccc-8ccc-ccccccccccc3';
+const B_C1 = 'cccccccc-cccc-4ccc-8ccc-ccccccccccc4'; // +90 يومًا، 5 وحدات
+const B_C2 = 'cccccccc-cccc-4ccc-8ccc-ccccccccccc5'; // +200 يوم، 6 وحدات
 const U_A = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa10';
 const U_B = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb12';
 
@@ -45,6 +57,47 @@ let skipReason = null;
 let owner = null;
 
 const sql = (text, params) => owner.query(text, params);
+
+// يفتح جلسة مستقلة بدور التطبيق وسياق مخزن، ويترك المعاملة مفتوحة لصاحبها.
+// تُستخدم في اختبار التزامن حيث يجب أن تتزامن جلستان فعلًا لا أن تتتابعا.
+async function openAppSession(ctx) {
+  const client = new pg.Client({ ...options, statement_timeout: 20000 });
+  await client.connect();
+  await client.query('BEGIN');
+  await client.query(
+    `SELECT set_config('app.tenant_id', $1, true), set_config('app.user_id', $2, true)`,
+    [ctx.tenantId ?? '', ctx.userId ?? ''],
+  );
+  await client.query('SET LOCAL ROLE slamtak_app');
+  return client;
+}
+
+// ينتظر حتى تظهر جلسة تنتظر قفل صف على allocate_fefo (لا مجرد تأخير زمني).
+async function waitForRowLock(client, timeoutMs = 8000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const { rows } = await client.query(
+      `SELECT count(*)::int AS n
+         FROM pg_stat_activity
+        WHERE datname = current_database()
+          AND wait_event_type = 'Lock'
+          AND query ILIKE '%allocate_fefo%'`,
+    );
+    if (rows[0].n > 0) return true;
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
+  return false;
+}
+
+// يمنع تعليق الاختبار إلى الأبد لو لم يُحرَّر القفل أبدًا.
+function withTimeout(promise, ms) {
+  let timer;
+  const guard = new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`تجاوز مهلة ${ms}ms`)), ms);
+    timer.unref?.();
+  });
+  return Promise.race([promise, guard]).finally(() => clearTimeout(timer));
+}
 
 // ينفّذ العمل داخل معاملة بدور التطبيق وسياق مخزن محدد ثم يتراجع.
 async function asApp(ctx, fn) {
@@ -99,8 +152,17 @@ async function expectFailure(client, text, params) {
 }
 
 // ترتيب الحذف يحترم المفاتيح الأجنبية (بلا ON DELETE CASCADE على المخزن).
+// سجل الحركات append-only أمام الجميع (trigger يرفض DELETE)، واختبار التزامن
+// وحده يُثبّت حركات؛ فنُعطّل الحارس لحظيًا بدور المالك ثم نُعيده في finally.
+// هذا تنظيف الاختبار لا مسارًا في المنتج: لا شيء يعطّل الحارس على قاعدة حقيقية.
 async function cleanupTenants(client) {
-  const ids = [T_A, T_B];
+  const ids = [T_A, T_B, T_C];
+  await client.query('ALTER TABLE public.stock_movements DISABLE TRIGGER trg_movements_append_only');
+  try {
+    await client.query('DELETE FROM public.stock_movements WHERE tenant_id = ANY($1)', [ids]);
+  } finally {
+    await client.query('ALTER TABLE public.stock_movements ENABLE TRIGGER trg_movements_append_only');
+  }
   for (const statement of [
     `DELETE FROM public.user_permission_overrides WHERE tenant_id = ANY($1)`,
     `DELETE FROM public.user_roles WHERE tenant_id = ANY($1)`,
@@ -201,6 +263,32 @@ before(async () => {
     `INSERT INTO public.stock_batches (tenant_id, warehouse_id, location_id, medicine_id, batch_id, qty_on_hand)
      VALUES ($1, $2, $3, $4, $5, 99)`,
     [T_B, W_B, L_B, M_B, B_B1],
+  );
+
+  // مخزن ج: 11 وحدة متاحة على تشغيلتين، لاختبار التزامن (8 + 8 > 11).
+  await sql(`INSERT INTO public.tenants (id, slug, name) VALUES ($1, 'iso-c', 'مخزن ج')`, [T_C]);
+  await sql(`INSERT INTO public.warehouses (tenant_id, id, name) VALUES ($1, $2, 'مخزن ج')`, [T_C, W_C]);
+  await sql(
+    `INSERT INTO public.storage_locations (tenant_id, id, warehouse_id, code, name, is_default)
+     VALUES ($1, $2, $3, 'DEFAULT', 'الافتراضي', true)`,
+    [T_C, L_C, W_C],
+  );
+  await sql(
+    `INSERT INTO public.medicines (tenant_id, id, sku, trade_name_ar) VALUES ($1, $2, 'ISO-C-1', 'دواء ج')`,
+    [T_C, M_C],
+  );
+  await sql(
+    `INSERT INTO public.batches (tenant_id, id, medicine_id, batch_no, expiry_date, status) VALUES
+       ($1, $2, $4, 'C1', CURRENT_DATE + 90,  'active'),
+       ($1, $3, $4, 'C2', CURRENT_DATE + 200, 'active')`,
+    [T_C, B_C1, B_C2, M_C],
+  );
+  await sql(
+    `INSERT INTO public.stock_batches
+       (tenant_id, warehouse_id, location_id, medicine_id, batch_id, qty_on_hand, status) VALUES
+       ($1, $2, $3, $4, $5, 5, 'available'),
+       ($1, $2, $3, $4, $6, 6, 'available')`,
+    [T_C, W_C, L_C, M_C, B_C1, B_C2],
   );
 
   // أدوار المخزنين: المالك في أ بلا أدوار في ب (لاختبار رفض الصلاحية).
@@ -658,4 +746,87 @@ needsDb('FEFO: الفهرس الذي يخدم الاستعلام موجود با
   assert.match(rows[0].indexdef, /WHERE .*qty_on_hand/);
   assert.match(rows[0].indexdef, /qty_on_hand > \(0\)/);
   assert.match(rows[0].indexdef, /status = 'available'/);
+});
+
+// ---------------------------------------------------------------- التزامن
+// هذا الاختبار الوحيد الذي يُثبّت (COMMIT): القفل لا يُختبر بمعاملة تُتراجع.
+// يعمل على مخزن مستقل (T_C، 11 متاحة) وحركاته تُزال في التنظيف.
+
+needsDb('التزامن: تخصيصان متوازيان يزيد مجموعهما على المتاح — واحد ينجح والثاني يرتد', async () => {
+  const a = await openAppSession({ tenantId: T_C });
+  const b = await openAppSession({ tenantId: T_C });
+  let bError = null;
+  let bRows = null;
+
+  try {
+    // أ: يخصّص 8 من 11 (5 من C1 + 3 من C2) ويحتفظ بأقفال الصفوف.
+    const aRows = (await a.query('SELECT * FROM app.allocate_fefo($1, $2, $3, $4)', [T_C, W_C, M_C, 8])).rows;
+    assert.equal(
+      aRows.reduce((sum, r) => sum + Number(r.qty), 0),
+      8,
+      'العميل أ خصّص 8 واحتفظ بالأقفال',
+    );
+
+    // أ يسجّل الخصم كحركات sale حقيقية داخل نفس المعاملة (الأقفال باقية).
+    for (const r of aRows) {
+      await a.query(
+        `INSERT INTO public.stock_movements
+           (tenant_id, warehouse_id, location_id, medicine_id, batch_id, movement_type, qty_delta)
+         VALUES ($1, $2, $3, $4, $5, 'sale', $6)`,
+        [T_C, W_C, r.location_id, M_C, r.batch_id, -Number(r.qty)],
+      );
+    }
+
+    // ب: يطلب 8 في نفس اللحظة، فيصطدم بقفل صفوف أ بدل أن يقرأ رصيدًا قديمًا.
+    const bPromise = b
+      .query('SELECT * FROM app.allocate_fefo($1, $2, $3, $4)', [T_C, W_C, M_C, 8])
+      .then(
+        (res) => {
+          bRows = res.rows;
+        },
+        (err) => {
+          bError = err;
+        },
+      );
+
+    assert.equal(await waitForRowLock(owner), true, 'العميل ب واقف على قفل صف في allocate_fefo');
+    assert.equal(bError, null, 'ب لم يصرف شيئًا قبل أن ينهي أ معاملته');
+    assert.equal(bRows, null, 'ب لم يحصل على تخصيص قبل تحرير القفل');
+
+    // أ يُثبّت: تصبح خصوماته مرئية ويُحرّر القفل، فيُكمل ب على الواقع الجديد.
+    await a.query('COMMIT');
+    await withTimeout(bPromise, 20000);
+  } finally {
+    await a.query('ROLLBACK').catch(() => {});
+    await b.query('ROLLBACK').catch(() => {});
+    await a.end().catch(() => {});
+    await b.end().catch(() => {});
+  }
+
+  assert.ok(bError, 'التخصيص الثاني فوق المتاح مرفوض بعد تحرير القفل');
+  assert.equal(bError.code, 'P0001');
+  assert.match(bError.message, /FEFO_INSUFFICIENT_STOCK/);
+  assert.equal(bRows, null, 'لا صفوف تخصيص للعميل الثاني');
+
+  // الرصيد بعد المعاملة الناجحة وحدها: 11 − 8 = 3، ولا سالب في أي تشغيلة.
+  const state = await owner.query(
+    'SELECT batch_id, qty_on_hand FROM public.stock_batches WHERE tenant_id = $1',
+    [T_C],
+  );
+  const byBatch = Object.fromEntries(state.rows.map((r) => [r.batch_id, Number(r.qty_on_hand)]));
+  assert.deepEqual(byBatch, { [B_C1]: 0, [B_C2]: 3 }, 'الخصم وقع مرة واحدة فقط');
+
+  const negative = await owner.query(
+    'SELECT count(*)::int AS n FROM public.stock_batches WHERE tenant_id = $1 AND qty_on_hand < 0',
+    [T_C],
+  );
+  assert.equal(negative.rows[0].n, 0, 'لا رصيد سالب بعد تزامن');
+
+  // دفتر الحركات يحمل حركتَي أ فقط، ولا أثر للعميل الذي ارتد.
+  const ledger = await owner.query(
+    'SELECT count(*)::int AS n, sum(qty_delta)::numeric AS total FROM public.stock_movements WHERE tenant_id = $1',
+    [T_C],
+  );
+  assert.equal(ledger.rows[0].n, 2, 'حركتان فقط: خصم واحد لكل تشغيلة');
+  assert.equal(Number(ledger.rows[0].total), -8, 'مجموع الحركات = خصم التخصيص الناجح وحده');
 });

@@ -961,7 +961,7 @@ GRANT EXECUTE ON FUNCTION app.allocate_fefo(uuid, uuid, uuid, numeric) TO slamta
 | القرار | السبب |
 |---|---|
 | الدالة **تقرأ وتقفل** ولا تخصم | الخصم يبقى حصرًا عبر `stock_movements` → `apply_stock_movement`. لو خصمت الدالة لصار لتغيير الرصيد طريقان، وأحدهما بلا حركة موثقة |
-| `FOR UPDATE OF sb` | القراءة والخصم يجب أن يكونا ذرّيين، وإلا بيعت العلبة نفسها مرتين تحت التزامن (`CONC-1`) |
+| `FOR UPDATE OF sb` | القراءة والخصم يجب أن يكونا ذرّيين، وإلا بيعت العلبة نفسها مرتين تحت التزامن (`CONC-1`). مُختبر فعليًا بجلستين في `test:isolation`: الثانية تنتظر القفل في `pg_stat_activity` ثم ترتد `FEFO_INSUFFICIENT_STOCK` |
 | `qty_on_hand - qty_reserved` | المحجوز لفاتورة أخرى ليس متاحًا؛ التخصيص يقرأ المتاح لا الرصيد |
 | تعيد `location_id` و`unit_cost` و`batch_no` | تكفي لبناء حركة `sale` وسطر الفاتورة بلا استعلام إضافي |
 | المتاح أقل من المطلوب = استثناء | لا تخصيص جزئي صامت: إما تغطية كاملة أو فشل المعاملة كلها (`409 INSUFFICIENT_STOCK`) |
@@ -1048,7 +1048,8 @@ CREATE TRIGGER trg_dispense_requires_usable_batch
 | V10 | عضوية بـ`warehouse_id` لمخزن حساب آخر | ✅ مرفوضة بالـFK المركّب `(tenant_id, warehouse_id)` |
 | V11 | حذف مخزن الحساب الوحيد | ✅ مرفوض/ممنوع تشغيليًا: لا مسار حذف، والـFK من العضوية يمنع الحذف الصامت |
 | V12 | `app.allocate_fefo` على تشغيلات متاحة/منتهية/محجوبة/محجورة/محجوزة | ✅ يقسم على تشغيلتين بالترتيب، ويستبعد الأربعة، ويرفض الطلب فوق المتاح بـ`FEFO_INSUFFICIENT_STOCK` |
-| V13 | حركة `sale` مباشرة على تشغيلة منتهية/محجوبة/رصيد محجوب | ✅ مرفوضة `23514` بـ`DISPENSE_EXPIRED_BATCH`/`DISPENSE_BLOCKED_STOCK`/`DISPENSE_BLOCKED_BATCH` ولا تُخصم، و`damage` على المنتهي ما زال يعمل (23/23 في CI) |
+| V13 | حركة `sale` مباشرة على تشغيلة منتهية/محجوبة/رصيد محجوب | ✅ مرفوضة `23514` بـ`DISPENSE_EXPIRED_BATCH`/`DISPENSE_BLOCKED_STOCK`/`DISPENSE_BLOCKED_BATCH` ولا تُخصم، و`damage` على المنتهي ما زال يعمل (24/24 في CI) |
+| V14 | تخصيصان متوازيان على 11 متاحة من جلستين مستقلتين | ✅ واحد فقط ينجح، والثاني ينتظر القفل ثم يرتد `FEFO_INSUFFICIENT_STOCK`، والرصيد النهائي 3 بلا سالب، والدفتر يحمل حركتين فقط |
 
 **بيئة التحقق:** PostgreSQL 17 (WASM/PGlite) — نفس إصدار المزوّد المستهدف. السياسات واختبار العزل في [`22`](22-rls-and-isolation-tests.md).
 
