@@ -358,7 +358,7 @@ sequenceDiagram
 | `SENTRY_DSN` | — | ✅ | اختياري |
 | `LOG_LEVEL` | `info` | — | إعدادات الدالة |
 | `R2_ACCOUNT_ID` / `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` / `R2_BUCKET` | — | ✅ | **أسرار GitHub Actions** فقط — لا تُوضع في الدوال |
-| `SUPABASE_ANON_KEY` | المفتاح العام نفسه في `public/supabase-config.js` | ✅ (سرّ مستودع) | **أسرار GitHub Actions** لسير `supabase-health` فقط — يُحجب في الإخراج، ولا يُضاف `service_role` |
+| `SUPABASE_ANON_KEY` | المفتاح العام نفسه في `public/supabase-config.js` (`sb_publishable_…` بعد الهجرة، أو `anon` القديم حتى تعطيله) | ✅ (سرّ مستودع) | **أسرار GitHub Actions** لسير `supabase-health` فقط — يُحجب في الإخراج، ولا يضاف `service_role` |
 
 **ما ليس متغير بيئة:** المفتاح العام الذي يستورده Realtime للتحقق من توكناتنا يُضبط في إعدادات المشروع (JWT secret / Third-Party Auth)، لا في متغيرات الدوال — ولا يُكتب في أي ملف في المستودع.
 

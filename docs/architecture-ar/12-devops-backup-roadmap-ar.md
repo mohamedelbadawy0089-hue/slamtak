@@ -120,7 +120,7 @@ jobs:
 
 1. `Settings → Secrets and variables → Actions` في المستودع.
 2. **New repository secret** بالاسم `SUPABASE_URL`، والقيمة نفس `url` في `public/supabase-config.js` (`https://<ref>.supabase.co`).
-3. **New repository secret** بالاسم `SUPABASE_ANON_KEY`، والقيمة نفس `anonKey` من الملف ذاته.
+3. **New repository secret** بالاسم `SUPABASE_ANON_KEY`، والقيمة نفس `anonKey` من الملف ذاته (أو `sb_publishable_…` بعد الهجرة إلى المفاتيح الجديدة — `09` §6).
 
 | الشرط | التفصيل |
 |---|---|
@@ -236,7 +236,7 @@ SUPABASE_URL='https://<ref>.supabase.co' SUPABASE_ANON_KEY='<anonKey>' npm run c
 | تعطّل القاعدة | تحويل للنسخة/إعادة إنشاء + استعادة + تحقق | Backend | ≤ 4 س |
 | تعطّل مزود الاستضافة | تحويل DNS إلى خطة بديلة + نشر من المصدر | DevOps | ≤ 2 س |
 | تلف بيانات (خطأ تطبيق) | تجميد الكتابة + تحديد النطاق + استعادة انتقائية | Backend + DB | ≤ 3 س |
-| تسريب أسرار | إبطال/تدوير + إبطال جلسات + تدقيق | أمن | ≤ 1 س |
+| تسريب أسرار | إبطال المفتاح المسرّب فورًا، ثم تدويره إن كان المزوّد يدعم ذلك؛ ومفتاحا Supabase القديمان `anon`/`service_role` يُستبدلان بـ`publishable`/`secret` ثم يُعطَّلان (→ `09` §6) + إبطال جلسات + تدقيق | أمن | ≤ 1 س |
 | فقدان حساب سحابي | استعادة من نسخة الحساب المنفصل | المالك + DevOps | ≤ 8 س |
 | انقطاع إنترنت الموقع | العمل مستمر (سحابي) | — | 0 |
 
