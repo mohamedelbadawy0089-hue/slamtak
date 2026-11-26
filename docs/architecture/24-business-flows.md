@@ -37,7 +37,7 @@ sequenceDiagram
         API-->>UI: 409 INSUFFICIENT_STOCK مع المتاح الفعلي
         UI-->>U: رسالة عربية بالمتاح والمطلوب
     else الرصيد كافٍ
-        API->>DB: تخصيص FEFO على التشغيلات
+        API->>DB: app.allocate_fefo(المخزن، الصنف، الكمية)
         API->>DB: INSERT stock_movements لكل تخصيص
         Note over DB: Trigger apply_stock_movement<br/>يخصم من stock_batches
         API->>DB: INSERT sales_invoice + lines + allocations
@@ -51,9 +51,10 @@ sequenceDiagram
 
 | الخطوة الحرجة | القاعدة المُلزمة | الاختبار المقابل |
 |---|---|---|
-| ترتيب التشغيلات | `ORDER BY expiry_date, created_at` (FEFO) | `T11` + اختبار وحدة `FEFO-1` |
+| ترتيب التشغيلات | `app.allocate_fefo` — `ORDER BY expiry_date, created_at` (FEFO) داخل القاعدة | `T11` + `test:isolation` |
 | استبعاد المنتهي | `expiry_date > CURRENT_DATE` إلزامي | `FEFO-2` (منتهي لا يُخصص) |
-| استبعاد المحجوب | `status = 'available'` فقط | `FEFO-3` |
+| استبعاد المحجوب | `status = 'available'` فقط على الرصيد وعلى التشغيلة | `FEFO-3` |
+| المتاح لا الرصيد | `qty_on_hand - qty_reserved` | `test:isolation` (المحجوز لا يُخصص) |
 | الرصيد السالب | `CHECK qty_on_hand >= 0` | `T6` |
 | التزامن | `SELECT ... FOR UPDATE` على صفوف التشغيلات | `CONC-1` (فاتورتان متوازيتان) |
 | التكرار | `Idempotency-Key` 24 ساعة | `IDEM-1` |

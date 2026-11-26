@@ -103,6 +103,7 @@ GRANT EXECUTE ON FUNCTION app.current_user_id() TO slamtak_app;
 GRANT EXECUTE ON FUNCTION app.current_warehouse_id() TO slamtak_app;
 GRANT EXECUTE ON FUNCTION app.has_permission(text) TO slamtak_app;
 GRANT EXECUTE ON FUNCTION app.apply_stock_movement() TO slamtak_app;
+GRANT EXECUTE ON FUNCTION app.allocate_fefo(uuid, uuid, uuid, numeric) TO slamtak_app;
 GRANT EXECUTE ON FUNCTION app.next_document_number(uuid, text, int) TO slamtak_app;
 GRANT EXECUTE ON FUNCTION app.record_login_attempt(text, inet, boolean, text) TO slamtak_app;
 ```
@@ -727,7 +728,7 @@ node run.mjs
 SUPABASE_DB_PASSWORD=... npm run check:security
 ```
 
-يغطي 33 ثابتًا: الأدوار الأربعة وصفاتها، عدّ الكتالوج (39/4 جدولًا، 44 سياسة، 67 صلاحية، 12 دالة، 34 مشغّلًا)، `RLS`+`FORCE` على 38 جدولًا، صفر سياسة `true` على أي جدول بمخزن، سياسة التدقيق `RESTRICTIVE`، صفر `EXECUTE` لـ`PUBLIC`، صفر وصول لـ`slamtak_platform` على `public`/`app`، صفر جداول لـ`slamtak_ops`، وغياب التعديل/الحذف المباشر عن الأرصدة والسجلات.
+يغطي 33 ثابتًا: الأدوار الأربعة وصفاتها، عدّ الكتالوج (39/4 جدولًا، 44 سياسة، 67 صلاحية، 13 دالة، 34 مشغّلًا)، `RLS`+`FORCE` على 38 جدولًا، صفر سياسة `true` على أي جدول بمخزن، سياسة التدقيق `RESTRICTIVE`، صفر `EXECUTE` لـ`PUBLIC`، صفر وصول لـ`slamtak_platform` على `public`/`app`، صفر جداول لـ`slamtak_ops`، وغياب التعديل/الحذف المباشر عن الأرصدة والسجلات.
 
 **تشغيل من طرف إلى طرف (مُثبت):** نُفِّذ `npm run check:security` فعلًا بمسار `pg` الحقيقي على PostgreSQL 17.11 بعد تطبيق الهجرتين: **33/33، رمز الخروج 0**. ثم فُتحت ثغرتان عمدًا (`GRANT EXECUTE ... TO PUBLIC` و`GRANT UPDATE ON stock_batches`) → رمز الخروج **1** وثلاثة `FAIL` برسائلها. تشغيل `20261108000002_seed_and_harden.sql` أعاد الحالة → **33/33** ورجوع الرمز إلى 0. وغياب `SUPABASE_DB_PASSWORD` يُرجع **2** (تعذّر الفحص)، لا 0.
 
@@ -741,7 +742,7 @@ SUPABASE_DB_PASSWORD=... npm run check:security
 | ADR-025 | محاولة مخزن ثانٍ لنفس الحساب ترتد بقيد `uq_one_warehouse_per_tenant` |
 | الرصيد | `UPDATE stock_batches` ممنوع على دور التطبيق، والتغيير يحدث عبر حركة موثقة فقط، والصرف فوق المتاح يرتد بـ`23514`، ودفتر الحركات append-only، ونقل سجل بين مخزنين يرتد بـ`TENANT_IMMUTABLE` |
 | الصلاحيات | المالك يملك صلاحيات مخزنه ولا يملك صلاحية منصة، ومستخدم بلا دور لا يملك شيئًا، و`deny` يتغلب على منح الدور، وكتابة `audit_logs` تحتاج `system.audit.write` لا مجرد الانتماء للمخزن |
-| FEFO | الترتيب يعطي الأقرب انتهاءً أولًا ويستبعد المنتهي والمحجوب وصفر الرصيد ولا يعبر مخزنًا آخر، وفهرس `idx_stock_fefo` موجود بتعريفه المتوقع |
+| FEFO | `app.allocate_fefo` (الدالة الفعلية لا استعلام مكتوب في الاختبار) ترتّب الأقرب انتهاءً وتقسّم على تشغيلتين، وتحترم `qty_reserved`، وتستبعد المنتهي والمحجوب والمحجور وصفر الرصيد حتى لو كانوا الأقرب انتهاءً، وترفض الطلب فوق المتاح بـ`FEFO_INSUFFICIENT_STOCK` والكمية غير الصالحة بـ`FEFO_INVALID_QTY`، وترفض `TENANT_CONTEXT_MISMATCH` ولو بمعرّفات مخزن آخر، ومجموع التخصيص = المطلوب، والحركات المشتقة منه تُنقص الأرصدة بالمقدار نفسه، و`EXECUTE` مقصور على `slamtak_app` (لا `PUBLIC` ولا المنصة ولا التشغيل)، وفهرس `idx_stock_fefo` موجود بتعريفه المتوقع |
 
 **الفحص الإنتاجي المجدول:** `.github/workflows/security-invariants-production.yml` يشغّل نفس الفحص على قاعدة المشروع يوميًا (‎03:00 UTC‎) وعند الطلب يدويًا. إعداده مرة واحدة في المستودع: السرّ `SUPABASE_DB_PASSWORD`، وإن لزم الـPooler فمتغيّرا `SUPABASE_DB_HOST` و`SUPABASE_DB_USER`. وهو يقرأ الكتالوج فقط، لا يكتب شيئًا. الفشل هنا يعني انحرافًا حقيقيًا في القاعدة الحية — لا في الملفات.
 

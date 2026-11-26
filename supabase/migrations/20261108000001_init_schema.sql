@@ -410,6 +410,92 @@ CREATE INDEX idx_stock_fefo
   INCLUDE (qty_on_hand, qty_reserved, batch_id)
   WHERE qty_on_hand > 0 AND status = 'available';
 
+-- تخصيص FEFO الفعلي: يُعيد خطة صرف تغطي الكمية المطلوبة من الأقرب انتهاءً،
+-- ويرفض المنتهي والمحجوب والمحجور وما حُجز بالكامل. الدالة تقرأ وتقفل فقط:
+-- الخصم يبقى حصرًا عبر stock_movements → trg_apply_stock_movement، فلا توجد
+-- طريق ثانية لتغيير رصيد. القفل (FOR UPDATE) يجعل القراءة والخصم ذرّيين،
+-- فيمنع بيع العلبة نفسها مرتين تحت التزامن.
+--
+-- تُستدعى داخل معاملة البيع بعد ضبط app.tenant_id، ويُسجَّل كل صف عائد كحركة
+-- «sale» بنفس الكمية. إن كان المتاح أقل من المطلوب فشلت المعاملة كلها ولم
+-- يُخصم شيء (لا تخصيص جزئي صامت).
+CREATE OR REPLACE FUNCTION app.allocate_fefo(
+  p_tenant uuid, p_warehouse uuid, p_medicine uuid, p_qty numeric
+) RETURNS TABLE (
+  stock_batch_id uuid,
+  batch_id       uuid,
+  batch_no       text,
+  expiry_date    date,
+  location_id    uuid,
+  qty            numeric,
+  unit_cost      numeric
+)
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp AS $$
+DECLARE
+  v_ctx  uuid := app.current_tenant_id();
+  v_left numeric := p_qty;
+  v_free numeric := 0;
+  v_take numeric;
+  r      record;
+BEGIN
+  IF p_qty IS NULL OR p_qty <= 0 THEN
+    RAISE EXCEPTION 'FEFO_INVALID_QTY: الكمية المطلوبة يجب أن تكون أكبر من صفر'
+      USING ERRCODE = '22023';
+  END IF;
+
+  IF p_tenant IS NULL OR p_warehouse IS NULL OR p_medicine IS NULL THEN
+    RAISE EXCEPTION 'FEFO_INVALID_SCOPE: المخزن والصنف والحساب إلزامية'
+      USING ERRCODE = '22004';
+  END IF;
+
+  -- الحارس الثاني للعزل: RLS لا تحمي SECURITY DEFINER، فتمنع الدالة نفسها
+  -- تمرير حساب آخر من داخل سياق حساب ما. بلا سياق (مهمة خادم) يُقبل الوسيط.
+  IF v_ctx IS NOT NULL AND v_ctx <> p_tenant THEN
+    RAISE EXCEPTION 'TENANT_CONTEXT_MISMATCH: سياق % لا يطابق الحساب المطلوب %', v_ctx, p_tenant
+      USING ERRCODE = '42501';
+  END IF;
+
+  FOR r IN
+    SELECT sb.id, sb.batch_id, sb.location_id, sb.unit_cost,
+           sb.qty_on_hand - sb.qty_reserved AS free_qty,
+           b.batch_no, b.expiry_date
+      FROM stock_batches sb
+      JOIN batches b ON b.tenant_id = sb.tenant_id AND b.id = sb.batch_id
+     WHERE sb.tenant_id    = p_tenant
+       AND sb.warehouse_id = p_warehouse
+       AND sb.medicine_id  = p_medicine
+       AND b.medicine_id   = p_medicine
+       AND sb.status       = 'available'          -- المحجوب والمحجور والتالف والمسحوب خارج التخصيص
+       AND b.status        = 'active'             -- تشغيلة محجورة إكلينيكيًا لا تُصرف
+       AND b.expiry_date   > CURRENT_DATE         -- المنتهي لا يُصرف ولو كان الأقرب
+       AND sb.qty_on_hand - sb.qty_reserved > 0
+     ORDER BY b.expiry_date, b.created_at, sb.id
+       FOR UPDATE OF sb
+  LOOP
+    EXIT WHEN v_left <= 0;
+
+    v_free := v_free + r.free_qty;
+    v_take := LEAST(r.free_qty, v_left);
+    v_left := v_left - v_take;
+
+    stock_batch_id := r.id;
+    batch_id       := r.batch_id;
+    batch_no       := r.batch_no;
+    expiry_date    := r.expiry_date;
+    location_id    := r.location_id;
+    qty            := v_take;
+    unit_cost      := r.unit_cost;
+    RETURN NEXT;
+  END LOOP;
+
+  IF v_left > 0 THEN
+    RAISE EXCEPTION 'FEFO_INSUFFICIENT_STOCK: المطلوب % والمتاح %', p_qty, v_free
+      USING ERRCODE = 'P0001';
+  END IF;
+
+  RETURN;
+END $$;
+
 CREATE TABLE stock_movements (
   tenant_id    uuid NOT NULL,
   id           uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -1218,3 +1304,6 @@ GRANT EXECUTE ON FUNCTION app.has_permission(text) TO slamtak_app;
 GRANT EXECUTE ON FUNCTION app.apply_stock_movement() TO slamtak_app;
 GRANT EXECUTE ON FUNCTION app.next_document_number(uuid, text, int) TO slamtak_app;
 GRANT EXECUTE ON FUNCTION app.record_login_attempt(text, inet, boolean, text) TO slamtak_app;
+-- تخصيص FEFO: للتطبيق وحده، وPUBLIC ممنوع صراحةً لأن الدالة SECURITY DEFINER.
+REVOKE ALL ON FUNCTION app.allocate_fefo(uuid, uuid, uuid, numeric) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION app.allocate_fefo(uuid, uuid, uuid, numeric) TO slamtak_app;

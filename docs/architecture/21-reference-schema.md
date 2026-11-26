@@ -869,7 +869,105 @@ REVOKE ALL ON FUNCTION app.verify_ledger_consistency() FROM PUBLIC;
 
 > **من ينفّذها:** دور تشغيلي مستقل `slamtak_ops` (يُعرَّف ويُمنح في `22` §1) يُمنح `EXECUTE` وحده، ويُستخدم في مهمة ليلية وفي تمرين الاستعادة. لا يُمنح لدور التطبيق ولا لدور المنصة.
 
-### 9.4 ما تم التحقق منه فعليًا
+### 9.4 دالة تخصيص FEFO (`allocate_fefo`)
+
+**المشكلة التي تحلها:** «FEFO» في `24` §1 كان عقدًا مكتوبًا في الوثائق والاختبار، لا دالة في القاعدة. أي مسار بيع يُعيد كتابة `ORDER BY expiry_date` بنفسه، وأول من ينسى `b.status = 'active'` أو `expiry_date > CURRENT_DATE` يصرف دواءً منتهيًا. الآن التخصيص دالة واحدة في المخطط: كل مسار صرف يستدعيها، ولا تكرار للشرط الحرج في كود التطبيق.
+
+```sql
+CREATE OR REPLACE FUNCTION app.allocate_fefo(
+  p_tenant uuid, p_warehouse uuid, p_medicine uuid, p_qty numeric
+) RETURNS TABLE (
+  stock_batch_id uuid,
+  batch_id       uuid,
+  batch_no       text,
+  expiry_date    date,
+  location_id    uuid,
+  qty            numeric,
+  unit_cost      numeric
+)
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp AS $$
+DECLARE
+  v_ctx  uuid := app.current_tenant_id();
+  v_left numeric := p_qty;
+  v_free numeric := 0;
+  v_take numeric;
+  r      record;
+BEGIN
+  IF p_qty IS NULL OR p_qty <= 0 THEN
+    RAISE EXCEPTION 'FEFO_INVALID_QTY: الكمية المطلوبة يجب أن تكون أكبر من صفر'
+      USING ERRCODE = '22023';
+  END IF;
+
+  IF p_tenant IS NULL OR p_warehouse IS NULL OR p_medicine IS NULL THEN
+    RAISE EXCEPTION 'FEFO_INVALID_SCOPE: المخزن والصنف والحساب إلزامية'
+      USING ERRCODE = '22004';
+  END IF;
+
+  -- الحارس الثاني للعزل: RLS لا تحمي SECURITY DEFINER، فتمنع الدالة نفسها
+  -- تمرير حساب آخر من داخل سياق حساب ما. بلا سياق (مهمة خادم) يُقبل الوسيط.
+  IF v_ctx IS NOT NULL AND v_ctx <> p_tenant THEN
+    RAISE EXCEPTION 'TENANT_CONTEXT_MISMATCH: سياق % لا يطابق الحساب المطلوب %', v_ctx, p_tenant
+      USING ERRCODE = '42501';
+  END IF;
+
+  FOR r IN
+    SELECT sb.id, sb.batch_id, sb.location_id, sb.unit_cost,
+           sb.qty_on_hand - sb.qty_reserved AS free_qty,
+           b.batch_no, b.expiry_date
+      FROM stock_batches sb
+      JOIN batches b ON b.tenant_id = sb.tenant_id AND b.id = sb.batch_id
+     WHERE sb.tenant_id    = p_tenant
+       AND sb.warehouse_id = p_warehouse
+       AND sb.medicine_id  = p_medicine
+       AND b.medicine_id   = p_medicine
+       AND sb.status       = 'available'          -- المحجوب والمحجور والتالف والمسحوب خارج التخصيص
+       AND b.status        = 'active'             -- تشغيلة محجورة إكلينيكيًا لا تُصرف
+       AND b.expiry_date   > CURRENT_DATE         -- المنتهي لا يُصرف ولو كان الأقرب
+       AND sb.qty_on_hand - sb.qty_reserved > 0
+     ORDER BY b.expiry_date, b.created_at, sb.id
+       FOR UPDATE OF sb
+  LOOP
+    EXIT WHEN v_left <= 0;
+
+    v_free := v_free + r.free_qty;
+    v_take := LEAST(r.free_qty, v_left);
+    v_left := v_left - v_take;
+
+    stock_batch_id := r.id;
+    batch_id       := r.batch_id;
+    batch_no       := r.batch_no;
+    expiry_date    := r.expiry_date;
+    location_id    := r.location_id;
+    qty            := v_take;
+    unit_cost      := r.unit_cost;
+    RETURN NEXT;
+  END LOOP;
+
+  IF v_left > 0 THEN
+    RAISE EXCEPTION 'FEFO_INSUFFICIENT_STOCK: المطلوب % والمتاح %', p_qty, v_free
+      USING ERRCODE = 'P0001';
+  END IF;
+
+  RETURN;
+END $$;
+
+-- للتطبيق وحده: PUBLIC ممنوع، والمنصة والتشغيل بلا USAGE على app أصلًا.
+REVOKE ALL ON FUNCTION app.allocate_fefo(uuid, uuid, uuid, numeric) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION app.allocate_fefo(uuid, uuid, uuid, numeric) TO slamtak_app;
+```
+
+**قرارات مقصودة:**
+
+| القرار | السبب |
+|---|---|
+| الدالة **تقرأ وتقفل** ولا تخصم | الخصم يبقى حصرًا عبر `stock_movements` → `apply_stock_movement`. لو خصمت الدالة لصار لتغيير الرصيد طريقان، وأحدهما بلا حركة موثقة |
+| `FOR UPDATE OF sb` | القراءة والخصم يجب أن يكونا ذرّيين، وإلا بيعت العلبة نفسها مرتين تحت التزامن (`CONC-1`) |
+| `qty_on_hand - qty_reserved` | المحجوز لفاتورة أخرى ليس متاحًا؛ التخصيص يقرأ المتاح لا الرصيد |
+| تعيد `location_id` و`unit_cost` و`batch_no` | تكفي لبناء حركة `sale` وسطر الفاتورة بلا استعلام إضافي |
+| المتاح أقل من المطلوب = استثناء | لا تخصيص جزئي صامت: إما تغطية كاملة أو فشل المعاملة كلها (`409 INSUFFICIENT_STOCK`) |
+| `TENANT_CONTEXT_MISMATCH` | `SECURITY DEFINER` يتجاوز RLS؛ فحص تطابق السياق يمنع استغلالها لصرف مخزون حساب آخر |
+
+### 9.5 ما تم التحقق منه فعليًا
 
 | # | الفحص | النتيجة |
 |---|---|---|
@@ -884,6 +982,7 @@ REVOKE ALL ON FUNCTION app.verify_ledger_consistency() FROM PUBLIC;
 | V9 | إدراج مخزن ثانٍ لنفس `tenant_id` | ✅ مرفوض: `23505` على `uq_one_warehouse_per_tenant` |
 | V10 | عضوية بـ`warehouse_id` لمخزن حساب آخر | ✅ مرفوضة بالـFK المركّب `(tenant_id, warehouse_id)` |
 | V11 | حذف مخزن الحساب الوحيد | ✅ مرفوض/ممنوع تشغيليًا: لا مسار حذف، والـFK من العضوية يمنع الحذف الصامت |
+| V12 | `app.allocate_fefo` على تشغيلات متاحة/منتهية/محجوبة/محجورة/محجوزة | ✅ يقسم على تشغيلتين بالترتيب، ويستبعد الأربعة، ويرفض الطلب فوق المتاح بـ`FEFO_INSUFFICIENT_STOCK` (21/21 في CI) |
 
 **بيئة التحقق:** PostgreSQL 17 (WASM/PGlite) — نفس إصدار المزوّد المستهدف. السياسات واختبار العزل في [`22`](22-rls-and-isolation-tests.md).
 

@@ -1,7 +1,8 @@
 // اختبار عزل المخزنين وFEFO والصلاحيات — على قاعدة حقيقية لا على نصّ الملفات.
 //
 // يشغّل السيناريوهات بدور التطبيق الفعلي `slamtak_app` (NOBYPASSRLS) داخل معاملة
-// يُضبط فيها سياق الطلب بـset_config، ثم يتراجع عنها، فلا يترك أثرًا. والبذور
+// (ومنها استدعاء دالة التخصيص الحقيقية app.allocate_fefo، لا استعلام FEFO مكتوبًا
+// في الاختبار) يُضبط فيها سياق الطلب بـset_config، ثم يتراجع عنها، فلا يترك أثرًا. والبذور
 // (مخزنان، مخزنان منفصلان، أصناف، تشغيلات) تُنشأ بدور المالك لأن سياسات RLS
 // موجّهة إلى slamtak_app وحده.
 //
@@ -35,6 +36,7 @@ const B_A2 = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa6'; // +300 يوم، متاح
 const B_A3 = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa7'; // منتهٍ
 const B_A4 = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa8'; // الأقرب انتهاءً لكنه محجوب
 const B_A5 = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa9'; // رصيد صفر
+const B_A6 = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11'; // الأقرب انتهاءً لكن التشغيلة محجورة
 const B_B1 = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb7';
 const U_A = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa10';
 const U_B = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb12';
@@ -171,25 +173,29 @@ before(async () => {
     [T_A, T_B, M_A, M_B],
   );
 
-  // تشغيلات المخزن أ: قريبة وبعيدة ومنتهية ومحجوبة وصفرية، وتشغيلة واحدة للمخزن ب.
+  // تشغيلات المخزن أ: قريبة وبعيدة ومنتهية ومحجوبة ومحجورة وصفرية، وتشغيلة للمخزن ب.
   await sql(
-    `INSERT INTO public.batches (tenant_id, id, medicine_id, batch_no, expiry_date) VALUES
-       ($1, $2, $7,  'A1', CURRENT_DATE + 60),
-       ($1, $3, $7,  'A2', CURRENT_DATE + 300),
-       ($1, $4, $7,  'A3', CURRENT_DATE - 30),
-       ($1, $5, $7,  'A4', CURRENT_DATE + 10),
-       ($1, $6, $7,  'A5', CURRENT_DATE + 20),
-       ($8, $9, $10, 'B1', CURRENT_DATE + 45)`,
-    [T_A, B_A1, B_A2, B_A3, B_A4, B_A5, M_A, T_B, B_B1, M_B],
+    `INSERT INTO public.batches (tenant_id, id, medicine_id, batch_no, expiry_date, status) VALUES
+       ($1, $2, $7,  'A1', CURRENT_DATE + 60,  'active'),
+       ($1, $3, $7,  'A2', CURRENT_DATE + 300, 'active'),
+       ($1, $4, $7,  'A3', CURRENT_DATE - 30,  'active'),
+       ($1, $5, $7,  'A4', CURRENT_DATE + 10,  'active'),
+       ($1, $6, $7,  'A5', CURRENT_DATE + 20,  'active'),
+       ($1, $11, $7, 'A6', CURRENT_DATE + 5,   'quarantine'),
+       ($8, $9, $10, 'B1', CURRENT_DATE + 45,  'active')`,
+    [T_A, B_A1, B_A2, B_A3, B_A4, B_A5, M_A, T_B, B_B1, M_B, B_A6],
   );
+  // A2 فيها 4 محجوزة: المتاح للتخصيص 6 لا 10.
   await sql(
-    `INSERT INTO public.stock_batches (tenant_id, warehouse_id, location_id, medicine_id, batch_id, qty_on_hand, status) VALUES
-       ($1, $2, $3, $4, $5, 5,  'available'),
-       ($1, $2, $3, $4, $6, 10, 'available'),
-       ($1, $2, $3, $4, $7, 7,  'available'),
-       ($1, $2, $3, $4, $8, 4,  'blocked'),
-       ($1, $2, $3, $4, $9, 0,  'available')`,
-    [T_A, W_A, L_A, M_A, B_A1, B_A2, B_A3, B_A4, B_A5],
+    `INSERT INTO public.stock_batches
+       (tenant_id, warehouse_id, location_id, medicine_id, batch_id, qty_on_hand, qty_reserved, status) VALUES
+       ($1, $2, $3, $4, $5, 5,  0, 'available'),
+       ($1, $2, $3, $4, $6, 10, 4, 'available'),
+       ($1, $2, $3, $4, $7, 7,  0, 'available'),
+       ($1, $2, $3, $4, $8, 4,  0, 'blocked'),
+       ($1, $2, $3, $4, $9, 0,  0, 'available'),
+       ($1, $2, $3, $4, $10, 3, 0, 'available')`,
+    [T_A, W_A, L_A, M_A, B_A1, B_A2, B_A3, B_A4, B_A5, B_A6],
   );
   await sql(
     `INSERT INTO public.stock_batches (tenant_id, warehouse_id, location_id, medicine_id, batch_id, qty_on_hand)
@@ -448,6 +454,137 @@ needsDb('FEFO: الأقرب انتهاءً أولًا، مع استبعاد ال
       'FEFO لا يعبر إلى مخزن آخر',
     );
   });
+});
+
+// ------------------------------------------- دالة التخصيص الفعلية allocate_fefo
+
+needsDb('FEFO: الدالة تخصّص من الأقرب انتهاءً وتقسّم على تشغيلتين', async () => {
+  await asApp({ tenantId: T_A, userId: U_A }, async (c) => {
+    const { rows } = await c.query('SELECT * FROM app.allocate_fefo($1, $2, $3, $4)', [T_A, W_A, M_A, 8]);
+    assert.deepEqual(rows.map((r) => r.batch_no), ['A1', 'A2'], 'الترتيب: الأقرب انتهاءً أولًا');
+    assert.deepEqual(rows.map((r) => Number(r.qty)), [5, 3], 'استُنفد A1 ثم أُخذ الباقي من A2');
+    assert.equal(
+      rows.reduce((sum, r) => sum + Number(r.qty), 0),
+      8,
+      'مجموع التخصيص = الكمية المطلوبة بلا زيادة ولا نقص',
+    );
+    assert.equal(rows[0].batch_id, B_A1, 'batch_id الفعلي وليس رقم التشغيلة النصي');
+    assert.equal(rows[0].location_id, L_A, 'الموقع يُعاد ليبني عليه الـcaller الحركة');
+    assert.ok(rows[0].expiry_date < rows[1].expiry_date, 'تواريخ الانتهاء تصاعدية');
+  });
+});
+
+needsDb('FEFO: الدالة تحترم qty_reserved ولا تخصص المحجوز', async () => {
+  await asApp({ tenantId: T_A, userId: U_A }, async (c) => {
+    const { rows } = await c.query('SELECT * FROM app.allocate_fefo($1, $2, $3, $4)', [T_A, W_A, M_A, 6]);
+    assert.deepEqual(rows.map((r) => Number(r.qty)), [5, 1], 'من A2 يُخصص المتاح بعد الحجز فقط');
+  });
+});
+
+needsDb('FEFO: لا يُصرف منتهٍ ولا محجوب ولا محجور ولا صفر رصيد', async () => {
+  await asApp({ tenantId: T_A, userId: U_A }, async (c) => {
+    // 11 = كل المتاح فعلًا (5 في A1 + 6 حرة في A2)، والأقرب انتهاءً A6 ثم A4.
+    const { rows } = await c.query('SELECT * FROM app.allocate_fefo($1, $2, $3, $4)', [T_A, W_A, M_A, 11]);
+    const used = rows.map((r) => r.batch_id);
+    assert.deepEqual(used, [B_A1, B_A2], 'التخصيص الكامل يقع على الصالح فقط');
+    for (const [id, label] of [
+      [B_A3, 'منتهٍ'],
+      [B_A4, 'محجوب'],
+      [B_A5, 'صفر رصيد'],
+      [B_A6, 'تشغيلة بحالة quarantine'],
+    ]) {
+      assert.equal(used.includes(id), false, `${label} خارج التخصيص حتى لو كان أقرب انتهاءً`);
+    }
+  });
+});
+
+needsDb('FEFO: المتاح أقل من المطلوب يفشل برسالة صريحة ولا يخصص جزئيًا', async () => {
+  await asApp({ tenantId: T_A, userId: U_A }, async (c) => {
+    const err = await failure(c.query('SELECT * FROM app.allocate_fefo($1, $2, $3, $4)', [T_A, W_A, M_A, 12]));
+    assert.ok(err, 'الطلب فوق المتاح مرفوض');
+    assert.equal(err.code, 'P0001');
+    assert.match(err.message, /FEFO_INSUFFICIENT_STOCK/);
+    assert.match(err.message, /11/, 'الرسالة تحمل المتاح الفعلي لا صفرًا');
+  });
+});
+
+needsDb('FEFO: كمية غير صالحة أو سياق مخزن آخر مرفوضان', async () => {
+  await asApp({ tenantId: T_A, userId: U_A }, async (c) => {
+    const zero = await expectFailure(c, 'SELECT * FROM app.allocate_fefo($1, $2, $3, 0)', [T_A, W_A, M_A]);
+    assert.ok(zero, 'الكمية الصفرية مرفوضة');
+    assert.equal(zero.code, '22023');
+    assert.match(zero.message, /FEFO_INVALID_QTY/);
+
+    const negative = await expectFailure(c, 'SELECT * FROM app.allocate_fefo($1, $2, $3, -5)', [T_A, W_A, M_A]);
+    assert.ok(negative, 'الكمية السالبة مرفوضة');
+    assert.equal(negative.code, '22023');
+
+    // سياق مخزن أ يطلب التخصيص من مخزن ب: RLS لا تحمي SECURITY DEFINER، فالدالة تمنعه بنفسها.
+    const cross = await expectFailure(c, 'SELECT * FROM app.allocate_fefo($1, $2, $3, 1)', [T_B, W_B, M_B]);
+    assert.ok(cross, 'التخصيص لحساب آخر من داخل سياق حساب مرفوض');
+    assert.equal(cross.code, '42501');
+    assert.match(cross.message, /TENANT_CONTEXT_MISMATCH/);
+  });
+});
+
+needsDb('FEFO: الدالة لا تعبر إلى مخزن آخر ولو بمعرّف الصنف الصحيح', async () => {
+  // مخزن ب يملك 99 من صنفه، وصفر من صنف مخزن أ.
+  await asApp({ tenantId: T_B, userId: U_B }, async (c) => {
+    const own = await c.query('SELECT * FROM app.allocate_fefo($1, $2, $3, $4)', [T_B, W_B, M_B, 99]);
+    assert.deepEqual(own.rows.map((r) => r.batch_no), ['B1']);
+    assert.equal(Number(own.rows[0].qty), 99);
+
+    const foreign = await expectFailure(
+      c,
+      'SELECT * FROM app.allocate_fefo($1, $2, $3, 1)',
+      [T_B, W_B, M_A],
+    );
+    assert.ok(foreign, 'صنف مخزن آخر غير موجود في نطاقه');
+    assert.match(foreign.message, /FEFO_INSUFFICIENT_STOCK:.*المتاح 0/);
+  });
+});
+
+needsDb('FEFO: نتيجة التخصيص تُسجَّل كحركات فتنخفض الأرصدة بالمقدار نفسه', async () => {
+  await asApp({ tenantId: T_A, userId: U_A }, async (c) => {
+    const { rows } = await c.query('SELECT * FROM app.allocate_fefo($1, $2, $3, $4)', [T_A, W_A, M_A, 8]);
+    for (const r of rows) {
+      await c.query(
+        `INSERT INTO public.stock_movements
+           (tenant_id, warehouse_id, location_id, medicine_id, batch_id, movement_type, qty_delta, created_by)
+         VALUES ($1, $2, $3, $4, $5, 'sale', $6, $7)`,
+        [T_A, W_A, r.location_id, M_A, r.batch_id, -Number(r.qty), U_A],
+      );
+    }
+    const after = await c.query(
+      'SELECT batch_id, qty_on_hand FROM public.stock_batches WHERE batch_id = ANY($1)',
+      [[B_A1, B_A2]],
+    );
+    const byBatch = Object.fromEntries(after.rows.map((r) => [r.batch_id, Number(r.qty_on_hand)]));
+    assert.equal(byBatch[B_A1], 0, 'A1 استُنفد بالكامل (5 − 5)');
+    assert.equal(byBatch[B_A2], 7, 'A2 نقص بمقدار المخصص فقط (10 − 3)');
+  });
+});
+
+needsDb('FEFO: تنفيذ الدالة مقصور على دور التطبيق لا PUBLIC ولا المنصة ولا التشغيل', async () => {
+  const { rows } = await owner.query(
+    `SELECT has_function_privilege('slamtak_app', $1, 'EXECUTE')      AS app_ok,
+            has_function_privilege('slamtak_platform', $1, 'EXECUTE') AS platform_ok,
+            has_function_privilege('slamtak_ops', $1, 'EXECUTE')      AS ops_ok`,
+    ['app.allocate_fefo(uuid, uuid, uuid, numeric)'],
+  );
+  assert.equal(rows[0].app_ok, true, 'دور التطبيق ينفّذ التخصيص');
+  assert.equal(rows[0].platform_ok, false, 'لوحة المنصة لا تخصم مخزونًا');
+  assert.equal(rows[0].ops_ok, false, 'دور التشغيل للتحقق فقط');
+
+  const pub = await owner.query(
+    `SELECT count(*)::int AS n
+       FROM pg_proc p
+       JOIN pg_namespace n ON n.oid = p.pronamespace
+       CROSS JOIN LATERAL aclexplode(coalesce(p.proacl, '{}'::aclitem[])) a
+      WHERE n.nspname = 'app' AND p.proname = 'allocate_fefo'
+        AND a.grantee = 0 AND a.privilege_type = 'EXECUTE'`,
+  );
+  assert.equal(pub.rows[0].n, 0, 'لا EXECUTE لـPUBLIC على الدالة');
 });
 
 needsDb('FEFO: الفهرس الذي يخدم الاستعلام موجود بالتعريف المتوقع', async () => {

@@ -93,6 +93,7 @@ GRANT EXECUTE ON FUNCTION app.has_permission(text) TO slamtak_app;
 GRANT EXECUTE ON FUNCTION app.apply_stock_movement() TO slamtak_app;
 GRANT EXECUTE ON FUNCTION app.next_document_number(uuid, text, int) TO slamtak_app;
 GRANT EXECUTE ON FUNCTION app.record_login_attempt(text, inet, boolean, text) TO slamtak_app;
+GRANT EXECUTE ON FUNCTION app.allocate_fefo(uuid, uuid, uuid, numeric) TO slamtak_app;
 
 -- الكتالوج العام للقراءة فقط، والسجلات لا تُحذف، والأرصدة لا تُكتب مباشرة.
 REVOKE INSERT, UPDATE, DELETE ON public.permissions FROM slamtak_app;

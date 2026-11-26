@@ -157,6 +157,8 @@ CREATE INDEX idx_stock_fefo
   WHERE qty_on_hand > 0 AND status = 'available';
 ```
 
+التخصيص نفسه يتم في دالة واحدة `app.allocate_fefo` (تعريفها في [`21`](21-reference-schema.md#94-دالة-تخصيص-fefo-allocate_fefo)): شرط FEFO واستبعاد المنتهي والمحجوب مكتوب مرة واحدة في القاعدة، فلا يُعاد في كل مسار بيع.
+
 ### 3.5 المشتريات والتوريد
 `suppliers`, `supplier_contacts`, `purchase_orders`, `purchase_order_items`, `goods_receipts`, `goods_receipt_items`, `supplier_invoices`, `supplier_invoice_items`, `supplier_payments`, `supplier_returns`, `supplier_return_items`, `supplier_ledger`.
 
