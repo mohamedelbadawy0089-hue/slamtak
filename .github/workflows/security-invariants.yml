@@ -5,6 +5,9 @@ name: security-invariants
 #   SUPABASE_DB_PASSWORD=... npm run check:security
 # بوابات الوثائق الثلاث (check:docs-ar وcheck:docs-actions وcheck:docs-links)
 # انتقلت إلى .github/workflows/docs.yml، فلا تُكرَّر هنا.
+# مهمة tests تشغّل اختبارات node:test الدائمة: كانت محلية فقط، فكان يمكن كسر حارس
+# المسار أو بوابة الأسرار أو منطق الجلسة دون أن يلاحظ أحد. لا تحتاج تبعيات ولا
+# قاعدة بيانات ولا شبكة، فتعمل بلا npm ci في ثوانٍ.
 on:
   push:
     branches: [main]
@@ -79,3 +82,28 @@ jobs:
 
       - name: Check security invariants
         run: npm run check:security
+
+  # اختبارات الانحدار الدائمة (node:test): لا npm ci ولا قاعدة بيانات ولا شبكة.
+  # test:secrets — بوابة الأسرار تفشل فعلًا عند مفتاح مسرّب
+  # test:auth    — منطق جلسة الواجهة وعلامة الخطوة الثانية
+  # test:start   — حارس مسار خادم التطوير: «..» مشفّرة وروابط رمزية خارج الجذر
+  tests:
+    name: tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Test the secret gate
+        run: npm run test:secrets
+
+      - name: Test the auth session logic
+        run: npm run test:auth
+
+      - name: Test the dev-server path guard
+        run: npm run test:start
