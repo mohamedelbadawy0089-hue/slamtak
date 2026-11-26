@@ -7,6 +7,10 @@ node_modules/
 .env.*
 !.env.example
 
+# نسخ احتياطية/قديمة من أصول الواجهة — لا يجب أن تُنشر على الموقع
+*.bak
+*.original-*
+
 *.tsbuildinfo
 dist/
 logs/
