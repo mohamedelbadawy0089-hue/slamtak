@@ -223,6 +223,17 @@ jobs:
 
 ---
 
+### 2.4 بوابة الأسرار (`secret-guard`)
+
+`.gitignore` وحده لا يمنع تسريبًا: `git add -f` يتجاوزه، والملف يبقى متتبَّعًا ولو أُضيف إلى التجاهل بعد ذلك. و`.dev.vars` كان متتبَّعًا على `main` ومعه مفتاح `service_role` من 2026-11-02 إلى 2026-11-26 دون أن يكشفه أي فحص. لذلك يقوم `.github/workflows/secret-guard.yml` بتشغيل `npm run check:secrets` (`scripts/check-no-tracked-secrets.mjs`) على كل `push` إلى `main` وكل `pull_request`، ويفشل عند:
+
+1. وجود ملف متتبَّع اسمه `.dev.vars` أو `.dev.vars.*` أو `.env` أو `.env.*` أو `*.env` — عدا القوالب `.env.example` و`.env.sample` و`.env.template` و`.env.dist`.
+2. اختفاء قاعدة التجاهل: `git check-ignore` يجب أن يتجاهل `.dev.vars` و`.env` و`.env.local`، وإلا عاد الملف بالتزام عادي.
+
+الفحص يقرأ شجرة Git (`git ls-files`) لا مجلد العمل، بلا تبعيات ولا شبكة، ويُشغَّل محليًا بأمر واحد قبل الدفع. ما لا يفعله: لا يقرأ محتوى الملفات ولا يبحث عن أنماط أسرار داخل الكود (gitleaks وتوأمه يغطيان ذلك عند إضافتهما)، ولا يمحو الملف من تاريخ Git — الإبطال في لوحة المزوّد هو ما يُنهي الخطر ([`13`](13-security-architecture.md) §3.5).
+
+---
+
 ## 3. الصور (Docker)
 
 ```dockerfile
