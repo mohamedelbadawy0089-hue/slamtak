@@ -17,6 +17,9 @@
 //
 // محليًا بلا قاعدة: تُتخطّى الاختبارات برسالة. وفي CI يُضبط ISOLATION_DB_REQUIRED=1
 // فيصبح غياب القاعدة فشلًا صريحًا لا تخطيًا صامتًا.
+//
+// هدف الكتابة محروس: الملف يزرع صفوفًا ويُثبّت حركات (COMMIT)، فلا يعمل على قاعدة
+// غير محلية ولا داخل CI إلا بتفعيل صريح عبر ISOLATION_DB_ALLOW_NONLOCAL=1.
 import test, { after, before } from 'node:test';
 import assert from 'node:assert/strict';
 import pg from 'pg';
@@ -25,6 +28,34 @@ import { dbTarget } from './db-target.mjs';
 
 const REQUIRED = process.env.ISOLATION_DB_REQUIRED === '1';
 const { options } = dbTarget();
+
+// حارس هدف الاختبار: بلا هذا الحارس يكفي أن يُضبط PGHOST (أو SUPABASE_DB_PASSWORD
+// وحده) بالخطأ ليجد الاختبار نفسه على قاعدة الإنتاج، فيزرع فيها مخازن تجريبية
+// ويُثبّت خصوماتها. الفحص قبل أي اتصال، والفشل صريح لا تخطٍّ.
+//   ISOLATION_DB_ALLOW_NONLOCAL=1 — تفعيل صريح لهدف غير محلي أو لتشغيل CI.
+const LOCAL_HOSTS = new Set(['127.0.0.1', 'localhost', '::1']);
+const IS_CI = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
+const ALLOW_NONLOCAL = process.env.ISOLATION_DB_ALLOW_NONLOCAL === '1';
+
+function assertWritableTarget() {
+  if (ALLOW_NONLOCAL) return;
+  const host = String(options.host ?? '')
+    .toLowerCase()
+    .replace(/^\[/, '')
+    .replace(/\]$/, '');
+  if (!LOCAL_HOSTS.has(host)) {
+    throw new Error(
+      `هدف test:isolation غير محلي (${options.host}): الاختبار يزرع صفوفًا ويُثبّت حركات، ` +
+        'فأوقفه الحارس قبل أي اتصال. للتشغيل على هذا الهدف عن قصد اضبط ISOLATION_DB_ALLOW_NONLOCAL=1.',
+    );
+  }
+  if (IS_CI) {
+    throw new Error(
+      'test:isolation داخل CI يكتب ويُثبّت حركات، فيتطلب تفعيلًا صريحًا: ' +
+        'اضبط ISOLATION_DB_ALLOW_NONLOCAL=1 في خطوة تشغيل الاختبار.',
+    );
+  }
+}
 
 // معرّفات ثابتة: تسهّل الإشارة إلى الصفوف في التأكيدات، وتُحذف في النهاية.
 const T_A = '11111111-1111-4111-8111-111111111111';
@@ -184,6 +215,10 @@ const needsDb = (name, fn) =>
     if (skipReason) return t.skip(skipReason);
     await fn(t);
   });
+
+// الفحص عند تحميل الملف لا داخل before: يظهر الفشل مرة واحدة بدل تكراره على كل اختبار،
+// ولا يبلغ الملف أي اتصال أو كتابة.
+assertWritableTarget();
 
 before(async () => {
   owner = new pg.Client(options);

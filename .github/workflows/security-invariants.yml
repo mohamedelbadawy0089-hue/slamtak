@@ -117,6 +117,9 @@ jobs:
       PGSSLMODE: disable
       # غياب القاعدة في CI فشل صريح لا تخطٍّ صامت.
       ISOLATION_DB_REQUIRED: '1'
+      # تفعيل صريح لكتابة test:isolation في CI: الحارس يرفض CI بلا هذا المتغيّر
+      # لأن اختبار التزامن يُثبّت حركات (COMMIT) على القاعدة الموجَّه إليها.
+      ISOLATION_DB_ALLOW_NONLOCAL: '1'
 
     steps:
       - uses: actions/checkout@v5
