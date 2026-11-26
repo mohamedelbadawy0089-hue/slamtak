@@ -1232,6 +1232,14 @@ async function loadAuditCheckSection(body, client) {
     // التحقق من الصلاحية
     await SuperAdminPanel.requireSuperAdmin(clientSup);
 
+    // الأداة تُحمَّل من devtools/ عند ?debug=true فقط، فلا تُنشر مع الموقع.
+    if (!window.SecurityAudit) {
+      body.innerHTML = sectionErrorHtml(
+        'أداة الفحص غير محمَّلة. افتح الصفحة مع ?debug=true من خادم التطوير المحلي (ملف devtools/audit-check.js غير منشور مع الموقع).'
+      );
+      return;
+    }
+
     // تشغيل الفحص الكامل
     const results = await SecurityAudit.runFullSecurityAudit(clientSup);
 

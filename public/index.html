@@ -26,7 +26,6 @@
   <script src="post-login-setup.js"></script>
   <script src="super-admin.js"></script>
   <script src="subscriptions-manager.js"></script>
-  <script src="audit-check.js"></script>
   <script src="ai-inventory.js"></script>
   <script src="tenant-query-filter.js"></script>
   <script src="inventory-stock.js"></script>
@@ -39,6 +38,12 @@
       script.src = 'https://cdn.jsdelivr.net/npm/eruda';
       script.onload = function () { eruda.init(); };
       document.head.appendChild(script);
+
+      // أداة الفحص الأمني (window.SecurityAudit) تُحفظ في devtools/ خارج public/،
+      // فلا تُنشر مع الموقع ولا يطلبها المتصفح إلا في وضع التصحيح.
+      var auditScript = document.createElement('script');
+      auditScript.src = 'devtools/audit-check.js';
+      document.head.appendChild(auditScript);
     }
   </script>
 </body>
