@@ -158,7 +158,7 @@ flowchart LR
 | النوع | الأداة | التردد | البوابة |
 |---|---|---|---|
 | تحليل ثابت (SAST) | CodeQL / ESLint أمني | كل PR | تحذير → خطأ للحرج |
-| أسرار | gitleaks | كل commit | يمنع الدفع |
+| أسرار | `secret-guard` (`npm run check:secrets`) | كل push وPR | يفشل عند `.dev.vars`/`.env` متتبَّع أو اختفاء قاعدة تجاهله؛ `gitleaks` لسجل Git الكامل لم يُضف بعد |
 | اعتماديات | `pnpm audit` + Trivy | كل بناء | يمنع النشر للحرج |
 | عزل Tenant | مجموعة اختبارات مخصصة | كل PR | **يمنع الدمج** |
 | صلاحيات | مصفوفة API × أدوار | كل PR | يمنع الدمج |
@@ -192,7 +192,7 @@ flowchart LR
 | صلاحيات موزّعة على 3 أنظمة | P1 | توحيد RBAC | Phase 1 |
 | لا MFA | P1 | TOTP إلزامي للأدوار الحساسة | Phase 1 |
 | لا Idempotency | P1 | مفتاح + قيد فريد | Phase 1 |
-| لا فحص أسرار آلي | P1 | gitleaks + pre-commit | Phase 1 |
+| لا فحص أسرار آلي | P1 | `secret-guard` في CI (2026-11-26)؛ يبقى `gitleaks` على سجل Git وpre-commit | Phase 1 |
 | 100+ هجرة بلا Baseline | P1 | Baseline + بيئات | Phase 1 |
 | لا تنبيهات أمنية | P2 | قواعد كشف + Runbook | Phase 2 |
 | لا تمرين استعادة | P1 | تمرين ربع سنوي | Phase 1 |

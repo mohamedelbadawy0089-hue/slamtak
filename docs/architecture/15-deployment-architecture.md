@@ -26,7 +26,7 @@ flowchart LR
     U --> I["Integration + Testcontainers"]
     I --> ISO["Tenant Isolation Suite<br/>بوابة إلزامية"]
     ISO --> M["Migration Check<br/>من الصفر + مقارنة مخطط"]
-    M --> S["SAST + gitleaks + audit + Trivy"]
+    M --> S["SAST + check:secrets + audit + Trivy"]
     S --> B["Build Images"]
     B --> PV["Preview Deploy"]
     PV --> E["E2E على Preview"]

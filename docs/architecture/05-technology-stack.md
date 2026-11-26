@@ -89,7 +89,8 @@
 | Testcontainers | PostgreSQL/Redis حقيقية في الاختبارات |
 | Playwright 1.4x | E2E + PDF |
 | k6 | حمل وأداء |
-| Trivy + gitleaks + `pnpm audit` | أمن الحزم والأسرار |
+| `secret-guard` (`npm run check:secrets`) | أمن الأسرار المطبّق الآن: يمنع عودة `.dev.vars`/`.env` إلى التتبّع ([`15`](15-deployment-architecture.md) §2.4) |
+| Trivy + gitleaks (سجل Git) + `npm audit` | أمن الحزم وتاريخ الأسرار — **مستهدف، لم يُضف إلى CI بعد** |
 | dependency-cruiser | فرض حدود الوحدات آليًا |
 | `@axe-core/playwright` | إتاحة الواجهة |
 | — (بلا حاويات) | البناء والنشر على Pages + `supabase functions deploy` |
