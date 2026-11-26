@@ -18,7 +18,8 @@
     "check:docs-links": "node scripts/check-doc-links.mjs",
     "check:supabase": "node scripts/supabase-health.mjs",
     "test:auth": "node --test scripts/test-auth-session.mjs",
-    "test:start": "node --test scripts/test-start-traversal.mjs scripts/test-start-symlink-guard.mjs"
+    "test:start": "node --test scripts/test-start-traversal.mjs scripts/test-start-symlink-guard.mjs",
+    "test:isolation": "node --test scripts/test-warehouse-isolation.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.0.0",

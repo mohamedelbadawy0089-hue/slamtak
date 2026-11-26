@@ -83,14 +83,39 @@ jobs:
       - name: Check security invariants
         run: npm run check:security
 
-  # اختبارات الانحدار الدائمة (node:test): لا npm ci ولا قاعدة بيانات ولا شبكة.
+  # اختبارات الانحدار الدائمة (node:test).
   # test:secrets — بوابة الأسرار تفشل فعلًا عند مفتاح مسرّب
   # test:auth    — منطق جلسة الواجهة وعلامة الخطوة الثانية
   # test:start   — حارس مسار خادم التطوير: «..» مشفّرة وروابط رمزية خارج الجذر
+  # test:isolation — عزل مخزنين وFEFO وصلاحيات على قاعدة حقيقية بدور slamtak_app
   tests:
     name: tests
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
+
+    # قاعدة حقيقية لاختبارات العزل: RLS لا تُختبر بقراءة نص الهجرة.
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: postgres
+      PGSSLMODE: disable
+      # غياب القاعدة في CI فشل صريح لا تخطٍّ صامت.
+      ISOLATION_DB_REQUIRED: '1'
 
     steps:
       - uses: actions/checkout@v5
@@ -98,6 +123,10 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
 
       - name: Test the secret gate
         run: npm run test:secrets
@@ -107,3 +136,13 @@ jobs:
 
       - name: Test the dev-server path guard
         run: npm run test:start
+
+      # المخطط من هجرتَي المعمارية الجديدة، كما في مهمة invariants.
+      - name: Apply baseline migrations
+        run: >-
+          node scripts/apply-migrations.mjs
+          supabase/migrations/20261108000001_init_schema.sql
+          supabase/migrations/20261108000002_seed_and_harden.sql
+
+      - name: Test warehouse isolation, FEFO and permissions
+        run: npm run test:isolation

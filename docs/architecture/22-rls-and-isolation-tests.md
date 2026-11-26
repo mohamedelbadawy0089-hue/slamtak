@@ -733,6 +733,16 @@ SUPABASE_DB_PASSWORD=... npm run check:security
 
 **البوابة في CI:** `.github/workflows/security-invariants.yml` يشغّل نفس الشيء عند كل `push` إلى `main` وكل `pull_request`: حاوية `postgres:17` جديدة، ثم `scripts/apply-migrations.mjs` يبني المخطط من ملفي المعمارية الجديدة، ثم `npm run check:security`. أي `FAIL` يُفشل المهمة، فتُمتنع البوابة قبل الدمج. وأُضيف `scripts/db-target.mjs` ليقرأ متغيّرات libpq (`PGHOST`/`PGPORT`/`PGUSER`/`PGDATABASE`/`PGPASSWORD`/`PGSSLMODE`)، والافتراضي بلا أي متغيّر يبقى `db.<ref>.supabase.co` عبر TLS — أي أن CI لم يغيّر السلوك الإنتاجي.
 
+**الاختبار الآلي للعزل في CI:** `scripts/test-warehouse-isolation.mjs` (`npm run test:isolation`) يُشغَّل في مهمة `tests` داخل `.github/workflows/security-invariants.yml` على حاوية `postgres:17` جديدة بعد بناء المخطط بهجرتَي `20261108`. يُنشئ مخزنين كاملين (مستخدمان، مخزنان، أصناف، تشغيلات بأعمار مختلفة) بدور المالك، ثم ينفّذ كل سيناريو داخل معاملة بدور `slamtak_app` وسياق `app.tenant_id` مضبوط بـ`set_config`، ويتراجع عنها فلا يترك أثرًا. ما يثبته:
+
+| المجموعة | التأكيد |
+|---|---|
+| العزل | مخزن أ لا يرى صفًا من ب، وبلا سياق لا يُقرأ شيء، والكتابة بمعرّف الطرف الآخر تُرفض (`42501`)، والتحديث لا يصيب صفًا غير مرئي |
+| ADR-025 | محاولة مخزن ثانٍ لنفس الحساب ترتد بقيد `uq_one_warehouse_per_tenant` |
+| الرصيد | `UPDATE stock_batches` ممنوع على دور التطبيق، والتغيير يحدث عبر حركة موثقة فقط، والصرف فوق المتاح يرتد بـ`23514`، ودفتر الحركات append-only، ونقل سجل بين مخزنين يرتد بـ`TENANT_IMMUTABLE` |
+| الصلاحيات | المالك يملك صلاحيات مخزنه ولا يملك صلاحية منصة، ومستخدم بلا دور لا يملك شيئًا، و`deny` يتغلب على منح الدور، وكتابة `audit_logs` تحتاج `system.audit.write` لا مجرد الانتماء للمخزن |
+| FEFO | الترتيب يعطي الأقرب انتهاءً أولًا ويستبعد المنتهي والمحجوب وصفر الرصيد ولا يعبر مخزنًا آخر، وفهرس `idx_stock_fefo` موجود بتعريفه المتوقع |
+
 **الفحص الإنتاجي المجدول:** `.github/workflows/security-invariants-production.yml` يشغّل نفس الفحص على قاعدة المشروع يوميًا (‎03:00 UTC‎) وعند الطلب يدويًا. إعداده مرة واحدة في المستودع: السرّ `SUPABASE_DB_PASSWORD`، وإن لزم الـPooler فمتغيّرا `SUPABASE_DB_HOST` و`SUPABASE_DB_USER`. وهو يقرأ الكتالوج فقط، لا يكتب شيئًا. الفشل هنا يعني انحرافًا حقيقيًا في القاعدة الحية — لا في الملفات.
 
 > **حدّ الاتصال:** الاتصال المباشر `db.<ref>.supabase.co` صار IPv6 فقط في المشاريع الحديثة، وrunners في GitHub تدعم IPv4 فقط. الحل هو Session Pooler: `SUPABASE_DB_HOST=aws-0-<region>.pooler.supabase.com` و`SUPABASE_DB_USER=postgres.<ref>`، وSSL يبقى مفعّلًا تلقائيًا. رمز الخروج 2 يعني «تعذّر الفحص» لا «القاعدة سليمة»، والـworkflow يفرّق بين الحالتين في رسالته.
