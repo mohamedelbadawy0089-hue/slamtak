@@ -241,7 +241,7 @@ packages/db/
 | `tests/*` | يُنقل المفيد إلى `tests/` الجديدة (خصوصًا اختبار العزل) |
 | `worker.js`, `wrangler.jsonc` | يُبقى فقط إن استمر نشر Cloudflare كطبقة حافة |
 | `.dev.vars`, `.wrangler/` | لا تُنقل (بيانات محلية/أسرار) |
-| `devtools/` | يبقى خارج `public/` فلا يُنشر؛ أداة الفحص الأمني تُحمَّل فقط مع `?debug=true` على خادم التطوير |
+| `devtools/` | يبقى خارج `public/` فلا يُنشر؛ أداة الفحص الأمني تُحمَّل فقط مع `?debug=true` على خادم التطوير، ولا يخدمه `start.js` إلا بعد `fs.realpathSync` (اختبار `npm run test:start`) |
 
 ---
 
