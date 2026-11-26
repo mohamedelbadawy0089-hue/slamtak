@@ -12,6 +12,7 @@
     "deploy:prod": "wrangler pages deploy ./public --project-name slamtak --branch main --commit-dirty=true",
     "check:security": "node scripts/check-security-invariants.mjs",
     "check:secrets": "node scripts/check-no-tracked-secrets.mjs",
+    "test:secrets": "node --test scripts/test-check-no-tracked-secrets.mjs",
     "check:docs-ar": "node scripts/check-architecture-ar-docs.mjs",
     "check:docs-actions": "node scripts/check-doc-actions.mjs",
     "check:docs-links": "node scripts/check-doc-links.mjs",

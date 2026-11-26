@@ -89,7 +89,7 @@
 | Testcontainers | PostgreSQL/Redis حقيقية في الاختبارات |
 | Playwright 1.4x | E2E + PDF |
 | k6 | حمل وأداء |
-| `secret-guard` (`npm run check:secrets`) | أمن الأسرار المطبّق الآن: يمنع عودة `.dev.vars`/`.env` إلى التتبّع ([`15`](15-deployment-architecture.md) §2.4) |
+| `secret-guard` (`npm run check:secrets`) | أمن الأسرار المطبّق الآن: يمنع عودة `.dev.vars`/`.env` إلى التتبّع، ويكشف `service_role` و`sb_secret_` داخل الملفات المتتبَّعة ([`15`](15-deployment-architecture.md) §2.4) |
 | Trivy + gitleaks (سجل Git) + `npm audit` | أمن الحزم وتاريخ الأسرار — **مستهدف، لم يُضف إلى CI بعد** |
 | dependency-cruiser | فرض حدود الوحدات آليًا |
 | `@axe-core/playwright` | إتاحة الواجهة |

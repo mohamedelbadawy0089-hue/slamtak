@@ -158,7 +158,7 @@
 | Contract | `openapi.yaml` محدّث ومطابق |
 | Build | بناء الويب والـ API ناجح |
 | E2E | السيناريو الذهبي أخضر |
-| Security scan | `npm run check:secrets` (secret-guard) أخضر: لا `.dev.vars`/`.env` متتبَّع؛ وgitleaks لسجل Git لم يُضف بعد |
+| Security scan | `npm run check:secrets` (secret-guard) أخضر: لا ملف بيئة متتبَّع ولا `service_role`/`sb_secret_` داخل ملفات متتبَّعة؛ وgitleaks لسجل Git لم يُضف بعد |
 | Performance smoke | لا انحدار > 20% في زمن استعلامات مرجعية |
 
 ---
