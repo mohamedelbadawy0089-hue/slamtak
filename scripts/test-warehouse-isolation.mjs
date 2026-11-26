@@ -362,6 +362,69 @@ needsDb('الرصيد: دفتر الحركات append-only، والمخزن لا
   });
 });
 
+// ---------------------------------------------------------------- منع الصرف
+
+needsDb('الصرف: حركة sale على تشغيلة منتهية أو محجوبة أو رصيد محجوب مرفوضة في القاعدة', async () => {
+  await asApp({ tenantId: T_A, userId: U_A }, async (c) => {
+    const sell = (batchId) =>
+      expectFailure(
+        c,
+        `INSERT INTO public.stock_movements
+           (tenant_id, warehouse_id, location_id, medicine_id, batch_id, movement_type, qty_delta, created_by)
+         VALUES ($1, $2, $3, $4, $5, 'sale', -1, $6)`,
+        [T_A, W_A, L_A, M_A, batchId, U_A],
+      );
+
+    // A3 منتهية (−30) وA4 رصيدها محجوب (+10) وA6 تشغيلتها بحالة quarantine (+5).
+    const expired = await sell(B_A3);
+    assert.ok(expired, 'الصرف من تشغيلة منتهية مرفوض');
+    assert.equal(expired.code, '23514');
+    assert.match(expired.message, /DISPENSE_EXPIRED_BATCH/);
+
+    const blockedStock = await sell(B_A4);
+    assert.ok(blockedStock, 'الصرف من رصيد محجوب مرفوض');
+    assert.equal(blockedStock.code, '23514');
+    assert.match(blockedStock.message, /DISPENSE_BLOCKED_STOCK/);
+
+    const blockedBatch = await sell(B_A6);
+    assert.ok(blockedBatch, 'الصرف من تشغيلة محجورة مرفوض');
+    assert.equal(blockedBatch.code, '23514');
+    assert.match(blockedBatch.message, /DISPENSE_BLOCKED_BATCH/);
+
+    // والرفض لم يترك أثرًا: الأرصدة الثلاثة كما كانت.
+    const after = await c.query(
+      'SELECT batch_id, qty_on_hand FROM public.stock_batches WHERE batch_id = ANY($1)',
+      [[B_A3, B_A4, B_A6]],
+    );
+    const byBatch = Object.fromEntries(after.rows.map((r) => [r.batch_id, Number(r.qty_on_hand)]));
+    assert.deepEqual(byBatch, { [B_A3]: 7, [B_A4]: 4, [B_A6]: 3 }, 'لا خصم من حركة مرفوضة');
+  });
+});
+
+needsDb('الصرف: الحارس لا يغلق إتلاف المنتهي ولا الصرف من تشغيلة صالحة', async () => {
+  await asApp({ tenantId: T_A, userId: U_A }, async (c) => {
+    // إتلاف دواء منتهٍ: مسار مشروع يجب أن يبقى مفتوحًا وإلا تعذّر شطب المنتهي.
+    await c.query(
+      `INSERT INTO public.stock_movements
+         (tenant_id, warehouse_id, location_id, medicine_id, batch_id, movement_type, qty_delta, reason, created_by)
+       VALUES ($1, $2, $3, $4, $5, 'damage', -2, 'إتلاف تشغيلة منتهية', $6)`,
+      [T_A, W_A, L_A, M_A, B_A3, U_A],
+    );
+    const expired = await c.query('SELECT qty_on_hand FROM public.stock_batches WHERE batch_id = $1', [B_A3]);
+    assert.equal(Number(expired.rows[0].qty_on_hand), 5, 'الإتلاف خصم 2 من 7');
+
+    // والصرف من تشغيلة صالحة ما زال يعمل.
+    await c.query(
+      `INSERT INTO public.stock_movements
+         (tenant_id, warehouse_id, location_id, medicine_id, batch_id, movement_type, qty_delta, created_by)
+       VALUES ($1, $2, $3, $4, $5, 'sale', -1, $6)`,
+      [T_A, W_A, L_A, M_A, B_A1, U_A],
+    );
+    const ok = await c.query('SELECT qty_on_hand FROM public.stock_batches WHERE batch_id = $1', [B_A1]);
+    assert.equal(Number(ok.rows[0].qty_on_hand), 4, 'الصرف من A1 الصالح خصم 1');
+  });
+});
+
 // ---------------------------------------------------------------- الصلاحيات
 
 needsDb('الصلاحيات: المالك يملك صلاحيات مخزنه ولا يملك صلاحية منصة', async () => {

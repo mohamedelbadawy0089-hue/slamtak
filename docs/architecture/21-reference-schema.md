@@ -967,7 +967,70 @@ GRANT EXECUTE ON FUNCTION app.allocate_fefo(uuid, uuid, uuid, numeric) TO slamta
 | المتاح أقل من المطلوب = استثناء | لا تخصيص جزئي صامت: إما تغطية كاملة أو فشل المعاملة كلها (`409 INSUFFICIENT_STOCK`) |
 | `TENANT_CONTEXT_MISMATCH` | `SECURITY DEFINER` يتجاوز RLS؛ فحص تطابق السياق يمنع استغلالها لصرف مخزون حساب آخر |
 
-### 9.5 ما تم التحقق منه فعليًا
+### 9.5 حارس الصرف على مسار الحركات (`guard_dispense_movement`)
+
+`allocate_fefo` تمنع اختيار التشغيلة المنتهية أو المحجوبة، لكن `stock_movements` جدول يقبل الإدراج المباشر من دور التطبيق: حركة `sale` واحدة على تشغيلة منتهية كانت تُقبل وتُخصم من الرصيد، فتُتجاوز FEFO بكتابة صف واحد. الحارس يجعل الفحص الأخير على مسار الحركة نفسه، وهو المسار الوحيد لتغيير رصيد (`UPDATE`/`DELETE` على `stock_batches` مسحوب من `slamtak_app`).
+
+```sql
+CREATE OR REPLACE FUNCTION app.guard_dispense_movement() RETURNS trigger
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp AS $$
+DECLARE
+  v_expiry       date;
+  v_batch_status text;
+  v_stock_status text;
+BEGIN
+  SELECT b.expiry_date, b.status, sb.status
+    INTO v_expiry, v_batch_status, v_stock_status
+    FROM stock_batches sb
+    JOIN batches b ON b.tenant_id = sb.tenant_id AND b.id = sb.batch_id
+   WHERE sb.tenant_id    = NEW.tenant_id
+     AND sb.warehouse_id = NEW.warehouse_id
+     AND sb.location_id  = NEW.location_id
+     AND sb.batch_id     = NEW.batch_id;
+
+  -- صف رصيد مفقود: الحكم يبقى لقيد qty_on_hand (23514) كما كان، فلا نغيّر السلوك.
+  IF NOT FOUND THEN
+    RETURN NEW;
+  END IF;
+
+  IF v_expiry <= CURRENT_DATE THEN
+    RAISE EXCEPTION 'DISPENSE_EXPIRED_BATCH: التشغيلة تنتهي في % ولا تُصرف', v_expiry
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF v_batch_status <> 'active' THEN
+    RAISE EXCEPTION 'DISPENSE_BLOCKED_BATCH: حالة التشغيلة «%» تمنع الصرف', v_batch_status
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF v_stock_status <> 'available' THEN
+    RAISE EXCEPTION 'DISPENSE_BLOCKED_STOCK: حالة الرصيد «%» تمنع الصرف', v_stock_status
+      USING ERRCODE = '23514';
+  END IF;
+
+  RETURN NEW;
+END $$;
+
+REVOKE ALL ON FUNCTION app.guard_dispense_movement() FROM PUBLIC;
+
+CREATE TRIGGER trg_dispense_requires_usable_batch
+  BEFORE INSERT ON stock_movements
+  FOR EACH ROW WHEN (NEW.movement_type = 'sale')
+  EXECUTE FUNCTION app.guard_dispense_movement();
+```
+
+**لماذا `sale` وحدها:**
+
+| الحركة | الحكم | السبب |
+|---|---|---|
+| `sale` | مرفوضة على المنتهي/المحجوب/المحجور | صرف للمريض، والحظر التنظيمي هنا غايته |
+| `damage` / `expiry` | مسموحة | إتلاف دواء منتهٍ مسار إلزامي؛ منعه يترك المخزن بلا طريقة قانونية لشطب المنتهي |
+| `return_out` / `recall` | مسموحة | سحب التشغيلة وإرجاعها للمورد يحدث بالضبط بعد الحجب أو سحب التسجيل |
+| `adjustment_out` | مسموحة | تسوية جرد بسبب موثق، لا صرف |
+
+الحارس `BEFORE INSERT` فيعمل قبل `trg_apply_stock_movement` (`AFTER INSERT`)، فلا يُخصم رصيد ثم يُلغى: الحركة المرفوضة لا تصل إلى جدول الحركات أصلًا.
+
+### 9.6 ما تم التحقق منه فعليًا
 
 | # | الفحص | النتيجة |
 |---|---|---|
@@ -982,7 +1045,8 @@ GRANT EXECUTE ON FUNCTION app.allocate_fefo(uuid, uuid, uuid, numeric) TO slamta
 | V9 | إدراج مخزن ثانٍ لنفس `tenant_id` | ✅ مرفوض: `23505` على `uq_one_warehouse_per_tenant` |
 | V10 | عضوية بـ`warehouse_id` لمخزن حساب آخر | ✅ مرفوضة بالـFK المركّب `(tenant_id, warehouse_id)` |
 | V11 | حذف مخزن الحساب الوحيد | ✅ مرفوض/ممنوع تشغيليًا: لا مسار حذف، والـFK من العضوية يمنع الحذف الصامت |
-| V12 | `app.allocate_fefo` على تشغيلات متاحة/منتهية/محجوبة/محجورة/محجوزة | ✅ يقسم على تشغيلتين بالترتيب، ويستبعد الأربعة، ويرفض الطلب فوق المتاح بـ`FEFO_INSUFFICIENT_STOCK` (21/21 في CI) |
+| V12 | `app.allocate_fefo` على تشغيلات متاحة/منتهية/محجوبة/محجورة/محجوزة | ✅ يقسم على تشغيلتين بالترتيب، ويستبعد الأربعة، ويرفض الطلب فوق المتاح بـ`FEFO_INSUFFICIENT_STOCK` |
+| V13 | حركة `sale` مباشرة على تشغيلة منتهية/محجوبة/رصيد محجوب | ✅ مرفوضة `23514` بـ`DISPENSE_EXPIRED_BATCH`/`DISPENSE_BLOCKED_STOCK`/`DISPENSE_BLOCKED_BATCH` ولا تُخصم، و`damage` على المنتهي ما زال يعمل (23/23 في CI) |
 
 **بيئة التحقق:** PostgreSQL 17 (WASM/PGlite) — نفس إصدار المزوّد المستهدف. السياسات واختبار العزل في [`22`](22-rls-and-isolation-tests.md).
 

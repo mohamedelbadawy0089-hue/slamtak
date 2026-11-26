@@ -54,6 +54,7 @@ sequenceDiagram
 | ترتيب التشغيلات | `app.allocate_fefo` — `ORDER BY expiry_date, created_at` (FEFO) داخل القاعدة | `T11` + `test:isolation` |
 | استبعاد المنتهي | `expiry_date > CURRENT_DATE` إلزامي | `FEFO-2` (منتهي لا يُخصص) |
 | استبعاد المحجوب | `status = 'available'` فقط على الرصيد وعلى التشغيلة | `FEFO-3` |
+| مسار الحركة نفسه | `trg_dispense_requires_usable_batch` يرفض `sale` على المنتهي/المحجوب حتى لو كُتبت الحركة يدويًا | `test:isolation` |
 | المتاح لا الرصيد | `qty_on_hand - qty_reserved` | `test:isolation` (المحجوز لا يُخصص) |
 | الرصيد السالب | `CHECK qty_on_hand >= 0` | `T6` |
 | التزامن | `SELECT ... FOR UPDATE` على صفوف التشغيلات | `CONC-1` (فاتورتان متوازيتان) |

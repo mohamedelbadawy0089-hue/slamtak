@@ -813,6 +813,62 @@ CREATE TRIGGER trg_apply_stock_movement
   AFTER INSERT ON stock_movements
   FOR EACH ROW EXECUTE FUNCTION app.apply_stock_movement();
 
+-- حارس الصرف على مسار الحركة نفسه.
+-- allocate_fefo تختار من الصالح فقط، لكن stock_movements جدول يقبل الإدراج
+-- مباشرة من دور التطبيق: بلا هذا الحارس تُقبل حركة «sale» على تشغيلة منتهية
+-- أو محجوبة وتُخصم من الرصيد، فتتجاوز FEFO بكتابة صف واحد. الفحص هنا لا
+-- يمكن تجاوزه لأن كل تغيير رصيد يمر بجدول الحركات (UPDATE على stock_batches
+-- مسحوب من slamtak_app).
+-- مقصور على «sale» عمدًا: إتلاف/شطب المنتهي (damage/expiry) ومرتجع المورد
+-- مسارات مشروعة على التشغيلة نفسها، فلا يغلقها الحارس ويترك الكاتب بلا طريق
+-- للتخلص من دواء منتهٍ مسجل.
+CREATE OR REPLACE FUNCTION app.guard_dispense_movement() RETURNS trigger
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp AS $$
+DECLARE
+  v_expiry       date;
+  v_batch_status text;
+  v_stock_status text;
+BEGIN
+  SELECT b.expiry_date, b.status, sb.status
+    INTO v_expiry, v_batch_status, v_stock_status
+    FROM stock_batches sb
+    JOIN batches b ON b.tenant_id = sb.tenant_id AND b.id = sb.batch_id
+   WHERE sb.tenant_id    = NEW.tenant_id
+     AND sb.warehouse_id = NEW.warehouse_id
+     AND sb.location_id  = NEW.location_id
+     AND sb.batch_id     = NEW.batch_id;
+
+  -- صف رصيد مفقود: الحكم يبقى لقيد qty_on_hand (23514) كما كان، فلا نغيّر السلوك.
+  IF NOT FOUND THEN
+    RETURN NEW;
+  END IF;
+
+  IF v_expiry <= CURRENT_DATE THEN
+    RAISE EXCEPTION 'DISPENSE_EXPIRED_BATCH: التشغيلة تنتهي في % ولا تُصرف', v_expiry
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF v_batch_status <> 'active' THEN
+    RAISE EXCEPTION 'DISPENSE_BLOCKED_BATCH: حالة التشغيلة «%» تمنع الصرف', v_batch_status
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF v_stock_status <> 'available' THEN
+    RAISE EXCEPTION 'DISPENSE_BLOCKED_STOCK: حالة الرصيد «%» تمنع الصرف', v_stock_status
+      USING ERRCODE = '23514';
+  END IF;
+
+  RETURN NEW;
+END $$;
+
+-- دالة مشغّل لا ينفّذها أحد مباشرة؛ EXECUTE لـPUBLIC ممنوع كبقية دوال app.
+REVOKE ALL ON FUNCTION app.guard_dispense_movement() FROM PUBLIC;
+
+CREATE TRIGGER trg_dispense_requires_usable_batch
+  BEFORE INSERT ON stock_movements
+  FOR EACH ROW WHEN (NEW.movement_type = 'sale')
+  EXECUTE FUNCTION app.guard_dispense_movement();
+
 -- ---- [21] ----
 DO $$
 DECLARE r record;
