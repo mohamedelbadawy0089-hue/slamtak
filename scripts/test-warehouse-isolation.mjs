@@ -99,6 +99,19 @@ const B_D2 = 'dddddddd-dddd-4ddd-8ddd-ddddddddddd5'; // +120 يومًا، 6 وح
 const U_D = 'dddddddd-dddd-4ddd-8ddd-ddddddddddd6';
 const UN_D = 'dddddddd-dddd-4ddd-8ddd-ddddddddddd7';
 const CU_D = 'dddddddd-dddd-4ddd-8ddd-ddddddddddd8';
+// مخزن خامس معزول (T_E) بضنين على تشغيلة واحدة لكل منهما، لاختبار الفاتورة
+// متعددة الأسطر وفشل السطر الثاني، كي لا تغيّر أرصدة أ/ب/ج/د التي تفترضها
+// بقية الاختبارات.
+const T_E = '55555555-5555-4555-8555-555555555555';
+const W_E = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee1';
+const L_E = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee2';
+const M_E1 = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee3'; // 4 وحدات
+const M_E2 = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee4'; // 3 وحدات
+const B_E1 = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee5'; // +40 يومًا
+const B_E2 = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee6'; // +80 يومًا
+const UN_E = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee7';
+const CU_E = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee8';
+const U_E = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee9';
 
 let skipReason = null;
 let owner = null;
@@ -205,7 +218,7 @@ async function expectFailure(client, text, params) {
 // وحده يُثبّت حركات؛ فنُعطّل الحارس لحظيًا بدور المالك ثم نُعيده في finally.
 // هذا تنظيف الاختبار لا مسارًا في المنتج: لا شيء يعطّل الحارس على قاعدة حقيقية.
 async function cleanupTenants(client) {
-  const ids = [T_A, T_B, T_C, T_D];
+  const ids = [T_A, T_B, T_C, T_D, T_E];
   await client.query('ALTER TABLE public.stock_movements DISABLE TRIGGER trg_movements_append_only');
   try {
     await client.query('DELETE FROM public.stock_movements WHERE tenant_id = ANY($1)', [ids]);
@@ -413,13 +426,60 @@ before(async () => {
      SELECT $1, $2, id FROM public.roles WHERE tenant_id = $1 AND code = 'owner'`,
     [T_D, U_D],
   );
+
+  // مخزن هـ: صنفان مستقلان، لاختبار فاتورة بسطرين وفشل السطر الثاني.
+  await sql(`INSERT INTO public.tenants (id, slug, name) VALUES ($1, 'iso-e', 'مخزن هـ')`, [T_E]);
+  await sql(`INSERT INTO public.warehouses (tenant_id, id, name) VALUES ($1, $2, 'مخزن هـ')`, [T_E, W_E]);
+  await sql(
+    `INSERT INTO public.storage_locations (tenant_id, id, warehouse_id, code, name, is_default)
+     VALUES ($1, $2, $3, 'DEFAULT', 'الافتراضي', true)`,
+    [T_E, L_E, W_E],
+  );
+  await sql(
+    `INSERT INTO public.medicines (tenant_id, id, sku, trade_name_ar) VALUES
+       ($1, $2, 'ISO-E-1', 'دواء هـ ١'),
+       ($1, $3, 'ISO-E-2', 'دواء هـ ٢')`,
+    [T_E, M_E1, M_E2],
+  );
+  await sql(
+    `INSERT INTO public.batches (tenant_id, id, medicine_id, batch_no, expiry_date, status) VALUES
+       ($1, $2, $4, 'E1', CURRENT_DATE + 40, 'active'),
+       ($1, $3, $5, 'E2', CURRENT_DATE + 80, 'active')`,
+    [T_E, B_E1, B_E2, M_E1, M_E2],
+  );
+  await sql(
+    `INSERT INTO public.stock_batches
+       (tenant_id, warehouse_id, location_id, medicine_id, batch_id, qty_on_hand) VALUES
+       ($1, $2, $3, $4, $5, 4),
+       ($1, $2, $3, $6, $7, 3)`,
+    [T_E, W_E, L_E, M_E1, B_E1, M_E2, B_E2],
+  );
+  await sql(
+    `INSERT INTO public.units (tenant_id, id, code, name) VALUES ($1, $2, 'box', 'علبة')`,
+    [T_E, UN_E],
+  );
+  await sql(
+    `INSERT INTO public.customers (tenant_id, id, name, kind) VALUES ($1, $2, 'عميل هـ', 'cash')`,
+    [T_E, CU_E],
+  );
+  await sql(
+    `INSERT INTO public.users (id, email, full_name, password_hash)
+     VALUES ($1, 'isolation-e@test.local', 'مستخدم هـ', 'x')`,
+    [U_E],
+  );
+  await sql(`SELECT app.seed_tenant_roles($1)`, [T_E]);
+  await sql(
+    `INSERT INTO public.user_roles (tenant_id, user_id, role_id)
+     SELECT $1, $2, id FROM public.roles WHERE tenant_id = $1 AND code = 'owner'`,
+    [T_E, U_E],
+  );
 });
 
 after(async () => {
   if (!owner) return;
   try {
     await cleanupTenants(owner);
-    await sql(`DELETE FROM public.users WHERE id = ANY($1)`, [[U_A, U_B, U_D]]);
+    await sql(`DELETE FROM public.users WHERE id = ANY($1)`, [[U_A, U_B, U_D, U_E]]);
   } finally {
     await owner.end();
   }
@@ -864,8 +924,13 @@ needsDb('FEFO: الفهرس الذي يخدم الاستعلام موجود با
 
 // ---------------------------------------------------------------- البيع (post_sale)
 
+// توقيع السطر الواحد (غلاف فوق الدالة متعددة الأسطر).
 const postSale = (client, args) =>
   client.query('SELECT app.post_sale($1, $2, $3, $4, $5, $6, $7) AS sale', args);
+
+// نداء الفاتورة: [العميل، المخزن، مصفوفة البنود، مفتاح التكرار].
+const postSaleItems = (client, args) =>
+  client.query('SELECT app.post_sale($1, $2, $3, $4) AS sale', args);
 
 needsDb('البيع: post_sale ينشئ فاتورة مؤكدة ويخصم الأقرب انتهاءً عبر حركات sale', async () => {
   await asApp({ tenantId: T_A, userId: U_A }, async (c) => {
@@ -944,7 +1009,9 @@ needsDb('البيع: نفس مفتاح التكرار يعيد الفاتورة 
     assert.equal(second.replayed, true, 'الإعادة تُعلَن صراحةً');
     assert.equal(second.invoice_id, first.invoice_id, 'نفس الفاتورة لا فاتورة ثانية');
     assert.equal(second.item_id, first.item_id);
-    assert.deepEqual(second.allocations, first.allocations, 'التخصيص المعاد هو نفسه');
+    // الإعادة لا تعيد `line_no`: الحركة لا تُشير إلى سطرها، والترتيب وحده يُحفظ.
+    const stripLine = (allocs) => allocs.map(({ line_no, ...rest }) => rest);
+    assert.deepEqual(stripLine(second.allocations), stripLine(first.allocations), 'التخصيص المعاد هو نفسه');
 
     assert.deepEqual((await ledger()).rows, before.ledger, 'لا حركة جديدة ولا خصم إضافي');
     assert.deepEqual((await balances()).rows, before.balances, 'الأرصدة لم تتغير');
@@ -1059,6 +1126,172 @@ needsDb('البيع: مفتاح فارغ أو عميل من مخزن آخر أو
     assert.ok(denied, 'بلا صلاحية إنشاء فاتورة لا بيع');
     assert.equal(denied.code, '42501');
     assert.match(denied.message, /SALE_PERMISSION_DENIED/);
+  });
+});
+
+needsDb('البيع: فاتورة بسطرين تُخصم بسطرين وتُحسب بمجموع السطور', async () => {
+  await asApp({ tenantId: T_E, userId: U_E }, async (c) => {
+    // الثانية أولًا في الإدخال، لإثبات أن الترتيب الداخلي لا يتبع ترتيب الواجهة.
+    const items = [
+      { medicine_id: M_E2, unit_id: UN_E, qty: 1, unit_price: 7.25 },
+      { medicine_id: M_E1, unit_id: UN_E, qty: 2, unit_price: 10.5 },
+    ];
+    const sale = (await postSaleItems(c, [CU_E, W_E, JSON.stringify(items), 'sale-key-multi']))
+      .rows[0].sale;
+
+    assert.equal(sale.replayed, false, 'أول نداء ليس إعادة');
+    assert.equal(sale.line_count, 2, 'سطران في نداء واحد');
+    assert.equal(Number(sale.total), 28.25, '2 × 10.50 + 1 × 7.25');
+    assert.deepEqual(
+      sale.items.map((i) => i.medicine_id),
+      [M_E1, M_E2],
+      'الأسطر مرتبة بالصنف لا بترتيب الإدخال',
+    );
+    assert.deepEqual(
+      sale.items.map((i) => Number(i.line_total)),
+      [21, 7.25],
+    );
+    assert.deepEqual(
+      sale.allocations.map((a) => [a.line_no, a.medicine_id, Number(a.qty)]),
+      [
+        [1, M_E1, 2],
+        [2, M_E2, 1],
+      ],
+      'تخصيص لكل سطر من تشغيلته',
+    );
+
+    const inv = await c.query(
+      'SELECT status, subtotal, total, idempotency_key FROM public.sales_invoices WHERE id = $1',
+      [sale.invoice_id],
+    );
+    assert.equal(inv.rowCount, 1);
+    assert.equal(inv.rows[0].status, 'confirmed');
+    assert.equal(Number(inv.rows[0].subtotal), 28.25);
+    assert.equal(Number(inv.rows[0].total), 28.25);
+    assert.equal(inv.rows[0].idempotency_key, 'sale-key-multi');
+
+    const lines = await c.query(
+      `SELECT medicine_id, qty, unit_price, line_total
+         FROM public.sales_invoice_items
+        WHERE invoice_id = $1
+        ORDER BY medicine_id`,
+      [sale.invoice_id],
+    );
+    assert.deepEqual(
+      lines.rows.map((r) => [r.medicine_id, Number(r.qty), Number(r.unit_price), Number(r.line_total)]),
+      [
+        [M_E1, 2, 10.5, 21],
+        [M_E2, 1, 7.25, 7.25],
+      ],
+    );
+
+    const moves = await c.query(
+      `SELECT medicine_id, qty_delta, ref_type, ref_id
+         FROM public.stock_movements
+        WHERE tenant_id = $1 AND ref_type = 'sales_invoice' AND ref_id = $2
+        ORDER BY medicine_id`,
+      [T_E, sale.invoice_id],
+    );
+    assert.deepEqual(
+      moves.rows.map((m) => [m.medicine_id, Number(m.qty_delta)]),
+      [
+        [M_E1, -2],
+        [M_E2, -1],
+      ],
+      'حركة sale لكل سطر، على الفاتورة نفسها',
+    );
+    for (const m of moves.rows) assert.equal(m.ref_id, sale.invoice_id);
+
+    const balances = () =>
+      c.query(
+        'SELECT batch_id, qty_on_hand FROM public.stock_batches WHERE batch_id = ANY($1) ORDER BY batch_id',
+        [[B_E1, B_E2]],
+      );
+    const before = (await balances()).rows;
+    assert.deepEqual(
+      Object.fromEntries(before.map((r) => [r.batch_id, Number(r.qty_on_hand)])),
+      { [B_E1]: 2, [B_E2]: 2 },
+      'الخصم مر عبر الحركات فقط',
+    );
+
+    // إعادة المفتاح نفسه بترتيب أسطر مختلف: الفاتورة نفسها بلا صرف ثانٍ.
+    const reordered = [items[1], items[0]];
+    const replay = (await postSaleItems(c, [CU_E, W_E, JSON.stringify(reordered), 'sale-key-multi']))
+      .rows[0].sale;
+    assert.equal(replay.replayed, true, 'الإعادة تُعلَن صراحةً');
+    assert.equal(replay.invoice_id, sale.invoice_id, 'نفس الفاتورة لا فاتورة ثانية');
+    assert.equal(replay.items.length, 2);
+    assert.deepEqual(
+      replay.allocations.map((a) => [a.medicine_id, Number(a.qty)]),
+      [
+        [M_E1, 2],
+        [M_E2, 1],
+      ],
+      'التخصيص المعاد هو نفسه',
+    );
+    assert.deepEqual((await balances()).rows, before, 'لا خصم إضافي عند الإعادة');
+
+    // إعادة المفتاح ببنود مختلفة (كمية السطر الثاني) ترتد ولا تصرف.
+    const changed = [items[0], { ...items[1], qty: 3 }];
+    const reused = await expectFailure(c, 'SELECT app.post_sale($1, $2, $3, $4)', [
+      CU_E,
+      W_E,
+      JSON.stringify(changed),
+      'sale-key-multi',
+    ]);
+    assert.ok(reused, 'المفتاح نفسه ببنود أخرى مرفوض');
+    assert.equal(reused.code, '23505');
+    assert.match(reused.message, /SALE_IDEMPOTENCY_KEY_REUSED/);
+    assert.deepEqual((await balances()).rows, before, 'الرفض لا يخصم شيئًا');
+  });
+});
+
+needsDb('البيع: فشل السطر الثاني لا يترك فاتورة جزئية ولا حركة ولا يستهلك رقم مستند', async () => {
+  await asApp({ tenantId: T_E, userId: U_E }, async (c) => {
+    const snapshot = async () => ({
+      invoices: (await c.query('SELECT count(*)::int AS n FROM public.sales_invoices')).rows[0].n,
+      movements: (await c.query('SELECT count(*)::int AS n FROM public.stock_movements')).rows[0].n,
+      lines: (await c.query('SELECT count(*)::int AS n FROM public.sales_invoice_items')).rows[0].n,
+      seq: (
+        await c.query(
+          `SELECT doc_type, fiscal_year, last_value FROM public.document_sequences
+            WHERE tenant_id = $1 AND doc_type = 'sale'`,
+          [T_E],
+        )
+      ).rows,
+      balances: (
+        await c.query(
+          'SELECT batch_id, qty_on_hand FROM public.stock_batches WHERE batch_id = ANY($1) ORDER BY batch_id',
+          [[B_E1, B_E2]],
+        )
+      ).rows,
+    });
+
+    const before = await snapshot();
+
+    // السطر الأول متاح (1 من 4) والثاني فوق المتاح (99 من 3)، والترتيب الداخلي
+    // يضع M_E1 أولًا فعلًا: فالخصم يُسجَّل ثم يجب أن يرتد كله.
+    const err = await expectFailure(c, 'SELECT app.post_sale($1, $2, $3, $4)', [
+      CU_E,
+      W_E,
+      JSON.stringify([
+        { medicine_id: M_E1, unit_id: UN_E, qty: 1, unit_price: 10 },
+        { medicine_id: M_E2, unit_id: UN_E, qty: 99, unit_price: 10 },
+      ]),
+      'sale-key-multi-fail',
+    ]);
+    assert.ok(err, 'الطلب فوق المتاح مرفوض');
+    assert.equal(err.code, 'P0001');
+    assert.match(err.message, /FEFO_INSUFFICIENT_STOCK/);
+
+    assert.deepEqual(await snapshot(), before, 'لا فاتورة ولا سطر ولا حركة ولا استهلاك لرقم مستند');
+
+    const invoices = await c.query(
+      `SELECT count(*)::int AS n FROM public.sales_invoices
+        WHERE tenant_id = $1 AND idempotency_key = 'sale-key-multi-fail'`,
+      [T_E],
+    );
+    assert.equal(invoices.rows[0].n, 0, 'لا فاتورة معلقة بلا بضاعة');
   });
 });
 

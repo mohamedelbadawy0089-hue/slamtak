@@ -702,53 +702,111 @@ CREATE TABLE sales_return_items (
 );
 
 -- ---- [21] ----
--- ترحيل بيع واحد من أوله إلى آخره: يخصّص FEFO (فتأخذ الدالة أقفال الصفوف)، ثم
--- يسجّل حركة «sale» لكل صف تخصيص (فالخصم لا يقع إلا عبر stock_movements)، ثم
--- يربط الفاتورة بالحركات بـref_type='sales_invoice'. الواجهة تستدعي هذه الدالة
--- وحدها ولا ترسل batch_id ولا qty_delta، فلا تستطيع تجاوز FEFO ولا تزوير كمية.
+-- ترحيل بيع واحد من أوله إلى آخره، بعدة أصناف في فاتورة واحدة: يتحقق من البنود،
+-- ثم يحجز مفتاح التكرار (إدراج الفاتورة) قبل أي تخصيص، ثم يخصّص FEFO لكل سطر
+-- (فتأخذ الدالة أقفال الصفوف)، ويسجّل حركة «sale» سالبة لكل صف تخصيص (فالخصم لا
+-- يقع إلا عبر stock_movements)، ويربط الحركات بالفاتورة بـref_type='sales_invoice'.
+-- الواجهة تستدعي هذه الدالة وحدها ولا ترسل batch_id ولا qty_delta، فلا تستطيع
+-- تجاوز FEFO ولا تزوير كمية.
 --
--- مفتاح التكرار هو ما يمنع الصرف المزدوج عند إعادة الإرسال: يُحجز أولًا
--- بـON CONFLICT DO NOTHING، فلا تصل المحاولة الثانية إلى allocate_fefo قبل أن
--- تنتهي الأولى (تنتظر على رقم المستند أو على الفهرس الفريد)، ثم تعود الفاتورة
--- نفسها بلا تخصيص جديد. وإعادة المفتاح بكمية أو صنف أو عميل مختلف تُرفض
--- (SALE_IDEMPOTENCY_KEY_REUSED)، فلا يصرف خطأ إدخال كميةً أخرى تحت مفتاح قديم.
+-- المفتاح واحد للفاتورة كلها لا لكل سطر: يُحجز أولًا بـON CONFLICT DO NOTHING، فلا
+-- تصل المحاولة الثانية إلى allocate_fefo قبل أن تنتهي الأولى (تنتظر على رقم
+-- المستند أو على الفهرس الفريد)، ثم تعود الفاتورة نفسها بلا تخصيص جديد. وإعادة
+-- المفتاح ببنود أو عميل أو مخزن مختلف تُرفض (SALE_IDEMPOTENCY_KEY_REUSED)، فلا
+-- يصرف خطأ إدخال كميةً أخرى تحت مفتاح قديم.
 --
--- فشل التخصيص (نقص المتاح) يُبطل المعاملة كلها: لا فاتورة، ولا حركة، ولا استهلاك
--- لرقم مستند — لأن كل الإدراجات في نداء واحد.
+-- الذرّية: فشل أي سطر (نقص المتاح) يُبطل المعاملة كلها: لا فاتورة، ولا سطر، ولا
+-- حركة، ولا استهلاك لرقم مستند — لأن كل الإدراجات في نداء واحد، فلا فاتورة جزئية.
+--
+-- ترتيب المعالجة ثابت (بالـmedicine_id ثم برقم السطر) لا ترتيب إدخال الواجهة،
+-- فجلستان تبيعان الصنفين نفسهما بترتيبين مختلفين تأخذان الأقفال بالترتيب نفسه.
 CREATE OR REPLACE FUNCTION app.post_sale(
-  p_customer uuid, p_warehouse uuid, p_medicine uuid, p_unit uuid,
-  p_qty numeric, p_unit_price numeric, p_idempotency_key text
+  p_customer uuid, p_warehouse uuid, p_items jsonb, p_idempotency_key text
 ) RETURNS jsonb
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, app, pg_temp AS $$
 DECLARE
-  v_tenant        uuid := app.current_tenant_id();
-  v_user          uuid := app.current_user_id();
-  v_key           text := btrim(coalesce(p_idempotency_key, ''));
-  v_invoice       uuid;
-  v_item          uuid;
-  v_doc           text;
-  v_status        text;
-  v_total         numeric(14,2);
-  v_prev_med      uuid;
-  v_prev_qty      numeric;
-  v_prev_price    numeric;
-  v_prev_customer uuid;
-  v_prev_warehouse uuid;
-  v_alloc         record;
-  v_allocations   jsonb := '[]'::jsonb;
+  v_tenant      uuid := app.current_tenant_id();
+  v_user        uuid := app.current_user_id();
+  v_key         text := btrim(coalesce(p_idempotency_key, ''));
+  v_count       int;
+  v_idx         int;
+  v_entry       jsonb;
+  v_line        jsonb;
+  v_items       jsonb := '[]'::jsonb;
+  v_med         uuid;
+  v_unit        uuid;
+  v_qty         numeric(14,3);
+  v_price       numeric(14,2);
+  v_line_total  numeric(14,2);
+  v_subtotal    numeric(14,2) := 0;
+  v_invoice     uuid;
+  v_item        uuid;
+  v_doc         text;
+  v_status      text;
+  v_total       numeric(14,2);
+  v_prev_cust   uuid;
+  v_prev_wh     uuid;
+  v_prev_items  jsonb;
+  v_alloc       record;
+  v_allocations jsonb := '[]'::jsonb;
+  v_out_items   jsonb := '[]'::jsonb;
 BEGIN
-  IF p_qty IS NULL OR p_qty <= 0 THEN
-    RAISE EXCEPTION 'SALE_INVALID_QTY: الكمية يجب أن تكون أكبر من صفر'
+  IF p_items IS NULL OR jsonb_typeof(p_items) <> 'array' THEN
+    RAISE EXCEPTION 'SALE_ITEMS_REQUIRED: بنود الفاتورة مصفوفة JSON إلزامية'
       USING ERRCODE = '22023';
   END IF;
-  IF p_qty <> round(p_qty, 3) THEN
-    RAISE EXCEPTION 'SALE_INVALID_QTY: الكمية بأكثر من ثلاث منازل عشرية (%)', p_qty
+  v_count := jsonb_array_length(p_items);
+  IF v_count = 0 THEN
+    RAISE EXCEPTION 'SALE_ITEMS_REQUIRED: الفاتورة بلا أي بند'
       USING ERRCODE = '22023';
   END IF;
-  IF p_unit_price IS NULL OR p_unit_price < 0 OR p_unit_price <> round(p_unit_price, 2) THEN
-    RAISE EXCEPTION 'SALE_INVALID_PRICE: السعر يجب أن يكون غير سالب بعشرتين على الأكثر (%)', p_unit_price
-      USING ERRCODE = '22023';
-  END IF;
+
+  -- تحقق كل بند قبل حجز المفتاح: مدخلات خاطئة لا تستهلك رقم مستند ولا مفتاحًا.
+  FOR v_idx IN 0 .. v_count - 1 LOOP
+    v_entry := p_items -> v_idx;
+    IF v_entry IS NULL OR jsonb_typeof(v_entry) <> 'object' THEN
+      RAISE EXCEPTION 'SALE_INVALID_ITEM: البند % ليس كائنًا', v_idx + 1
+        USING ERRCODE = '22023';
+    END IF;
+    IF coalesce(v_entry->>'medicine_id', '')
+       !~ '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$' THEN
+      RAISE EXCEPTION 'SALE_INVALID_ITEM: البند % بلا medicine_id صالح', v_idx + 1
+        USING ERRCODE = '22023';
+    END IF;
+    IF coalesce(v_entry->>'unit_id', '')
+       !~ '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$' THEN
+      RAISE EXCEPTION 'SALE_INVALID_ITEM: البند % بلا unit_id صالح', v_idx + 1
+        USING ERRCODE = '22023';
+    END IF;
+    IF coalesce(jsonb_typeof(v_entry->'qty'), 'missing') <> 'number' THEN
+      RAISE EXCEPTION 'SALE_INVALID_QTY: البند % بلا كمية رقمية', v_idx + 1
+        USING ERRCODE = '22023';
+    END IF;
+    v_qty := (v_entry->>'qty')::numeric;
+    IF v_qty <= 0 OR v_qty <> round(v_qty, 3) THEN
+      RAISE EXCEPTION 'SALE_INVALID_QTY: كمية البند % يجب أن تكون أكبر من صفر وبثلاث منازل على الأكثر (%)',
+        v_idx + 1, v_qty
+        USING ERRCODE = '22023';
+    END IF;
+    IF coalesce(jsonb_typeof(v_entry->'unit_price'), 'missing') <> 'number' THEN
+      RAISE EXCEPTION 'SALE_INVALID_PRICE: البند % بلا سعر رقمي', v_idx + 1
+        USING ERRCODE = '22023';
+    END IF;
+    v_price := (v_entry->>'unit_price')::numeric;
+    IF v_price < 0 OR v_price <> round(v_price, 2) THEN
+      RAISE EXCEPTION 'SALE_INVALID_PRICE: سعر البند % يجب أن يكون غير سالب بعشرتين على الأكثر (%)',
+        v_idx + 1, v_price
+        USING ERRCODE = '22023';
+    END IF;
+
+    v_items := v_items || jsonb_build_object(
+      'line_no',     v_idx + 1,
+      'medicine_id', (v_entry->>'medicine_id')::uuid,
+      'unit_id',     (v_entry->>'unit_id')::uuid,
+      'qty',         v_qty,
+      'unit_price',  v_price);
+  END LOOP;
+
   IF v_key = '' THEN
     RAISE EXCEPTION 'SALE_IDEMPOTENCY_KEY_REQUIRED: مفتاح التكرار إلزامي ومنع الصرف المزدوج يتوقف عليه'
       USING ERRCODE = '22023';
@@ -764,59 +822,102 @@ BEGIN
       USING ERRCODE = '42501';
   END IF;
 
-  v_total := round(p_qty * p_unit_price, 2);
+  -- ترتيب ثابت لأخذ الأقفال: بالصنف ثم برقم السطر، لا بترتيب إدخال الواجهة.
+  -- وأرقام الأسطر تُعاد ترقيمًا على الترتيب نفسه، فتطابق الفاتورة ما تُرجعه الدالة.
+  SELECT coalesce(jsonb_agg(
+           jsonb_build_object(
+             'line_no',     t.ord,
+             'medicine_id', (t.e->>'medicine_id')::uuid,
+             'unit_id',     (t.e->>'unit_id')::uuid,
+             'qty',         (t.e->>'qty')::numeric,
+             'unit_price',  (t.e->>'unit_price')::numeric)
+           ORDER BY t.ord), '[]'::jsonb)
+    INTO v_items
+    FROM (
+      SELECT row_number() OVER (ORDER BY e->>'medicine_id', (e->>'line_no')::int) AS ord, e
+        FROM jsonb_array_elements(v_items) AS e
+    ) AS t;
+
+  SELECT coalesce(
+           sum(round((e->>'qty')::numeric * (e->>'unit_price')::numeric, 2)), 0
+         )::numeric(14,2)
+    INTO v_subtotal
+    FROM jsonb_array_elements(v_items) AS e;
 
   SELECT i.id, i.status INTO v_invoice, v_status
     FROM sales_invoices i
    WHERE i.tenant_id = v_tenant AND i.idempotency_key = v_key;
 
   IF NOT FOUND THEN
-    -- الحجز الأول: إدراج الفاتورة بمفتاحها الفريد قبل أي تخصيص. المحاولة
-    -- الثانية لنفس المفتاح تنتظر (على رقم المستند أو على الفهرس الفريد) ولا
-    -- تصل إلى allocate_fefo أبدًا.
+    -- الحجز الأول: إدراج الفاتورة بمفتاحها الفريد قبل أي تخصيص. المحاولة الثانية
+    -- لنفس المفتاح تنتظر (على رقم المستند أو على الفهرس الفريد) ولا تصل إلى
+    -- allocate_fefo أبدًا.
     v_doc := app.next_document_number(v_tenant, 'sale', extract(year FROM CURRENT_DATE)::int);
     INSERT INTO sales_invoices
       (tenant_id, doc_number, customer_id, warehouse_id, status,
        subtotal, total, idempotency_key, issued_at, created_by)
     VALUES
       (v_tenant, v_doc, p_customer, p_warehouse, 'confirmed',
-       v_total, v_total, v_key, now(), v_user)
+       v_subtotal, v_subtotal, v_key, now(), v_user)
     ON CONFLICT (tenant_id, idempotency_key) DO NOTHING
     RETURNING id INTO v_invoice;
 
     IF v_invoice IS NOT NULL THEN
-      -- التخصيص يرفع FEFO_INSUFFICIENT_STOCK فيُرجع المعاملة كلها بلا أثر.
-      FOR v_alloc IN SELECT * FROM app.allocate_fefo(v_tenant, p_warehouse, p_medicine, p_qty)
+      FOR v_line IN SELECT e FROM jsonb_array_elements(v_items) AS e
       LOOP
-        INSERT INTO stock_movements
-          (tenant_id, warehouse_id, location_id, medicine_id, batch_id,
-           movement_type, qty_delta, unit_cost, ref_type, ref_id, created_by)
+        v_med   := (v_line->>'medicine_id')::uuid;
+        v_unit  := (v_line->>'unit_id')::uuid;
+        v_qty   := (v_line->>'qty')::numeric;
+        v_price := (v_line->>'unit_price')::numeric;
+        v_line_total := round(v_qty * v_price, 2);
+
+        -- التخصيص يرفع FEFO_INSUFFICIENT_STOCK فيُرجع المعاملة كلها بلا أثر، ولو
+        -- كان سطر سابق قد خُصّص وسُجّلت حركته بالفعل.
+        FOR v_alloc IN SELECT * FROM app.allocate_fefo(v_tenant, p_warehouse, v_med, v_qty)
+        LOOP
+          INSERT INTO stock_movements
+            (tenant_id, warehouse_id, location_id, medicine_id, batch_id,
+             movement_type, qty_delta, unit_cost, ref_type, ref_id, created_by)
+          VALUES
+            (v_tenant, p_warehouse, v_alloc.location_id, v_med, v_alloc.batch_id,
+             'sale', -v_alloc.qty, v_alloc.unit_cost, 'sales_invoice', v_invoice, v_user);
+
+          v_allocations := v_allocations || jsonb_build_object(
+            'line_no',        (v_line->>'line_no')::int,
+            'medicine_id',    v_med,
+            'stock_batch_id', v_alloc.stock_batch_id,
+            'batch_id',       v_alloc.batch_id,
+            'batch_no',       v_alloc.batch_no,
+            'expiry_date',    v_alloc.expiry_date,
+            'location_id',    v_alloc.location_id,
+            'qty',            v_alloc.qty,
+            'unit_cost',      v_alloc.unit_cost);
+        END LOOP;
+
+        INSERT INTO sales_invoice_items
+          (tenant_id, invoice_id, medicine_id, unit_id, qty, unit_price, line_total)
         VALUES
-          (v_tenant, p_warehouse, v_alloc.location_id, p_medicine, v_alloc.batch_id,
-           'sale', -v_alloc.qty, v_alloc.unit_cost, 'sales_invoice', v_invoice, v_user);
+          (v_tenant, v_invoice, v_med, v_unit, v_qty, v_price, v_line_total)
+        RETURNING id INTO v_item;
 
-        v_allocations := v_allocations || jsonb_build_object(
-          'stock_batch_id', v_alloc.stock_batch_id,
-          'batch_id',       v_alloc.batch_id,
-          'batch_no',       v_alloc.batch_no,
-          'expiry_date',    v_alloc.expiry_date,
-          'location_id',    v_alloc.location_id,
-          'qty',            v_alloc.qty,
-          'unit_cost',      v_alloc.unit_cost);
+        v_out_items := v_out_items || jsonb_build_object(
+          'line_no',     (v_line->>'line_no')::int,
+          'item_id',     v_item,
+          'medicine_id', v_med,
+          'unit_id',     v_unit,
+          'qty',         v_qty,
+          'unit_price',  v_price,
+          'line_total',  v_line_total);
       END LOOP;
-
-      INSERT INTO sales_invoice_items
-        (tenant_id, invoice_id, medicine_id, unit_id, qty, unit_price, line_total)
-      VALUES
-        (v_tenant, v_invoice, p_medicine, p_unit, p_qty, p_unit_price, v_total)
-      RETURNING id INTO v_item;
 
       RETURN jsonb_build_object(
         'invoice_id',  v_invoice,
-        'item_id',     v_item,
         'doc_number',  v_doc,
-        'total',       v_total,
+        'line_count',  v_count,
+        'subtotal',    v_subtotal,
+        'total',       v_subtotal,
         'replayed',    false,
+        'items',       v_out_items,
         'allocations', v_allocations);
     END IF;
 
@@ -838,32 +939,57 @@ BEGIN
   END IF;
 
   SELECT i.doc_number, i.total, i.customer_id, i.warehouse_id
-    INTO v_doc, v_total, v_prev_customer, v_prev_warehouse
+    INTO v_doc, v_total, v_prev_cust, v_prev_wh
     FROM sales_invoices i
    WHERE i.tenant_id = v_tenant AND i.id = v_invoice;
 
-  SELECT it.id, it.medicine_id, it.qty, it.unit_price
-    INTO v_item, v_prev_med, v_prev_qty, v_prev_price
+  -- المقارنة كمجموعة لا كترتيب: إعادة الإرسال قد تعيد ترتيب الأسطر نفسه.
+  SELECT coalesce(jsonb_agg(jsonb_build_object(
+           'medicine_id', it.medicine_id,
+           'unit_id',     it.unit_id,
+           'qty',         it.qty,
+           'unit_price',  it.unit_price)
+         ORDER BY it.medicine_id, it.unit_id, it.qty, it.unit_price), '[]'::jsonb)
+    INTO v_prev_items
     FROM sales_invoice_items it
-   WHERE it.tenant_id = v_tenant AND it.invoice_id = v_invoice
-   ORDER BY it.id
-   LIMIT 1;
+   WHERE it.tenant_id = v_tenant AND it.invoice_id = v_invoice;
 
-  IF NOT FOUND THEN
+  IF v_prev_items = '[]'::jsonb THEN
     RAISE EXCEPTION 'SALE_IDEMPOTENCY_CONFLICT: الفاتورة % بلا بنود', v_invoice
       USING ERRCODE = '23505';
   END IF;
 
-  IF v_prev_med      <> p_medicine
-     OR v_prev_qty    <> p_qty
-     OR v_prev_price  <> p_unit_price
-     OR v_prev_customer <> p_customer
-     OR v_prev_warehouse <> p_warehouse THEN
+  IF v_prev_cust <> p_customer
+     OR v_prev_wh <> p_warehouse
+     OR v_prev_items <> (
+          SELECT coalesce(jsonb_agg(jsonb_build_object(
+                   'medicine_id', (e->>'medicine_id')::uuid,
+                   'unit_id',     (e->>'unit_id')::uuid,
+                   'qty',         (e->>'qty')::numeric,
+                   'unit_price',  (e->>'unit_price')::numeric)
+                 ORDER BY (e->>'medicine_id')::uuid, (e->>'unit_id')::uuid,
+                          (e->>'qty')::numeric, (e->>'unit_price')::numeric), '[]'::jsonb)
+            FROM jsonb_array_elements(v_items) AS e) THEN
     RAISE EXCEPTION 'SALE_IDEMPOTENCY_KEY_REUSED: المفتاح % أُستخدم لبيع آخر ببيانات مختلفة', v_key
       USING ERRCODE = '23505';
   END IF;
 
   SELECT coalesce(jsonb_agg(jsonb_build_object(
+           'item_id',     it.id,
+           'medicine_id', it.medicine_id,
+           'unit_id',     it.unit_id,
+           'qty',         it.qty,
+           'unit_price',  it.unit_price,
+           'line_total',  it.line_total)
+         ORDER BY it.medicine_id, it.unit_id, it.qty, it.unit_price, it.id), '[]'::jsonb)
+    INTO v_out_items
+    FROM sales_invoice_items it
+   WHERE it.tenant_id = v_tenant AND it.invoice_id = v_invoice;
+
+  -- لا رابط بين الحركة وسطرها، فتُعاد التخصيصات مسطّحة بترتيب (صنف، انتهاء) نفسه
+  -- الذي تُنتج به في الإنشاء الأول.
+  SELECT coalesce(jsonb_agg(jsonb_build_object(
+           'medicine_id',    m.medicine_id,
            'stock_batch_id', sb.id,
            'batch_id',       m.batch_id,
            'batch_no',       b.batch_no,
@@ -871,7 +997,7 @@ BEGIN
            'location_id',    m.location_id,
            'qty',            -m.qty_delta,
            'unit_cost',      m.unit_cost)
-         ORDER BY b.expiry_date, b.created_at), '[]'::jsonb)
+         ORDER BY m.medicine_id, b.expiry_date, b.batch_no, sb.id), '[]'::jsonb)
     INTO v_allocations
     FROM stock_movements m
     JOIN batches b ON b.tenant_id = m.tenant_id AND b.id = m.batch_id
@@ -880,20 +1006,49 @@ BEGIN
      AND sb.warehouse_id = m.warehouse_id
      AND sb.location_id  = m.location_id
      AND sb.batch_id     = m.batch_id
-   WHERE m.tenant_id    = v_tenant
-     AND m.ref_type     = 'sales_invoice'
-     AND m.ref_id       = v_invoice
+   WHERE m.tenant_id     = v_tenant
+     AND m.ref_type      = 'sales_invoice'
+     AND m.ref_id        = v_invoice
      AND m.movement_type = 'sale';
 
   RETURN jsonb_build_object(
     'invoice_id',  v_invoice,
-    'item_id',     v_item,
     'doc_number',  v_doc,
+    'line_count',  jsonb_array_length(v_out_items),
+    'subtotal',    v_total,
     'total',       v_total,
     'replayed',    true,
+    'items',       v_out_items,
     'allocations', v_allocations);
 END $$;
 
+-- التوقيع القديم لسطر واحد يبقى ويعود أثرًا رقيقًا فوق الدالة أعلاه، فلا يبقى
+-- مساران لخصم المخزون ولا ينكسر أي نداء قائم.
+CREATE OR REPLACE FUNCTION app.post_sale(
+  p_customer uuid, p_warehouse uuid, p_medicine uuid, p_unit uuid,
+  p_qty numeric, p_unit_price numeric, p_idempotency_key text
+) RETURNS jsonb
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, app, pg_temp AS $$
+DECLARE
+  v_sale jsonb;
+BEGIN
+  v_sale := app.post_sale(
+    p_customer, p_warehouse,
+    jsonb_build_array(jsonb_build_object(
+      'medicine_id', p_medicine,
+      'unit_id',     p_unit,
+      'qty',         p_qty,
+      'unit_price',  p_unit_price)),
+    p_idempotency_key);
+
+  RETURN jsonb_build_object(
+    'invoice_id',  v_sale->'invoice_id',
+    'item_id',     v_sale->'items'->0->'item_id',
+    'doc_number',  v_sale->'doc_number',
+    'total',       v_sale->'total',
+    'replayed',    v_sale->'replayed',
+    'allocations', v_sale->'allocations');
+END $$;
 -- ---- [21] ----
 CREATE TABLE audit_logs (
   tenant_id     uuid NOT NULL,
@@ -1559,5 +1714,8 @@ GRANT EXECUTE ON FUNCTION app.record_login_attempt(text, inet, boolean, text) TO
 REVOKE ALL ON FUNCTION app.allocate_fefo(uuid, uuid, uuid, numeric) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION app.allocate_fefo(uuid, uuid, uuid, numeric) TO slamtak_app;
 -- ترحيل البيع: المسار الوحيد الذي يخصم مقابل فاتورة، ولا يُنفَّذ إلا للتطبيق.
+REVOKE ALL ON FUNCTION app.post_sale(uuid, uuid, jsonb, text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION app.post_sale(uuid, uuid, jsonb, text) TO slamtak_app;
+-- غلاف السطر الواحد فوق الدالة نفسها، فلا يُترك توقيع قائم بلا منح.
 REVOKE ALL ON FUNCTION app.post_sale(uuid, uuid, uuid, uuid, numeric, numeric, text) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION app.post_sale(uuid, uuid, uuid, uuid, numeric, numeric, text) TO slamtak_app;
