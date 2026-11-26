@@ -159,7 +159,7 @@ upgrade-insecure-requests;
 ## 9. حماية سلسلة التوريد و CI
 
 - تثبيت إصدارات دقيقة + lockfile (بلا `^`).
-- بوابة الأسرار الفعلية الآن: `npm run check:secrets` في سير `secret-guard`، تفشل عند وجود `.dev.vars` أو `.env` متتبَّع، أو JWT بدور `service_role` أو مفتاح `sb_secret_` داخل ملف متتبَّع، أو اختفاء قاعدة تجاهله. أما `gitleaks` (يفحص سجل Git كاملًا لا الأسماء فقط) و`Trivy` و`pnpm audit` (والمستودع يستخدم npm: `npm audit`) فليست في CI بعد، وإضافتها في Phase 1.
+- بوابة الأسرار الفعلية الآن: `npm run check:secrets` في سير `secret-guard`، تفشل عند وجود `.dev.vars` أو `.env` متتبَّع، أو JWT بدور `service_role` أو مفتاح `sb_secret_` داخل ملف متتبَّع، أو اختفاء قاعدة تجاهله. وأما `gitleaks` فقد أُضيف في المهمة نفسها (`gitleaks-new-commits`) على **الالتزامات الجديدة فقط** — مدى الـpush/PR — لا على السجل كاملًا لأن المفتاح القديم ما زال في تاريخه (`12` §4.2). ويبقى `Trivy` و`pnpm audit` (والمستودع يستخدم npm: `npm audit`) خارج CI، وإضافتهما في Phase 1.
 - مراجعة بشرية لأي ترقية Major، ولا تُرقّى تلقائيًا.
 - توقيع commits (اختياري) وحماية فرع `main` (مراجعة إلزامية + فحوص خضراء).
 - لا أسرار في CI logs؛ استخدام OIDC/Secrets.
@@ -212,7 +212,8 @@ upgrade-insecure-requests;
 - [ ] CSP صارم بلا `unsafe-inline` للسكربتات، وتقارير CSP تعمل.
 - [ ] كل نقاط §5 مطبّقة ومُختبرة بـ k6/Playwright.
 - [x] بوابة الأسرار `secret-guard` (`npm run check:secrets`) في CI: تفشل عند ملف بيئة متتبَّع أو مفتاح `service_role`/`sb_secret_` داخل ملف متتبَّع، واختبارها `npm run test:secrets` (2026-11-26).
-- [ ] `gitleaks` (على سجل Git الكامل) و`npm audit` جزء من CI ويفشلان عند High — لم يُضافا بعد.
+- [x] `gitleaks` على الالتزامات الجديدة في CI (`gitleaks-new-commits` بجانب `secret-guard`، 2026-11-26).
+- [ ] `gitleaks` على سجل Git الكامل و`npm audit` جزء من CI ويفشلان عند High — لم يُضافا بعد؛ فحص السجل مؤجل حتى إبطال المفتاح القديم وتنظيف التاريخ بموافقة صريحة.
 - [ ] لا حقل حساس في أي سجل (اختبار: تشغيل سيناريو دخول وفحص السجل).
 - [ ] تمرين استعادة نسخة ناجح وموثّق.
 - [ ] Runbooks الستة موجودة.

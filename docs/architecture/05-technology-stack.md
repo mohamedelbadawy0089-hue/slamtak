@@ -90,7 +90,8 @@
 | Playwright 1.4x | E2E + PDF |
 | k6 | حمل وأداء |
 | `secret-guard` (`npm run check:secrets`) | أمن الأسرار المطبّق الآن: يمنع عودة `.dev.vars`/`.env` إلى التتبّع، ويكشف `service_role` و`sb_secret_` داخل الملفات المتتبَّعة ([`15`](15-deployment-architecture.md) §2.4) |
-| Trivy + gitleaks (سجل Git) + `npm audit` | أمن الحزم وتاريخ الأسرار — **مستهدف، لم يُضف إلى CI بعد** |
+| `gitleaks` (`gitleaks/gitleaks-action@v3` في سير `secret-guard`) | أمن الأسرار في **الالتزامات الجديدة فقط**: أنماط مفاتيح المزوّدين على مدى الـpush/PR، لا على سجل Git كاملًا ([`15`](15-deployment-architecture.md) §2.4) |
+| Trivy + `npm audit` | أمن الحزم والاعتماديات — **مستهدف، لم يُضف إلى CI بعد** |
 | dependency-cruiser | فرض حدود الوحدات آليًا |
 | `@axe-core/playwright` | إتاحة الواجهة |
 | — (بلا حاويات) | البناء والنشر على Pages + `supabase functions deploy` |
