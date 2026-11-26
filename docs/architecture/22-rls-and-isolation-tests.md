@@ -728,9 +728,9 @@ node run.mjs
 SUPABASE_DB_PASSWORD=... npm run check:security
 ```
 
-يغطي 33 ثابتًا: الأدوار الأربعة وصفاتها، عدّ الكتالوج (39/4 جدولًا، 44 سياسة، 67 صلاحية، 14 دالة، 34 مشغّلًا)، `RLS`+`FORCE` على 38 جدولًا، صفر سياسة `true` على أي جدول بمخزن، سياسة التدقيق `RESTRICTIVE`، صفر `EXECUTE` لـ`PUBLIC`، صفر وصول لـ`slamtak_platform` على `public`/`app`، صفر جداول لـ`slamtak_ops`، وغياب التعديل/الحذف المباشر عن الأرصدة والسجلات.
+يغطي 34 ثابتًا: الأدوار الأربعة وصفاتها، عدّ الكتالوج (39/4 جدولًا، 44 سياسة، 67 صلاحية، 14 دالة، 34 مشغّلًا)، `RLS`+`FORCE` على 38 جدولًا، صفر سياسة `true` على أي جدول بمخزن، سياسة التدقيق `RESTRICTIVE`، صفر `EXECUTE` لـ`PUBLIC`، صفر وصول لـ`slamtak_platform` على `public`/`app`، صفر جداول لـ`slamtak_ops`، وغياب التعديل/الحذف المباشر عن الأرصدة والسجلات.
 
-**تشغيل من طرف إلى طرف (مُثبت):** نُفِّذ `npm run check:security` فعلًا بمسار `pg` الحقيقي على PostgreSQL 17.11 بعد تطبيق الهجرتين: **33/33، رمز الخروج 0**. ثم فُتحت ثغرتان عمدًا (`GRANT EXECUTE ... TO PUBLIC` و`GRANT UPDATE ON stock_batches`) → رمز الخروج **1** وثلاثة `FAIL` برسائلها. تشغيل `20261108000002_seed_and_harden.sql` أعاد الحالة → **33/33** ورجوع الرمز إلى 0. وغياب `SUPABASE_DB_PASSWORD` يُرجع **2** (تعذّر الفحص)، لا 0.
+**تشغيل من طرف إلى طرف (مُثبت):** نُفِّذ `npm run check:security` فعلًا بمسار `pg` الحقيقي على PostgreSQL 17.11 بعد تطبيق الهجرتين: **34/34، رمز الخروج 0**. ثم فُتحت ثغرتان عمدًا (`GRANT EXECUTE ... TO PUBLIC` و`GRANT UPDATE ON stock_batches`) → رمز الخروج **1** وثلاثة `FAIL` برسائلها. تشغيل `20261108000002_seed_and_harden.sql` أعاد الحالة → **34/34** ورجوع الرمز إلى 0. وغياب `SUPABASE_DB_PASSWORD` يُرجع **2** (تعذّر الفحص)، لا 0.
 
 **البوابة في CI:** `.github/workflows/security-invariants.yml` يشغّل نفس الشيء عند كل `push` إلى `main` وكل `pull_request`: حاوية `postgres:17` جديدة، ثم `scripts/apply-migrations.mjs` يبني المخطط من ملفي المعمارية الجديدة، ثم `npm run check:security`. أي `FAIL` يُفشل المهمة، فتُمتنع البوابة قبل الدمج. وأُضيف `scripts/db-target.mjs` ليقرأ متغيّرات libpq (`PGHOST`/`PGPORT`/`PGUSER`/`PGDATABASE`/`PGPASSWORD`/`PGSSLMODE`)، والافتراضي بلا أي متغيّر يبقى `db.<ref>.supabase.co` عبر TLS — أي أن CI لم يغيّر السلوك الإنتاجي.
 

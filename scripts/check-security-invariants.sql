@@ -56,6 +56,24 @@ FROM (VALUES
      WHERE NOT t.tgisinternal AND n.nspname = 'public' AND t.tgname ILIKE '%tenant%'),
    'حارس tenant_id على الجداول المرتبطة'),
 
+  -- حارس الصرف هو الفحص الأخير على مسار الحركة، ولا يراه أي اختبار CI على
+  -- قاعدة الإنتاج: حذفه أو تعطيله هناك يمرّ صامتًا بلا هذا الثابت.
+  ('مشغّل حارس الصرف ودالته', '1',
+   (SELECT count(*)::text
+      FROM pg_trigger t
+      JOIN pg_class c ON c.oid = t.tgrelid
+      JOIN pg_namespace n ON n.oid = c.relnamespace
+      JOIN pg_proc p ON p.oid = t.tgfoid
+     WHERE NOT t.tgisinternal
+       AND n.nspname = 'public' AND c.relname = 'stock_movements'
+       AND t.tgname = 'trg_dispense_requires_usable_batch'
+       AND p.proname = 'guard_dispense_movement'
+       AND t.tgenabled <> 'D'   -- غير معطّل بـDISABLE TRIGGER
+       AND (t.tgtype & 2) = 2   -- BEFORE
+       AND (t.tgtype & 4) = 4   -- INSERT (وبلا UPDATE/DELETE/TRUNCATE)
+       AND t.tgqual IS NOT NULL),  -- شرط WHEN باقٍ: الحارس على sale وحده
+   'حذفه أو تعطيله يُعيد فتح صرف المنتهي/المحجوب عبر stock_movements، ولا يراه إلا هذا الفحص المجدول على الإنتاج'),
+
   -- ------------------------------------------------------------------- RLS
   ('جداول عليها RLS مفعّلة', '38',
    (SELECT count(*)::text FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
