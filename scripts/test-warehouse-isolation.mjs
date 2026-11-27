@@ -959,6 +959,24 @@ const postSale = (client, args) =>
 const postSaleItems = (client, args) =>
   client.query('SELECT app.post_sale($1, $2, $3, $4) AS sale', args);
 
+// أثر أي رفض بيع على مخزن هـ في لقطة واحدة: العدّادات، ورقم مستند البيع،
+// وأرصدة تشغيلتي المخزن. تُقارن قبل الرفض وبعده فتشمل «لا فاتورة ولا حركة ولا
+// استهلاك لرقم مستند».
+const saleStateE = async (client) =>
+  (
+    await client.query(
+      `SELECT (SELECT count(*) FROM public.sales_invoices)::int       AS invoices,
+              (SELECT count(*) FROM public.sales_invoice_items)::int AS items,
+              (SELECT count(*) FROM public.stock_movements)::int      AS movements,
+              (SELECT jsonb_agg(jsonb_build_object('doc_type', doc_type, 'last_value', last_value))
+                 FROM public.document_sequences WHERE tenant_id = $2)   AS seq,
+              (SELECT jsonb_object_agg(batch_id::text, qty_on_hand)
+                 FROM public.stock_batches
+                WHERE batch_id = ANY($1))                              AS balances`,
+      [[B_E1, B_E2], T_E],
+    )
+  ).rows[0];
+
 needsDb('البيع: post_sale ينشئ فاتورة مؤكدة ويخصم الأقرب انتهاءً عبر حركات sale', async () => {
   await asApp({ tenantId: T_A, userId: U_A }, async (c) => {
     const sale = (await postSale(c, [CU_A, W_A, M_A, UN_A, 6, 12.5, 'sale-key-fefo'])).rows[0].sale;
@@ -1313,20 +1331,7 @@ needsDb('البيع: فشل السطر الثاني لا يترك فاتورة �
 
 needsDb('البيع: مدخلات غير صالحة ترتد 22023 ولا تترك فاتورة ولا حركة', async () => {
   await asApp({ tenantId: T_E, userId: U_E }, async (c) => {
-    // لقطة واحدة: عدّ الفواتير والأسطر والحركات، وأرصدة تشغيلتي المخزن.
-    const state = async () =>
-      (
-        await c.query(
-          `SELECT (SELECT count(*) FROM public.sales_invoices)::int       AS invoices,
-                  (SELECT count(*) FROM public.sales_invoice_items)::int AS items,
-                  (SELECT count(*) FROM public.stock_movements)::int      AS movements,
-                  (SELECT jsonb_object_agg(batch_id::text, qty_on_hand)
-                     FROM public.stock_batches
-                    WHERE batch_id = ANY($1))                              AS balances`,
-          [[B_E1, B_E2]],
-        )
-      ).rows[0];
-    const before = await state();
+    const before = await saleStateE(c);
 
     const ok = { medicine_id: M_E1, unit_id: UN_E, qty: 1, unit_price: 10 };
     const cases = [
@@ -1350,28 +1355,13 @@ needsDb('البيع: مدخلات غير صالحة ترتد 22023 ولا تتر
       assert.match(err.message, new RegExp(code), `${label}: ${code}`);
     }
 
-    assert.deepEqual(await state(), before, 'لا فاتورة ولا سطر ولا حركة، والأرصدة كما كانت');
+    assert.deepEqual(await saleStateE(c), before, 'لا فاتورة ولا سطر ولا حركة، والأرصدة كما كانت');
   });
 });
 
 needsDb('البيع: سعر أدنى من السعر المرجعي مرفوض بلا فاتورة ولا حركة', async () => {
   await asApp({ tenantId: T_E, userId: U_E }, async (c) => {
-    // اللقطة تشمل رقم المستند أيضًا: الفحص يقع قبل حجزه فلا يُستهلك بسعر مرفوض.
-    const state = async () =>
-      (
-        await c.query(
-          `SELECT (SELECT count(*) FROM public.sales_invoices)::int       AS invoices,
-                  (SELECT count(*) FROM public.sales_invoice_items)::int AS items,
-                  (SELECT count(*) FROM public.stock_movements)::int      AS movements,
-                  (SELECT jsonb_agg(jsonb_build_object('doc_type', doc_type, 'last_value', last_value))
-                     FROM public.document_sequences WHERE tenant_id = $2) AS seq,
-                  (SELECT jsonb_object_agg(batch_id::text, qty_on_hand)
-                     FROM public.stock_batches
-                    WHERE batch_id = ANY($1))                              AS balances`,
-          [[B_E1, B_E2], T_E],
-        )
-      ).rows[0];
-    const before = await state();
+    const before = await saleStateE(c);
 
     // السعر المرجعي لـM_E1 هو 10.00، فـ9.99 خصم لم تعتمده القاعدة.
     const cheap = await expectFailure(c, 'SELECT app.post_sale($1, $2, $3, $4)', [
@@ -1395,7 +1385,7 @@ needsDb('البيع: سعر أدنى من السعر المرجعي مرفوض �
     assert.equal(missing.code, '22023');
     assert.match(missing.message, /SALE_PRICE_REFERENCE_MISSING/);
 
-    assert.deepEqual(await state(), before, 'لا فاتورة ولا سطر ولا حركة ولا رقم مستند، والأرصدة كما كانت');
+    assert.deepEqual(await saleStateE(c), before, 'لا فاتورة ولا سطر ولا حركة ولا رقم مستند، والأرصدة كما كانت');
   });
 });
 

@@ -723,9 +723,9 @@ CREATE TABLE sales_return_items (
 --
 -- السعر لا يُقبل من العميل بلا مرجع: كل سطر يُقارن بسعر الصنف في قائمة البيع
 -- الافتراضية (is_default) للمخزن، فسعر أدنى منها يرتد (SALE_PRICE_BELOW_REFERENCE)
--- وصنف بلا سعر مرجعي يرتد (SALE_PRICE_REFERENCE_MISSING). الفحص في مسار الإنشاء
--- وحده وقبل حجز رقم المستند: إعادة المفتاح نفسه تعيد فاتورتها القديمة ولو تغيّر
--- سعر القائمة بعدها.
+-- وصنف بلا سعر مرجعي يرتد (SALE_PRICE_REFERENCE_MISSING). والفحص لكل سطر قبل
+-- تخصيصه في مسار الإنشاء وحده: فشله يُبطل المعاملة كلها (لا فاتورة ولا رقم مستند)،
+-- وإعادة المفتاح نفسه لا تمر به فتعيد فاتورتها القديمة ولو تغيّر سعر القائمة.
 CREATE OR REPLACE FUNCTION app.post_sale(
   p_customer uuid, p_warehouse uuid, p_items jsonb, p_idempotency_key text
 ) RETURNS jsonb
@@ -846,33 +846,6 @@ BEGIN
    WHERE i.tenant_id = v_tenant AND i.idempotency_key = v_key;
 
   IF NOT FOUND THEN
-    -- السعر المرجعي قبل حجز المفتاح ورقم المستند: سعر مرفوض لا يستهلك شيئًا.
-    -- وإن تعددت القوائم الافتراضية (خطأ بيانات) فالسعر المرجعي أدناها، فلا يُرفض
-    -- سعر اعتمدته إحداها، ويبقى الترتيب حتميًا.
-    FOR v_line IN SELECT e FROM jsonb_array_elements(v_items) AS e
-    LOOP
-      SELECT min(pli.price) INTO v_ref_price
-        FROM public.price_list_items pli
-        JOIN public.price_lists pl
-          ON pl.tenant_id = pli.tenant_id
-         AND pl.id = pli.price_list_id
-       WHERE pli.tenant_id   = v_tenant
-         AND pl.is_default
-         AND pli.medicine_id = (v_line->>'medicine_id')::uuid
-         AND pli.unit_id     = (v_line->>'unit_id')::uuid;
-
-      IF v_ref_price IS NULL THEN
-        RAISE EXCEPTION 'SALE_PRICE_REFERENCE_MISSING: الصنف % بلا سعر في قائمة بيع افتراضية',
-          v_line->>'medicine_id'
-          USING ERRCODE = '22023';
-      END IF;
-      IF (v_line->>'unit_price')::numeric < v_ref_price THEN
-        RAISE EXCEPTION 'SALE_PRICE_BELOW_REFERENCE: سعر الصنف % (%) أدنى من السعر المرجعي (%)',
-          v_line->>'medicine_id', (v_line->>'unit_price')::numeric, v_ref_price
-          USING ERRCODE = '22023';
-      END IF;
-    END LOOP;
-
     -- الحجز الأول: إدراج الفاتورة بمفتاحها الفريد قبل أي تخصيص. المحاولة الثانية
     -- لنفس المفتاح تنتظر (على رقم المستند أو على الفهرس الفريد) ولا تصل إلى
     -- allocate_fefo أبدًا.
@@ -894,6 +867,28 @@ BEGIN
         v_qty   := (v_line->>'qty')::numeric;
         v_price := (v_line->>'unit_price')::numeric;
         v_line_total := round(v_qty * v_price, 2);
+
+        -- السعر المرجعي: سعر الصنف في قائمة البيع الافتراضية للمخزن (وأدناها إن
+        -- تعددت). التحقق قبل التخصيص، وفشله يُبطل المعاملة كلها.
+        SELECT min(pli.price) INTO v_ref_price
+          FROM public.price_list_items pli
+          JOIN public.price_lists pl
+            ON pl.tenant_id = pli.tenant_id
+           AND pl.id = pli.price_list_id
+         WHERE pli.tenant_id   = v_tenant
+           AND pl.is_default
+           AND pli.medicine_id = v_med
+           AND pli.unit_id     = v_unit;
+
+        IF v_ref_price IS NULL THEN
+          RAISE EXCEPTION 'SALE_PRICE_REFERENCE_MISSING: الصنف % بلا سعر في قائمة بيع افتراضية', v_med
+            USING ERRCODE = '22023';
+        END IF;
+        IF v_price < v_ref_price THEN
+          RAISE EXCEPTION 'SALE_PRICE_BELOW_REFERENCE: سعر الصنف % (%) أدنى من السعر المرجعي (%)',
+            v_med, v_price, v_ref_price
+            USING ERRCODE = '22023';
+        END IF;
 
         -- التخصيص يرفع FEFO_INSUFFICIENT_STOCK فيُرجع المعاملة كلها بلا أثر، ولو
         -- كان سطر سابق قد خُصّص وسُجّلت حركته بالفعل.
