@@ -718,8 +718,8 @@ CREATE TABLE sales_return_items (
 -- الذرّية: فشل أي سطر (نقص المتاح) يُبطل المعاملة كلها: لا فاتورة، ولا سطر، ولا
 -- حركة، ولا استهلاك لرقم مستند — لأن كل الإدراجات في نداء واحد، فلا فاتورة جزئية.
 --
--- ترتيب المعالجة ثابت (بالـmedicine_id ثم برقم السطر) لا ترتيب إدخال الواجهة،
--- فجلستان تبيعان الصنفين نفسهما بترتيبين مختلفين تأخذان الأقفال بالترتيب نفسه.
+-- ترتيب المعالجة ثابت (بالصنف ثم بمحتوى السطر) لا ترتيب إدخال الواجهة، فجلستان
+-- تبيعان الصنفين نفسهما بترتيبين مختلفين تأخذان الأقفال بالترتيب نفسه.
 CREATE OR REPLACE FUNCTION app.post_sale(
   p_customer uuid, p_warehouse uuid, p_items jsonb, p_idempotency_key text
 ) RETURNS jsonb
@@ -761,51 +761,58 @@ BEGIN
       USING ERRCODE = '22023';
   END IF;
 
-  -- تحقق كل بند قبل حجز المفتاح: مدخلات خاطئة لا تستهلك رقم مستند ولا مفتاحًا.
-  FOR v_idx IN 0 .. v_count - 1 LOOP
-    v_entry := p_items -> v_idx;
-    IF v_entry IS NULL OR jsonb_typeof(v_entry) <> 'object' THEN
-      RAISE EXCEPTION 'SALE_INVALID_ITEM: البند % ليس كائنًا', v_idx + 1
-        USING ERRCODE = '22023';
-    END IF;
-    IF coalesce(v_entry->>'medicine_id', '')
-       !~ '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$' THEN
-      RAISE EXCEPTION 'SALE_INVALID_ITEM: البند % بلا medicine_id صالح', v_idx + 1
-        USING ERRCODE = '22023';
-    END IF;
-    IF coalesce(v_entry->>'unit_id', '')
-       !~ '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$' THEN
-      RAISE EXCEPTION 'SALE_INVALID_ITEM: البند % بلا unit_id صالح', v_idx + 1
-        USING ERRCODE = '22023';
-    END IF;
-    IF coalesce(jsonb_typeof(v_entry->'qty'), 'missing') <> 'number' THEN
-      RAISE EXCEPTION 'SALE_INVALID_QTY: البند % بلا كمية رقمية', v_idx + 1
-        USING ERRCODE = '22023';
-    END IF;
-    v_qty := (v_entry->>'qty')::numeric;
-    IF v_qty <= 0 OR v_qty <> round(v_qty, 3) THEN
-      RAISE EXCEPTION 'SALE_INVALID_QTY: كمية البند % يجب أن تكون أكبر من صفر وبثلاث منازل على الأكثر (%)',
-        v_idx + 1, v_qty
-        USING ERRCODE = '22023';
-    END IF;
-    IF coalesce(jsonb_typeof(v_entry->'unit_price'), 'missing') <> 'number' THEN
-      RAISE EXCEPTION 'SALE_INVALID_PRICE: البند % بلا سعر رقمي', v_idx + 1
-        USING ERRCODE = '22023';
-    END IF;
-    v_price := (v_entry->>'unit_price')::numeric;
-    IF v_price < 0 OR v_price <> round(v_price, 2) THEN
-      RAISE EXCEPTION 'SALE_INVALID_PRICE: سعر البند % يجب أن يكون غير سالب بعشرتين على الأكثر (%)',
-        v_idx + 1, v_price
-        USING ERRCODE = '22023';
-    END IF;
+  -- حلقة واحدة تتحقق وتبني المصفوفة المعيّرة وتحسب الإجمالي، قبل حجز المفتاح:
+  -- مدخلات خاطئة لا تستهلك رقم مستند ولا مفتاحًا.
+  BEGIN
+    FOR v_idx IN 0 .. v_count - 1 LOOP
+      v_entry := p_items -> v_idx;
+      IF jsonb_typeof(v_entry) <> 'object' THEN
+        RAISE EXCEPTION 'SALE_INVALID_ITEM: البند % ليس كائنًا', v_idx + 1
+          USING ERRCODE = '22023';
+      END IF;
 
-    v_items := v_items || jsonb_build_object(
-      'line_no',     v_idx + 1,
-      'medicine_id', (v_entry->>'medicine_id')::uuid,
-      'unit_id',     (v_entry->>'unit_id')::uuid,
-      'qty',         v_qty,
-      'unit_price',  v_price);
-  END LOOP;
+      v_med  := (v_entry->>'medicine_id')::uuid;
+      v_unit := (v_entry->>'unit_id')::uuid;
+      IF v_med IS NULL OR v_unit IS NULL THEN
+        RAISE EXCEPTION 'SALE_INVALID_ITEM: البند % بلا medicine_id أو unit_id', v_idx + 1
+          USING ERRCODE = '22023';
+      END IF;
+
+      IF coalesce(jsonb_typeof(v_entry->'qty'), 'missing') <> 'number' THEN
+        RAISE EXCEPTION 'SALE_INVALID_QTY: البند % بلا كمية رقمية', v_idx + 1
+          USING ERRCODE = '22023';
+      END IF;
+      v_qty := (v_entry->>'qty')::numeric;
+      IF v_qty <= 0 OR v_qty <> round(v_qty, 3) THEN
+        RAISE EXCEPTION 'SALE_INVALID_QTY: كمية البند % يجب أن تكون أكبر من صفر وبثلاث منازل على الأكثر (%)',
+          v_idx + 1, v_qty
+          USING ERRCODE = '22023';
+      END IF;
+
+      IF coalesce(jsonb_typeof(v_entry->'unit_price'), 'missing') <> 'number' THEN
+        RAISE EXCEPTION 'SALE_INVALID_PRICE: البند % بلا سعر رقمي', v_idx + 1
+          USING ERRCODE = '22023';
+      END IF;
+      v_price := (v_entry->>'unit_price')::numeric;
+      IF v_price < 0 OR v_price <> round(v_price, 2) THEN
+        RAISE EXCEPTION 'SALE_INVALID_PRICE: سعر البند % يجب أن يكون غير سالب بعشرتين على الأكثر (%)',
+          v_idx + 1, v_price
+          USING ERRCODE = '22023';
+      END IF;
+
+      v_line_total := round(v_qty * v_price, 2);
+      v_subtotal   := v_subtotal + v_line_total;
+      v_items := v_items || jsonb_build_object(
+        'medicine_id', v_med,
+        'unit_id',     v_unit,
+        'qty',         v_qty,
+        'unit_price',  v_price);
+    END LOOP;
+  EXCEPTION
+    WHEN invalid_text_representation THEN
+      RAISE EXCEPTION 'SALE_INVALID_ITEM: معرّف صنف أو وحدة غير صالح في بنود الفاتورة'
+        USING ERRCODE = '22023';
+  END;
 
   IF v_key = '' THEN
     RAISE EXCEPTION 'SALE_IDEMPOTENCY_KEY_REQUIRED: مفتاح التكرار إلزامي ومنع الصرف المزدوج يتوقف عليه'
@@ -822,26 +829,9 @@ BEGIN
       USING ERRCODE = '42501';
   END IF;
 
-  -- ترتيب ثابت لأخذ الأقفال: بالصنف ثم برقم السطر، لا بترتيب إدخال الواجهة.
-  -- وأرقام الأسطر تُعاد ترقيمًا على الترتيب نفسه، فتطابق الفاتورة ما تُرجعه الدالة.
-  SELECT coalesce(jsonb_agg(
-           jsonb_build_object(
-             'line_no',     t.ord,
-             'medicine_id', (t.e->>'medicine_id')::uuid,
-             'unit_id',     (t.e->>'unit_id')::uuid,
-             'qty',         (t.e->>'qty')::numeric,
-             'unit_price',  (t.e->>'unit_price')::numeric)
-           ORDER BY t.ord), '[]'::jsonb)
+  -- ترتيب ثابت لأخذ الأقفال: بالصنف ثم بمحتوى السطر، لا بترتيب إدخال الواجهة.
+  SELECT coalesce(jsonb_agg(e ORDER BY e->>'medicine_id', e::text), '[]'::jsonb)
     INTO v_items
-    FROM (
-      SELECT row_number() OVER (ORDER BY e->>'medicine_id', (e->>'line_no')::int) AS ord, e
-        FROM jsonb_array_elements(v_items) AS e
-    ) AS t;
-
-  SELECT coalesce(
-           sum(round((e->>'qty')::numeric * (e->>'unit_price')::numeric, 2)), 0
-         )::numeric(14,2)
-    INTO v_subtotal
     FROM jsonb_array_elements(v_items) AS e;
 
   SELECT i.id, i.status INTO v_invoice, v_status
@@ -883,7 +873,6 @@ BEGIN
              'sale', -v_alloc.qty, v_alloc.unit_cost, 'sales_invoice', v_invoice, v_user);
 
           v_allocations := v_allocations || jsonb_build_object(
-            'line_no',        (v_line->>'line_no')::int,
             'medicine_id',    v_med,
             'stock_batch_id', v_alloc.stock_batch_id,
             'batch_id',       v_alloc.batch_id,
@@ -901,7 +890,6 @@ BEGIN
         RETURNING id INTO v_item;
 
         v_out_items := v_out_items || jsonb_build_object(
-          'line_no',     (v_line->>'line_no')::int,
           'item_id',     v_item,
           'medicine_id', v_med,
           'unit_id',     v_unit,
@@ -913,8 +901,6 @@ BEGIN
       RETURN jsonb_build_object(
         'invoice_id',  v_invoice,
         'doc_number',  v_doc,
-        'line_count',  v_count,
-        'subtotal',    v_subtotal,
         'total',       v_subtotal,
         'replayed',    false,
         'items',       v_out_items,
@@ -953,11 +939,6 @@ BEGIN
     INTO v_prev_items
     FROM sales_invoice_items it
    WHERE it.tenant_id = v_tenant AND it.invoice_id = v_invoice;
-
-  IF v_prev_items = '[]'::jsonb THEN
-    RAISE EXCEPTION 'SALE_IDEMPOTENCY_CONFLICT: الفاتورة % بلا بنود', v_invoice
-      USING ERRCODE = '23505';
-  END IF;
 
   IF v_prev_cust <> p_customer
      OR v_prev_wh <> p_warehouse
@@ -1014,8 +995,6 @@ BEGIN
   RETURN jsonb_build_object(
     'invoice_id',  v_invoice,
     'doc_number',  v_doc,
-    'line_count',  jsonb_array_length(v_out_items),
-    'subtotal',    v_total,
     'total',       v_total,
     'replayed',    true,
     'items',       v_out_items,

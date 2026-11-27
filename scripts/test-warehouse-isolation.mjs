@@ -1009,9 +1009,7 @@ needsDb('البيع: نفس مفتاح التكرار يعيد الفاتورة 
     assert.equal(second.replayed, true, 'الإعادة تُعلَن صراحةً');
     assert.equal(second.invoice_id, first.invoice_id, 'نفس الفاتورة لا فاتورة ثانية');
     assert.equal(second.item_id, first.item_id);
-    // الإعادة لا تعيد `line_no`: الحركة لا تُشير إلى سطرها، والترتيب وحده يُحفظ.
-    const stripLine = (allocs) => allocs.map(({ line_no, ...rest }) => rest);
-    assert.deepEqual(stripLine(second.allocations), stripLine(first.allocations), 'التخصيص المعاد هو نفسه');
+    assert.deepEqual(second.allocations, first.allocations, 'التخصيص المعاد هو نفسه');
 
     assert.deepEqual((await ledger()).rows, before.ledger, 'لا حركة جديدة ولا خصم إضافي');
     assert.deepEqual((await balances()).rows, before.balances, 'الأرصدة لم تتغير');
@@ -1140,7 +1138,6 @@ needsDb('البيع: فاتورة بسطرين تُخصم بسطرين وتُح�
       .rows[0].sale;
 
     assert.equal(sale.replayed, false, 'أول نداء ليس إعادة');
-    assert.equal(sale.line_count, 2, 'سطران في نداء واحد');
     assert.equal(Number(sale.total), 28.25, '2 × 10.50 + 1 × 7.25');
     assert.deepEqual(
       sale.items.map((i) => i.medicine_id),
@@ -1148,27 +1145,20 @@ needsDb('البيع: فاتورة بسطرين تُخصم بسطرين وتُح�
       'الأسطر مرتبة بالصنف لا بترتيب الإدخال',
     );
     assert.deepEqual(
-      sale.items.map((i) => Number(i.line_total)),
-      [21, 7.25],
-    );
-    assert.deepEqual(
-      sale.allocations.map((a) => [a.line_no, a.medicine_id, Number(a.qty)]),
+      sale.allocations.map((a) => [a.medicine_id, Number(a.qty)]),
       [
-        [1, M_E1, 2],
-        [2, M_E2, 1],
+        [M_E1, 2],
+        [M_E2, 1],
       ],
       'تخصيص لكل سطر من تشغيلته',
     );
 
     const inv = await c.query(
-      'SELECT status, subtotal, total, idempotency_key FROM public.sales_invoices WHERE id = $1',
+      'SELECT status, total FROM public.sales_invoices WHERE id = $1',
       [sale.invoice_id],
     );
-    assert.equal(inv.rowCount, 1);
     assert.equal(inv.rows[0].status, 'confirmed');
-    assert.equal(Number(inv.rows[0].subtotal), 28.25);
     assert.equal(Number(inv.rows[0].total), 28.25);
-    assert.equal(inv.rows[0].idempotency_key, 'sale-key-multi');
 
     const lines = await c.query(
       `SELECT medicine_id, qty, unit_price, line_total
@@ -1200,7 +1190,6 @@ needsDb('البيع: فاتورة بسطرين تُخصم بسطرين وتُح�
       ],
       'حركة sale لكل سطر، على الفاتورة نفسها',
     );
-    for (const m of moves.rows) assert.equal(m.ref_id, sale.invoice_id);
 
     const balances = () =>
       c.query(

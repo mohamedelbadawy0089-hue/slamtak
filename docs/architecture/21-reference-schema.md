@@ -1035,10 +1035,10 @@ CREATE TRIGGER trg_dispense_requires_usable_batch
 
 ### 9.6 ترحيل البيع (`post_sale`) ومفتاح التكرار
 
-`allocate_fefo` تعيد خطة صرف وتقفل صفوفها، لكنها لا تنشئ فاتورة ولا حركة. الربط الفعلي في دالة واحدة `app.post_sale(customer, warehouse, items, idempotency_key)` تقبل **مصفوفة بنود** (لكل بند `medicine_id` و`unit_id` و`qty` و`unit_price`) وتعيد `jsonb`: فاتورة `confirmed` واحدة، وسطر بيع لكل بند، وحركات `sale` مربوطة بها بـ`ref_type='sales_invoice'` و`ref_id`، وقائمة تخصيصات مسطّحة يحمل كل تخصيص `line_no` و`medicine_id` (والإعادة تعيدها مسطّحة بلا `line_no` لأن الحركة لا تُشير إلى سطرها). والمفتاح واحد للفاتورة كلها لا لكل سطر. خطواتها:
+`allocate_fefo` تعيد خطة صرف وتقفل صفوفها، لكنها لا تنشئ فاتورة ولا حركة. الربط الفعلي في دالة واحدة `app.post_sale(customer, warehouse, items, idempotency_key)` تقبل **مصفوفة بنود** (لكل بند `medicine_id` و`unit_id` و`qty` و`unit_price`) وتعيد `jsonb`: فاتورة `confirmed` واحدة، وسطر بيع لكل بند، وحركات `sale` مربوطة بها بـ`ref_type='sales_invoice'` و`ref_id`، وقائمة تخصيصات مسطّحة يحمل كل تخصيص `medicine_id` و`batch_id` (والإعادة تعيدها بالترتيب نفسه من حركات الفاتورة). والمفتاح واحد للفاتورة كلها لا لكل سطر. خطواتها:
 
 1. تحقق المصفوفة وبنودها: مصفوفة غير فارغة (`SALE_ITEMS_REQUIRED`)، و`uuid` صالح للصنف والوحدة والسعر والكمية، وكمية موجبة بثلاث منازل وسعر غير سالب بعشرتين (`SALE_INVALID_ITEM`/`SALE_INVALID_QTY`/`SALE_INVALID_PRICE`)، ثم المفتاح الإلزامي، ثم سياق المخزن وصلاحية `sales.invoice.create` (`SALE_PERMISSION_DENIED`).
-2. ترتيب الأسطر بالـ`medicine_id` ثم برقم السطر وإعادة ترقيمها، وحساب الإجمالي من مجموع السطور `round(qty * unit_price, 2)`.
+2. ترتيب الأسطر بالـ`medicine_id` ثم بمحتوى السطر (فيتكرر ترتيب أخذ الأقفال بين الجلسات)، وحساب الإجمالي من مجموع السطور `round(qty * unit_price, 2)`.
 3. إدراج الفاتورة بمفتاحها الفريد `(tenant_id, idempotency_key)` **قبل** أي تخصيص.
 4. لكل سطر بالترتيب: `allocate_fefo` ثم حركة `sale` سالبة لكل صف تخصيص وربطها بالفاتورة، ثم إدراج سطر `sales_invoice_items`.
 5. أي فشل — ولو في السطر الثاني بعد نجاح الأول — يرجع المعاملة كلها: صفر فواتير، وصفر أسطر، وصفر حركات، ورقم المستند يعود.
