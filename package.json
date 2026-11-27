@@ -19,7 +19,8 @@
     "check:supabase": "node scripts/supabase-health.mjs",
     "test:auth": "node --test scripts/test-auth-session.mjs",
     "test:start": "node --test scripts/test-start-traversal.mjs scripts/test-start-symlink-guard.mjs",
-    "test:isolation": "node --test scripts/test-warehouse-isolation.mjs"
+    "test:isolation": "node --test scripts/test-warehouse-isolation.mjs",
+    "test:prices": "node --test scripts/test-price-backfill.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.0.0",

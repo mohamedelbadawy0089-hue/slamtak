@@ -79,6 +79,7 @@ jobs:
           node scripts/apply-migrations.mjs
           supabase/migrations/20261108000001_init_schema.sql
           supabase/migrations/20261108000002_seed_and_harden.sql
+          supabase/migrations/20261108000003_default_price_list_backfill.sql
 
       - name: Check security invariants
         run: npm run check:security
@@ -147,6 +148,10 @@ jobs:
           node scripts/apply-migrations.mjs
           supabase/migrations/20261108000001_init_schema.sql
           supabase/migrations/20261108000002_seed_and_harden.sql
+          supabase/migrations/20261108000003_default_price_list_backfill.sql
 
       - name: Test warehouse isolation, FEFO, permissions and concurrency
         run: npm run test:isolation
+
+      - name: Test the default price list and price backfill migration
+        run: npm run test:prices
