@@ -1284,6 +1284,53 @@ needsDb('البيع: فشل السطر الثاني لا يترك فاتورة �
   });
 });
 
+needsDb('البيع: مدخلات غير صالحة ترتد 22023 ولا تترك فاتورة ولا حركة', async () => {
+  await asApp({ tenantId: T_E, userId: U_E }, async (c) => {
+    const counts = async () =>
+      (
+        await c.query(
+          `SELECT (SELECT count(*) FROM public.sales_invoices)::int       AS invoices,
+                  (SELECT count(*) FROM public.sales_invoice_items)::int AS items,
+                  (SELECT count(*) FROM public.stock_movements)::int      AS movements`,
+        )
+      ).rows[0];
+    const balances = async () =>
+      (
+        await c.query(
+          'SELECT batch_id, qty_on_hand FROM public.stock_batches WHERE batch_id = ANY($1) ORDER BY batch_id',
+          [[B_E1, B_E2]],
+        )
+      ).rows;
+    const before = { ...(await counts()), balances: await balances() };
+
+    const ok = { medicine_id: M_E1, unit_id: UN_E, qty: 1, unit_price: 10 };
+    const cases = [
+      ['مصفوفة فارغة', [], 'SALE_ITEMS_REQUIRED'],
+      ['معرّف صنف غير صالح', [{ ...ok, medicine_id: 'not-a-uuid' }], 'SALE_INVALID_ITEM'],
+      ['كمية صفر', [{ ...ok, qty: 0 }], 'SALE_INVALID_QTY'],
+      ['سعر سالب', [{ ...ok, unit_price: -1 }], 'SALE_INVALID_PRICE'],
+    ];
+
+    for (const [label, items, code] of cases) {
+      const err = await expectFailure(c, 'SELECT app.post_sale($1, $2, $3, $4)', [
+        CU_E,
+        W_E,
+        JSON.stringify(items),
+        `sale-key-bad-${code}`,
+      ]);
+      assert.ok(err, `${label}: مرفوض`);
+      assert.equal(err.code, '22023', `${label}: رمز 22023`);
+      assert.match(err.message, new RegExp(code), `${label}: ${code}`);
+    }
+
+    assert.deepEqual(
+      { ...(await counts()), balances: await balances() },
+      before,
+      'لا فاتورة ولا سطر ولا حركة، والأرصدة كما كانت',
+    );
+  });
+});
+
 // ---------------------------------------------------------------- التزامن
 // اختبارا هذا القسم وحدهما يُثبّتان (COMMIT): القفل لا يُختبر بمعاملة تُتراجع.
 // لكل منهما مخزن مستقل (T_C وT_D) وحركاته تُزال في التنظيف.
