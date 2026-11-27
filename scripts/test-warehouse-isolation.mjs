@@ -112,6 +112,7 @@ const B_E2 = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee6'; // +80 يومًا
 const UN_E = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee7';
 const CU_E = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee8';
 const U_E = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee9';
+const M_E3 = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee10'; // بلا سعر في قائمة بيع افتراضية
 
 let skipReason = null;
 let owner = null;
@@ -228,6 +229,8 @@ async function cleanupTenants(client) {
   for (const statement of [
     `DELETE FROM public.sales_invoice_items WHERE tenant_id = ANY($1)`,
     `DELETE FROM public.sales_invoices WHERE tenant_id = ANY($1)`,
+    `DELETE FROM public.price_list_items WHERE tenant_id = ANY($1)`,
+    `DELETE FROM public.price_lists WHERE tenant_id = ANY($1)`,
     `DELETE FROM public.customers WHERE tenant_id = ANY($1)`,
     `DELETE FROM public.user_permission_overrides WHERE tenant_id = ANY($1)`,
     `DELETE FROM public.user_roles WHERE tenant_id = ANY($1)`,
@@ -438,8 +441,9 @@ before(async () => {
   await sql(
     `INSERT INTO public.medicines (tenant_id, id, sku, trade_name_ar) VALUES
        ($1, $2, 'ISO-E-1', 'دواء هـ ١'),
-       ($1, $3, 'ISO-E-2', 'دواء هـ ٢')`,
-    [T_E, M_E1, M_E2],
+       ($1, $3, 'ISO-E-2', 'دواء هـ ٢'),
+       ($1, $4, 'ISO-E-3', 'دواء هـ ٣')`,
+    [T_E, M_E1, M_E2, M_E3],
   );
   await sql(
     `INSERT INTO public.batches (tenant_id, id, medicine_id, batch_no, expiry_date, status) VALUES
@@ -473,6 +477,29 @@ before(async () => {
      SELECT $1, $2, id FROM public.roles WHERE tenant_id = $1 AND code = 'owner'`,
     [T_E, U_E],
   );
+
+  // السعر المرجعي الذي تتحقق منه post_sale: قائمة بيع افتراضية واحدة لكل مخزن،
+  // وسعر لكل صنف في وحدة البيع. M_E3 يُترك بلا سعر عن قصد لاختبار الرفض.
+  const seedPriceList = (tenant, items) =>
+    sql(
+      `WITH pl AS (
+         INSERT INTO public.price_lists (tenant_id, code, name, is_default)
+         VALUES ($1, 'retail', 'قائمة التجزئة', true)
+         RETURNING id)
+       INSERT INTO public.price_list_items (tenant_id, price_list_id, medicine_id, unit_id, price)
+       SELECT $1, pl.id, i.medicine_id, i.unit_id, i.price
+         FROM pl,
+              jsonb_to_recordset($2::jsonb) AS i(medicine_id uuid, unit_id uuid, price numeric)`,
+      [tenant, JSON.stringify(items)],
+    );
+
+  await seedPriceList(T_A, [{ medicine_id: M_A, unit_id: UN_A, price: 10 }]);
+  await seedPriceList(T_B, [{ medicine_id: M_B, unit_id: UN_B, price: 10 }]);
+  await seedPriceList(T_D, [{ medicine_id: M_D, unit_id: UN_D, price: 10 }]);
+  await seedPriceList(T_E, [
+    { medicine_id: M_E1, unit_id: UN_E, price: 10 },
+    { medicine_id: M_E2, unit_id: UN_E, price: 7.25 },
+  ]);
 });
 
 after(async () => {
@@ -1324,6 +1351,51 @@ needsDb('البيع: مدخلات غير صالحة ترتد 22023 ولا تتر
     }
 
     assert.deepEqual(await state(), before, 'لا فاتورة ولا سطر ولا حركة، والأرصدة كما كانت');
+  });
+});
+
+needsDb('البيع: سعر أدنى من السعر المرجعي مرفوض بلا فاتورة ولا حركة', async () => {
+  await asApp({ tenantId: T_E, userId: U_E }, async (c) => {
+    // اللقطة تشمل رقم المستند أيضًا: الفحص يقع قبل حجزه فلا يُستهلك بسعر مرفوض.
+    const state = async () =>
+      (
+        await c.query(
+          `SELECT (SELECT count(*) FROM public.sales_invoices)::int       AS invoices,
+                  (SELECT count(*) FROM public.sales_invoice_items)::int AS items,
+                  (SELECT count(*) FROM public.stock_movements)::int      AS movements,
+                  (SELECT jsonb_agg(jsonb_build_object('doc_type', doc_type, 'last_value', last_value))
+                     FROM public.document_sequences WHERE tenant_id = $2) AS seq,
+                  (SELECT jsonb_object_agg(batch_id::text, qty_on_hand)
+                     FROM public.stock_batches
+                    WHERE batch_id = ANY($1))                              AS balances`,
+          [[B_E1, B_E2], T_E],
+        )
+      ).rows[0];
+    const before = await state();
+
+    // السعر المرجعي لـM_E1 هو 10.00، فـ9.99 خصم لم تعتمده القاعدة.
+    const cheap = await expectFailure(c, 'SELECT app.post_sale($1, $2, $3, $4)', [
+      CU_E,
+      W_E,
+      JSON.stringify([{ medicine_id: M_E1, unit_id: UN_E, qty: 1, unit_price: 9.99 }]),
+      'sale-key-cheap',
+    ]);
+    assert.ok(cheap, 'السعر الأدنى مرفوض');
+    assert.equal(cheap.code, '22023');
+    assert.match(cheap.message, /SALE_PRICE_BELOW_REFERENCE/);
+
+    // صنف بلا سعر في قائمة افتراضية: لا مرجع فلا بيع بدل الثقة بالعميل.
+    const missing = await expectFailure(c, 'SELECT app.post_sale($1, $2, $3, $4)', [
+      CU_E,
+      W_E,
+      JSON.stringify([{ medicine_id: M_E3, unit_id: UN_E, qty: 1, unit_price: 10 }]),
+      'sale-key-no-price',
+    ]);
+    assert.ok(missing, 'صنف بلا سعر مرجعي مرفوض');
+    assert.equal(missing.code, '22023');
+    assert.match(missing.message, /SALE_PRICE_REFERENCE_MISSING/);
+
+    assert.deepEqual(await state(), before, 'لا فاتورة ولا سطر ولا حركة ولا رقم مستند، والأرصدة كما كانت');
   });
 });
 
